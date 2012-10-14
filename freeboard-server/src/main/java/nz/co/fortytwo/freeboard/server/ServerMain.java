@@ -1,16 +1,23 @@
 package nz.co.fortytwo.freeboard.server;
 
 import org.apache.camel.main.Main;
+import org.apache.commons.lang3.StringUtils;
+
 
 public class ServerMain {
 
 	//private static Server server;
+
+	private static String SERIAL_URL = "/home/robert/camel.txt&scanStream=true&scanStreamDelay=500";
 
 	private ServerMain() {
         // to pass checkstyle we have a private constructor
     }
 
     public static void main(String[] args) throws Exception {
+    	if(args!=null && StringUtils.isNotBlank(args[0])){
+    		SERIAL_URL=args[0];
+    	}
         System.out.println("\n\n\n\n");
         System.out.println("===============================================");
         System.out.println("Open your web browser on http://localhost:9090");
@@ -28,7 +35,7 @@ public class ServerMain {
 
         // web socket on port 9090
         route.setPort(9090);
-
+        route.setSerialUrl(SERIAL_URL);
         // add our routes to Camel
         main.addRouteBuilder(route);
         

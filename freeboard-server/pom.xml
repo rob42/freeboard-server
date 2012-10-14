@@ -1,24 +1,25 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <groupId>nz.co.fortytwo.freeboard</groupId>
-  <artifactId>freeboard-server</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
-  <name>Freeboard Server</name>
-  <description>Webserver and data server for FreeBoard</description>
-  	<dependencies>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>nz.co.fortytwo.freeboard</groupId>
+	<artifactId>freeboard-server</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<name>Freeboard Server</name>
+	<description>Webserver and data server for FreeBoard</description>
+	<dependencies>
 
 		<dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-core</artifactId>
 			<version>2.10.1</version>
 		</dependency>
-<!-- 		<dependency> -->
-<!-- 			<groupId>org.eclipse.jetty</groupId> -->
-<!-- 			<artifactId>jetty-server</artifactId> -->
-<!-- 			<version>2.10.1</version> -->
-<!-- 		</dependency> -->
+		<!-- <dependency> -->
+		<!-- <groupId>org.eclipse.jetty</groupId> -->
+		<!-- <artifactId>jetty-server</artifactId> -->
+		<!-- <version>2.10.1</version> -->
+		<!-- </dependency> -->
 
-		<!-- jetty-deploy.jar, jetty-io.jar, jetty-security.jar,  jetty-xml.jar -->
+		<!-- jetty-deploy.jar, jetty-io.jar, jetty-security.jar, jetty-xml.jar -->
 		<dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-websocket</artifactId>
@@ -34,7 +35,12 @@
 			<artifactId>commons-codec</artifactId>
 			<version>1.5</version>
 		</dependency>
-  <!-- logging to the console -->
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+			<version>3.1</version>
+		</dependency>
+		<!-- logging to the console -->
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-log4j12</artifactId>
@@ -45,8 +51,8 @@
 			<artifactId>log4j</artifactId>
 			<version>1.2.17</version>
 		</dependency>
-  </dependencies>
-  <build>
+	</dependencies>
+	<build>
 		<plugins>
 			<!-- Allows the example to be run via 'mvn compile exec:java' -->
 			<plugin>
@@ -64,5 +70,5 @@
 		</plugins>
 
 	</build>
-	
+
 </project>
