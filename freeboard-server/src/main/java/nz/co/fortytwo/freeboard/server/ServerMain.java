@@ -15,7 +15,7 @@ public class ServerMain {
     }
 
     public static void main(String[] args) throws Exception {
-    	if(args!=null && StringUtils.isNotBlank(args[0])){
+    	if(args!=null && args.length>0 && StringUtils.isNotBlank(args[0])){
     		SERIAL_URL=args[0];
     	}
         System.out.println("\n\n\n\n");
