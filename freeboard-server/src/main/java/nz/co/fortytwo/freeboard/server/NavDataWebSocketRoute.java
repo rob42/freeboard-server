@@ -24,9 +24,11 @@ public class NavDataWebSocketRoute extends RouteBuilder {
 		// we can serve static resources from the classpath: or file: system
 		wc.setStaticResources("classpath:.");
 
+		
 		// poll serial to get new data
 		// from("websocket:navData")
-		from("stream:file?fileName=" + serialUrl)
+		//from("stream:file?fileName=" + serialUrl)
+		from("mina2:serial:/dev/ttyS0,38400,8,1,NONE,NONE")
 		.to("log:nz.co.fortytwo?level=DEBUG")
 		// and push tweets to all web socket subscribers on camel-tweet
 		.to("websocket:navData?sendToAll=true");

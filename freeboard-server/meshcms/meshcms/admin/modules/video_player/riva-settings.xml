@@ -1,0 +1,11 @@
+<preset>
+	<videoframerate value="25" />
+	<videobitrate value="240" />
+	<videosize value="320x240" />
+	<pass value="undefined" />
+	<deinterlace value="true" />
+	<sound value="true" />
+	<audiochannels value="1" />
+	<audiobitrate value="56" />
+	<audiosamplingrate value="22050" />
+</preset>

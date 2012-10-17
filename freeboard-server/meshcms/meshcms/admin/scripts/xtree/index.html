@@ -1,0 +1,129 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<html>
+<head>
+
+<title>xTree (WebFX)</title>
+
+<!-- WebFX Layout Include -->
+<script type="text/javascript" src="../../webfxlayout.js"></script>
+<!-- end WebFX Layout Includes -->
+
+<style type="text/css">
+
+table {
+	width: 500px;
+}
+
+td {
+	vertical-align: top;
+}
+
+</style>
+
+</head>
+<body>
+
+<!-- WebFX Layout Include -->
+<script type="text/javascript">
+
+var articleMenu= new WebFXMenu;
+articleMenu.left  = 384;
+articleMenu.top   = 86;
+articleMenu.width = 140;
+articleMenu.add(new WebFXMenuItem("History & Introduction", "index.html"));
+articleMenu.add(new WebFXMenuItem("Usage", "usage.html"));
+articleMenu.add(new WebFXMenuItem("API", "api.html"));
+articleMenu.add(new WebFXMenuItem("Implementation", "implementation.html"));
+articleMenu.add(new WebFXMenuItem("Demo", "javascript:window.open('demo.html','demo','scrollbars=yes,status=no,width=500,height=400,resizable=yes'); void(0);"));
+articleMenu.add(new WebFXMenuSeparator);
+articleMenu.add(new WebFXMenuItem("Download", "http://webfx.eae.net/download/xtree117.zip"));
+webfxMenuBar.add(new WebFXMenuButton("Article Menu", null, null, articleMenu));
+
+
+webfxLayout.writeTitle("xTree");
+webfxLayout.writeMenu();
+webfxLayout.writeDesignedByEdger();
+</script>
+
+<div class="webfx-main-body">
+
+<!-- end WebFX Layout Includes -->
+
+<p>
+  <span class="date">(2003-03-16)</span> Version 1.17 - Added target property.<br />
+  <span class="date">(2003-02-15)</span> Version 1.16 - The selected node can now be distinguished even when the tree control loses focus.<br />
+  <span class="date">(2002-10-29)</span> Version 1.15 - This version is based on 1.13 and fixes the bugs 1.14 were supposed to fix.<br />
+  <span class="date">(2002-10-23)</span> Version 1.14 - Minor fix for a case where the plus icon used wrong image.<br />
+  <span class="date">(2002-08-20)</span> Version 1.13 - Added <code>usePersistence</code> flag to allow disable the usage of cookies.<br />
+  <span class="date">(2002-06-13)</span> Version 1.12 - Various bug fixes.<br />
+  <span class="date">(2002-01-27)</span> Version 1.11 - Bug fixes and improved mozilla support.<br />
+  <span class="date">(2001-09-23)</span> Version 1.1 - New features included keyboard navigation (ie) and the ability to add and remove nodes dynamically and some other small tweaks and fixes.<br />
+  <span class="date">(2001-03-18)</span> Added getSelected and get/setBehavior that can make it behave more like the windows explorer<br>(check usage for more information about it).<br />
+  <span class="date">(2001-01-10)</span> Original Version Posted.
+</p>
+
+<p>
+  An object based tree widget with persistence using cookies that works in ie5 and mozilla.
+</p>
+
+<h2>History</h2>
+
+<p>
+  Among the first things I created with DHTML was a tree view, that was over four years ago
+  (spring 1997), since then a lot has happened in the browser market, and also with my skills in
+  JavaScript and DHTML. Today I give you the third version of this tree view widget. The idea
+  behind it is the same as in the first version, to emulate the tree widget found in many modern
+  graphical operation environments, such as Microsoft Windows, and so is the basic idea of how to
+  accomplish this, to toggle the display property of elements depending on the expanded state of
+  their parents. However the similarities stop there. Another thing I can mention from a
+  historical point of view is that this is the first complex script that I have created that
+  works under two different browsers without the use of browser detection, the same code is
+  actually used for ie5 and mozilla. :o)
+</p>
+
+<h2>Introduction</h2>
+
+<p>
+  This new version is based on objects, so you do not create the actual html code for the tree
+  yourself, you create an object (the tree's root folder) and then you add child items to this.
+  Once you're done adding items the actual html code is generated and inserted into the page.
+  This makes it very easy to create and update the content of the tree (or to dynamically
+  generate it). If you've seen Erik's new xMenu you will notice that it's working in similar
+  way.
+</p>
+
+<h3>Persistence</h3>
+
+<p>
+  This script also features persistence using per session cookies. So now if you go to a page
+  using this tree widget, expand a few folders and then leave the page again (by following a
+  link or by typing a new url manually) it will store the state of each folder in a cookie so
+  when you go back to the page it will remember what folders you last had opened and open them
+  for you. This could be very useful if you use this for site navigation etc.
+</p>
+
+<h3>Limitations</h3>
+
+<p>
+  The persistence functionality is using the node creation order to remember the state of each node,
+  this works fine for static trees, but not for dynamic ones since adding and/or deleting
+  nodes will change the original order numbering.
+</p>
+
+<p>
+  <a href="index.html">History & Introduction</a><br />
+  <a href="usage.html">Usage</a><br />
+  <a href="api.html">API</a><br />
+  <a href="implementation.html">Implementation</a><br />
+  <a href="javascript:window.open('demo.html','demo','scrollbars=yes,status=no,width=500,height=400,resizable=yes'); void(0);">Demo</a><br />
+  <a href="http://webfx.eae.net/download/xtree117.zip">Download</a>
+</p>
+
+<p class="author">Author: Emil A Eklund</p>
+
+<!-- end webfx-main-body -->
+</div>
+
+</body>
+</html>

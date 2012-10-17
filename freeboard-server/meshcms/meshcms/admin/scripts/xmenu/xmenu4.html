@@ -1,0 +1,231 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+	"http://www.w3.org/TR/html4/loose.dtd">
+
+<html>
+<head>
+<title>XMenu L&amp;F(WebFX)</title>
+<script type="text/javascript" src="webfxlayout.local.js"></script>
+<link type="text/css" rel="stylesheet" href="xmenu.windows.css">
+
+<script>
+
+// define the default values
+webfxMenuDefaultBorderLeft		= 2;
+webfxMenuDefaultBorderRight		= 2;
+webfxMenuDefaultBorderTop		= 2;
+webfxMenuDefaultBorderBottom	= 2;
+
+webfxMenuDefaultPaddingLeft		= 1;
+webfxMenuDefaultPaddingRight	= 1;
+webfxMenuDefaultPaddingTop		= 1;
+webfxMenuDefaultPaddingBottom	= 1;
+
+webfxMenuDefaultShadowLeft		= 0;
+webfxMenuDefaultShadowRight		= 0;
+webfxMenuDefaultShadowTop		= 0;
+webfxMenuDefaultShadowBottom	= 0;
+
+webfxMenuImagePath			= "../../images/";
+
+</script>
+
+<style type="text/css">
+
+#webfx-menu-bar-1 {
+	background:	buttonhighlight;
+}
+
+#webfx-menu-bar-2,
+#webfx-menu-bar-3,
+#webfx-menu-bar-4 {
+	background-color:	buttonface;
+}
+
+#webfx-menu-bar-4 {
+	background-color:	buttonshadow;
+}
+
+</style>
+</head>
+<body>
+
+<!-- WebFX Layout Include -->
+
+<script type="text/javascript">
+
+var articleMenu= new WebFXMenu;
+articleMenu.left  = 384;
+articleMenu.top   = 86;
+articleMenu.width = 140;
+articleMenu.add(new WebFXMenuItem("Cross browser Issues", "xmenu.html"));
+articleMenu.add(new WebFXMenuItem("Using the Menu tool kit", "xmenu.usage.html"));
+articleMenu.add(new WebFXMenuItem("Implementation", "xmenu2.html"));
+articleMenu.add(new WebFXMenuItem("Menu tool kit API", "xmenu3.html"));
+articleMenu.add(new WebFXMenuItem("Customizing look and feel", "xmenu4.html"));
+articleMenu.add(new WebFXMenuItem("Hover Menu", "hover.html"));
+articleMenu.add(new WebFXMenuSeparator);
+articleMenu.add(new WebFXMenuItem("Download", "http://webfx.eae.net/download/xmenu112.zip"));
+webfxMenuBar.add(new WebFXMenuButton("Article Menu", null, null, articleMenu));
+
+webfxLayout.writeTitle("XMenu Look and Feel");
+webfxLayout.writeMenu();
+webfxLayout.writeDesignedByEdger();
+</script>
+<div class="webfx-main-body">
+<!-- end WebFX Layout Includes -->
+
+
+<h2>Changing the look and feel</h2>
+
+<p>There are two places that needs to be changed for the layout of the menus to
+work correctly. The first thing to change is the css file.</p>
+
+<p>To show how to do all this I'm going to update the current menu to give it a
+Windows look and feel.</p>
+
+<h3>The Menu</h3>
+
+<p>Menus in windows have a <code>2px outset</code> border and a <code>menu</code> background color.</p>
+
+<pre>
+.webfx-menu {
+   position:   absolute;
+   z-index:    100;
+   visibility: hidden;
+   width:      100px;
+   background: <b>Menu</b>;
+   border:     <b>2px outset Menu</b>;
+   padding:    1px;
+}
+</pre>
+
+<h3>Menu Items</h3>
+
+<p>The cursor of a menu item should always be <code>default</code>. The border should be 0 and
+the color for selected items should use <code>Highlight</code> and <code>HighlightText</code>.</p>
+
+<pre>
+.webfx-menu a {
+   display:         block;
+   width:           expression(constExpression(ieBox ? "100%" : "auto"));
+   text-decoration: none;
+   color:           <b>MenuText</b>;
+   height:          expression(constExpression("1px"));
+   vertical-align:  center;
+   padding:         2px;
+   padding-left:    3px;
+   padding-right:   3px;
+   cursor:          default;
+   font:            <b>Menu</b>;
+   border:          0;
+}
+
+.webfx-menu a:visited {
+   color:  <b>MenuText</b>;
+   border: 0;
+}
+
+.webfx-menu a:hover,
+.webfx-menu a:visited:hover {
+   color:      <b>HighlightText</b>;
+   background: <b>Highlight</b>;
+   border:     0;
+}
+</pre>
+
+<h3>Menu Separator</h3>
+
+<p>Not much here, just some color changes.</p>
+
+<pre>
+/* separator */
+.webfx-menu div {
+   height:        0;
+   height:        expression(constExpression(ieBox ? 2 : 0));
+   border-top:    1px solid <b>ButtonShadow</b>;
+   border-bottom: 1px solid <b>ButtonHighlight</b>;
+   overflow:      hidden;
+   margin:        0;
+   margin-top:    2px;
+   margin-bottom: 2px;
+   font-size:     0mm;
+}
+</pre>
+
+<h3>Menu Bar</h3>
+
+<p>Just some color changes and a font change.</p>
+
+<pre>
+.webfx-menu-bar {
+   background:  ButtonFace;
+   padding:     2px;
+   font-family: Verdana, Helvetica, Sans-Serif;
+   font-size:   11px;
+
+   /* IE5.0 has the wierdest box model for inline elements */
+   padding:     expression(constExpression(ie50 ? "0px" : "2px"));
+}
+
+.webfx-menu-bar a,
+.webfx-menu-bar a:visited,
+.webfx-menu-bar a:visited:hover {
+   color:           ButtonText;
+   border:          1px solid ButtonFace;
+   text-decoration: none;
+   padding:         1px;
+   padding-left:    5px;
+   padding-right:   5px;
+
+   /* IE5.0 Does not paint borders and padding on inline elements without a height/width */
+   height:          expression(constExpression(ie50 ? "17px" : "auto"));
+   white-space:     nowrap;
+}
+
+.webfx-menu-bar a:hover {
+   color:           ButtonText;
+   background:      ButtonFace;
+   border-left:     1px solid ButtonHighlight;
+   border-right:    1px solid ButtonShadow;
+   border-top:      1px solid ButtonHighlight;
+   border-bottom:   1px solid ButtonShadow;
+}
+</pre>
+
+<h2>JS Constants</h2>
+
+<p>We should also set the default js constants so that the menus can be positioned to fit
+the style sheet that we have created.</p>
+
+<pre>
+webfxMenuDefaultBorderLeft    = 2;
+webfxMenuDefaultBorderRight   = 2;
+webfxMenuDefaultBorderTop     = 2;
+webfxMenuDefaultBorderBottom  = 2;
+
+webfxMenuDefaultPaddingLeft   = 1;
+webfxMenuDefaultPaddingRight  = 1;
+webfxMenuDefaultPaddingTop    = 1;
+webfxMenuDefaultPaddingBottom = 1;
+
+webfxMenuDefaultShadowLeft    = 0;
+webfxMenuDefaultShadowRight   = 0;
+webfxMenuDefaultShadowTop     = 0;
+webfxMenuDefaultShadowBottom  = 0;
+</pre>
+
+<p><a href="xmenu.html">Introduction &amp; Browser Issues</a><br />
+<a href="xmenu.usage.html">Usage</a><br />
+<a href="xmenu2.html">Implementation</a><br />
+<a href="xmenu3.html">API</a><br />
+<a href="xmenu4.html">Look &amp; Feel</a><br />
+<a href="hover.html">Hover Menu</a>
+</p>
+
+<p class="author">Author: Erik Arvidsson</p>
+
+<!-- end webfx-main-body -->
+</div>
+
+</body>
+</html>

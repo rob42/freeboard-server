@@ -1,0 +1,36 @@
+<org.meshcms.core.Configuration>
+  <useAdminTheme>true</useAdminTheme>
+  <preventHotlinking>false</preventHotlinking>
+  <alwaysRedirectWelcomes>true</alwaysRedirectWelcomes>
+  <alwaysDenyDirectoryListings>true</alwaysDenyDirectoryListings>
+  <hideExceptions>false</hideExceptions>
+  <editorModulesCollapsed>false</editorModulesCollapsed>
+  <highQualityThumbnails>true</highQualityThumbnails>
+  <replaceThumbnails>true</replaceThumbnails>
+  <exportCheckDates>true</exportCheckDates>
+  <searchMovedPages>false</searchMovedPages>
+  <redirectRoot>true</redirectRoot>
+  <passwordProtected>false</passwordProtected>
+  <backupLife>15</backupLife>
+  <statsLength>3</statsLength>
+  <updateInterval>2</updateInterval>
+  <cacheType>0</cacheType>
+  <tidy>0</tidy>
+  <excerptLength>400</excerptLength>
+  <mailServer>localhost</mailServer>
+  <smtpUsername></smtpUsername>
+  <smtpPassword></smtpPassword>
+  <siteName>Site Name</siteName>
+  <siteHost>www.thissite.com</siteHost>
+  <siteDescription>A short description of your site</siteDescription>
+  <siteKeywords>your, keywords, here</siteKeywords>
+  <siteAuthor>your name</siteAuthor>
+  <siteAuthorURL>http://www.yoursite.com/yourpage</siteAuthorURL>
+  <exportBaseURL></exportBaseURL>
+  <exportDir></exportDir>
+  <exportCommand></exportCommand>
+  <visualExtensions>
+    <string>html</string>
+    <string>htm</string>
+  </visualExtensions>
+</org.meshcms.core.Configuration>

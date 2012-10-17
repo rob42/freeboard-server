@@ -1,0 +1,5 @@
+The calendar.js file has been patched to provide a default value for the
+first day of the week, since most translations do not specify it.
+
+Unneeded files have been stripped out.
+

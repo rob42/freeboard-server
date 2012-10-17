@@ -1,0 +1,142 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>1.&nbsp;Create a Theme</title><link rel="stylesheet" href="html.css" type="text/css"><meta name="generator" content="DocBook XSL Stylesheets V1.70.1"><link rel="start" href="index.html" title="MeshCMS 3.6 User Guide"><link rel="up" href="ch04.html" title="Chapter&nbsp;4.&nbsp;Common Tasks"><link rel="prev" href="ch04.html" title="Chapter&nbsp;4.&nbsp;Common Tasks"><link rel="next" href="ch04s02.html" title="2.&nbsp;Edit a Page"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">1.&nbsp;Create a Theme</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="ch04.html">Prev</a>&nbsp;</td><th width="60%" align="center">Chapter&nbsp;4.&nbsp;Common Tasks</th><td width="20%" align="right">&nbsp;<a accesskey="n" href="ch04s02.html">Next</a></td></tr></table><hr></div><div class="section" lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="create_theme"></a>1.&nbsp;Create a Theme</h2></div></div></div><p>One of the essential features of a CMS is the ability to apply a common look &amp; feel to many pages, adding the graphics and some other components like the navigation menu. In MeshCMS you can achieve this result by using a <em class="firstterm">theme</em>. There is a special directory in MeshCMS whose default path is <code class="filename">/meshcms/themes</code>. A theme is a subdirectory of <code class="filename">/meshcms/themes</code> that contains all the elements needed by the theme itself. Those elements are:</p><div class="itemizedlist"><ul type="disc"><li><p>the theme main file: a JSP page named <code class="filename">main.jsp</code> that defines the common part of the pages and where the variable parts must be inserted;</p></li><li><p>the theme CSS: a CSS file named <code class="filename">main.css</code> that has the only special feature of being automatically linked from the page if the <a href="ch07s02.html#tag_defaultcss" title="2.2.&nbsp;defaultcss">defaultcss</a> custom tag is used. This should always be done, since using that syntax, the CSS will also be sent to the wysiwyg editor to display the page body being edited;</p></li><li><p>an additional CSS for MeshCMS specific styles (page editor and modules), named <code class="filename">meshcms.css</code>. If this CSS is not found in the theme, the default one will be used. You can override it if you want to change the appearance of MeshCMS components (the default is located in the <code class="filename">/meshcms/admin/theme</code> directory);</p></li><li><p>any other file needed by the theme: other CSS files, images, javascripts and so on. You can then use these files in your main file by inserting the <a href="ch07s02.html#tag_themepath" title="2.4.&nbsp;themepath">themepath</a> tag that will be replaced with the right path to the theme directory.</p></li></ul></div><p>You can assign a theme to a page using the <a href="ch05s01.html" title="1.&nbsp;Page Manager">Page Manager</a> tool in the Control Panel. There's no need to assign a theme to each page: if a page has no theme, the theme of the parent will be used. For example, if <code class="uri">www.yoursite.com/apage.html</code> has no theme, it will look like <code class="uri">www.yoursite.com</code>. In many cases a theme is assigned to the home page and that's all.</p><div class="section" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="theme_main_file"></a>1.1.&nbsp;The Theme Main File</h3></div></div></div><p>The main file of a theme is a JSP file that will include component of the page being shown:</p><pre class="programlisting">&lt;%@ taglib uri="meshcms-taglib" prefix="mesh" %&gt;
+
+&lt;html&gt;
+ &lt;head&gt;
+  &lt;title&gt;&lt;mesh:pagetitle /&gt;&lt;/title&gt;
+  &lt;mesh:defaultcss /&gt;
+  &lt;mesh:pagehead /&gt;
+ &lt;/head&gt;
+
+ &lt;body&gt;
+  &lt;mesh:editor&gt;
+   &lt;mesh:pagebody /&gt;
+  &lt;/mesh:editor&gt;
+ &lt;/body&gt;
+&lt;/html&gt;</pre><p>This theme file is very basic, but it works: when applied to the sample MeshCMS home page, it looks this way:</p><div class="screenshot"><div class="mediaobject" align="center"><img src="resources/bare_viewing.png" align="middle"></div></div><p>The same basic theme can be used to edit the page:</p><div class="screenshot"><div class="mediaobject" align="center"><img src="resources/bare_editing.png" align="middle"></div></div><p>Now you know that a basic theme isn't complicated at all. In fact, it is a normal HTML page (which you can create with your favorite editor), that includes some <a href="ch07.html" title="Chapter&nbsp;7.&nbsp;Tag Library">custom tags</a> that will be replaced by MeshCMS with the contents of the page. This is how MeshCMS translates the page above:</p><pre class="programlisting">&lt;html&gt;
+ &lt;head&gt;
+  &lt;title&gt;Home Page&lt;/title&gt;
+  &lt;link type="text/css" rel="stylesheet" href="/meshcms/themes/bare/main.css" /&gt;
+  &lt;link type="text/css" rel="stylesheet" href="/meshcms/admin/theme/meshcms.css" /&gt;
+  &lt;meta http-equiv="Content-Type" content="text/html; charset=utf-8"&gt;
+ &lt;/head&gt;
+
+ &lt;body&gt;
+  &lt;p&gt;Welcome to MeshCMS 2.0. Here is a list ...&lt;/p&gt;
+  ...
+ &lt;/body&gt;
+&lt;/html&gt;</pre><p>When you create a theme, you should create a normal HTML page along with its own CSS file and images and store all files in a directory. Use some text placeholder to point out where to put page components. For example, write [TITLE] where you expect to see the title of the page, [SITE MENU] where you want to see the menu, [BODY] where the text of the page should be located and so on. Please note that the notation with square brackets has nothing special. They are just placeholders. You might also use the "lorem ipsum" text instead of [BODY]. Your file might look like this one:</p><div class="screenshot"><div class="mediaobject" align="center"><img src="resources/theme_step1.jpg" align="middle"></div></div><p>This is the corresponding HTML code:</p><pre class="programlisting">&lt;html&gt;
+
+&lt;head&gt;
+  &lt;title&gt;[TITLE]&lt;/title&gt;
+&lt;/head&gt;
+
+&lt;body style="margin: 0px;"&gt;
+&lt;table width="770" border="0" cellspacing="0" cellpadding="0"&gt;
+  &lt;tr&gt;
+    &lt;td colspan="2" valign="bottom" style="background: url(flowers.jpg) no-repeat; &para;
+     height: 120px; padding: 10px; font-size: 22px;"&gt;[TITLE]&lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+    &lt;td bgcolor="#E2E0C9"&gt;
+    &lt;table border="0" align="center" cellpadding="3" cellspacing="0"&gt;
+      &lt;tr&gt;&lt;th&gt;Site Menu:&lt;/th&gt;&lt;/tr&gt;
+      &lt;tr&gt;&lt;td&gt;[SITE MENU]&lt;/td&gt;&lt;/tr&gt;
+      &lt;tr&gt;&lt;th&gt;MeshCMS Menu:&lt;/th&gt;&lt;/tr&gt;
+      &lt;tr&gt;&lt;td&gt;[MESHCMS MENU]&lt;/td&gt;&lt;/tr&gt;
+    &lt;/table&gt;
+    &lt;/td&gt;
+    &lt;td&gt;&lt;table border="0" cellspacing="0" cellpadding="5"&gt;
+      &lt;tr&gt;&lt;td&gt;[BREADCRUMBS]&lt;/td&gt;&lt;/tr&gt;
+      &lt;tr&gt;&lt;td&gt;[BODY]&lt;/td&gt;&lt;/tr&gt;
+    &lt;/table&gt;&lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr align="center"&gt;
+    &lt;td colspan="2" bgcolor="#DDBC00"&gt;
+      Powered by &lt;a href="http://www.cromoteca.com/meshcms/"&gt;MeshCMS&lt;/a&gt;
+    &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/table&gt;
+&lt;/body&gt;
+
+&lt;/html&gt;</pre><p>When you are happy with your page, open it with a source code editor. Replace:</p><div class="itemizedlist"><ul type="disc"><li><p>[TITLE] with <code class="code">&lt;mesh:pagetitle /&gt;</code></p></li><li><p>[SITE MENU] with <code class="code">&lt;mesh:simplemenu /&gt;</code></p></li><li><p>[MESHCMS MENU] with <code class="code">&lt;mesh:adminmenu /&gt;</code></p></li><li><p>[BREADCRUMBS] with <code class="code">&lt;mesh:breadcrumbs /&gt;</code></p></li><li><p>[BODY] with <code class="code">&lt;mesh:pagebody /&gt;</code></p></li></ul></div><p>There is a link to an image in the file: you must add <code class="code">&lt;mesh:themepath /&gt;</code> before the image path so it will be found correctly. <code class="code">url(flowers.jpg)</code> becomes <code class="code">url(&lt;mesh:themepath /&gt;/flowers.jpg)</code>.</p><p>Then add this line at the beginning of your file:</p><pre class="programlisting">&lt;%@ taglib uri="meshcms-taglib" prefix="mesh" %&gt;</pre><p>Save your file and name it <code class="filename">main.jsp</code>. The CSS must be named <code class="filename">main.css</code> and must be located in the same directory. This directory must be located in the <code class="filename">/meshcms/themes</code> directory in your site, and the name of the directory will be used as name of the theme itself. All images and other files must be located in the same directory. You can use subdirectories, but then you need to write paths accordingly: for example, if you put all images in a subdirectory called <code class="filename">images</code>, you will use <code class="code">url(&lt;mesh:themepath /&gt;/images/flowers.jpg)</code> in the example above.</p><p>When your brand new decorator is available, reopen the home page of your web site and your new look &amp; feel should now be used to display the page:</p><div class="screenshot"><div class="mediaobject" align="center"><img src="resources/theme_step2.jpg" align="middle"></div></div><pre class="programlisting"><span class="bold"><strong>&lt;%@ taglib uri="meshcms-taglib" prefix="mesh" %&gt;</strong></span>
+
+&lt;html&gt;
+
+&lt;head&gt;
+  &lt;title&gt;<span class="bold"><strong>&lt;mesh:pagetitle /&gt;</strong></span>&lt;/title&gt;
+&lt;/head&gt;
+
+&lt;body style="margin: 0px;"&gt;
+&lt;table width="770" border="0" cellspacing="0" cellpadding="0"&gt;
+  &lt;tr&gt;
+    &lt;td colspan="2" valign="bottom" style="background: &para;
+     url(<span class="bold"><strong>&lt;mesh:themepath /&gt;</strong></span>/flowers.jpg) no-repeat; height: 120px; &para;
+     padding: 10px; font-size: 22px;"&gt;<span class="bold"><strong>&lt;mesh:pagetitle /&gt;</strong></span>&lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+    &lt;td bgcolor="#E2E0C9"&gt;
+    &lt;table border="0" align="center"cellpadding="3" cellspacing="0"&gt;
+      &lt;tr&gt;&lt;th&gt;Site Menu:&lt;/th&gt;&lt;/tr&gt;
+      &lt;tr&gt;&lt;td&gt;<span class="bold"><strong>&lt;mesh:simplemenu /&gt;</strong></span>&lt;/td&gt;&lt;/tr&gt;
+      &lt;tr&gt;&lt;th&gt;MeshCMS Menu:&lt;/th&gt;&lt;/tr&gt;
+      &lt;tr&gt;&lt;td&gt;<span class="bold"><strong>&lt;mesh:adminmenu separator="&lt;br /&gt;" /&gt;</strong></span>&lt;/td&gt;&lt;/tr&gt;
+    &lt;/table&gt;
+    &lt;/td&gt;
+    &lt;td&gt;&lt;table border="0" cellspacing="0" cellpadding="5"&gt;
+      &lt;tr&gt;&lt;td&gt;<span class="bold"><strong>&lt;mesh:breadcrumbs /&gt;</strong></span>&lt;/td&gt;&lt;/tr&gt;
+      &lt;tr&gt;&lt;td&gt;<span class="bold"><strong>&lt;mesh:pagebody /&gt;</strong></span>&lt;/td&gt;&lt;/tr&gt;
+    &lt;/table&gt;&lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr align="center"&gt;
+    &lt;td colspan="2" bgcolor="#DDBC00"&gt;
+      Powered by &lt;a href="http://www.cromoteca.com/meshcms/"&gt;MeshCMS&lt;/a&gt;
+    &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/table&gt;
+&lt;/body&gt;
+
+&lt;/html&gt;</pre><p>There are other tags that you must add in your decorator:</p><div class="itemizedlist"><ul type="disc"><li><p><code class="code">&lt;mesh:pagehead /&gt;</code> and <code class="code">&lt;mesh:defaultcss /&gt;</code> go inside the <code class="code">&lt;head&gt;</code> tag of your file to include headers and CSS;</p></li><li><p><code class="code">&lt;mesh:editor&gt;...&lt;/mesh:editor&gt;</code> must enclose all the contents of the <code class="code">&lt;body&gt;</code> tag;</p></li><li><p><code class="code">&lt;mesh:setlocale /&gt;</code> to define the locale of the pages that will use the theme (optional);</p></li><li><p>you will probably want to add one or more <a href="ch06.html" title="Chapter&nbsp;6.&nbsp;Modules">modules</a>; otherwise you can't take advantage of available modules in your pages;</p></li><li><p>other <a href="ch07.html" title="Chapter&nbsp;7.&nbsp;Tag Library">tags</a> could be useful in some cases.</p></li></ul></div><p>After these other modifications, you should get this source code:</p><pre class="programlisting">&lt;%@ taglib uri="meshcms-taglib" prefix="mesh" %&gt;
+<span class="bold"><strong>&lt;mesh:setlocale value="en" /&gt;</strong></span>
+
+&lt;html&gt;
+
+&lt;head&gt;
+  &lt;title&gt;
+    &lt;mesh:pagetitle /&gt;
+    <span class="bold"><strong>&lt;mesh:pagehead /&gt;</strong></span>
+    <span class="bold"><strong>&lt;mesh:defaultcss /&gt;</strong></span>
+  &lt;/title&gt;
+&lt;/head&gt;
+
+&lt;body style="margin: 0px;"&gt;<span class="bold"><strong>&lt;mesh:editor&gt;</strong></span>
+&lt;table width="770" border="0" cellspacing="0" cellpadding="0"&gt;
+  &lt;tr&gt;
+    &lt;td colspan="2" valign="bottom" style="background: &para;
+     url(&lt;mesh:themepath /&gt;/flowers.jpg) no-repeat; height: 120px; &para;
+     padding: 10px; font-size: 22px;"&gt;&lt;mesh:pagetitle /&gt;&lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+    &lt;td bgcolor="#E2E0C9"&gt;
+    &lt;table border="0" align="center" cellpadding="3" cellspacing="0"&gt;
+      &lt;tr&gt;&lt;th&gt;Site Menu:&lt;/th&gt;&lt;/tr&gt;
+      &lt;tr&gt;&lt;td&gt;&lt;mesh:simplemenu /&gt;&lt;/td&gt;&lt;/tr&gt;
+      &lt;tr&gt;&lt;th&gt;MeshCMS Menu:&lt;/th&gt;&lt;/tr&gt;
+      &lt;tr&gt;&lt;td&gt;&lt;mesh:adminmenu separator="&lt;br /&gt;" /&gt;&lt;/td&gt;&lt;/tr&gt;
+    &lt;/table&gt;
+    &lt;/td&gt;
+    &lt;td&gt;&lt;table border="0" cellspacing="0" cellpadding="5"&gt;
+      &lt;tr&gt;&lt;td&gt;&lt;mesh:breadcrumbs /&gt;&lt;/td&gt;&lt;/tr&gt;
+      &lt;tr&gt;&lt;td&gt;&lt;mesh:pagebody /&gt;&lt;/td&gt;&lt;/tr&gt;
+    &lt;/table&gt;&lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr align="center"&gt;
+    &lt;td colspan="2" bgcolor="#DDBC00"&gt;
+      Powered by &lt;a href="http://www.cromoteca.com/meshcms/"&gt;MeshCMS&lt;/a&gt;
+    &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/table&gt;
+<span class="bold"><strong>&lt;/mesh:editor&gt;</strong></span>&lt;/body&gt;
+
+&lt;/html&gt;</pre></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ch04.html">Prev</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="ch04.html">Up</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="ch04s02.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Chapter&nbsp;4.&nbsp;Common Tasks&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top">&nbsp;2.&nbsp;Edit a Page</td></tr></table></div></body></html>

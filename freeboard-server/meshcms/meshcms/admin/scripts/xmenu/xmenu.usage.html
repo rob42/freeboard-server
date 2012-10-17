@@ -1,0 +1,125 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+	"http://www.w3.org/TR/html4/loose.dtd">
+
+<html>
+<head>
+<title>XMenu Usage(WebFX)</title>
+<script type="text/javascript" src="webfxlayout.local.js"></script>
+</head>
+<body>
+
+<!-- WebFX Layout Include -->
+<script type="text/javascript">
+var articleMenu= new WebFXMenu;
+articleMenu.left  = 384;
+articleMenu.top   = 86;
+articleMenu.width = 140;
+articleMenu.add(new WebFXMenuItem("Cross browser Issues", "xmenu.html"));
+articleMenu.add(new WebFXMenuItem("Using the Menu tool kit", "xmenu.usage.html"));
+articleMenu.add(new WebFXMenuItem("Implementation", "xmenu2.html"));
+articleMenu.add(new WebFXMenuItem("Menu tool kit API", "xmenu3.html"));
+articleMenu.add(new WebFXMenuItem("Customizing look and feel", "xmenu4.html"));
+articleMenu.add(new WebFXMenuItem("Hover Menu", "hover.html"));
+articleMenu.add(new WebFXMenuSeparator);
+articleMenu.add(new WebFXMenuItem("Download", "http://webfx.eae.net/download/xmenu112.zip"));
+webfxMenuBar.add(new WebFXMenuButton("Article Menu", null, null, articleMenu));
+
+webfxLayout.writeTitle("XMenu");
+webfxLayout.writeMenu();
+webfxLayout.writeDesignedByEdger();
+</script>
+<div class="webfx-main-body">
+<!-- end WebFX Layout Includes -->
+
+<p>The XMenu system is an Object Oriented JavaScript system and all menus are created
+using JS constructors. The only HTML you need for a menu is the script tags that enclose
+the js.</p>
+
+<h2>Creating a Menu</h2>
+
+<p>All menus needs to be created during the load phase of the page. A menu is created
+by creating a <code>WebFXMenu</code> and then adding <code>WebFXMenuItem</code>s and
+<code>WebFXMenuSeparator</code>s to it. Once all objects have been created the menus needs to
+be generated. This is done using <code>document.write</code>. This will write the entire
+menu tree so if you have more than one menu tree you will need to do more than one write.</p>
+
+<pre>
+var myMenu = new WebFXMenu;
+myMenu.add(new WebFXMenuItem("Menu Item 1", "http://www.domain.com", "Tool tip to show"));
+myMenu.add(new WebFXMenuSeparator());
+myMenu.add(new WebFXMenuItem("Menu Item 2", "http://www.domain.com", "Tool tip to show"));
+
+document.write(myMenu);
+</pre>
+
+<h3>Sub Menus</h3>
+
+<p>To create a sub menu you just create another menu and then in the creation of the menu
+item you should pass along that menu as the fourth argument.</p>
+
+<pre>
+var mySubMenu = new WebFXMenu;
+mySubMenu.add(new WebFXMenuItem("Menu Item 3", "http://www.domain.com", "Tool tip to show"));
+
+myMenu.add(new WebFXMenuItem("Menu Item 4 with sub menu", null, "Tool tip to show", <b>mySubMenu</b>));
+</pre>
+
+<h3>Positioning and Sizing</h3>
+
+<p>Positioning is now done automatically but the posibility to set the position is still there.
+See the API for the right properties. The <code>width</code> however still needs to be set in the
+JavaScript. The default <code>width</code> is 100 but can be changed by setting th
+<code>width</code> property of the menu.</p>
+
+<pre>
+myMenu.width = 200;
+</pre>
+
+<h2>Creating a menu bar</h2>
+
+<p>The menu bar is basically just a menu with a slightly different layout. The
+<code>WebFXMenuBar</code> extends the menu and it overrides the toString method. Menu buttons
+are extending menu items and are called <code>WebFXMenuButton</code>.</p>
+
+<pre>
+var myBar = new WebFXMenuBar;
+myBar.add(new WebFXMenuButton("Menu Button 1", "http://www.domain.com", "Tool tip to show"));
+myBar.add(new WebFXMenuButton("Menu Button 2", null, "Tool tip to show", myMenu));
+</pre>
+
+<p>The menu buttons can have a drop down menu by passing along a menu as the fourth argument
+(just like for the menu items). Drop down menus are shown when the anchor becomes focused and
+hidden when the anchor is blurred. This makes the menu disappear as soon as the user clicks
+anywhere else. If <code>useHoverMode</code> is set to <code>true</code> the menus will be
+shown when you hover a menu button.</p>
+
+<h2>Objects</h2>
+
+<p>The menu system consists of a few object types, <code>WebFXMenu</code>,
+<code>WebFXMenuItem</code> and <code>WebFXMenuSeparator</code>. All of these
+return the string needed to generate the
+HTML when one calls <code>toString()</code>. This method is the one JS uses whenever
+a string is needed for an object. This means that the following will create the needed
+HTML:</p>
+
+<pre>
+document.write(myMenu);
+</pre>
+
+
+
+<p><a href="xmenu.html">Introduction &amp; Browser Issues</a><br />
+<a href="xmenu.usage.html">Usage</a><br />
+<a href="xmenu2.html">Implementation</a><br />
+<a href="xmenu3.html">API</a><br />
+<a href="xmenu4.html">Look &amp; Feel</a><br />
+<a href="hover.html">Hover Menu</a>
+</p>
+
+<p class="author">Author: Erik Arvidsson</p>
+
+<!-- end webfx-main-body -->
+</div>
+
+</body>
+</html>

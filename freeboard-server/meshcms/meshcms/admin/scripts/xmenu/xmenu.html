@@ -1,0 +1,138 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+	"http://www.w3.org/TR/html4/loose.dtd">
+
+<html>
+<head>
+<title>XMenu (WebFX)</title>
+
+<link type="text/css" href="webfxlayout.local.css" rel="stylesheet" />
+</head>
+<body>
+
+<!-- WebFX Layout Include -->
+<script type="text/javascript">
+var articleMenu= new WebFXMenu;
+articleMenu.left  = 384;
+articleMenu.top   = 86;
+articleMenu.width = 140;
+articleMenu.add(new WebFXMenuItem("Cross browser Issues", "xmenu.html"));
+articleMenu.add(new WebFXMenuItem("Using the Menu tool kit", "xmenu.usage.html"));
+articleMenu.add(new WebFXMenuItem("Implementation", "xmenu2.html"));
+articleMenu.add(new WebFXMenuItem("Menu tool kit API", "xmenu3.html"));
+articleMenu.add(new WebFXMenuItem("Customizing look and feel", "xmenu4.html"));
+articleMenu.add(new WebFXMenuItem("Hover Menu", "hover.html"));
+articleMenu.add(new WebFXMenuSeparator);
+articleMenu.add(new WebFXMenuItem("Download", "http://webfx.eae.net/download/xmenu112.zip"));
+webfxMenuBar.add(new WebFXMenuButton("Article Menu", null, null, articleMenu));
+
+webfxLayout.writeTitle("XMenu");
+webfxLayout.writeMenu();
+webfxLayout.writeDesignedByEdger();
+</script>
+<div class="webfx-main-body">
+<!-- end WebFX Layout Includes -->
+
+
+<p>This is a simple menu system designed to work in Internet Explorer, Mozilla and Opera.
+This does however lead to some limitations and I'm going to cover some these and see what
+can be done and how. If you are not interested in these you can go directly to the
+<a href="xmenu2.html">implementation description</a>.</p>
+
+<h2>Static Content Model</h2>
+
+<p>Opera has a serious limitation when it comes to DHTML and that is that you cannot change
+the content at runtime. This means that you cannot add or remove nodes. It also means that
+you cannot modify a text node (no way to change the text). This means that we cannot add
+and remove menus at runtime. Everything needs to be created at load, therefore we use the
+old classical <code>document.write</code> to generate our content.</p>
+
+<h2>Element Boundaries</h2>
+
+<p>To get the element size in IE, Mozilla and Opera we use the MS proprietary properties called
+<code>offsetWidth</code> and <code>offsetHeight</code>. Even though IE before version 6 uses a
+non standard box model all three browsers return the border box size when using
+<code>offsetWidth</code> and <code>offsetHeight</code>. This means that the size includes paddings
+and borders.<p>
+
+<h2>Element Positions</h2>
+
+<p>Once again all browsers use the same properties but this time it is not equally easy since
+all of them treat them a little bit different. The properties to use here are
+<code>offsetLeft</code>, <code>offsetTop</code> and <code>offsetParent</code>. The difference is
+basically that Opera returns the position from the offsetParent's top left corner while IE
+and Mozilla returns the position from the upper left minus the borders. Another problem that is
+ignored when finding the positions for the XMenu is that any container may have been scrolled. If
+you want to take this into account you need to subtract the <code>scrollLeft</code> and
+<code>scrollTop</code>.
+
+<h2>Window Size</h2>
+
+<p>All three browser do allow you to get the size of the document. Opera and Mozilla use
+<code>window.innerWidth</code> and <code>window.innerHeight</code> just like Netscape
+Navigator 4.x. In IE on the other hand we return the size of the root (canvas) element. This is
+normally the <code>html</code> element but if IE is in quirks mode (all versions prior to IE6
+except IE5 Mac) this is the <code>body</code>.</p>
+
+<h2>Event Model</h2>
+
+<p>Only Mozilla supports the W3C standard way of hooking up events correctly but all three
+browsers almost support the event attributes on html identically. The big difference
+is that IE incorrectly binds the <code>event</code> object to the <code>window</code> object.
+The menu system does not need the event object because all elements pass all the desired
+arguments in the event attributes.</p>
+
+<pre>
+&lt;a href="myuri" onmouseover="webFXMenuHandler.overMenuItem(this)"&gt;...&lt;/a&gt;
+</pre>
+
+<h2>Box Model</h2>
+
+<p>This is the biggest problem today when trying to create cross browser DHTML applications because
+Internet Explorer (before version 6) does not support the correct box model. CSS3 has a proposed
+property called <code>box-sizing</code> which currently have two possible values,
+<code>border-box</code> and <code>content-box</code>. Border box is what old versions of IE are using
+and content box is what CSS1 uses. Border box means that the width is calculated including the border
+and padding. Content box does not include the borders nor the padding. This gives Mozilla and Opera a
+wider box and therefore som extra properties are needed to make the layout identical in the different
+browsers.</p>
+
+<p>There is a trick that can be used when defining the CSS for cross browser applications.
+IE5 added a proprietary value called <code>expression</code> which evaluates an expression
+and uses that value as the value for the property. All browsers with correct CSS support
+should ignore invalid CSS declarations so declarations done using expression are ignored.
+The following CSS declarations give the same look and feel in all three browsers.</p>
+
+<pre>
+.selector {
+   border:  10px solid black;
+   padding: 10px;
+   width:   60px;
+   width:   expression(ieBox ? 100 : 60 + "px");
+}
+</pre>
+
+<h3>Opera Focus Bug</h3>
+
+<p>The menu system uses the events <code>onfocus</code> and <code>onfocus</code> to show
+and hide the menus. This allows an easy way to make sure the menus are hidden with almost
+no code.</p>
+
+<p>Opera does however not support focus on anchors so to get the menus to work in Opera
+the hover mode is used.</p>
+
+
+<p><a href="xmenu.html">Introduction &amp; Browser Issues</a><br />
+<a href="xmenu.usage.html">Usage</a><br />
+<a href="xmenu2.html">Implementation</a><br />
+<a href="xmenu3.html">API</a><br />
+<a href="xmenu4.html">Look &amp; Feel</a><br />
+<a href="hover.html">Hover Menu</a>
+</p>
+
+<p class="author">Author: Erik Arvidsson</p>
+
+<!-- end webfx-main-body -->
+</div>
+
+</body>
+</html>

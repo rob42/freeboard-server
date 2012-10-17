@@ -1,0 +1,396 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<html>
+<head>
+
+<title>xTree API (WebFX)</title>
+
+<!-- WebFX Layout Include -->
+<script type="text/javascript" src="../../webfxlayout.js"></script>
+<!-- end WebFX Layout Includes -->
+
+<style type="text/css">
+
+table {
+	width: 500px;
+}
+
+td {
+	vertical-align: top;
+}
+
+</style>
+
+</head>
+<body>
+
+<!-- WebFX Layout Include -->
+<script type="text/javascript">
+
+var articleMenu= new WebFXMenu;
+articleMenu.left  = 384;
+articleMenu.top   = 86;
+articleMenu.width = 140;
+articleMenu.add(new WebFXMenuItem("History & Introduction", "index.html"));
+articleMenu.add(new WebFXMenuItem("Usage", "usage.html"));
+articleMenu.add(new WebFXMenuItem("API", "api.html"));
+articleMenu.add(new WebFXMenuItem("Implementation", "implementation.html"));
+articleMenu.add(new WebFXMenuItem("Demo", "javascript:window.open('demo.html','demo','scrollbars=yes,status=no,width=500,height=400,resizable=yes'); void(0);"));
+articleMenu.add(new WebFXMenuSeparator);
+articleMenu.add(new WebFXMenuItem("Download", "http://webfx.eae.net/download/xtree117.zip"));
+webfxMenuBar.add(new WebFXMenuButton("Article Menu", null, null, articleMenu));
+
+
+webfxLayout.writeTitle("xTree API");
+webfxLayout.writeMenu();
+webfxLayout.writeDesignedByEdger();
+</script>
+
+<div class="webfx-main-body">
+
+<!-- end WebFX Layout Includes -->
+
+<h2>WebFXTreeAbstractNode</h2>
+
+<p>
+  Abstract object with common functions and methods shared by WebFXTree and WebFXTreeItem.
+  The two of those inherites from this object.
+</p>
+
+<h3>Constructor</h3>
+
+<p>Abstract object - no instances of it should be created</p>
+
+<h3>Properties</h3>
+
+<table>
+<thead><tr>
+	<td>Name</td>
+	<td>Type</td>
+	<td>Description</td>
+</tr></thead>
+<tbody>
+<tr>
+	<td>id</td>
+	<td>Number</td>
+	<td>Read only property that can be used to find the related HTMLElement. It can also be
+		used the other way around. If you know the id of the HTMLElement you can get the JS
+		object by looking in the <code>webFXTreeHandler.all</code> collection.</td>
+</tr>
+<tr>
+	<td>text</td>
+	<td>String</td>
+	<td>The text label for the node.</td>
+</tr>
+<tr>
+	<td>action</td>
+	<td>String</td>
+	<td>The action (uri) associated with the node.</td>
+</tr>
+<tr>
+	<td>open</td>
+	<td>Boolean</td>
+	<td>Read only. Boolean property that tells if the node is expanded or collapsed (will always return false if there are no child nodes).</td>
+</tr>
+<tr>
+	<td>icon</td>
+	<td>String</td>
+	<td>Image file to use as icon. Uses default if not specified.</td>
+</tr>
+<tr>
+	<td>openIcon</td>
+	<td>String</td>
+	<td>Image file to use as the open icon (if child nodes only). Uses default if not specified.</td>
+</tr>
+<tr>
+	<td>parentNode</td>
+	<td>Reference</td>
+	<td>A reference to the parent node.</td>
+</tr>
+<tr>
+	<td>childNodes</td>
+	<td>Array</td>
+	<td>Collection of references to all child nodes.</td>
+</tr>
+</tbody>
+</table>
+
+<h3>Methods</h3>
+
+<table>
+<thead><tr>
+	<td>Name</td>
+	<td>Returns</td>
+	<td>Description</td>
+</tr></thead>
+<tbody>
+<tr>
+	<td>add(oNode, [bNoIdent])</td>
+	<td>Reference</td>
+	<td>
+	  Adds a tree item to the current item. This method takes two argument, the first
+	  is the WebFXTreeItem object to add and the second is an optional boolean value,
+	  that if specified and set to true will prevent the tree from executing the indent
+	  method automatically once the node has been added. This parameter has no effect
+	  on calls to the add method before the tree is rendered, but settings this flag
+	  when adding nodes after the tree has been rendered will greatly reduce the time
+	  needed to complete the operation, this can be quite useful while adding more
+	  than one node at a time, but requires that the indent method is manually executed
+		on the top most node affected by the changes afterwards.
+		Returns a reference to the added node.</td>
+</tr>
+<tr>
+	<td>indent()</td>
+	<td>Void</td>
+	<td>Redraws the traces between nodes and makes sure the tree is properly layed out.</td>
+</tr>
+<tr>
+	<td>toggle()</td>
+	<td>Void</td>
+	<td>Toggles the expand/collapse.</td>
+</tr>
+<tr>
+	<td>expand()</td>
+	<td>Void</td>
+	<td>Expands the tree item.</td>
+</tr>
+<tr>
+	<td>collapse()</td>
+	<td>Void</td>
+	<td>Collapses the tree item.</td>
+</tr>
+<tr>
+	<td>expandAll()</td>
+	<td>Void</td>
+	<td>Expands the tree item and all sub items recursively.</td>
+</tr>
+<tr>
+	<td>collapseAll()</td>
+	<td>Void</td>
+	<td>Collapses the tree root and all sub items recursively.</td>
+</tr>
+<tr>
+	<td>expandChildren()</td>
+	<td>Void</td>
+	<td>Expands all sub items recursively (same as executing expandAll and the collapse).</td>
+</tr>
+<tr>
+	<td>collapseChildren()</td>
+	<td>Void</td>
+	<td>Collapses all sub items recursively (same as executing collapseAll and the expand).</td>
+</tr>
+<tr>
+	<td>getNextSibling()</td>
+	<td>Reference</td>
+	<td>Returns a reference to the next sibling.</td>
+</tr>
+<tr>
+	<td><nobr>getPreviousSibling()</nobr></td>
+	<td>Reference</td>
+	<td>Returns a reference to the previous sibling.</td>
+</tr>
+<tr>
+	<td>toString()</td>
+	<td>String</td>
+	<td>Genereates the HTML string needed to render the tree item.</td>
+</tr>
+</tbody>
+</table>
+
+<h2>WebFXTree</h2>
+
+<p>
+  The WebFXTree object is used to create the actual tree root that can later be populated with tree items.
+  All properties and methods from the WebFXTreeAbstractNode are inherited.
+</p>
+
+<h3>Constructor</h3>
+
+<pre>new WebFXTree([text], [action], [behavior])</pre>
+
+<table>
+<thead><tr>
+	<td>Name</td>
+	<td>Type</td>
+	<td>Description</td>
+</tr></thead>
+<tbody>
+<tr>
+	<td>text</td>
+	<td>String</td>
+	<td>Optional. The text label for the tree root.</td>
+</tr>
+<tr>
+	<td>action</td>
+	<td>String</td>
+	<td>Optional. The action (uri) associated with the tree root.</td>
+</tr>
+<tr>
+	<td>behavior</td>
+	<td>String</td>
+	<td>Optional. Name of the behavior to use, check the setBehavior() method for details.</td>
+</tr>
+<tr>
+	<td>icon</td>
+	<td>String</td>
+	<td>Optional. Image to use as the icon.</td>
+</tr>
+<tr>
+	<td>openIcon</td>
+	<td>String</td>
+	<td>Optional. Image to use as the open icon.</td>
+</tr>
+</tbody>
+</table>
+
+<h3>Properties</h3>
+
+<table>
+<thead><tr>
+	<td>Name</td>
+	<td>Type</td>
+	<td>Description</td>
+</tr></thead>
+<tbody>
+<tr>
+	<td>rendered</td>
+	<td>Boolean</td>
+	<td>Flag that indicates whatever or no the tree has been generated and rendered.</td>
+</tr>
+</tbody>
+</table>
+
+<h3>Methods</h3>
+
+<table>
+<thead><tr>
+	<td>Name</td>
+	<td>Returns</td>
+	<td>Description</td>
+</tr></thead>
+<tbody>
+<tr>
+<tr>
+	<td>getSelected()</td>
+	<td>Reference</td>
+	<td>Returns the id of the selected object, if any.</td>
+</tr>
+<tr>
+	<td><nobr>setBehavior(sBehavior)</nobr></td>
+	<td>Void</td>
+	<td>
+		Has to be specified before the tree is created and can be used to change the way the tree behaves,
+		possible values are <i>classic</i> (default) and <i>explorer</i>. Check the usage page for more
+		information about this.
+	</td>
+</tr>
+<tr>
+	<td>getBehavior()</td>
+	<td>String</td>
+	<td>Returns the name of the behavior used.</td>
+</tr>
+</tbody>
+</table>
+
+<h2>WebFXTreeItem</h2>
+
+<p>
+  Used to create tree items, can be added (uisng the add method) to a WebFXTree or to another
+  WebFXTreeItem object.
+  All properties and methods from the WebFXTreeAbstractNode are inherited.
+</p>
+
+<h3>Constructor</h3>
+
+<pre>new WebFXTreeItem([text], [action], [parent], [icon], [openIcon])</pre>
+
+<table>
+<thead><tr>
+	<td>Name</td>
+	<td>Type</td>
+	<td>Description</td>
+</tr></thead>
+<tbody>
+<tr>
+	<td>text</td>
+	<td>String</td>
+	<td>Optional. The text label for the tree item.</td>
+</tr>
+<tr>
+	<td>action</td>
+	<td>String</td>
+	<td>Optional. The action (uri) associated with the tree item.</td>
+</tr>
+<tr>
+	<td>parent</td>
+	<td>Reference</td>
+	<td>Optional. Reference to an object to witch the node should be added.</td>
+</tr>
+<tr>
+	<td>icon</td>
+	<td>String</td>
+	<td>Optional. Image to use as the icon.</td>
+</tr>
+<tr>
+	<td>openIcon</td>
+	<td>String</td>
+	<td>Optional. Image to use as the open icon.</td>
+</tr>
+</tbody>
+</table>
+
+<h3>Properties</h3>
+
+<table>
+<thead><tr>
+	<td>Name</td>
+	<td>Type</td>
+	<td>Description</td>
+</tr></thead>
+<tbody>
+<tr>
+<tr>
+	<td colspan="3">None but the inherited ones</td>
+</tr>
+</tbody>
+</table>
+
+<h3>Methods</h3>
+
+<table>
+<thead><tr>
+	<td>Name</td>
+	<td>Returns</td>
+	<td>Description</td>
+</tr></thead>
+<tbody>
+<tr>
+	<td>getFirst()</td>
+	<td>Reference</td>
+	<td>Returns a reference to the first child node, if any.</td>
+</tr>
+<tr>
+	<td>getLast()</td>
+	<td>Reference</td>
+	<td>Returns a reference to the last child node, if any.</td>
+</tr>
+</tr>
+</tbody>
+</table>
+
+
+
+<p>
+  <a href="index.html">History & Introduction</a><br />
+  <a href="usage.html">Usage</a><br />
+  <a href="api.html">API</a><br />
+  <a href="implementation.html">Implementation</a><br />
+  <a href="javascript:window.open('demo.html','demo','scrollbars=yes,status=no,width=500,height=400,resizable=yes'); void(0);">Demo</a><br />
+  <a href="http://webfx.eae.net/download/xtree117.zip">Download</a>
+</p>
+
+<!-- end webfx-main-body -->
+</div>
+
+</body>
+</html>

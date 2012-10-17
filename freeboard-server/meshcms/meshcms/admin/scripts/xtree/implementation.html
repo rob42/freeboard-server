@@ -1,0 +1,198 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<html>
+<head>
+
+<title>xTree API (WebFX)</title>
+
+<!-- WebFX Layout Include -->
+<script type="text/javascript" src="../../webfxlayout.js"></script>
+<!-- end WebFX Layout Includes -->
+
+<style type="text/css">
+
+table {
+	width: 500px;
+}
+
+td {
+	vertical-align: top;
+}
+
+</style>
+
+</head>
+<body>
+
+<!-- WebFX Layout Include -->
+<script type="text/javascript">
+
+var articleMenu= new WebFXMenu;
+articleMenu.left  = 384;
+articleMenu.top   = 86;
+articleMenu.width = 140;
+articleMenu.add(new WebFXMenuItem("History & Introduction", "index.html"));
+articleMenu.add(new WebFXMenuItem("Usage", "usage.html"));
+articleMenu.add(new WebFXMenuItem("API", "api.html"));
+articleMenu.add(new WebFXMenuItem("Implementation", "implementation.html"));
+articleMenu.add(new WebFXMenuItem("Demo", "javascript:window.open('demo.html','demo','scrollbars=yes,status=no,width=500,height=400,resizable=yes'); void(0);"));
+articleMenu.add(new WebFXMenuSeparator);
+articleMenu.add(new WebFXMenuItem("Download", "http://webfx.eae.net/download/xtree117.zip"));
+webfxMenuBar.add(new WebFXMenuButton("Article Menu", null, null, articleMenu));
+
+webfxLayout.writeTitle("xTree Implementation");
+webfxLayout.writeMenu();
+webfxLayout.writeDesignedByEdger();
+</script>
+
+<div class="webfx-main-body">
+
+<!-- end WebFX Layout Includes -->
+
+<p>
+  A tree widget is basically a bunch of collapsible containers, when you open a node
+  all it's child nodes becomes visible, and when you close it they're hidden. The basic
+  idea is that simple however there are a few things that makes it a bit more complicated.
+  Below you'll find information about parts of the implementation of this tree widget,
+  how the generated code looks like and how a few of the methods work. This is not
+  something you need to read and understand in order to use this widget, however if
+  you're interested in how this was made and how it works you might find this helpful.
+</p>
+
+<h2>Generated Code</h2>
+
+<p>
+  As described earlier the tree widget uses an object hierarchy implementation to simplify the creation of trees,
+  however since the browser cannot understand that object hierarchy we are required to convert it into something
+  that the browser can render, in this case guess what we're using? Yeah you where right, our old buddy html.
+  Below is the generated html code for a small tree with only three items. Further down this document you'll find
+  the same code but split up and described.
+</p>
+
+<pre>
+&lt;div id="webfx-tree-object-0" ondblclick="webFXTreeHandler.toggle(this);" class="webfx-tree-item"&gt;
+  &lt;img id="webfx-tree-object-0-icon" src="images/openfoldericon.png" onclick="webFXTreeHandler.select(this);"&gt;
+  &lt;a href="javascript:void(0);" id="webfx-tree-object-0-anchor"&gt;Root&lt;/a&gt;
+&lt;/div&gt;
+&lt;div id="webfx-tree-object-0-cont" class="webfx-tree-container" style="display: block;"&gt;
+  &lt;div id="webfx-tree-object-1" class="webfx-tree-item"&gt;
+    &lt;img id="webfx-tree-object-1-plus" src="images/L.png"&gt;
+    &lt;img id="webfx-tree-object-1-icon" src="images/new.png" onclick="webFXTreeHandler.select(this);"&gt;
+    &lt;a href="javascript:void(0);" id="webfx-tree-object-1-anchor"&gt;1&lt;/a&gt;
+  &lt;/div&gt;
+  &lt;div id="webfx-tree-object-2" class="webfx-tree-item"&gt;
+    &lt;img id="webfx-tree-object-2-plus" src="images/L.png"&gt;
+    &lt;img id="webfx-tree-object-2-icon" src="images/new.png" onclick="webFXTreeHandler.select(this);"&gt;
+    &lt;a href="javascript:void(0);" id="webfx-tree-object-2-anchor"&gt;2&lt;/a&gt;
+  &lt;/div&gt;
+  &lt;div id="webfx-tree-object-3" class="webfx-tree-item"&gt;
+    &lt;img id="webfx-tree-object-3-plus" src="images/L.png"&gt;
+    &lt;img id="webfx-tree-object-3-icon" src="images/new.png" onclick="webFXTreeHandler.select(this);"&gt;
+    &lt;a href="javascript:void(0);" id="webfx-tree-object-3-anchor"&gt;3&lt;/a&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+</pre>
+
+<h3>WebFXTree Object</h3>
+
+<p>
+  The code below is what is generated from the WebFXTree Object (it will however also contain the code from all tree items
+  but to increase the readability that code has been removed).
+</p>
+
+<pre>
+&lt;div id="webfx-tree-object-0" ondblclick="webFXTreeHandler.toggle(this);" class="webfx-tree-item"&gt;
+  &lt;img id="webfx-tree-object-0-icon" src="images/openfoldericon.png" onclick="webFXTreeHandler.select(this);"&gt;
+  &lt;a href="javascript:void(0);" id="webfx-tree-object-0-anchor"&gt;Root&lt;/a&gt;
+&lt;/div&gt;
+&lt;div id="webfx-tree-object-0-cont" class="webfx-tree-container" style="display: block;"&gt;
+  <font color="teal">&lt;!-- This is where the Tree Item's will be inserted --&gt;</font>
+&lt;/div&gt;
+</pre>
+
+<p>
+  The first div contains the top level icon and label while the secund div is the container that will house the tree items.
+  When the first div is double clicked the display property of the secund one will be toggled.
+</p>
+
+<h3>WebFXTreeItem</h3>
+
+<p>
+  The code below is what is generated from a singel WebFXTreeItem Object.
+</p>
+
+<pre>
+&lt;div id="webfx-tree-object-1" class="webfx-tree-item"&gt;
+  &lt;img id="webfx-tree-object-1-plus" src="images/L.png"&gt;
+  &lt;img id="webfx-tree-object-1-icon" src="images/new.png" onclick="webFXTreeHandler.select(this);"&gt;
+  &lt;a href="javascript:void(0);" id="webfx-tree-object-1-anchor"&gt;1&lt;/a&gt;
+&lt;/div&gt;
+</pre>
+
+<p>
+  As you can see the code generated by each WebFXTreeItem looks pretty much the same as the one for the WebFXTree object, the
+  main difference is the extra image(s) that the tree items has (the plus/minus and track icons). Also note that the code
+  shown above is from a tree item without children. If the tree item has children an extra div to contain those will be added
+  (much like the secund div generated by the WebFXTree Object).
+</p>
+
+<h2>Expanding/Collapsing</h2>
+
+<p>
+  The most important methods for this widget are expand and collapse. Here I'll try to describe how those works. As the html
+  code above showed <code>webFXTreeHandler.toggle(this);</code> is executed once a tree item is clicked. The tree handler
+  then uses an internal reference, <code>webFXTreeHandler.all</code> to look up the object for the clicked tree item. Once
+  the object has been found it executes the <code>toggle()</code> method on that
+  object.
+</p>
+
+<p>
+  Below is the code for the toggle method and as you can see all it does is to check whatever or not the item is currently
+  expanded or collapsed, and then calls the appropriated method (expand if it's collapsed or collapse if it's expanded).
+</p>
+
+<pre>
+WebFXTreeItem.prototype.toggle = function () {
+  if (this.open) { this.collapse(); }
+  else { this.expand(); }
+}
+</pre>
+
+<p>
+  Since the expand and collapse methods works pretty much the same I'll only describe one of them, the expand method.
+</p>
+
+<pre>
+WebFXTreeItem.prototype.expand = function () {
+  if (!this._subItems.length > 0) { return; }
+  document.getElementById(this.id + '-cont').style.display = 'block';
+  document.getElementById(this.id + '-icon').src = openFolderIcon;
+  document.getElementById(this.id + '-plus').src = this.minusIcon;
+  this.open = true;
+  setCookie(this.id.substr(18,this.id.length - 18), '1');
+}
+</pre>
+
+<p>
+  The first line of code checks to see if there are any children, since it doesn't do any good to expand it unless
+  there are. The next line is the most important one and does the expanding by changing the display mode of the div
+  containing all children to block. The next two lines changes the icon and the plus/minus sign, then the <code>open</code>
+  property is changed to reflect the expanded/collpased state and finally it sets a cookie (used to keep track of what's
+  expanded or not so that the tree can be restored to it's previous state the next time you visit the site).
+</p>
+
+
+<p>
+  <a href="index.html">History & Introduction</a><br />
+  <a href="usage.html">Usage</a><br />
+  <a href="api.html">API</a><br />
+  <a href="implementation.html">Implementation</a><br />
+  <a href="javascript:window.open('demo.html','demo','scrollbars=yes,status=no,width=500,height=400,resizable=yes'); void(0);">Demo</a><br />
+  <a href="http://webfx.eae.net/download/xtree117.zip">Download</a>
+</p>
+
+<!-- end webfx-main-body -->
+</div>
+
+</body>
+</html>

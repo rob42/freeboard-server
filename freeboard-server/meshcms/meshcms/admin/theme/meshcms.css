@@ -1,0 +1,219 @@
+/* Entire mail form. Be very explicit with sizes to avoid IE6 textfield bug. */
+.mailform {
+ width: 80%;
+ /* removed again due to issues with IE6 and 7
+ padding-left: 10%;
+ padding-right: 10%;
+ */
+}
+
+/* Field name in mail forms */
+.fieldname {
+ padding: 12px 5px 5px 5px;
+}
+
+/* Required field name in mail forms */
+.requiredfieldname {
+ padding: 12px 5px 5px 5px;
+ font-weight: bold;
+}
+
+/* Applied to the fields in mail form */
+.formfields {
+ width: 100%;
+}
+
+/* Applied to the DIV that contains buttons in mail form */
+.fieldbuttons {
+ padding-top: 1em;
+ padding-bottom: 2em;
+ text-align: center;
+}
+
+/* A file included by the some modules... */
+.includeitem {
+ border-top: 1px solid;
+}
+
+/* ... its title, ... */
+.includetitle {
+ margin-top: 0;
+ padding: 0.25em 1em;
+}
+
+/* ... its date and link ... */
+.includedate, .includereadmore {
+ text-align: right;
+ font-size: 85%;
+ font-style: oblique;
+}
+
+/* ... its text */
+.includetext {
+ padding: 0.5em 0;
+}
+
+.includeimage {
+  margin: 0.5em 1em;
+  float: left;
+}
+
+.includeitem hr {
+  clear: both;
+}
+
+/* Editing table */
+table.meshcmseditor {
+ border-top: 1px dotted silver;
+ border-left: 1px dotted silver;
+}
+
+table.meshcmseditor th, table.meshcmseditor td {
+ padding: 2px;
+ border-right: 1px dotted silver;
+ border-bottom: 1px dotted silver;
+}
+
+table.meshcmseditor th {
+ text-align: center;
+}
+
+table.meshcmseditor tr:hover {
+  background-color: #edeeef;
+}
+
+/* Editing DIVs */
+div.meshcmseditor {
+ padding: 1em;
+ border: 1px dotted silver;
+ margin-bottom: 1em;
+}
+
+div.meshcmsfieldlabel {
+ border-bottom: 1px dotted silver;
+ margin-top: 0.8em;
+ margin-bottom: 0.2em;
+}
+
+div.meshcmsfield {
+ white-space: nowrap;
+}
+
+div.meshcmscheckbox {
+ margin: 1em 0 0 1em;
+}
+
+div.meshcmsbuttons {
+ margin-top: 0.8em;
+ border-top: 1px dotted silver;
+ padding-top: 0.2em;
+ text-align: center;
+}
+
+/* This style causes issue with IE6
+fieldset.meshcmseditor {
+ margin: 0 0.5em 1em 0.5em;
+ padding: 0.2em 1em 1em 1em;
+}
+*/
+
+fieldset.meshcmseditor legend {
+ margin-bottom: 0.5em;
+}
+
+a.meshcmspanelicon {
+ /*width: 12em;*/
+ display: block;
+ float: left;
+ margin: 0.5em;
+ padding: 5px;
+ border: 0;
+}
+
+a.meshcmspanelicon img {
+ float: left;
+ margin-right: 0.5em;
+}
+
+a.meshcmspanelicon:hover {
+ text-decoration: none;
+ padding: 4px;
+ border: 1px solid silver;
+}
+
+/* style for the thumbnail box in the lightbox image gallery */
+.imagebox {
+ float: left;
+ margin: 0 30px 30px 0;
+}
+
+.clearLeft {
+ clear: left;
+}
+
+/* IE6 holly hack \*/
+* html .lightbox {height: 1%;}
+/* End IE6 holly hack */
+
+.meshcmsinfo {
+ border: 1px dotted silver;
+ padding: 0.5em;
+ font-style: italic;
+}
+
+/* media player */
+
+.meshcmsMediaPlayerScreen {
+ width: 400px;
+ height: 300px;
+}
+
+.meshcmsMediaPlayer_vertical .meshcmsMediaPlayerScreen {
+}
+
+.meshcmsMediaPlayer_horizontal .meshcmsMediaPlayerScreen {
+    float: left;
+}
+
+.meshcmsPlayList {
+ background-color: #7b7b7b;
+ overflow: auto;
+ font-family: sans-serif;
+}
+
+.meshcmsMediaPlayer_vertical .meshcmsPlayList {
+ width: 400px;
+ height: 180px;
+}
+
+.meshcmsMediaPlayer_horizontal .meshcmsPlayList {
+ width: 202px;
+ height: 300px;
+}
+
+.meshcmsPlayList a {
+ float: left;
+ width: 176px;
+ height: 56px;
+ overflow: hidden;
+ border: 1px solid #888888;
+ padding: 2px;
+ margin: 1px;
+ text-decoration: none;
+ color: white;
+}
+
+.meshcmsPlayList a.playing {
+ background-color: #afafaf;
+}
+
+.meshcmsPlayList a:hover {
+ background-color: #afafaf;
+ text-decoration: none;
+}
+
+.meshcmsPlayList img {
+ float: left;
+ border: 1px solid #5a5a5a;
+ margin-right: 2px;
+}

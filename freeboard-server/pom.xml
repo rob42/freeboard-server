@@ -13,11 +13,16 @@
 			<artifactId>camel-core</artifactId>
 			<version>2.10.1</version>
 		</dependency>
-		<!-- <dependency> -->
-		<!-- <groupId>org.eclipse.jetty</groupId> -->
-		<!-- <artifactId>jetty-server</artifactId> -->
-		<!-- <version>2.10.1</version> -->
-		<!-- </dependency> -->
+		<dependency>
+			<groupId>org.eclipse.jetty</groupId>
+			<artifactId>jetty-server</artifactId>
+			<version>7.5.4.v20111024</version>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.jetty</groupId>
+			<artifactId>jetty-webapp</artifactId>
+			<version>7.5.4.v20111024</version>
+		</dependency>
 
 		<!-- jetty-deploy.jar, jetty-io.jar, jetty-security.jar, jetty-xml.jar -->
 		<dependency>
@@ -31,6 +36,12 @@
 			<version>2.10.1</version>
 		</dependency>
 		<dependency>
+			<groupId>org.apache.camel</groupId>
+			<artifactId>camel-exec</artifactId>
+			<version>2.10.1</version>
+		</dependency>
+
+		<dependency>
 			<groupId>commons-codec</groupId>
 			<artifactId>commons-codec</artifactId>
 			<version>1.5</version>
@@ -40,6 +51,13 @@
 			<artifactId>commons-lang3</artifactId>
 			<version>3.1</version>
 		</dependency>
+		<!-- nmea -->
+		<dependency>
+			<groupId>net.sf.marineapi</groupId>
+			<artifactId>marineapi</artifactId>
+			<version>0.5.1</version>
+		</dependency>
+
 		<!-- logging to the console -->
 		<dependency>
 			<groupId>org.slf4j</groupId>

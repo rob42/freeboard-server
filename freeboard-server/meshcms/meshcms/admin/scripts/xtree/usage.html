@@ -1,0 +1,177 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<html>
+<head>
+
+<title>xTree Usage (WebFX)</title>
+
+<!-- WebFX Layout Include -->
+<script type="text/javascript" src="../../webfxlayout.js"></script>
+<!-- end WebFX Layout Includes -->
+
+<style type="text/css">
+
+table {
+	width: 500px;
+}
+
+td {
+	vertical-align: top;
+}
+
+</style>
+
+</head>
+<body>
+
+<!-- WebFX Layout Include -->
+<script type="text/javascript">
+
+var articleMenu= new WebFXMenu;
+articleMenu.left  = 384;
+articleMenu.top   = 86;
+articleMenu.width = 140;
+articleMenu.add(new WebFXMenuItem("History & Introduction", "index.html"));
+articleMenu.add(new WebFXMenuItem("Usage", "usage.html"));
+articleMenu.add(new WebFXMenuItem("API", "api.html"));
+articleMenu.add(new WebFXMenuItem("Implementation", "implementation.html"));
+articleMenu.add(new WebFXMenuItem("Demo", "javascript:window.open('demo.html','demo','scrollbars=yes,status=no,width=500,height=400,resizable=yes'); void(0);"));
+articleMenu.add(new WebFXMenuSeparator);
+articleMenu.add(new WebFXMenuItem("Download", "http://webfx.eae.net/download/xtree117.zip"));
+webfxMenuBar.add(new WebFXMenuButton("Article Menu", null, null, articleMenu));
+
+webfxLayout.writeTitle("xTree Usage");
+webfxLayout.writeMenu();
+webfxLayout.writeDesignedByEdger();
+</script>
+
+<div class="webfx-main-body">
+
+<!-- end WebFX Layout Includes -->
+
+<p>
+  This tree widget is based on objects and all html code is generated from a js structure. To create a tree
+  you won't have to write a single line of html however you will have to learn how to to create the tree and
+  treeItem objects.
+</p>
+
+<h2>Usage</h2>
+
+<p>
+  The tree(s) needs to be create during the initial load phase of the page. This is accomplished by creating a
+  <code>WebFXTree</code> object and then add <code>WebFXTreeItem</code>s to it. Once all items has been added
+  <code>document.write</code> is used to generate the html code and insert it into the page.
+</p>
+
+<img src="article-images/tree1.png" align="left">
+
+<pre style="margin-left: 82px;">
+  var tree = new WebFXTree('Root');
+  tree.add(new WebFXTreeItem('Tree Item 1'));
+  tree.add(new WebFXTreeItem('Tree Item 2'));
+  tree.add(new WebFXTreeItem('Tree Item 3'));
+  document.write(tree);
+</pre>
+
+<h3>Folders</h3>
+
+<p>
+  A folder is created by adding a new tree item to a already created tree item. However since we need to keep
+  a reference to this tree item object (so that we can add tree items to it, and make it a folder) we cannot
+  create the new object inside the add method. So instead we first create the new tree item object and then
+  we add it to the tree.
+</p>
+
+<img src="article-images/tree2.png" align="left">
+
+<pre style="margin-left: 82px;">
+  var tree = new WebFXTree('Root');
+  <font color="teal">/* Add tree item to tree */</font>
+  tree.add(new WebFXTreeItem('1'));
+  <font color="teal">/* Create a new folder and add it to tree */</font>
+  var folder = new WebFXTreeItem('2')
+  tree.add(folder);
+  <font color="teal">/* Add tree items to folder */</font>
+  folder.add(new WebFXTreeItem('2.1'));
+  folder.add(new WebFXTreeItem('2.2'));
+  folder.add(new WebFXTreeItem('2.3'));
+  <font color="teal">/* Add another tree item to tree */</font>
+  tree.add(new WebFXTreeItem('3'));
+  document.write(tree);
+</pre>
+
+<h3>Explorer behavior</h3>
+
+<p>
+  Since I first published this tree control I've been getting a lot of requesters about making it contain
+  only folders. So I added a setBehavior method to it. The example below is an exact copy of the one above,
+  with the one exception that this uses <code>tree.setBehavior('explorer');</code>
+</p>
+
+<img src="article-images/tree3.png" align="left">
+
+<pre style="margin-left: 82px;">
+  var tree = new WebFXTree('Root');
+  <font color="teal">/* Change the behavior of the tree */</font>
+  tree.setBehavior('explorer');
+  <font color="teal">/* Add tree item to tree */</font>
+  tree.add(new WebFXTreeItem('1'));
+  <font color="teal">/* Create a new folder and add it to tree */</font>
+  var folder = new WebFXTreeItem('2')
+  tree.add(folder);
+  <font color="teal">/* Add tree items to folder */</font>
+  folder.add(new WebFXTreeItem('2.1'));
+  folder.add(new WebFXTreeItem('2.2'));
+  folder.add(new WebFXTreeItem('2.3'));
+  <font color="teal">/* Add another tree item to tree */</font>
+  tree.add(new WebFXTreeItem('3'));
+  document.write(tree);
+</pre>
+
+<h3>Custom Icons</h3>
+
+<p>
+  Some times you might want to combine the two styles, or make some of the folders/items have a different
+  icon than the default. To achieve that set the <code>object.icon</code> property to an uri, or to a javascript
+  variable containing one. To change the open icons for folders use <code>object.openIcon</code>.
+</p>
+
+<img src="article-images/tree4.png" align="left">
+
+<pre style="margin-left: 82px;">
+  var tree = new WebFXTree('Root');
+  tree.setBehavior('explorer');
+  tree.icon = 'http://webfx.eae.net/images/notepad.gif';
+  tree.add(new WebFXTreeItem('1'));
+  var folder = new WebFXTreeItem('2')
+  tree.add(folder);
+  var t21 = new WebFXTreeItem('2.1');
+  <font color="teal">/* Change the icon */</font>
+  t21.icon = webFXTreeConfig.fileIcon;
+  folder.add(t21);
+  var t22 = new WebFXTreeItem('2.2');
+  <font color="teal">/* Change the icon */</font>
+  t22.icon = webFXTreeConfig.fileIcon;
+  folder.add(t22);
+  var t23 = new WebFXTreeItem('2.3');
+  <font color="teal">/* Change the icon */</font>
+  t23.icon = webFXTreeConfig.fileIcon;
+  folder.add(t23);
+  tree.add(new WebFXTreeItem('3'));
+  document.write(tree);
+</pre>
+
+<p>
+  <a href="index.html">History & Introduction</a><br />
+  <a href="usage.html">Usage</a><br />
+  <a href="api.html">API</a><br />
+  <a href="implementation.html">Implementation</a><br />
+  <a href="javascript:window.open('demo.html','demo','scrollbars=yes,status=no,width=500,height=400,resizable=yes'); void(0);">Demo</a><br />
+  <a href="http://webfx.eae.net/download/xtree117.zip">Download</a>
+</p>
+
+<!-- end webfx-main-body -->
+</div>
+
+</body>
+</html>

@@ -1,0 +1,174 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+	"http://www.w3.org/TR/html4/loose.dtd">
+
+<html>
+<head>
+<title>XMenu (WebFX)</title>
+<script type="text/javascript" src="webfxlayout.local.js"></script>
+<style type="text/css">
+
+table {
+	width:	500px;
+}
+
+td {
+	vertical-align:	top;
+}
+
+</style>
+</head>
+<body>
+
+<!-- WebFX Layout Include -->
+<script type="text/javascript">
+
+webfxMenuUseHover = true;
+webfxMenuHideTime = 500;
+webfxMenuShowTime = 200;
+
+var articleMenu= new WebFXMenu;
+articleMenu.left  = 384;
+articleMenu.top   = 86;
+articleMenu.width = 140;
+articleMenu.add(new WebFXMenuItem("Cross browser Issues", "xmenu.html"));
+articleMenu.add(new WebFXMenuItem("Using the Menu tool kit", "xmenu.usage.html"));
+articleMenu.add(new WebFXMenuItem("Implementation", "xmenu2.html"));
+articleMenu.add(new WebFXMenuItem("Menu tool kit API", "xmenu3.html"));
+articleMenu.add(new WebFXMenuItem("Customizing look and feel", "xmenu4.html"));
+articleMenu.add(new WebFXMenuItem("Hover Menu", "hover.html"));
+articleMenu.add(new WebFXMenuSeparator);
+articleMenu.add(new WebFXMenuItem("Download", "http://webfx.eae.net/download/xmenu112.zip"));
+webfxMenuBar.add(new WebFXMenuButton("Article Menu", null, null, articleMenu));
+
+webfxLayout.writeTitle("XMenu");
+webfxLayout.writeMenu();
+webfxLayout.writeDesignedByEdger();
+</script>
+<div class="webfx-main-body">
+<!-- end WebFX Layout Includes -->
+
+<h2>Introduction</h2>
+
+<p>This is a small update to the XMenu system that allows the menus to be shown
+when the mouse pointer hovers a menu button and hides the menu when leaving it.
+For this to work I had to do some small changes and while I was at it I also removed
+the Opera focus bug hack because now you can get the menu to work in Opera using
+the hover mode.</p>
+
+<h2>Usage</h2>
+
+<p>There are three new global variables that control how the menu works.</p>
+
+<table>
+<thead>
+<td>Name</td>
+<td>Description</td>
+</thead>
+<tr>
+<td><code>webfxMenuUseHover</code></td>
+<td>If this is set to true then the menu will be set in hover mode and this means
+that the menu will open on mouse over and hide on mouse out.</td>
+</tr>
+<tr>
+<td><code>webfxMenuShowTime</code></td>
+<td>This is the time to wait before showing a menu. Using 0 when the menu is in hover mode
+is not recommended because then the menus will popup even when the user did not intend them
+to.</td>
+</tr>
+<tr>
+<td><code>webfxMenuHideTime</code></td>
+<td>This is the time to wait before hiding a menu. When using normal mode it is important that
+this time is fairly large (~300ms) because otherwise the user will not have time to complete
+the click on the menu item she/he intended. When using hover mode this time should be about the
+same. If too small the menus will hide when going between sub menus.</td>
+</tr>
+</table>
+
+<p>These properties should be set (if changed) before the menus are written. The hover mode is only
+checked at creation.</p>
+
+<pre>
+webfxMenuUseHover = true;
+webfxMenuHideTime = 500;
+webfxMenuShowTime = 200;
+</pre>
+
+<h2>Implementation</h2>
+
+<p>The main code for this was added to the <code>webFXmenuHandler</code> but throughout all the
+<code>toString</code> methods we had to test the hover mode and and add the inline event listeners
+accordingly. All these do is to call <code>webfxMenuHandler.outMenuItem(this)</code> (as well as
+the same for focus, blur and mouseover).</p>
+
+<pre>
+overMenuItem   :   function (oItem) {
+   if (this.showTimeout != null)
+      window.clearTimeout(this.showTimeout);
+   if (this.hideTimeout != null)
+      window.clearTimeout(this.hideTimeout);
+   var jsItem = this.all[oItem.id];
+   if (webfxMenuShowTime <= 0)
+      this._over(jsItem);
+   else
+      this.showTimeout = window.setTimeout(function () { webFXMenuHandler._over(jsItem) ; }, webfxMenuShowTime);
+},
+outMenuItem   :   function (oItem) {
+   if (this.showTimeout != null)
+      window.clearTimeout(this.showTimeout);
+   if (this.hideTimeout != null)
+      window.clearTimeout(this.hideTimeout);
+   var jsItem = this.all[oItem.id];
+   if (webfxMenuHideTime <= 0)
+      this._out(jsItem);
+   else
+      this.hideTimeout = window.setTimeout(function () { webFXMenuHandler._out(jsItem) ; }, webfxMenuHideTime);
+},
+</pre>
+
+<p>The first thing to do in both over and out is to clear current timers.
+Once that is done we call the real code directly if no hide/show time or
+otherwise we call the code using <code>window.setTimeout</code>.</p>
+
+<pre>
+_over   :   function (jsItem) {
+   if (jsItem.subMenu) {
+      jsItem.parentMenu.hideAllSubs();
+      jsItem.subMenu.show();
+   }
+   else      jsItem.parentMenu.hideAllSubs();
+},
+_out   :   function (jsItem) {
+   // find top most menu
+   var root = jsItem;
+   var m;
+   if (root instanceof WebFXMenuButton)
+      m = root.subMenu;
+   else {
+      m = jsItem.parentMenu;
+      while (m.parentMenu != null && !(m.parentMenu instanceof WebFXMenuBar))
+         m = m.parentMenu;
+   }
+   if (m != null)
+      m.hide();
+},
+</pre>
+
+<p>The code in <code>_over</code> is exactly the same as we previously had in the
+original <code>overMenuItem</code>. The code for <code>_out</code> is fairly straight
+forward and all it does is to find the top most menu and if found hides it.</p>
+
+<p><a href="xmenu.html">Introduction &amp; Browser Issues</a><br />
+<a href="xmenu.usage.html">Usage</a><br />
+<a href="xmenu2.html">Implementation</a><br />
+<a href="xmenu3.html">API</a><br />
+<a href="xmenu4.html">Look &amp; Feel</a><br />
+<a href="hover.html">Hover Menu</a>
+</p>
+
+<p class="author">Author: Erik Arvidsson</p>
+
+<!-- end webfx-main-body -->
+</div>
+
+</body>
+</html>

@@ -2,11 +2,15 @@ package nz.co.fortytwo.freeboard.server;
 
 import org.apache.camel.main.Main;
 import org.apache.commons.lang3.StringUtils;
+import org.eclipse.jetty.server.Connector;
+import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.nio.SelectChannelConnector;
+import org.eclipse.jetty.webapp.WebAppContext;
 
 
 public class ServerMain {
 
-	//private static Server server;
+	private static Server server;
 
 	private static String SERIAL_URL = "/home/robert/camel.txt&scanStream=true&scanStreamDelay=500";
 
@@ -40,22 +44,23 @@ public class ServerMain {
         main.addRouteBuilder(route);
         
         //add the meshcms
-        //server = new Server();
+        server = new Server();
 
-        //Connector connector = new SelectChannelConnector();
-        //connector.setPort(8080);
+        Connector connector = new SelectChannelConnector();
+        connector.setPort(8080);
 
-        //server.addConnector(connector);
+        server.addConnector(connector);
 
-//        WebAppContext wac = new WebAppContext();
-//        wac.setWar("target/meshcms/.");
-//        wac.setDescriptor("WEB-INF/web.xml");
-//        wac.setContextPath("/meshcms");
-//        wac.setServer(server);
-//        //wac.setWar("target/meshcms.war");
-//        wac.setParentLoaderPriority(true);
-//        server.setHandler(wac);
-//        server.start();
+        WebAppContext wac = new WebAppContext();
+     
+        wac.setWar("meshcms/.");
+        wac.setDescriptor("WEB-INF/web.xml");
+        wac.setContextPath("/meshcms");
+        wac.setServer(server);
+        //wac.setWar("target/meshcms.war");
+        wac.setParentLoaderPriority(true);
+        server.setHandler(wac);
+        server.start();
         // and run, which keeps blocking until we terminate the JVM (or stop CamelContext)
         main.run();
     }

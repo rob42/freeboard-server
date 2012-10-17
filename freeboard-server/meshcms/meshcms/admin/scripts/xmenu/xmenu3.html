@@ -1,0 +1,561 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+	"http://www.w3.org/TR/html4/loose.dtd">
+
+<html>
+<head>
+<title>XMenu API (WebFX)</title>
+<script type="text/javascript" src="webfxlayout.local.js"></script>
+</head>
+<body>
+
+<!-- WebFX Layout Include -->
+<script type="text/javascript">
+var articleMenu= new WebFXMenu;
+articleMenu.left  = 384;
+articleMenu.top   = 86;
+articleMenu.width = 140;
+articleMenu.add(new WebFXMenuItem("Cross browser Issues", "xmenu.html"));
+articleMenu.add(new WebFXMenuItem("Using the Menu tool kit", "xmenu.usage.html"));
+articleMenu.add(new WebFXMenuItem("Implementation", "xmenu2.html"));
+articleMenu.add(new WebFXMenuItem("Menu tool kit API", "xmenu3.html"));
+articleMenu.add(new WebFXMenuItem("Customizing look and feel", "xmenu4.html"));
+articleMenu.add(new WebFXMenuItem("Hover Menu", "hover.html"));
+articleMenu.add(new WebFXMenuSeparator);
+articleMenu.add(new WebFXMenuItem("Download", "http://webfx.eae.net/download/xmenu112.zip"));
+webfxMenuBar.add(new WebFXMenuButton("Article Menu", null, null, articleMenu));
+
+webfxLayout.writeTitle("XMenu API");
+webfxLayout.writeMenu();
+webfxLayout.writeDesignedByEdger();
+</script>
+<div class="webfx-main-body">
+<!-- end WebFX Layout Includes -->
+
+<h2>WebFXMenu</h2>
+
+<p>This object type is used for menu containers. The menu containers can be populated with menu
+items.</p>
+
+<h3>Constructor</h3>
+
+<pre>new WebFXMenu()</pre>
+
+<table>
+<thead><tr>
+	<td>Name</td>
+	<td>Description</td>
+</tr></thead>
+<tbody>
+<tr>
+	<td colspan="2">No arguments</td>
+</tr>
+</tbody>
+</table>
+
+<h3>Properties</h3>
+
+<table>
+<thead><tr>
+	<td>Name</td>
+	<td>Description</td>
+</tr></thead>
+<tbody>
+<tr>
+	<td>id</td>
+	<td>Read only property that can be used to find the related HTMLElement. It can also be
+		used the other way around. If you know the id of the HTMLElement you can get the JS
+		object by looking in the <code>webFXMenuHandler.all</code> collection.</td>
+</tr>
+<tr>
+	<td>parentMenu</td>
+	<td>The parent menu of the current menu. If this menu has not been added as a sub menu then
+	parent menu is null.
+	</td>
+</tr>
+<tr>
+	<td>parentMenuItem</td>
+	<td>The parent menu item of the current menu. If this menu has not been added as a sub menu then
+	parentMenuItem is null.
+	</td>
+</tr>
+<tr>
+	<td>emptyText</td>
+	<td>The text to show if no menu items have been added to the menu. To change the default
+	text change <code>webfxMenuDefaultEmptyText</code>.</td>
+</tr>
+<tr>
+	<td>useAutoPosition</td>
+	<td>If this is set to true the <code>left</code> and <code>top</code> properties will be
+	ignored and the menu will be positioned relative to the item that opened it. To change the
+	default value change <code>webfxMenuDefaultUseAutoPosition</code>.</td>
+</tr>
+<tr>
+	<td>width</td>
+	<td>The width of the menu. If the width is too small the text will be clipped to fit.
+		The default value is 100 and to change the default value change
+		<code>webfxMenuDefaultWidth</code>.</td>
+</tr>
+<tr>
+	<td>left</td>
+	<td>The left position of the menu. To update the actual position of a shown menu call show
+		again. Notice that this value is ignored if the menu is automatically positoned.</td>
+</tr>
+<tr>
+	<td>top</td>
+	<td>The top position of the menu. To update the actual position of a shown menu call show
+		again. Notice that this value is ignored if the menu is automatically positoned.</td>
+</tr>
+<tr>
+	<td>shown</td>
+	<td>Read only. Boolean property that tells if the menu is shown or not.</td>
+</tr>
+<tr>
+	<td>borderLeft</td>
+	<td>The width of the left border. This is used to position sub menus correctly.
+		To update this value for all menus either redefine
+		<code>webfxMenuDefaultBorderLeft</code> or override the value on the prototype.</td>
+</tr>
+<tr>
+	<td>borderRight</td>
+	<td>The width of the right border. This is used to position sub menus correctly.
+		To update this value for all menus either redefine
+		<code>webfxMenuDefaultBorderRight</code> or override the value on the prototype.</td>
+</tr>
+<tr>
+	<td>borderTop</td>
+	<td>The height of the top border. This is used to position sub menus correctly.
+		To update this value for all menus either redefine
+		<code>webfxMenuDefaultBorderTop</code> or override the value on the prototype.</td>
+</tr>
+<tr>
+	<td>borderBottom</td>
+	<td>The height of the bottom border. This is used to position sub menus correctly.
+		To update this value for all menus either redefine
+		<code>webfxMenuDefaultBorderBottom</code> or override the value on the prototype.</td>
+</tr>
+<tr>
+	<td>paddingLeft</td>
+	<td>The width of the left padding. This is used to position sub menus correctly.
+		To update this value for all menus either redefine
+		<code>webfxMenuDefaultPaddingLeft</code> or override the value on the prototype.</td>
+</tr>
+<tr>
+	<td>paddingRight</td>
+	<td>The width of the right padding. This is used to position sub menus correctly.
+		To update this value for all menus either redefine
+		<code>webfxMenuDefaultPaddingRight</code> or override the value on the prototype.</td>
+</tr>
+<tr>
+	<td>paddingTop</td>
+	<td>The height of the top padding. This is used to position sub menus correctly.
+		To update this value for all menus either redefine
+		<code>webfxMenuDefaultPaddingTop</code> or override the value on the prototype.</td>
+</tr>
+<tr>
+	<td>paddingBottom</td>
+	<td>The height of the bottom padding. This is used to position sub menus correctly.
+		To update this value for all menus either redefine
+		<code>webfxMenuDefaultPaddingBottom</code> or override the value on the prototype.</td>
+</tr>
+<tr>
+	<td>shadowLeft</td>
+	<td>The width of the shadow on the left edge of the menu. This is used to position sub menus
+		correctly. To update this value for all menus either redefine
+		<code>webfxMenuDefaultShadowLeft</code> or override the value on the prototype.</td>
+</tr>
+<tr>
+	<td>shadowRight</td>
+	<td>The width of the shadow on the right edge of the menu. This is used to position sub menus
+		correctly. To update this value for all menus either redefine
+		<code>webfxMenuDefaultShadowRight</code> or override the value on the prototype.</td>
+</tr>
+<tr>
+	<td>shadowTop</td>
+	<td>The width of the shadow on the upper edge of the menu. This is used to position sub menus
+		correctly. To update this value for all menus either redefine
+		<code>webfxMenuDefaultShadowTop</code> or override the value on the prototype.</td>
+</tr>
+<tr>
+	<td>shadowBottom</td>
+	<td>The width of the shadow on the left edge of the menu. This is used to position sub menus
+		correctly. To update this value for all menus either redefine
+		<code>webfxMenuDefaultShadowBottom</code> or override the value on the prototype.</td>
+</tr>
+</tbody>
+</table>
+
+<h3>Methods</h3>
+
+<table>
+<thead><tr>
+	<td>Name</td>
+	<td>Description</td>
+</tr></thead>
+<tbody>
+<tr>
+	<td>add(oMenuItem)</td>
+	<td>Adds a menu item to the menu. This method takes one argument and that is the menu
+		item or menu separator to add.</td>
+</tr>
+<tr>
+	<td>show([relObj [, sDir]])</td>
+	<td>Shows the menu and all of its parent menus. If the menu should be automatically
+		positined the first argument is an object with left, top, width and height fields or an
+		HTMLElement.
+		The second argument can either be <code>"horizontal"</code> or <code>"vertical"</code>
+		and describes which side of the <code>relObj</code> the menu should be shown.</td>
+</tr>
+<tr>
+	<td>hide()</td>
+	<td>Hides the menu and all of its sub menus</td>
+</tr>
+<tr>
+	<td>hideAllSubs()</td>
+	<td>Hides all sub menus of the current menu</td>
+</tr>
+<tr>
+	<td>position([relObj [, sDir]])</td>
+	<td>Positions the menu relative to the <code>relObj</code> or if left out the menu item that
+		opened the menu. The <code>relObj</code> is an object with a left, top, width and height
+		field or an HTMLElement. The second argument can either be <code>"horizontal"</code> or
+		<code>"vertical"</code> and describes which side of the <code>relObj</code> the menu
+		should be shown.</td>
+</tr>
+<tr>
+	<td>toString()</td>
+	<td>Genereates the HTML string needed to render the menu.</td>
+</tr>
+</tbody>
+</table>
+
+<!--------------------------------- WebFXMenuItem ------------------------------------->
+
+<h2>WebFXMenuItem</h2>
+
+<p>This object type is used for menu items. The menu item can have a sub menu that will be
+opened when the item is highlighted.</p>
+
+<h3>Constructor</h3>
+
+<pre>new WebFXMenuItem(sText, sHref, sToolTip, oSubMenu)</pre>
+
+<table>
+<thead><tr>
+	<td>Name</td>
+	<td>Description</td>
+</tr></thead>
+<tbody>
+<tr>
+	<td>sText</td>
+	<td>Optional. The HTML string to show on the menu item. If null or left out the
+		default text is used.</td>
+</tr>
+<tr>
+	<td>sHref</td>
+	<td>Optional. The uri to load when the item is clicked. If null or left out the default uri
+		is used.</td>
+</tr>
+<tr>
+	<td>sToolTip</td>
+	<td>Optional. The text to show as a tool tip when the user holds the mouse pointer over it.
+		No tool tip is used if this argument is left out or null.</td>
+</tr>
+<tr>
+	<td>oSubMenu</td>
+	<td>Optional. The sub menu to show when the menu item is selected.</td>
+</tr>
+</tbody>
+</table>
+
+<h3>Properties</h3>
+
+<table>
+<thead><tr>
+	<td>Name</td>
+	<td>Description</td>
+</tr></thead>
+<tbody>
+<tr>
+	<td>id</td>
+	<td>Read only property that can be used to find the related HTMLElement. It can also be
+		used the other way around. If you know the id of the HTMLElement you can get the JS
+		object by looking in the <code>webFXMenuHandler.all</code> collection.</td>
+</tr>
+<tr>
+	<td>height</td>
+	<td>The height of the menu item. This is used to position sub menus correctly.</td>
+</tr>
+
+<tr>
+	<td>text</td>
+	<td>The HTML string to show on the menu item. If null or left out the
+		default text is used.</td>
+</tr>
+<tr>
+	<td>href</td>
+	<td>Optional. The uri to load when the item is clicked. If null or left out the default uri
+		is used.</td>
+</tr>
+<tr>
+	<td>target</td>
+	<td>The name of the window to open the uri in. Default is to open in the same
+		window.</td>
+</tr>
+<tr>
+	<td>toolTip</td>
+	<td>The text to show as a tool tip when the user holds the mouse pointer over it.
+		No tool tip is used if this argument is left out or null.</td>
+</tr>
+<tr>
+	<td>subMenu</td>
+	<td> The sub menu to show when the menu item is selected.</td>
+</tr>
+<tr>
+	<td>parentMenu</td>
+	<td>The menu that the menu item was added to.</td>
+</tr>
+</tbody>
+</table>
+
+
+<h3>Methods</h3>
+
+<table>
+<thead><tr>
+	<td>Name</td>
+	<td>Description</td>
+</tr></thead>
+<tbody>
+<tr>
+	<td>toString()</td>
+	<td>Genereates the HTML string needed to render the menu item.</td>
+</tr>
+</tbody>
+</table>
+
+<!--------------------------------- WebFXMenuSeparator ------------------------------------->
+
+<h2>WebFXMenuSeparator</h2>
+
+<p>This object type is used for menu separators. Separators are usually used to separate
+different groups of items in a menu.</p>
+
+<h3>Constructor</h3>
+
+<pre>new WebFXMenuSeparator()</pre>
+
+<table>
+<thead><tr>
+	<td>Name</td>
+	<td>Description</td>
+</tr></thead>
+<tbody>
+<tr>
+	<td colspan="2">No arguments</td>
+</tr>
+</tbody>
+</table>
+
+<h3>Properties</h3>
+
+<table>
+<thead><tr>
+	<td>Name</td>
+	<td>Description</td>
+</tr></thead>
+<tbody>
+<tr>
+	<td>id</td>
+	<td>Read only property that can be used to find the related HTMLElement. It can also be
+		used the other way around. If you know the id of the HTMLElement you can get the JS
+		object by looking in the <code>webFXMenuHandler.all</code> collection.</td>
+</tr>
+<tr>
+	<td>height</td>
+	<td>The height of the menu separator. This is used to position sub menus correctly.</td>
+</tr>
+</tbody>
+</table>
+
+
+<h3>Methods</h3>
+
+<table>
+<thead><tr>
+	<td>Name</td>
+	<td>Description</td>
+</tr></thead>
+<tbody>
+<tr>
+	<td>toString()</td>
+	<td>Genereates the HTML string needed to render the menu item.</td>
+</tr>
+</tbody>
+</table>
+
+<!--------------------------------- WebFXMenubar ------------------------------------->
+
+<h2>WebFXMenuBar</h2>
+
+<p>This object type is used for menu bars. The menu bar extends a menu so all properties
+and methods available on a menu are available to the menu bar. Some caution is due. The
+position of the default implementation of the menu bar is static so size and position
+has no real effect.</p>
+
+<h3>Constructor</h3>
+
+<pre>new WebFXMenuBar()</pre>
+
+<table>
+<thead><tr>
+	<td>Name</td>
+	<td>Description</td>
+</tr></thead>
+<tbody>
+<tr>
+	<td colspan="2">No arguments</td>
+</tr>
+</tbody>
+</table>
+
+<h3>Properties</h3>
+
+<p>Same as for WebFXMenu</p>
+
+<h3>Methods</h3>
+
+<p>Same as for WebFXMenu</p>
+
+<!--------------------------------- WebFXMenuButton ------------------------------------->
+
+<h2>WebFXMenuButton</h2>
+
+<p>This object type is used for buttons on a menu bar. The menu button extends the
+menu  item so all properties and methods available on a menu item are available to
+the menu button. Some caution is due. The height property is not used for anything
+right now.</p>
+
+<h3>Constructor</h3>
+
+<pre>new WebFXMenuButton(sText, sHref, sToolTip, oSubMenu)</pre>
+
+<p>Same as for WebFXMenuItem.</p>
+
+<h3>Properties</h3>
+
+<p>Same as for WebFXMenuItem</p>
+
+<h3>Methods</h3>
+
+<p>Same as for WebFXMenuItem</p>
+
+<!--------------------------------- webFXMenuHandler ------------------------------------->
+
+<h2>webFXMenuHandler</h2>
+
+<p>This object is used to handle the XMenu system and has a some methods to handle the menus.</p>
+
+<h3>Constructor</h3>
+
+<p>Not available. The <code>webFXMenuHandler</code> is already available as an object.</p>
+
+<h3>Properties</h3>
+
+<table>
+<thead><tr>
+	<td>Name</td>
+	<td>Description</td>
+</tr></thead>
+<tbody>
+<tr>
+	<td>all</td>
+	<td>A collection that maps an id to a JS object. This can be useful for finding the JS
+		object assosciated with an HTMLElement.</td>
+</tr>
+</tbody>
+</table>
+
+<h3>Methods</h3>
+
+<table>
+<thead><tr>
+	<td>Name</td>
+	<td>Description</td>
+</tr></thead>
+<tbody>
+<tr>
+	<td>showMenu(oMenu [, relObj [, sDir]])</td>
+	<td>Allows you to show a menu from outside the menu system. This way is preferred to
+		calling <code>show</code> on the actual menu item because it also handles the show
+		and hide timers. The second and third argument are the same as in the method
+		<code>position</code> for <code>WebFXMenu</code> and are used to position the
+		menu relative to an object.</td>
+</tr>
+<tr>
+	<td>hideMenu(oMenu)</td>
+	<td>Allows you to hide a menu from outside the menu system. This way is preferred to
+		calling <code>hide</code> on the actual menu item because it also handles the
+		show and hide timers.</td>
+</tr>
+</tbody>
+</table>
+
+<p>There are more methods and properties on the <code>webFXMenuHandler</code> but these are mostly
+needed for internal work.</p>
+
+
+<h2>Global Constants</h2>
+
+<p>There are a couple of global constants that are used to describe how the menus work. A lot of these
+are just used to define the default properties and these will not be listed again.</p>
+
+<table>
+<thead>
+<td>Name</td>
+<td>Description</td>
+</thead>
+<tbody>
+<tr>
+<td>webfxMenuUseHover</td>
+<td>If this is set to true then the menu will be set in hover mode and this means
+that the menu will open on mouse over and hide on mouse out.</td>
+</tr>
+<tr>
+<td>webfxMenuShowTime</td>
+<td>This is the time to wait before showing a menu. Using 0 when the menu is in hover mode
+is not recommended because then the menus will popup even when the user did not intend them
+to.</td>
+</tr>
+<tr>
+<td>webfxMenuHideTime</td>
+<td>This is the time to wait before hiding a menu. When using normal mode it is important that
+this time is fairly large (~300ms) because otherwise the user will not have time to complete
+the click on the menu item she/he intended. When using hover mode this time should be about the
+same. If too small the menus will hide when going between sub menus.</td>
+</tr>
+<tr>
+<td>webfxMenuImagePath</td>
+<td>This is the path to the images to use as arrows in the menu items. This should be the
+relative path from the web page location. Default value is <code>""</code> and that means the
+same directory.</td>
+</tr>
+</tbody>
+</table>
+
+
+
+<p><a href="xmenu.html">Introduction &amp; Browser Issues</a><br />
+<a href="xmenu.usage.html">Usage</a><br />
+<a href="xmenu2.html">Implementation</a><br />
+<a href="xmenu3.html">API</a><br />
+<a href="xmenu4.html">Look &amp; Feel</a><br />
+<a href="hover.html">Hover Menu</a>
+</p>
+
+<p class="author">Author: Erik Arvidsson</p>
+
+<!-- end webfx-main-body -->
+</div>
+
+</body>
+</html>

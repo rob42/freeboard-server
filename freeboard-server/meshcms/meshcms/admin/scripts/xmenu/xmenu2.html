@@ -1,0 +1,286 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+	"http://www.w3.org/TR/html4/loose.dtd">
+
+<html>
+<head>
+<title>XMenu - Usage (WebFX)</title>
+<script type="text/javascript" src="webfxlayout.local.js"></script>
+</head>
+<body>
+
+<!-- WebFX Layout Include -->
+<script type="text/javascript">
+var articleMenu= new WebFXMenu;
+articleMenu.left  = 384;
+articleMenu.top   = 86;
+articleMenu.width = 140;
+articleMenu.add(new WebFXMenuItem("Cross browser Issues", "xmenu.html"));
+articleMenu.add(new WebFXMenuItem("Using the Menu tool kit", "xmenu.usage.html"));
+articleMenu.add(new WebFXMenuItem("Implementation", "xmenu2.html"));
+articleMenu.add(new WebFXMenuItem("Menu tool kit API", "xmenu3.html"));
+articleMenu.add(new WebFXMenuItem("Customizing look and feel", "xmenu4.html"));
+articleMenu.add(new WebFXMenuItem("Hover Menu", "hover.html"));
+articleMenu.add(new WebFXMenuSeparator);
+articleMenu.add(new WebFXMenuItem("Download", "http://webfx.eae.net/download/xmenu112.zip"));
+webfxMenuBar.add(new WebFXMenuButton("Article Menu", null, null, articleMenu));
+
+webfxLayout.writeTitle("XMenu");
+webfxLayout.writeMenu();
+webfxLayout.writeDesignedByEdger();
+</script>
+<div class="webfx-main-body">
+<!-- end WebFX Layout Includes -->
+
+<p>Now that you know the basic usage of the menu system I'll walk you through
+a few parts of the implementation.</p>
+
+<h2>Layout</h2>
+
+<p>The layout of the menus was designed to be as simple as possible to prevent
+browser incompatibilities as much as possible and it has been implemented
+using one DIV containing anchors.</p>
+
+<pre>
+&lt;div id="ID" class="webfx-menu" style="width: 100px; left: 0px; top: 0px;"&gt;
+&lt;a id="ID" href="HREF" title="TITLE" onmouseover="webFXMenuHandler.overMenuItem(this)"&gt;
+   TEXT
+&lt;/a&gt;
+&lt;a id="ID" href="HREF" title="TITLE" onmouseover="webFXMenuHandler.overMenuItem(this)"&gt;
+   TEXT
+&lt;/a&gt;
+&lt;a id="ID" href="HREF" title="TITLE" onmouseover="webFXMenuHandler.overMenuItem(this)"&gt;
+   &lt;!-- when there is a sub menu an arrow image is added --&gt;
+   &lt;img src="arrow.right.gif"&gt;
+   TEXT
+&lt;/a&gt;
+&lt;/div&gt;
+</pre>
+
+<p>The usage of anchors as menu items allows us to use CSS to define the hover style in
+an easy way. The <code>display</code> property of the anchors has been changed to
+<code>block</code> to make them act and behave as rows.</p>
+
+<p>Even if the code for this is not that cumbersome to write there is really no reason
+for anyone to do it manually. Therefore an object oriented js solution has been used.</p>
+
+<h2>The WebFXMenu Constructor</h2>
+
+<p>To create a menu all you have to do is call <code>new WebFXMenu</code>. The constructor
+for the menu contains all the info it needs to be able to generate the HTML needed for it
+as well as an id that allows the js object to find the HTMLElement later. The constructor
+code looks like
+this:</p>
+
+<pre>
+function WebFXMenu() {
+   this._menuItems = [];
+   this._subMenus  = [];
+   this.id         = webFXMenuHandler.getId();
+   this.top        = 0;
+   this.left       = 0;
+   this.shown      = false;
+   this.parentMenu = null;
+   webFXMenuHandler.all[this.id] = this;
+}
+</pre>
+
+<h3>webFXMenuHandler</h3>
+
+<p>The object <code>webFXMenuHandler</code> is a global object that handles a few
+different shared methods and properties. First it has a method that returns a unique
+id string. This id is used to map js objects to HTMLElement as well as allow you
+to find a js object by its <code>id</code> by looking it up in the <code>webFXMenuHandler.all</code>
+collection.</p>
+
+<h2>Adding Menu Items</h2>
+
+<p>The <code>add</code> method of a menu is pretty simple. It adds the menu item
+to its <code>_menuItems</code> collection and checks if the menu item has a sub menu
+and in that case it also adds that to its <code>_subMenus</code> collection. Last but
+not leat it also sets the <code>parentMenu</code> properties on the menu item and on
+the sub menu.</p>
+
+<pre>
+WebFXMenu.prototype.add = function (menuItem) {
+   this._menuItems[this._menuItems.length] = menuItem;
+   if (menuItem.subMenu) {
+      this._subMenus[this._subMenus.length] = menuItem.subMenu;
+      menuItem.subMenu.parentMenu = this;
+   }
+
+   menuItem.parentMenu = this;
+};
+</pre>
+
+<h2>Generating the Menu</h2>
+
+<p>This is the most important part of the menu and it is here that we generate
+the layout shown above.</p>
+
+<p>The code is actually pretty simple. First we generate the code for the opening
+tag and then we loop through the menu items and draw them. Notice that since the
+menu items have their own <code>toString</code> method all we have to do is to
+concat the object and we will get the code needed for the menu item. After that
+we close the div tag.</p>
+
+<p>Two more things are worth mentioning. Inside the loop that adds the code for the
+menu items we also set the top position of the sub menu if the menu item had a sub menu.
+After the code for the menu has been generated we also generate the code for all the
+sub menus. If we had not done this we would have had to manually do this. In this way
+we will only need to do one <code>document.write</code> for an entire menu hierarchy.</p>
+
+
+<p>The code to generate the string for a menu looks like this:</p>
+
+<pre>
+WebFXMenu.prototype.toString = function () {
+   var top = this.top + this.borderTop + this.paddingTop;
+   var str = "&lt;div id='" + this.id + "' class='webfx-menu' style='" +
+   "width:" +
+   (!ieBox  ?
+      this.width - this.borderLeft - this.paddingLeft - this.borderRight - this.paddingRight  :
+      this.width) +
+   "px;" +
+   (this.useAutoPosition ?
+      "left:" + this.left + "px;" + "top:" + this.top + "px;" :
+      "") +
+   (ie50 ? "filter: none;" : "") +
+   "'&gt;";
+
+   if (this._menuItems.length == 0) {
+      str += "&lt;span class='webfx-menu-empty'&gt;" + this.emptyText + "&lt;/span&gt;";
+   }
+   else {
+      // loop through all menuItems
+      for (var i = 0; i &lt; this._menuItems.length; i++) {
+         var mi = this._menuItems[i];
+         str += mi;
+         if (!this.useAutoPosition) {
+            if (mi.subMenu && !mi.subMenu.useAutoPosition)
+               mi.subMenu.top = top - mi.subMenu.borderTop - mi.subMenu.paddingTop;
+            top += mi.height;
+         }
+      }
+   }
+
+   str += "&lt;/div&gt;";
+
+   for (var i = 0; i &lt; this._subMenus.length; i++) {
+      this._subMenus[i].left = this.left + this.width - this._subMenus[i].borderWidth/2;
+      str += this._subMenus[i];
+   }
+
+   return str;
+};
+</pre>
+
+<h2>Generating Menu Items</h2>
+
+<p>This one is even easier. I won't cover the WebFXMenuItem constructor but you are
+interested you can view the source for it. A menu item is actually an anchor tag with
+an <code>onmouseover</code> attribute. When the mouse is over the menu item,
+<code>webFXMenuHandler.overMenuItem(this)</code> is called. More about this later.
+Besides from this there is nothing strange here.</p>
+
+<pre>
+WebFXMenuItem.prototype.toString = function () {
+   return "&lt;a" +
+          " id='" + this.id + "'" +
+          " href='" + this.href + "'" +
+          (this.toolTip ? " title='" + this.toolTip + "'" : "") +
+          " onmouseover='webFXMenuHandler.overMenuItem(this)'" +
+          (webfxMenuUseHover ? " onmouseout='webFXMenuHandler.outMenuItem(this)'" : "") +
+          (this.subMenu ? " unselectable='on' tabindex='-1'" : "") +
+          "&gt;" +
+          (this.subMenu ?
+             "&lt;img class='arrow' src='" + webfxMenuDefaultImagePath + "arrow.right.png'&gt;" :
+             "") +
+          this.text +
+          "&lt;/a&gt;";
+};
+</pre>
+
+<h2>Hiding and Showing</h2>
+
+<p>Hiding and showing is done by changing the visibility in the usual way. The hard part is
+just to know what and when to hide and show. When the mouse
+enters (<code>onmouseover</code>) a menu item we hide all sub menus of the current menu. This is done
+calling <code>hideAllSubs()</code> on the menu that the menu item is in. After that we check
+if the menu item has a sub menu and if so we show that.</p>
+
+<p>This code is located in the global <code>webfxMenuHandler</code> so now is a good time
+to show the code for that.</p>
+
+<pre>
+var webFXMenuHandler = {
+   idCounter     :   0,
+   idPrefix      :   "webfx-menu-object-",
+   getId         :   function () { return this.idPrefix + this.idCounter++; },
+   <b>overMenuItem  :   function (oItem) {
+      var jsItem = this.all[oItem.id];
+      jsItem.parentMenu.hideAllSubs();
+      if (jsItem.subMenu)
+         jsItem.subMenu.show();
+   }</b>,
+   blurMenu      :   function (oMenuItem) {
+      window.setTimeout("webFXMenuHandler.all[\"" + oMenuItem.id + "\"].subMenu.hide();", 200);
+   },
+   all           :   {}
+};
+</pre>
+
+<p>Notice that this is not the complete and mot current version of the <code>webFXMenuHandler</code>
+but the logic is still the same. You can see what has been changed either by check the
+<a href="hover.html">hover part</a> of this article or check the actual source code.</p>
+
+<h2>Menu Bar and Buttons</h2>
+
+<p>The menu bar is just another menu with a slight different <code>toString</code>
+method. The menu buttons also have a slight different behavior. Instead of showing
+the sub menu when the mouse hovers the element it is shown when the user clicks it
+(when the anchor recieves focus). The menus are hidden when the anchor looses focus.
+The <code>toString</code> method for the WebFXMenuButton looks like this:</p>
+
+<pre>
+WebFXMenuButton.prototype.toString = function () {
+return	"&lt;a" +
+        " id='" + this.id + "'" +
+        " href='" + this.href + "'" +
+        (this.toolTip ? " title='" + this.toolTip + "'" : "") +
+        (webfxMenuUseHover ?
+           (" onmouseover='webFXMenuHandler.overMenuItem(this)'" +
+           " onmouseout='webFXMenuHandler.outMenuItem(this)'") :
+           (" onfocus='webFXMenuHandler.overMenuItem(this)'" +
+           (this.subMenu ?
+              " onblur='webFXMenuHandler.blurMenu(this)'" :
+             "")
+           )
+        ) +
+        "&gt;" +
+        this.text +
+        (this.subMenu ?
+           " &lt;img class='arrow' src='" + webfxMenuDefaultImagePath +
+           "arrow.down.png' align='absmiddle'&gt;" :
+           "") +
+        "&lt;/a&gt;";
+};
+</pre>
+
+<p>Notice here that we use different events depending on whether we are using hover mode
+or not.</p>
+
+<p><a href="xmenu.html">Introduction &amp; Browser Issues</a><br />
+<a href="xmenu.usage.html">Usage</a><br />
+<a href="xmenu2.html">Implementation</a><br />
+<a href="xmenu3.html">API</a><br />
+<a href="xmenu4.html">Look &amp; Feel</a><br />
+<a href="hover.html">Hover Menu</a>
+</p>
+
+<p class="author">Author: Erik Arvidsson</p>
+
+<!-- end webfx-main-body -->
+</div>
+
+</body>
+</html>

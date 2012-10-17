@@ -1,0 +1,82 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<!--
+ * Created on 5.1.2005
+ * (c) Jan Ptacek
+-->
+<head>
+	<meta http-equiv="Content-Language" content="cs">
+	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-2">
+	<title>Menu Vertical - sample page</title>
+
+	<!-- NEEDED -->
+	<script src="alib.common/script.js" type="text/javascript"></script>
+	<script src="menu.vertical/script.js" type="text/javascript"></script>
+	<link type="text/css" href="menu.vertical/style.css" rel="stylesheet">
+	<!-- /NEEDED -->
+</head>
+<body>
+	<ul class="vmenu">
+		<li><a href="#">News</a></li>
+		<li>
+			<a href="#">Products and Services</a>
+			<ul>
+				<li>
+					<a href="#">Software</a>
+				</li>
+				<li>
+					<a href="#">Services</a>
+					<ul>
+						<li><a href="#">HW</a></li>
+						<li><a href="#">Consulting</a></li>
+						<li><a href="#">Technical service</a></li>
+					</ul>
+				</li>
+				<li><a href="#">Technology</a></li>
+				<li><a href="#">HW</a></li>
+				<li>
+					<a href="#">Training</a>
+					<ul>
+						<li><a href="#">Word</a></li>
+						<li><a href="#">Excel</a></li>
+						<li><a href="#">Powerpoint</a></li>
+						<li><a href="#">Azureus</a></li>
+						<li><a href="#">Eclipse</a></li>
+						<li><a href="#">Netbeans</a></li>
+						<li><a href="#">Firefox</a></li>
+						<li><a href="#">CVS</a></li>
+						<li><a href="#">Lingea</a></li>
+						<li><a href="#">Opera</a></li>
+						<li><a href="#">SpeedSwitchXP</a></li>
+					</ul>
+				</li>
+			</ul>
+		</li>
+		<li><a href="#">Customers</a></li>
+		<li>
+			<a href="#">Solutions</a>
+			<ul>
+				<li><a href="#">Property exchange - property management</a></li>
+				<li><a href="#">Well-balanced institucional changes</a></li>
+				<li><a href="#">Wowwow Emulator</a></li>
+			</ul>
+		</li>
+
+		<li><a href="#">Partners</a></li>
+		<li><a href="#">Prices</a></li>
+		<li><a href="#">Training</a></li>
+		<li>
+			<a href="#">Hotline</a>
+		</li>
+	</ul>
+	<!--textarea id="report" style="position:absolute; top:100px; left:700px; height:450px; width:500px;"></textarea-->
+
+	<p>in ie, notice the bar:<br>
+	'IE has restricted this file from showing active content'<br>
+	it's there cos we rely on javascript<br>
+	 and its there only when NOT opened through http protocol.<br>
+	 serve it with your local apache, and it will work as expected.<br>
+	 (switches your security zone from script unfriendly<br>
+	 'My computer' to 'Internet')
+</body>
+</html>

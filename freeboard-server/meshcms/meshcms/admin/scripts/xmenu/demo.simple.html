@@ -1,0 +1,68 @@
+<!--
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+	"http://www.w3.org/TR/html4/loose.dtd">
+-->
+<html>
+<head>
+<title>Simple Link and Menu (WebFX)</title>
+<script type="text/javascript" src="cssexpr.js"></script>
+<link href="xmenu.css" type="text/css" rel="StyleSheet">
+<script type="text/javascript" src="xmenu.js"></script>
+<script type="text/javascript">
+
+//webfxMenuUseHover	= true;
+webfxMenuImagePath	= "images/";
+
+</script>
+</head>
+<body>
+
+<script>
+
+var myMenu = new WebFXMenu;
+myMenu.width = 150;
+for (var i = 0; i < 5; i++) {
+	myMenu.add(new WebFXMenuItem("Menu Item " + i, "javascript:alert(" + i + ")", "Tool tip to show"));
+	var tmp = new WebFXMenu;
+	for (var j = 0; j < 5; j++) {
+		tmp.add(new WebFXMenuItem("Menu Item " + i + "." + j, "javascript:alert(\"" + i + "." + j + "\")", "Tool tip to show"));
+	}
+	myMenu.add(new WebFXMenuItem("Menu Item " + i + " (with sub)" , null, "Tool tip to show", tmp));
+	if (i < 4)
+		myMenu.add(new WebFXMenuSeparator());
+}
+
+myMenu.add(new WebFXMenuSeparator());
+var emptyMenu = new WebFXMenu;
+myMenu.add(new WebFXMenuItem("Empty Sub", null, null, emptyMenu));
+
+myMenu.add(new WebFXMenuSeparator());
+myMenu.add(new WebFXMenuItem("New Window", "javascript:void window.open(\"http://webfx.eae.net\", \"windowOrFrameName\")"));
+
+document.write(myMenu);
+</script>
+
+<p>This page shows how a simple link can open a menu relative to it. This can be useful
+if one wants to bild their own menu bar using images or whatnot.</p>
+
+<pre>
+&lt;a href="#"
+   onfocus="if (!webfxMenuUseHover) webFXMenuHandler.showMenu(myMenu, this)"
+   onmouseover="if (webfxMenuUseHover) webFXMenuHandler.showMenu(myMenu, this)"
+   onblur="if (!webfxMenuUseHover) webFXMenuHandler.hideMenu(myMenu)"
+   onmouseout="if (webfxMenuUseHover) webFXMenuHandler.hideMenu(myMenu)"
+   onclick="return false"
+&gt;menu&lt;/a&gt;
+</pre>
+<p>This paragraph has a link that shows the a 
+<a href="#"
+	onfocus="if (!webfxMenuUseHover) webFXMenuHandler.showMenu(myMenu, this)"
+	onmouseover="if (webfxMenuUseHover) webFXMenuHandler.showMenu(myMenu, this)"
+	onblur="if (!webfxMenuUseHover) webFXMenuHandler.hideMenu(myMenu)"
+	onmouseout="if (webfxMenuUseHover) webFXMenuHandler.hideMenu(myMenu)"
+	onclick="return false"
+>menu</a> onfocus (or onmouseover if hover mode is true) and hides it onblur (or onmouseout)</p>
+
+
+</body>
+</html>

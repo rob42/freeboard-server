@@ -1,0 +1,74 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+	"http://www.w3.org/TR/html4/loose.dtd">
+
+<html>
+<head>
+<title>XMenu (WebFX)</title>
+<script type="text/javascript" src="cssexpr.js"></script>
+<script type="text/javascript" src="xmenu.js"></script>
+<link href="xmenu.css" type="text/css" rel="stylesheet">
+<style type="text/css">
+
+html {
+	border:		0;
+	overflow:	hidden;
+}
+
+body {
+	border: 0;
+	margin: 0;
+	overflow:	hidden;
+}
+
+
+.menuBottom {
+	top:		17px;
+	height:		1px;
+	width:		100%;
+	background:	buttonshadow;
+	overflow:	hidden;
+}
+
+</style>
+<script type="text/javascript">
+
+webfxMenuImagePath	= "images/";
+
+var myMenu = new WebFXMenu;
+for (var i = 0; i < 5; i++) {
+	myMenu.add(new WebFXMenuItem("Menu Item " + i, "javascript:alert(\"Not doing anything here\")", "Tool tip to show"));
+}
+
+myMenu.add(new WebFXMenuSeparator());
+
+var tmp;
+for (var i = 5; i < 10; i++) {
+	tmp = new WebFXMenu;
+	for (var j = 0; j < 5; j++) {
+		tmp.add(new WebFXMenuItem("Menu Item " + i + "." + j, "javascript:alert(\"Not doing anything here\")", "Tool tip to show"));
+	}
+	myMenu.add(new WebFXMenuItem("Menu Item " + i, "javascript:alert(\"Not doing anything here\")", "Tool tip to show", tmp));
+}
+
+var myMenu2 = new WebFXMenu;
+myMenu2.add(new WebFXMenuItem("Menu Item 0"));
+myMenu2.add(new WebFXMenuItem("Menu Item 1"));
+myMenu2.add(new WebFXMenuItem("New Window", "javascript:void window.open(\"http://webfx.eae.net\", \"windowOrFrameName\")"));
+
+var myBar = new WebFXMenuBar;
+myBar.add(new WebFXMenuButton("Menu Button 1", "javascript:alert(\"Not doing anything here\")", "Tool tip to show"));
+myBar.add(new WebFXMenuButton("Menu Button 2", null, "Tool tip to show", myMenu));
+myBar.add(new WebFXMenuButton("Menu Button 3", null, null, myMenu2));
+
+</script>
+</head>
+<body>
+
+<script>
+document.write(myBar);
+</script>
+<div class="menuBottom"></div>
+
+
+</body>
+</html>

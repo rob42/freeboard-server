@@ -1,0 +1,12 @@
+.art-post ul li, .art-post ol ul li {
+  overflow: visible;
+}
+
+body.mceContentBody, body.mceContentBody td, body.mceContentBody pre {
+  font-family: "Lucida Grande", "Lucida Sans Unicode", Arial, Helvetica, Sans-Serif;
+  font-size: 13px;
+}
+
+.highlighted {
+  background-color: yellow;
+}

@@ -1,0 +1,116 @@
+/*** LAYOUT ***/
+#pagecontentcolumn {
+  float: left;
+  width: 100%;
+}
+
+#pagecontent {
+  margin: 0 16em 0 0;
+}
+
+#additionalcolumn {
+  float: left;
+  width: 16em;
+  margin-left: -16em;
+}
+
+#footer{
+  clear: left;
+  width: 100%;
+}
+/*** END LAYOUT ***/
+
+
+
+
+
+#cmspagetitle {
+  color: #001f52;
+}
+
+#cmsdescription {
+  position: relative;
+  top: -1.5em;
+  left: 2em;
+  color: #254277;
+}
+
+#header {
+  padding: 0.5em;
+  height: 100px;
+}
+
+#footer {
+  border-top: 1px solid #7ecada;
+  padding: 0.2em 0 0.6em 0;
+  text-align: center;
+}
+
+.columnpadding {
+  padding: 1em 0.5em;
+}
+
+.sysinfo {
+  border: 1px dotted #7ecada;
+  padding: 0.25em;
+  margin-right: 1em;
+  margin-bottom: 1em;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+}
+
+body, th, td {
+  font-family: "DejaVu LGC Sans", "Bitstream Vera Sans", "Lucida Sans Unicode", sans-serif;
+}
+
+body {
+  font-size: 0.8em;
+}
+
+#cmsbody {
+  background: url(hbg.jpg) repeat-x top right;
+}
+
+a, a:visited {
+  color: #00608c;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+h1, h2 {
+  font-style: italic;
+}
+
+img {
+  border: 0;
+}
+
+#mainarea {
+  margin: 0 1em 2em 1em;
+  border: 1px solid #b5dce3;
+  padding: 1em;
+  background-color: white;
+}
+
+.secondarycolumn {
+  overflow: hidden;
+}
+
+input, select, textarea, pre {
+  font-family: "DejaVu LGC Sans Mono", "Bitstream Vera Sans Mono", "Lucida Sans Typewriter", "Lucida Console", monospace;
+  font-size: 0.9em;
+}
+
+input, select, textarea {
+  border: 1px inset #b5dce3;
+}
+
+input[type="checkbox"] {
+  border: 0;
+}
