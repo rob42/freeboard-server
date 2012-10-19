@@ -1,0 +1,112 @@
+/*
+ * Created on 5.1.2005
+ * (c) Jan Ptacek
+ *
+ * Three kinds of <li> elements get styled here
+ * 		top-level - always visible
+ * 		1-level   - pulled down
+ * 		n-level   - pulled left - n is from {2, ... }
+ *
+ *
+ * Additional style is attached in menu.horizontal/script.js
+ *		to emulate :first-child
+ *		to add background-image indicating submenu presence
+ */
+
+/* Commented-out: keep the standard box model
+* {
+	box-sizing: border-box;
+	-moz-box-sizing: border-box;
+}
+*/
+
+.hmenuALIB {								/* top-level menu */
+	position: relative; 				/* to let submenus be absolute positioned */
+/*	height: 1.4em;*/
+	height: 2.2em;							/* For andreas08 */
+	z-index: 20;
+
+	display: block;
+	margin: 0px;
+	padding: 0px;
+	border: 0px;
+	list-style: none;
+}
+
+.hmenuALIB ul {								/* 1-level menu */
+	position: absolute;					/* ie: out of flow, so do not strech height of top-level menu */
+/*	top: 1.4em;*/
+	top: 2.2em;									/* For andreas08 */
+	left: -1px;							/* due to box model */
+/*Commented-out: inherit from andreas08
+	padding: 0px;
+	margin: 0px;
+	list-style: none;*/
+	display: none;
+}
+
+.hmenuALIB ul ul {							/* n-level menu */
+	left: 170px;
+	top: -1px;							/* */
+}
+
+.hmenuALIB li {								/* top-level menu lineup */
+	position: relative;					/* to position submenus */
+	float: left;
+/*Commented-out: inherit from andreas08
+	border: 1px solid white;
+	border-left: 0px solid black;
+	background-color: #cacaca;*/
+}
+
+.hmenuALIB ul li {							/* 1 or n-level menu lineup */
+	clear: left;						/* we do not want float left here */
+										/* but we want excesive space eater effect */
+										/* of float: left, co just move next block */
+										/* to next line with clear */
+/*	border: 1px solid black;*/
+	border: 1px solid #cacaca;		/* For andreas08 */
+	border-top: 0px solid black;
+/*Commented-out: inherit from andreas08
+	background-color: white;*/
+	width: 170px;
+}
+
+
+.hmenuALIB li a {							/* all-level menu anchors */
+	display: block;						/* to fill full square */
+/*NB: Next line was commented-out in the alib css*/
+	/*float:left;*/							/* to lineup well */
+	border: 0px solid #ccc;
+/*Commented-out: inherit from andreas08
+	padding: 0px 9px 0px 9px;
+	text-decoration: none;
+	color: black;
+	vertical-align: bottom;
+	line-height: 1.4em;*/
+}
+
+.hmenuALIB li a:hover {
+/*Commented-out: inherit from andreas08
+	background-color: #cc0001;
+	background:#80b0da;
+	background-image: inherit;
+	background-position: inherit;
+	background-repeat: inherit;
+	color: white;*/
+}
+
+.hmenuALIB ul li a {						/* 1 or n-level menu anchors */
+	display: block;						/* all same width */
+/*	width: 150px;*/
+/*	line-height: normal;*/
+	line-height: 2.4em;				/* For andreas08 */
+}
+
+.hmenuALIBsuba {
+	width: 140px;
+}
+
+.hmenuALIBsubli {
+background: #ffffff url(images/sub.gif) no-repeat 99%;
+}

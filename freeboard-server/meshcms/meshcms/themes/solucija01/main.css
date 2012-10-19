@@ -1,0 +1,139 @@
+body { padding: 0; margin: 0; font: 0.7em Tahoma, Arial, sans-serif; line-height: 1.6em; background: #fff; color: #454545; }
+
+#container { margin: 10px auto; width: 960px; }
+
+/* header */
+#header { height: 75px; }
+#logo { padding: 15px 0 0 8px; }
+#logo p { margin: 0; padding: 0 0 0 10px; color: #808080; background: #fff; }
+#top_info { float: right; width: 670px; margin: 20px 5px 0 0; text-align: right; }
+
+/* horizontal tabbed menu */	
+#tabs { background: #fff url(images/tabmenu.gif) no-repeat top left; color: #000; height: 39px; width:inherit;text-align: center; padding: 0; margin: 0; }
+#tabs ul {margin:0 auto 0 auto; padding:0; width: 95%; }
+#tabs li { display: inline; height: 39px; }
+#tabs li a { float: left; background: #fff url(images/barbg.gif) no-repeat; color: #808080; padding: 7px 0; width: 82px; text-align: center; font-weight: bold; text-decoration: none; }
+#tabs li a:hover { background: #fff url(images/barcurrent.gif) no-repeat; color: #000; }
+#tabs .current { text-decoration: underline; }	
+
+/* search form */
+#search { 
+	color: #000;
+	clear: both;
+	background: #fff url(images/searchbg.gif) no-repeat;
+	padding: 0px 0 25px 5px;
+	width: 960px;
+	margin: 0;
+}
+#search p { padding: 10px 0 0 0; margin: 0; text-align:center;}
+
+/* grey subheader */
+.gboxtop { clear: both; height: 8px; background: #dedede url(images/gboxtop.gif) no-repeat; color: #000; }
+.gbox { background: #dedede url(images/gbox.gif) no-repeat bottom left; color: #444; padding: 1px 13px 7px 13px; margin: 0 0 20px 0; }
+.gbox p { padding: 7px 0; margin: 0;}
+
+/* links */
+a { color: #003B6E; background: inherit; }
+a:hover { color: #9EC068; background: inherit; }	
+td a img {border: 1px solid #FFFFFF;}
+td a:hover img {border: 1px solid #a8a8a8;}
+
+/* headings */
+h2 { font: bold 2.5em "Arial", Sans-Serif; margin: 0; letter-spacing: -1px; }
+h1 { font: bold 2em Arial, Sans-Serif; margin: 0; padding: 0; }
+h1 a, h2 a { color: #2b2b2b; background: #fff; text-decoration: none; }
+h1 a:hover, h2 a:hover { color: #87C154; background: #FFF; }
+/* .title { color: #808080; background: #fff; } */
+
+/* lists and form elements */
+form { margin: 0; }
+input.search { width: 279px; border: none; background: #fff url(images/input.gif) no-repeat; padding: 6px 10px; color: #1E67A8; font-weight: bold; }
+input.button, .fieldbuttons input { padding: 3px; }
+pre {border: 1px #999999 solid; background:#FFFFCC; padding:10px; font: 1em "Courier New", Courier, monospace; }
+.lastmodified {color:#999999;}
+
+.right {float: right;}
+.left {float: left}
+
+
+/* TODO: left side */
+#leftside { float: left; width: 650px; margin: 0 0 10px 0; }
+
+/* comments, includes */
+.includeitem {
+	margin: 10px 0 0 25px;
+	padding: 0 20px;
+	border-left: 3px solid #9ec068;
+	color: #666;
+}
+
+/* TODO: sidebar */
+.sidebar { float: left; width: 230px; margin: 0 12px 15px 15px; color: #5d5d5d; text-align:left; padding-left:50px; }
+/*
+	.smallboxtop { height: 14px; background: #fff url(images/smallboxtop.gif) no-repeat; color: #000; }
+	.smallbox { background: #f00 url(images/smallbox.gif) no-repeat bottom left; color: #444; padding: 1px 10px 10px 10px;  }
+	.smallbox p { padding: 0; margin: 0; }
+*/
+.sidebar ul { margin: 0; padding : 0; list-style : none; }
+.sidebar li { margin: 0 0 0 0; padding : 0; list-style : none; }
+.sidebar li ul li{ margin: 0 0 0 10px; padding : 0; list-style : none; }
+
+/* right side */
+#rightside {
+	float: right;
+	width: 295px;
+	margin: 0 0 10px 0;
+}
+#rightside h1 {
+	text-align:center;
+}
+	.boxtop { height: 19px; background: #fff url(images/boxtop.gif) no-repeat; color: #000; }
+	.box { background: #fff url(images/box.gif) no-repeat bottom left; color: #5b5b5b; padding: 0 10px 15px 10px; margin: 0 0 10px 0; }
+	.box p { padding: 0; margin: 0;}
+
+#rightside ul {
+	padding: 0.1em;
+	margin: 1.5em 0px;
+	border-top: 1px solid #88C354;
+}
+
+#rightside ul li {
+	border-bottom: 1px solid #88C354;
+	list-style-type: none;
+	margin: 0px;
+	padding: 0.5em;
+}
+
+#rightside ul li ul {
+	padding: 0;
+	margin: 0 0 0 20px;
+	border: 0;
+}
+
+#rightside ul li ul li {
+	list-style-type: none;
+	margin: 0;
+	padding: 0;
+	border: 0;
+}
+
+#rightside a {
+	color: #003B6E;
+	text-decoration: none;
+}
+
+#rightside a:hover {
+	color: #9EC068;
+}
+
+/* quick question*/
+#rightside .mailform {
+	margin-left: 24px;
+}
+
+
+/* footer  */
+.footer { clear: both; text-align: center; line-height: 1.8em; padding: 10px 0 10px 0; border-top: 1px solid #efefef; }
+
+
+

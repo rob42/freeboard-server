@@ -1,5 +1,7 @@
 <org.meshcms.core.SiteInfo>
   <data>
-    <property name="theme0" value="default"/>
+    <property name="theme0" value="andreas09_alib"/>
+    <property name="score108835" value="5"/>
+    <property name="score0" value="7"/>
   </data>
 </org.meshcms.core.SiteInfo>
