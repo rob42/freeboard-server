@@ -1,5 +1,5 @@
 <org.meshcms.core.Configuration>
-  <useAdminTheme>true</useAdminTheme>
+  <useAdminTheme>false</useAdminTheme>
   <preventHotlinking>false</preventHotlinking>
   <alwaysRedirectWelcomes>true</alwaysRedirectWelcomes>
   <alwaysDenyDirectoryListings>true</alwaysDenyDirectoryListings>
@@ -20,12 +20,12 @@
   <mailServer>localhost</mailServer>
   <smtpUsername></smtpUsername>
   <smtpPassword></smtpPassword>
-  <siteName>Site Name</siteName>
-  <siteHost>www.thissite.com</siteHost>
-  <siteDescription>A short description of your site</siteDescription>
+  <siteName>FreeBoard</siteName>
+  <siteHost>www.42.co.nz</siteHost>
+  <siteDescription>FreeBoard</siteDescription>
   <siteKeywords>your, keywords, here</siteKeywords>
   <siteAuthor>your name</siteAuthor>
-  <siteAuthorURL>http://www.yoursite.com/yourpage</siteAuthorURL>
+  <siteAuthorURL>http://www.42.co.nz</siteAuthorURL>
   <exportBaseURL></exportBaseURL>
   <exportDir></exportDir>
   <exportCommand></exportCommand>

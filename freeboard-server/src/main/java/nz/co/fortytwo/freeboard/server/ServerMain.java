@@ -50,11 +50,14 @@ public class ServerMain {
         connector.setPort(8080);
 
         server.addConnector(connector);
+        
 
         WebAppContext wac = new WebAppContext();
      
         wac.setWar("meshcms/.");
-        wac.setDescriptor("WEB-INF/web.xml");
+        wac.setDefaultsDescriptor("meshcms/WEB-INF/webdefault.xml");
+
+        wac.setDescriptor("meshcms/WEB-INF/web.xml");
         wac.setContextPath("/meshcms");
         wac.setServer(server);
         //wac.setWar("target/meshcms.war");

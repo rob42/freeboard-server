@@ -263,9 +263,7 @@
   <!--   If you get an error reporting that jikes can't use UTF-8 encoding, -->
   <!--   try setting the init parameter "javaEncoding" to "ISO-8859-1".     -->
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  -->
-  <servlet
-    id="jsp"
-  >
+  <servlet id="jsp"  >
     <servlet-name>jsp</servlet-name>
     <servlet-class>org.apache.jasper.servlet.JspServlet</servlet-class>
     <init-param>
@@ -322,12 +320,12 @@
   <!--                           each dynamic servlet as init parameters    -->
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  -->
   <!--
-    Uncomment for dynamic invocation -->
+    Uncomment for dynamic invocation 
     <servlet> <servlet-name>invoker</servlet-name> <servlet-class>org.eclipse.jetty.servlet.Invoker</servlet-class> <init-param> <param-name>verbose</param-name>
     <param-value>false</param-value> </init-param> <init-param> <param-name>nonContextServlets</param-name> <param-value>false</param-value> </init-param> <init-param>
     <param-name>dynamicParam</param-name> <param-value>anyValue</param-value> </init-param> <load-on-startup>0</load-on-startup> </servlet> <servlet-mapping> <servlet-name>invoker</servlet-name>
     <url-pattern>/servlet/*</url-pattern> </servlet-mapping>
-  <!-- -->
+  -->
 
 
 
