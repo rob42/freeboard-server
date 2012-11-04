@@ -45,13 +45,50 @@
 			//draw it
 			multi.setup();
 	
-			setInterval(function() {
-				multi.apparentWindDir = Math.random() * 40;
-				multi.apparentWindSpeed = Math.random() * 40;
-				multi.speed = Math.random() * 15;
-				multi.compass.setCurrentHeading(Math.random() * 90);
-
-			}, 4200);
+			function init(){
+				//make a web socket
+				var location = "ws://"+window.location.hostname+":9090/navData"
+				this._ws = new WebSocket(location);
+				this._ws.onopen = function() {
+				};
+				this._ws.onmessage = function(m) {
+					
+					if (m.data && m.data.indexOf('LOG') >= 0) {
+						var c = m.data.substring(m.data.indexOf('LOG') + 4);
+						multi.speed=c;
+					}
+					if (m.data && m.data.indexOf('WSA') >= 0) {
+						var c = m.data.substring(m.data.indexOf('WSA') + 4);
+						multi.apparentWindSpeed = c;
+					}
+					if (m.data && m.data.indexOf('WDA') >= 0) {
+						var c = m.data.substring(m.data.indexOf('WDA') + 4);
+						multi.apparentWindDir = c;
+					}
+					if (m.data && m.data.indexOf('HDM') >= 0) {
+						var c = m.data.substring(m.data.indexOf('HDM') + 4);
+						multi.compass.setCurrentHeadingMag(c);
+					}
+					if (m.data && m.data.indexOf('HDT') >= 0) {
+						var c = m.data.substring(m.data.indexOf('HDT') + 4);
+						multi.compass.setCurrentHeadingTrue(c);
+					}
+					if (m.data && m.data.indexOf('LAT') >= 0) {
+						var c = m.data.substring(m.data.indexOf('LAT') + 4);
+						multi.setLat(c);
+					}
+					if (m.data && m.data.indexOf('LON') >= 0) {
+						var c = m.data.substring(m.data.indexOf('LON') + 4);
+						multi.setLon(c);
+					}
+					
+				};
+				this._ws.onclose = function() {
+					this._ws = null;
+				};
+			}
+			init();
+			
 		</script>
 		
 	</div>

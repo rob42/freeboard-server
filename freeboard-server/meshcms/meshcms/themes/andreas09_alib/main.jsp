@@ -23,16 +23,17 @@
   </div>
 
   <div id="navigation"><cms:alibmenu part="body" orientation="horizontal" currentPathStyle="selected" /> </div>
-
-  <div id="wrap"> 
-    <div id="rightside">
+<div style="float: right; background-color: rgb(240,240,240); border:1px solid rgb(204, 204, 204); padding: 5px;margin: 5px;  color: rgb(96, 96, 96);" ><cms:adminmenu separator="<br />" /></div>
+  <div id="wrap" > 
+  
+    <div id="rightside" style="visibility: collapse;width: 1px;">
       <h1>Navigation</h1>
-      <cms:listmenu items="onpath,lastlevel,children" style="linklist" />
+      <cms:listmenu items="firstlevel,lastlevel, onpath, children" style="linklist" />
 
       <cms:module location="right" alt="" />
 	  
       <h1>User Menu</h1>
-      <p><cms:adminmenu separator="<br />" /></p>
+      
 
       <%-- search is not available at the moment
       <cms:ifnotediting>
@@ -44,6 +45,7 @@
       </cms:ifnotediting>
       --%>
     </div>
+    
     <div id="contentalt" >
       <cms:module location="top" alt="" />
       <cms:pagebody /> 
@@ -51,7 +53,6 @@
       <cms:mailform /> 
       <p style="text-align: right;"><cms:lastmodified pre="Last modified: " /></p>
     </div>
-	
     <div class="clearingdiv">&nbsp;</div>
   </div>
 </div>

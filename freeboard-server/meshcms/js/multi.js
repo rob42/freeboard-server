@@ -55,7 +55,9 @@ function Multi(canvas) {
 
 				//Gauge 
 				proc.smooth();
-				proc.background(255, 204, 0);
+				
+				//proc.background(255, 204, 0);
+				proc.background(250, 252, 255);
 				
 				multi.drawCloseHauled();
 				multi.compass.update();
@@ -94,7 +96,7 @@ function Multi(canvas) {
 				proc.text("KNTS", this.faceX * .25, this.faceX * .2);
 				proc.textFont(proc.bigNum);
 				proc.textAlign(proc.CENTER);
-				proc.text(proc.str(Math.round(this.speed, 2)), this.faceX * .3,
+				proc.text(proc.str(Math.round(this.speed*100)/100), this.faceX * .3,
 						this.faceX * .35);
 				proc.textAlign(proc.LEFT);
 				//speed vector
@@ -254,8 +256,18 @@ function Multi(canvas) {
 				return (proc.sqrt((a * a) + (b * b)));
 			}
 			
+			this.setLat = function(lat) {
+				this.lat=lat;
+				this.latStr=Math.round(lat*10000)/10000;
+			}
+			
+			this.setLon = function(lon) {
+				this.lon=lon;
+				this.lonStr=Math.round(lon*10000)/10000;
+			}
 
 			function Compass(faceX,faceY) {
+				this.headingTrue=false;
 				this.faceX=faceX;
 				this.faceY=faceY;
 				this.s1 = 190; //compass ring radius
@@ -272,7 +284,17 @@ function Multi(canvas) {
 				this.setup = function() {
 				}
 
-				this.setCurrentHeading = function(heading) {
+				
+				this.setCurrentHeadingMag = function(heading) {
+					if(this.headingTrue)return;
+					this.newHeading = heading;
+					this.t = new Tween(this, "lastHeading",
+							Tween.strongEaseInOut, this.lastHeading,
+							this.newHeading, 2);
+					this.t.start();
+				}
+				this.setCurrentHeadingTrue = function(heading) {
+					if(!this.headingTrue)return;
 					this.newHeading = heading;
 					this.t = new Tween(this, "lastHeading",
 							Tween.strongEaseInOut, this.lastHeading,
