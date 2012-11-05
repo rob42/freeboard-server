@@ -1,7 +1,9 @@
 package nz.co.fortytwo.freeboard.server;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.IOException;
 import java.util.Properties;
 
 import org.apache.camel.main.Main;
@@ -33,18 +35,12 @@ public class ServerMain {
 
 	private static Logger logger = Logger.getLogger(ServerMain.class);
 	
-	private Properties config=new Properties();
+	private Properties config=null;
 	
 	public ServerMain(String configDir) throws Exception {
-		setDefaults(config);
-		if(StringUtils.isNotBlank(configDir)){
-			config.setProperty(CFG_DIR, configDir);
-		}
-		File cfg = new File(config.getProperty(CFG_DIR)+config.getProperty(CFG_FILE));
 		
-		if(cfg.exists()){
-			config.load(new FileReader(cfg));
-		}
+		config=getConfig(configDir);
+		
 		logger.info("Freeboard starting....");
 
 		// create a new Camel Main so we can easily start Camel
@@ -111,21 +107,32 @@ public class ServerMain {
 		server.stop();
 	}
 
-	private void setDefaults(Properties config2) {
-		//populate sensible defaults here
-		config.setProperty(MESHCMS_URL,"/meshcms");
-		config.setProperty(MESHCMS_RESOURCE,"meshcms/");
-		config.setProperty(MAPCACHE_RESOURCE,"./mapcache");
-		config.setProperty(MAPCACHE,"/mapcache");
-		config.setProperty(HTTP_PORT,"8080");
-		config.setProperty(WEBSOCKET_PORT,"9090");
-		config.setProperty(SERIAL_PORT,"/dev/ttyUSB0");
-		config.setProperty(CFG_DIR,"./conf/");
-		config.setProperty(CFG_FILE,"freeboard.cfg");
-		config.setProperty(DEMO,"false");
-		config.setProperty(SERIAL_URL,"./src/test/resources/motu.log&scanStream=true&scanStreamDelay=500");
-
+	public static Properties getConfig(String dir) throws FileNotFoundException, IOException{
+		Properties props = new Properties();
+		setDefaults(props);
+		if(StringUtils.isNotBlank(dir)){
+			props.setProperty(CFG_DIR, dir);
+		}
+		File cfg = new File(props.getProperty(CFG_DIR)+props.getProperty(CFG_FILE));
 		
+		if(cfg.exists()){
+			props.load(new FileReader(cfg));
+		}
+		return props;
+	}
+	private static void setDefaults(Properties props) {
+		//populate sensible defaults here
+		props.setProperty(MESHCMS_URL,"/meshcms");
+		props.setProperty(MESHCMS_RESOURCE,"meshcms/");
+		props.setProperty(MAPCACHE_RESOURCE,"./mapcache");
+		props.setProperty(MAPCACHE,"/mapcache");
+		props.setProperty(HTTP_PORT,"8080");
+		props.setProperty(WEBSOCKET_PORT,"9090");
+		props.setProperty(SERIAL_PORT,"/dev/ttyUSB0");
+		props.setProperty(CFG_DIR,"./conf/");
+		props.setProperty(CFG_FILE,"freeboard.cfg");
+		props.setProperty(DEMO,"false");
+		props.setProperty(SERIAL_URL,"./src/test/resources/motu.log&scanStream=true&scanStreamDelay=500");
 	}
 
 	public static void main(String[] args) throws Exception {
