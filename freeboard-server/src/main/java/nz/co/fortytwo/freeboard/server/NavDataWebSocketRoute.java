@@ -19,6 +19,12 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.websocket.WebsocketComponent;
 import org.apache.commons.lang3.StringUtils;
 
+/**
+ * Main camel route definition to handle Arduino to web processing
+ * 
+ * @author robert
+ *
+ */
 public class NavDataWebSocketRoute extends RouteBuilder {
 	private int port = 9090;
 	private String serialUrl;
@@ -86,6 +92,10 @@ public class NavDataWebSocketRoute extends RouteBuilder {
 		this.serialUrl = serialUrl;
 	}
 	
+	/**
+	 * Adds NMES sentence listeners to process NMEA to simple output
+	 * @param processor
+	 */
 	private void setNMEAListeners(NMEAProcessor processor){
 		
 		processor.addSentenceListener(new SentenceListener() {
@@ -158,6 +168,10 @@ public class NavDataWebSocketRoute extends RouteBuilder {
 		this.serialPort = serialPort;
 	}
 	
+	/**
+	 * When the serial port is used to read from the arduino this must be called to shut
+	 * down the readers, which are in their own threads.
+	 */
 	public void stopSerial(){
 		if(serial != null){
 			serial.setRunning(false);

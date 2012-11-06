@@ -1,7 +1,6 @@
 //var map;
-// var mapBounds = new OpenLayers.Bounds( 173.014971899, -41.1579399972,
-// 173.061684157, -41.1303857203);
-// var mapMinZoom = 12;
+var mapMinZoom = 0;
+var mapMaxZoom = 18;
 
 var chartProjection = new OpenLayers.Projection("EPSG:900913");
 var screenProjection = new OpenLayers.Projection("EPSG:4326");
@@ -33,6 +32,7 @@ function init() {
 
 	//add layers
 	addLayers(map);
+	map.addLayer(shipMarker);
 	
 	var switcherControl = new OpenLayers.Control.LayerSwitcher();
 	map.addControl(switcherControl);

@@ -17,6 +17,11 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.commons.lang3.StringUtils;
 
+/**
+ * Processes NMEA sentences in the body of a message, firing events to interested listeners 
+ * @author robert
+ *
+ */
 public class NMEAProcessor implements Processor {
 
 	private static final String DISPATCH_ALL = "DISPATCH_ALL";

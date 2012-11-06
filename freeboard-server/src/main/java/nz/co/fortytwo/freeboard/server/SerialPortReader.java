@@ -12,6 +12,13 @@ import java.io.OutputStream;
 
 import org.apache.camel.ProducerTemplate;
 
+/**
+ * Wrapper to read serial port via rxtx, then fire messages into the camel route
+ * via the seda queue.
+ * 
+ * @author robert
+ *
+ */
 public class SerialPortReader {
 
 	private ProducerTemplate producer;
@@ -22,6 +29,12 @@ public class SerialPortReader {
 		super();
 	}
 	
+	/**
+	 * Opens a connection to the serial port, and starts two threads, one to read, one to write.
+	 * 
+	 * @param portName
+	 * @throws Exception
+	 */
 	void connect ( String portName ) throws Exception
     {
         CommPortIdentifier portIdentifier = CommPortIdentifier.getPortIdentifier(portName);
@@ -114,15 +127,28 @@ public class SerialPortReader {
         }
     }
 
+	/**
+	 * Set the camel producer, which fire the messages into camel
+	 * @param producer
+	 */
 	public void setProducer(ProducerTemplate producer) {
 		this.producer=producer;
 		
 	}
 
+	/**
+	 * True if the serial port read/write threads are running
+	 * @return
+	 */
 	public boolean isRunning() {
 		return running;
 	}
 
+	/**
+	 * Set to false to stop the serial port read/write threads.
+	 * You must connect() to restart. 
+	 * @param running
+	 */
 	public void setRunning(boolean running) {
 		this.running = running;
 	}
