@@ -37,3 +37,8 @@
 Icon?
 ehthumbs.db
 Thumbs.dB
+###################
+/mapcache
+/target
+/freeboard.tar.gz
+/**/*~
