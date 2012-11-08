@@ -6,6 +6,7 @@
 	<artifactId>freeboard-server</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>Freeboard Server</name>
+	
 	<description>Webserver and data server for FreeBoard</description>
 	<properties>
 		<!-- <bundle.name>nsb-${project.version}</bundle.name> -->
@@ -205,6 +206,13 @@
 						<goals>
 							<goal>single</goal>
 						</goals>
+<!-- 						<configuration> -->
+<!-- 							<finalName>freeboard${version}</finalName> -->
+<!-- 							<appendAssemblyId>false</appendAssemblyId> -->
+<!-- 							<descriptors> -->
+<!-- 								<descriptor>assembly/webapp.xml</descriptor> -->
+<!-- 							</descriptors> -->
+<!-- 						</configuration> -->
 					</execution>
 				</executions>
 			</plugin>
@@ -212,4 +220,8 @@
 
 	</build>
 
+	<organization>
+		<name>Tasman Consulting Ltd</name>
+		<url>www.42.co.nz</url>
+	</organization>
 </project>

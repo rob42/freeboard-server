@@ -1,0 +1,34 @@
+<?page title="new page title" contentType="text/html;charset=UTF-8"?>
+<?script src="./js/jquery-1.8.2.min.js"?>
+<?script src="./js/tween-min.js"?>
+<?script src="./js/steelseries.js"?>
+<?script src="./js/wind.js"?>
+<zk>
+	<hlayout>
+		<html>
+			<canvas id="canvasWindDirTrue" width="400px"
+				height="400px">
+			</canvas>
+		</html>
+		<vlayout>
+			<html>
+				<canvas id="canvasWindTrue" width="201px" height="201px"></canvas>
+			</html>
+			<html>
+				<canvas id="canvasWindApp" width="200px"
+					height="200px">
+					No canvas in your browser...sorry...
+				</canvas>
+			</html>
+		</vlayout>
+		<html>
+			<canvas id="canvasWindDirApp" width="400px"
+				height="400px">
+			</canvas>
+		</html>
+
+	</hlayout>
+
+
+	<script type="text/javascript" defer="true">initWind();</script>
+</zk>

@@ -1,0 +1,191 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Wind</title>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<title>multiInstrument : Built with Processing and Processing.js</title>
+<link rel="icon" type="image/x-icon"
+	href="data:image/x-icon;base64,AAABAAEAEBAQAAEABAAoAQAAFgAAACgAAAAQAAAAIAAAAAEABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADAQAAVzABAEAjBQAaDwYAWjUGAGE6CQBrQQ0ATS8PAFhAJwBUQC8AbFI6AHVXPACBZk4A4NrWAPb19QAAAAAAAMmZmZmZmgAJIwAAAAAAcMIjPjA+PjAKpxIuMDMzMAm0Ii4zMzMACaIiLt3dMAAJtyIuIzPQAAm0Un5yM+IzKLRkfncy4iIotRF+dyLkIiq0QX53F+EiGrQUTkd34iIatEVu7u5iIVrBVVRBRFRVbAtGZGZla2uwAMu7u7u8vADAAwAAgAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIABAADAAwAA" />
+
+<style type="text/css">
+canvas {
+	display: block;
+	outline: 0px;
+	margin-bottom: 1.5em;
+}
+</style>
+<!--[if lt IE 9]>
+			<script type="text/javascript">alert("Your browser does not support the canvas tag.");</script>
+		<![endif]-->
+
+<script src="../js/jquery-1.8.2.min.js" type="text/javascript"></script>
+<script src="../js/tween-min.js"></script>
+<script src="../js/steelseries-min.js"></script>
+
+</head>
+<body>
+	<div>
+		<table>
+
+			<tr>
+				<!-- 				wind dir - compass rose -->
+				<td rowspan="3" align="left"><canvas id="canvasWindDirTrue"
+						width="400px" height="400px"></canvas></td>
+				<td align="center"><canvas id="canvasWindApp" width="200px"
+						height="200px">No canvas in your browser...sorry...</canvas></td>
+				<td rowspan="3" align="right"><canvas id="canvasWindDirApp"
+						width="400px" height="400px"></canvas></td>
+
+			</tr>
+			<!-- 			<tr> -->
+			<!-- 				<td align="center"><canvas id="canvasLog" width="201" height="201"></canvas></td> -->
+
+			<!-- 				<td width="205px"><canvas id="canvasWindClose" width="201" height="201"></canvas> -->
+			<!-- 				</td> -->
+			<!-- 			</tr> -->
+			<tr>
+				<td align="center"><canvas id="canvasWindTrue" width="201"
+						height="201"></canvas></td>
+
+			</tr>
+		</table>
+		<script type="text/javascript">
+			var radialLog, radialWindTrue, radialWindDirTrue
+			var avgArray = [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ];
+			var avgPos = 0;
+			function init() {
+
+				// Define some sections for wind
+				var sections = [
+						steelseries.Section(0, 20, 'rgba(0, 0, 220, 0.3)'),
+						steelseries.Section(20, 35, 'rgba(0, 220, 0, 0.3)'),
+						steelseries.Section(35, 75, 'rgba(220,0, 0, 0.3)') ],
+
+				areasCloseHaul = [
+						steelseries.Section(-45, 0, 'rgba(0, 0, 220, 0.3)'),
+						steelseries.Section(0, 45, 'rgba(0, 0, 220, 0.3)') ],
+				// Define one area
+				areas = [ steelseries.Section(20, 25, 'rgba(220, 0, 0, 0.3)') ],
+
+				// Define value gradient for bargraph
+				valGrad = new steelseries.gradientWrapper(0, 25, [ 0, 0.33,
+						0.66, 0.85, 1 ], [
+						new steelseries.rgbaColor(0, 0, 200, 1),
+						new steelseries.rgbaColor(0, 200, 0, 1),
+						new steelseries.rgbaColor(200, 200, 0, 1),
+						new steelseries.rgbaColor(200, 0, 0, 1),
+						new steelseries.rgbaColor(200, 0, 0, 1) ]);
+
+				// Initialzing gauges
+
+				//log
+				// 				radialLog = new steelseries.DisplaySingle('canvasLog', {
+				// 					//gaugeType : steelseries.GaugeType.TYPE4,
+				// 					width : document.getElementById('canvasLog').width,
+				// 					height : document.getElementById('canvasLog').height,
+				// 					lcdDecimals : 1,
+				// 				});
+
+				//wind app
+				//wind
+				radialWindApp = new steelseries.Radial('canvasWindApp', {
+					gaugeType : steelseries.GaugeType.TYPE4,
+					size : document.getElementById('canvasWindApp').width,
+					minValue : 0,
+					maxValue : 60,
+					threshold : 35,
+					section : sections,
+					//area: areas,
+					titleString : "WIND APPARENT",
+					unitString : "knots",
+					lcdVisible : true
+				});
+
+				//wind dir
+				radialWindDirApp = new steelseries.WindDirection('canvasWindDirApp', {
+					size : document.getElementById('canvasWindDirApp').width,
+					titleString : "WIND     APP.",
+                    lcdVisible: false,
+                    pointSymbolsVisible: false,
+                    degreeScaleHalf:true,
+                    section:areasCloseHaul,
+                     area: areasCloseHaul,
+                    });
+				//	radialWindClose.setValue(0);
+
+				//wind true
+				radialWindTrue = new steelseries.Radial('canvasWindTrue', {
+					gaugeType : steelseries.GaugeType.TYPE4,
+					size : document.getElementById('canvasWindTrue').width,
+					maxValue : 60,
+					threshold : 35,
+					section : sections,
+					titleString : "WIND TRUE",
+					unitString : "knots",
+					lcdVisible : true
+				});
+
+				//wind dir
+
+				radialWindDirTrue = new steelseries.WindDirection(
+						'canvasWindDirTrue', {
+							size : document.getElementById('canvasWindDirTrue').width,
+							titleString : "WIND     TRUE",
+							roseVisible : false,
+							lcdVisible : true,
+							pointSymbolsVisible: false,
+							//pointSymbols: ["N", "", "", "", "", "", "", ""]
+							lcdTitleStrings : [ "Latest", "Average" ],
+							pointerTypeLatest : steelseries.PointerType.TYPE8,
+							pointerTypeAverage : steelseries.PointerType.TYPE1,
+						});
+				//make a web socket
+				var location = "ws://" + window.location.hostname
+						+ ":9090/navData"
+				this._ws = new WebSocket(location);
+				this._ws.onopen = function() {
+				};
+				this._ws.onmessage = function(m) {
+					if (m.data && m.data.indexOf('LOG') >= 0) {
+						var c = m.data.substring(m.data.indexOf('LOG') + 4);
+						radialLog.setValue(parseFloat(c));
+					}
+					if (m.data && m.data.indexOf('WSA') >= 0) {
+						var c = m.data.substring(m.data.indexOf('WSA') + 4);
+						radialWindApp.setValueAnimated(c);
+						radialWindTrue.setValueAnimated(c);
+					}
+					if (m.data && m.data.indexOf('WDA') >= 0) {
+						var c = m.data.substring(m.data.indexOf('WDA') + 4);
+						//-180 <> 180
+						if (parseFloat(c) >= 179) {
+							radialWindDirApp.setValueAnimated(-(360 - c));
+						} else {
+							radialWindDirApp.setValueAnimated(c);
+						}
+						//radialWindDirApp.setValueAnimated(c);
+						//radialWindClose.setValueAnimated(c);
+						radialWindDirTrue.setValueAnimatedLatest(c);
+						//make average
+						avgArray[avgPos] = parseFloat(c);
+						avgPos = avgPos + 1;
+						if (avgPos >= avgArray.length)
+							avgPos = 0;
+						var v = 0;
+						for ( var i = 0; i < avgArray.length; i++) {
+							v = v + avgArray[i];
+						}
+						radialWindDirTrue.setValueAnimatedAverage(v
+								/ avgArray.length);
+					}
+				};
+				this._ws.onclose = function() {
+					this._ws = null;
+				};
+			}
+
+			init();
+		</script>
+</body>
+</html>

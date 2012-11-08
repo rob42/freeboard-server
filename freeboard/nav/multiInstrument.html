@@ -1,0 +1,97 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>MultiInstrument</title>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<title>multiInstrument : Built with Processing and Processing.js</title>
+<link rel="icon" type="image/x-icon"
+	href="data:image/x-icon;base64,AAABAAEAEBAQAAEABAAoAQAAFgAAACgAAAAQAAAAIAAAAAEABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADAQAAVzABAEAjBQAaDwYAWjUGAGE6CQBrQQ0ATS8PAFhAJwBUQC8AbFI6AHVXPACBZk4A4NrWAPb19QAAAAAAAMmZmZmZmgAJIwAAAAAAcMIjPjA+PjAKpxIuMDMzMAm0Ii4zMzMACaIiLt3dMAAJtyIuIzPQAAm0Un5yM+IzKLRkfncy4iIotRF+dyLkIiq0QX53F+EiGrQUTkd34iIatEVu7u5iIVrBVVRBRFRVbAtGZGZla2uwAMu7u7u8vADAAwAAgAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIABAADAAwAA" />
+<meta name="Generator" content="Processing" />
+<!-- - - - - - - - - - - - - - - - - - - - - 
+		+
+		+    Wondering how this works? 
+		+
+		+    Go to: http://processing.org/
+		+    and: http://processingjs.org/
+		+
+		+ - - - - - - - - - - - - - - - - - - - - -->
+
+<!--[if lt IE 9]>
+			<script type="text/javascript">alert("Your browser does not support the canvas tag.");</script>
+		<![endif]-->
+<script src="../js/processing.js" type="text/javascript"></script>
+<script src="../js/jquery-1.8.2.min.js" type="text/javascript"></script>
+<script src="../js/tween-min.js"></script>
+<script src="../js/steelseries-min.js"></script>
+<script src="../js/Tween.lib"></script>
+
+<script src="../js/multi.js"></script>
+</head>
+<body>
+	<div >
+		<div>
+			<canvas id="multiInstrument" width="520" height="570">
+			<p>Your browser does not support the canvas tag.</p>
+			<!-- Note: you can put any alternative content here. --> </canvas>
+			<noscript>
+				<p>JavaScript is required to view the contents of this page.</p>
+			</noscript>
+		</div>
+		
+		<script type="text/javascript">
+			// convenience function to get the id attribute of generated sketch html element
+			var multi = new Multi(document.getElementById('multiInstrument'));
+			//draw it
+			multi.setup();
+	
+			function init(){
+				//make a web socket
+				var location = "ws://"+window.location.hostname+":9090/navData"
+				this._ws = new WebSocket(location);
+				this._ws.onopen = function() {
+				};
+				this._ws.onmessage = function(m) {
+					
+					if (m.data && m.data.indexOf('LOG') >= 0) {
+						var c = m.data.substring(m.data.indexOf('LOG') + 4);
+						multi.speed=c;
+					}
+					if (m.data && m.data.indexOf('WSA') >= 0) {
+						var c = m.data.substring(m.data.indexOf('WSA') + 4);
+						multi.apparentWindSpeed = c;
+					}
+					if (m.data && m.data.indexOf('WDA') >= 0) {
+						var c = m.data.substring(m.data.indexOf('WDA') + 4);
+						multi.apparentWindDir = c;
+					}
+					if (m.data && m.data.indexOf('HDM') >= 0) {
+						var c = m.data.substring(m.data.indexOf('HDM') + 4);
+						multi.compass.setCurrentHeadingMag(c);
+					}
+					if (m.data && m.data.indexOf('HDT') >= 0) {
+						var c = m.data.substring(m.data.indexOf('HDT') + 4);
+						multi.compass.setCurrentHeadingTrue(c);
+					}
+					if (m.data && m.data.indexOf('LAT') >= 0) {
+						var c = m.data.substring(m.data.indexOf('LAT') + 4);
+						multi.setLat(c);
+					}
+					if (m.data && m.data.indexOf('LON') >= 0) {
+						var c = m.data.substring(m.data.indexOf('LON') + 4);
+						multi.setLon(c);
+					}
+					
+				};
+				this._ws.onclose = function() {
+					this._ws = null;
+				};
+			}
+			init();
+			
+		</script>
+		
+	</div>
+
+</body>
+</html>

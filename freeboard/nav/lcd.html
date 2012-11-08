@@ -1,0 +1,139 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Lcd</title>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<title>multiInstrument : Built with Processing and Processing.js</title>
+<link rel="icon" type="image/x-icon"
+	href="data:image/x-icon;base64,AAABAAEAEBAQAAEABAAoAQAAFgAAACgAAAAQAAAAIAAAAAEABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADAQAAVzABAEAjBQAaDwYAWjUGAGE6CQBrQQ0ATS8PAFhAJwBUQC8AbFI6AHVXPACBZk4A4NrWAPb19QAAAAAAAMmZmZmZmgAJIwAAAAAAcMIjPjA+PjAKpxIuMDMzMAm0Ii4zMzMACaIiLt3dMAAJtyIuIzPQAAm0Un5yM+IzKLRkfncy4iIotRF+dyLkIiq0QX53F+EiGrQUTkd34iIatEVu7u5iIVrBVVRBRFRVbAtGZGZla2uwAMu7u7u8vADAAwAAgAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIABAADAAwAA" />
+
+
+<!--[if lt IE 9]>
+			<script type="text/javascript">alert("Your browser does not support the canvas tag.");</script>
+		<![endif]-->
+
+<script src="../js/jquery-1.8.2.min.js" type="text/javascript"></script>
+<script src="../js/tween-min.js"></script>
+<script src="../js/steelseries-min.js"></script>
+
+</head>
+<body>
+	<div>
+		<table >
+			<tr >
+				<td><canvas id="canvasWindApp" width="250px" height="80px">No
+					canvas in your browser...sorry...</canvas></td>
+				<td><canvas id="canvasWindDirApp" width="250px" height="80px"></canvas>
+				</td>
+			</tr>
+			<tr width="400px" height="400px">
+				<td colspan="2"><canvas id="canvasLog" width="500px" height="300px"></canvas>
+				</td>
+			</tr>
+		</table>
+		<script type="text/javascript">
+			var radialLog, radialWindTrue, radialWindDirTrue
+			odoValue = 99998.2;
+
+			function init() {
+
+				// Define some sections for wind
+				var sections = [
+						steelseries.Section(0, 20, 'rgba(0, 0, 220, 0.3)'),
+						steelseries.Section(20, 35, 'rgba(0, 220, 0, 0.3)'),
+						steelseries.Section(35, 75, 'rgba(220,0, 0, 0.3)') ],
+
+				areasCloseHaul = [
+						steelseries.Section(-45, 0, 'rgba(0, 0, 220, 0.3)'),
+						steelseries.Section(0, 45, 'rgba(0, 0, 220, 0.3)') ],
+				// Define one area
+				areas = [ steelseries.Section(20, 25, 'rgba(220, 0, 0, 0.3)') ],
+
+				// Define value gradient for bargraph
+				valGrad = new steelseries.gradientWrapper(0, 25, [ 0, 0.33,
+						0.66, 0.85, 1 ], [
+						new steelseries.rgbaColor(0, 0, 200, 1),
+						new steelseries.rgbaColor(0, 200, 0, 1),
+						new steelseries.rgbaColor(200, 200, 0, 1),
+						new steelseries.rgbaColor(200, 0, 0, 1),
+						new steelseries.rgbaColor(200, 0, 0, 1) ]);
+
+				// Initialzing gauges
+
+				//log
+				radialLog = new steelseries.DisplaySingle('canvasLog', {
+					//gaugeType : steelseries.GaugeType.TYPE4,
+					width : document.getElementById('canvasLog').width,
+					height : document.getElementById('canvasLog').height,
+					lcdDecimals : 1,
+					 headerString:"Knots",
+                     headerStringVisible:true,
+                     detailString:"Avg: ",
+                     detailStringVisible:true,
+				// unitString:"Knts",
+				//unitStringVisible: true
+
+				});
+
+				//wind app
+				//wind
+				radialWindApp = new steelseries.DisplayMulti('canvasWindApp', {
+					width : document.getElementById('canvasWindApp').width,
+					height : document.getElementById('canvasWindApp').height,
+					lcdDecimals : 1,
+					 headerString:"Heading",
+                     headerStringVisible:true,
+                     detailString:"Avg: ",
+                     detailStringVisible:true,
+				});
+
+				//wind dir
+				radialWindDirApp = new steelseries.DisplayMulti(
+						'canvasWindDirApp', {
+							width : document.getElementById('canvasWindDirApp').width,
+							height : document.getElementById('canvasWindDirApp').height,
+							lcdDecimals : 0,
+							 headerString:"Waypoint Heading",
+		                     headerStringVisible:true,
+		                     detailString:"ETA: ",
+		                     detailStringVisible:true,
+						});
+				radialWindDirApp.setValue(0);
+
+				//make a web socket
+
+				var location = "ws://"+window.location.hostname+":9090/navData";
+				this._ws = new WebSocket(location);
+				this._ws.onopen = function() {
+				};
+				this._ws.onmessage = function(m) {
+
+					if (m.data && m.data.indexOf('LOG') >= 0) {
+						var c = m.data.substring(m.data.indexOf('LOG') + 4);
+						radialLog.setValue(parseFloat(c));
+
+					}
+					if (m.data && m.data.indexOf('HDG') >= 0) {
+						var c = m.data.substring(m.data.indexOf('HDG') + 4);
+						radialWindApp.setValue(parseFloat(c));
+					}
+					if (m.data && m.data.indexOf('WPT') >= 0) {
+						var c = m.data.substring(m.data.indexOf('WPT') + 4);
+						//radialWindDirApp.setValue(parseFloat(c));
+						//-180 <> 180
+						if(parseFloat(c)>=179){
+							radialWindDirApp.setValue(-(360-parseFloat(c)));
+						}else{
+							radialWindDirApp.setValue(parseFloat(c));
+						}
+					}
+				};
+				this._ws.onclose = function() {
+					this._ws = null;
+				};
+			}
+			init();
+		</script>
+</body>
+</html>

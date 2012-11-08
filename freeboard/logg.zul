@@ -1,0 +1,26 @@
+<?page title="new page title" contentType="text/html;charset=UTF-8"?>
+<?script src="./js/jquery-1.8.2.min.js"?>
+<?script src="./js/tween-min.js"?>
+<?script src="./js/steelseries.js"?>
+<?script src="./js/logg.js"?>
+<zk>
+	
+		<hlayout >
+			<vlayout >
+				<html  style="">
+					<canvas id="canvasHeading" width="150px" height="100px">
+						No canvas in your browser...sorry...
+					</canvas>
+				</html>
+				<html >
+					<canvas id="canvasWaypoint" width="150px" height="100px" />
+				</html>
+			</vlayout>
+			<html >
+				<canvas id="canvasLog" width="300px" height="210px" />
+			</html>
+		</hlayout>
+
+	
+	<script type="text/javascript" defer="true">initLogg();</script>
+</zk>
