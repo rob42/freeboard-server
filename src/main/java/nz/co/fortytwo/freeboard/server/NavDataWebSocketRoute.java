@@ -58,8 +58,8 @@ public class NavDataWebSocketRoute extends RouteBuilder {
 		setNMEAListeners((NMEAProcessor) nmeaProcessor);
 		if(Boolean.valueOf(config.getProperty(ServerMain.DEMO))){
 			
-			//from("stream:file?fileName=" + serialUrl).
-			//to("seda:input");
+			from("stream:file?fileName=" + serialUrl).
+			to("seda:input");
 		
 		}else{
 			// start a serial port reader

@@ -87,7 +87,7 @@ public class ServerMain {
 		logger.info("  Freeboard resource:"+config.getProperty(FREEBOARD_RESOURCE));
 		wac.setWar(config.getProperty(FREEBOARD_RESOURCE));
 		wac.setDefaultsDescriptor(config.getProperty(FREEBOARD_RESOURCE)+"WEB-INF/webdefault.xml");
-		//wac.setExtraClasspath("./target/freeboard-server-0.0.1-SNAPSHOT-jar-with-dependencies.jar");
+		
 		wac.setDescriptor(config.getProperty(FREEBOARD_RESOURCE)+"WEB-INF/web.xml");
 		logger.info("  Freeboard url:"+config.getProperty(FREEBOARD_URL));
 		wac.setContextPath(config.getProperty(FREEBOARD_URL));
