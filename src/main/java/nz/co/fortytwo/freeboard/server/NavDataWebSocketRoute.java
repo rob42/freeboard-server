@@ -48,6 +48,7 @@ public class NavDataWebSocketRoute extends RouteBuilder {
 	@Override
 	public void configure() throws Exception {
 		// setup Camel web-socket component on the port we have defined
+		
 		WebsocketComponent wc = getContext().getComponent("websocket", WebsocketComponent.class);
 
 		wc.setPort(port);
@@ -57,8 +58,8 @@ public class NavDataWebSocketRoute extends RouteBuilder {
 		setNMEAListeners((NMEAProcessor) nmeaProcessor);
 		if(Boolean.valueOf(config.getProperty(ServerMain.DEMO))){
 			
-			from("stream:file?fileName=" + serialUrl).
-			to("seda:input");
+			//from("stream:file?fileName=" + serialUrl).
+			//to("seda:input");
 		
 		}else{
 			// start a serial port reader
@@ -176,6 +177,7 @@ public class NavDataWebSocketRoute extends RouteBuilder {
 		if(serial != null){
 			serial.setRunning(false);
 		}
+		
 	}
 	
 }

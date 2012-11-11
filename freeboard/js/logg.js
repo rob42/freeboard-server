@@ -1,6 +1,19 @@
-var lcdLog, radialWindTrue, radialWindDirTrue
-odoValue = 99998.2;
 
+odoValue = 99998.2;
+function resizeLog(amount){
+	var wsize = $("#canvasLog").width();
+	var hsize = $("#canvasLog").height();
+	$("#canvasLog").width(wsize+(wsize*amount));
+	$("#canvasLog").height(hsize+(hsize*amount));
+	var wsmallSize =  $("#canvasWaypoint").width();
+	var hsmallSize =  $("#canvasWaypoint").height();
+	$("#canvasHeading").width(wsmallSize+(wsmallSize*amount));
+	$("#canvasHeading").height(hsmallSize+(hsmallSize*amount));
+	$("#canvasWaypoint").width(wsmallSize+(wsmallSize*amount));
+	$("#canvasWaypoint").height(hsmallSize+(hsmallSize*amount));
+	this.initLogg();
+	
+}
 function initLogg() {
 
 	// Define some sections for wind
@@ -23,6 +36,7 @@ function initLogg() {
 		width : document.getElementById('canvasLog').width,
 		height : document.getElementById('canvasLog').height,
 		lcdDecimals : 1,
+		lcdColor: steelseries.LcdColor.BEIGE,
 		headerString : "Knots",
 		headerStringVisible : true,
 		detailString : "Avg: ",
@@ -38,6 +52,7 @@ function initLogg() {
 		width : document.getElementById('canvasHeading').width,
 		height : document.getElementById('canvasHeading').height,
 		lcdDecimals : 0,
+		lcdColor: steelseries.LcdColor.BEIGE,
 		headerString : "Heading",
 		headerStringVisible : true,
 		detailString : "Avg: ",
@@ -49,6 +64,7 @@ function initLogg() {
 		width : document.getElementById('canvasWaypoint').width,
 		height : document.getElementById('canvasWaypoint').height,
 		lcdDecimals : 0,
+		lcdColor: steelseries.LcdColor.BEIGE,
 		headerString : "To Waypoint",
 		headerStringVisible : true,
 		detailString : "ETA: ",

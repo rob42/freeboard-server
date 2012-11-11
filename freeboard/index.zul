@@ -5,55 +5,40 @@
 <?script src="./js/logg.js"?>
 <?script src="./js/wind.js"?>
 <zk>
-	<window apply="nz.co.fortytwo.freeboard.zk.InstrumentViewModel"
-		vflex="true">
-		<borderlayout>
-			<north vflex="min">
-				<toolbar id="tb" sclass="vista" height="20px"
-					align="start">
-					<toolbarbutton label="Chartplotter"
-						onClick="chartplotter.maximized = true" />
-					<toolbarbutton label="Log"
-						onClick="logg.visible=true;logg.minimized=false; logg.zindex=logg.zindex+6;" />
-					<toolbarbutton label="Wind"
-						onClick="wind.visible=true;wind.minimized=false;wind.zindex=wind.zindex+6;" />
-				</toolbar>
-			</north>
-			<center>
-				<div vflex="1" hflex="1" style="background-color: green;">
-							<panel id="logg" style="margin-bottom:10px" 
-								movable="true" title="Log" border="none" collapsible="true"
-								hflex="min" floatable="true" vflex="min" visible="false" >
-								<panelchildren style="background-color: transparent;">
-									<include src="./logg.zul" vflex="1"
-										hflex="1" />
-								</panelchildren>
-							</panel>
-							<!-- lower left -->
-							<panel id="wind" style="margin-bottom:10px;"
-								movable="true" title="Wind" border="none" 
-								collapsible="true" vflex="min" maximizable="true"
-								floatable="true" hflex="min" visible="true">
-								<panelchildren style="background-color: transparent;">
-									<include src="./wind.zul"
-										vflex="1" hflex="1" />
-								</panelchildren>
-							</panel>
+	<window id="mainWindow"
+		apply="nz.co.fortytwo.freeboard.zk.InstrumentViewModel"
+		vflex="true" style="margin-left:auto;">
 
-						<panel id="chartplotter"
-							style="margin-bottom:10px" movable="true" title="Chartplotter"
-							border="none" maximizable="true" collapsible="true"
-							floatable="false" sizable="true" hflex="1"
-							vflex="1">
-							<panelchildren>
-								<iframe src="/chartplotter/index.html"
-									vflex="1" hflex="1" />
-							</panelchildren>
-						</panel>
+		<div vflex="1" hflex="1" style="background-color: white;">
+			<iframe src="/chartplotter/index.html" vflex="1"
+				hflex="1" />
 
-				</div>
-			</center>
-		</borderlayout>
+			<panel id="logg"
+				style="margin-bottom:10px; overflow: visible; position:relative; left:60%; bottom=-100%" movable="true"
+				title="Log" border="none" collapsible="true" 
+				floatable="true" visible="true" width="110px" height="40px">
+				<panelchildren
+					style="background-color: transparent; overflow: visible; position:relative; left:-100%;">
+					<include src="./logg.zul" vflex="min" hflex="min"
+						style="overflow: visible" />
+				</panelchildren>
+			</panel>
+			<!-- lower left -->
+			<panel id="wind"
+				style="margin-bottom:10px; overflow: visible; position:relative; left:10%; top:0px" movable="true"
+				title="Wind" border="none" collapsible="true" 
+				floatable="true" width="120px" height="40px" visible="true">
+
+				<panelchildren
+					style="background-color: transparent; overflow: visible; position:relative; left:-100%;">
+					<include src="./wind.zul" vflex="min" hflex="min"
+						style="overflow: visible" />
+				</panelchildren>
+			</panel>
+
+
+
+		</div>
 
 	</window>
 </zk>

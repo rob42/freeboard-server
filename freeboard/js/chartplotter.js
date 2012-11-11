@@ -1,5 +1,5 @@
 //var map;
-var mapMinZoom = 0;
+var mapMinZoom = 7;
 var mapMaxZoom = 18;
 
 var chartProjection = new OpenLayers.Projection("EPSG:900913");
@@ -11,8 +11,7 @@ var shipMarker = new OpenLayers.Layer.Vector('Ship', {
         title: '${tooltip}'
     })
 });
-//var lat=mapBounds.getCenterLonLat().lat;
-//var lon=mapBounds.getCenterLonLat().lon;
+
 // avoid pink tiles
 OpenLayers.IMAGE_RELOAD_ATTEMPTS = 3;
 OpenLayers.Util.onImageLoadErrorColor = "transparent";
@@ -24,7 +23,7 @@ function init() {
 		controls : [],
 		projection : chartProjection,
 		displayProjection : screenProjection,
-		units : "m",
+		units : "nmi",
 		maxResolution : 156543.0339,
 		maxExtent : new OpenLayers.Bounds(-20037508, -20037508, 20037508,
 				20037508.34)
@@ -35,13 +34,6 @@ function init() {
 	addLayers(map);
 	map.addLayer(shipMarker);
 	
-	var switcherControl = new OpenLayers.Control.LayerSwitcher();
-	map.addControl(switcherControl);
-	switcherControl.maximizeControl();
-
-	map.zoomToExtent(mapBounds.transform(map.displayProjection,
-					map.projection));
-	
 	map.addControls([ 
 			new OpenLayers.Control.TouchNavigation({
 			    dragPanOptions: {
@@ -51,7 +43,8 @@ function init() {
 	        new OpenLayers.Control.Navigation(),
 			new OpenLayers.Control.Attribution(),
 	        new OpenLayers.Control.Zoom(),
-			new OpenLayers.Control.MousePosition()]);
+			new OpenLayers.Control.MousePosition(),
+			]);
 
 	// measurement
 	// style the sketch fancy
@@ -96,9 +89,12 @@ function init() {
 		line : new OpenLayers.Control.Measure(OpenLayers.Handler.Path, {
 			persist : true,
 			handlerOptions : {
+				displaySystemUnits: "nmi",
 				layerOptions : {
 					renderers : renderer,
-					styleMap : styleMap
+					styleMap : styleMap,
+					geodesic: true,
+					units : "nmi",
 				}
 			}
 		}),
@@ -117,6 +113,12 @@ function init() {
 		map.addControl(control);
 	}
 
+	var switcherControl = new OpenLayers.Control.LayerSwitcher();
+	map.addControl(switcherControl);
+	//switcherControl.maximizeControl();
+
+	map.zoomToExtent(mapBounds.transform(map.displayProjection,	map.projection));
+	map.zoomTo(10);
 	document.getElementById('noneToggle').checked = true;
 
 }
@@ -148,11 +150,7 @@ function overlay_getTileURL(bounds) {
 	var y = Math.round((bounds.bottom - this.tileOrigin.lat)
 			/ (res * this.tileSize.h));
 	var z = this.map.getZoom();
-	if (this.map.baseLayer.name == 'Virtual Earth Roads'
-			|| this.map.baseLayer.name == 'Virtual Earth Aerial'
-			|| this.map.baseLayer.name == 'Virtual Earth Hybrid') {
-		z = z + 1;
-	}
+	
 	if (mapBounds.intersectsBounds(bounds) && z >= mapMinZoom
 			&& z <= mapMaxZoom) {
 		// console.log( this.url + z + "/" + x + "/" + y + "." + this.type);
@@ -196,13 +194,14 @@ function handleMeasurements(event) {
 	var geometry = event.geometry;
 	var units = event.units;
 	var order = event.order;
-	var measure = event.measure;
+	//convert to nautical miles
+	var measure = event.measure * 0.539957;
 	var element = document.getElementById('output');
 	var out = "";
 	if (order == 1) {
-		out += "measure: " + measure.toFixed(3) + " " + units;
+		out += "measure: " + measure.toFixed(3) + " Nm";
 	} else {
-		out += "measure: " + measure.toFixed(3) + " " + units + "<sup>2</"
+		out += "measure: " + measure.toFixed(3) + " Nm" + "<sup>2</"
 				+ "sup>";
 	}
 	element.innerHTML = out;

@@ -20,8 +20,8 @@ import org.eclipse.jetty.webapp.WebAppContext;
 public class ServerMain {
 
 	public static  final String DEMO = "freeboard.demo";
-	public static  final String MESHCMS_URL = "freeboard.meshcms.url";
-	public static  final String MESHCMS_RESOURCE = "freeboard.meshcms.dir";
+	public static  final String FREEBOARD_URL = "freeboard.web.url";
+	public static  final String FREEBOARD_RESOURCE = "freeboard.web.dir";
 	public static  final String MAPCACHE_RESOURCE = "freeboard.mapcache.dir";
 	public static  final String MAPCACHE = "freeboard.mapcache.url";
 	public static  final String HTTP_PORT = "freeboard.http.port";
@@ -50,7 +50,7 @@ public class ServerMain {
 		main.enableHangupSupport();
 
 		NavDataWebSocketRoute route = new NavDataWebSocketRoute(config);
-
+		
 		// web socket on port 9090
 		logger.info("  Websocket port:"+config.getProperty(WEBSOCKET_PORT));
 		route.setPort(Integer.valueOf(config.getProperty(WEBSOCKET_PORT)));
@@ -82,15 +82,15 @@ public class ServerMain {
 		HandlerList handlers = new HandlerList();
 		handlers.addHandler(mapContext);
 
-		// serve meshcms
+		// serve freeboard
 		WebAppContext wac = new WebAppContext();
-		logger.info("  Meshcms resource:"+config.getProperty(MESHCMS_RESOURCE));
-		wac.setWar(config.getProperty(MESHCMS_RESOURCE));
-		wac.setDefaultsDescriptor(config.getProperty(MESHCMS_RESOURCE)+"WEB-INF/webdefault.xml");
-
-		wac.setDescriptor(config.getProperty(MESHCMS_RESOURCE)+"WEB-INF/web.xml");
-		logger.info("  Meshcms url:"+config.getProperty(MESHCMS_URL));
-		wac.setContextPath(config.getProperty(MESHCMS_URL));
+		logger.info("  Freeboard resource:"+config.getProperty(FREEBOARD_RESOURCE));
+		wac.setWar(config.getProperty(FREEBOARD_RESOURCE));
+		wac.setDefaultsDescriptor(config.getProperty(FREEBOARD_RESOURCE)+"WEB-INF/webdefault.xml");
+		//wac.setExtraClasspath("./target/freeboard-server-0.0.1-SNAPSHOT-jar-with-dependencies.jar");
+		wac.setDescriptor(config.getProperty(FREEBOARD_RESOURCE)+"WEB-INF/web.xml");
+		logger.info("  Freeboard url:"+config.getProperty(FREEBOARD_URL));
+		wac.setContextPath(config.getProperty(FREEBOARD_URL));
 		wac.setServer(server);
 		wac.setParentLoaderPriority(true);
 
@@ -103,8 +103,10 @@ public class ServerMain {
 		main.run();
 		
 		//so now shutdown serial reader and server
+		
 		route.stopSerial();
 		server.stop();
+		System.exit(0);
 	}
 
 	public static Properties getConfig(String dir) throws FileNotFoundException, IOException{
@@ -122,8 +124,8 @@ public class ServerMain {
 	}
 	private static void setDefaults(Properties props) {
 		//populate sensible defaults here
-		props.setProperty(MESHCMS_URL,"/meshcms");
-		props.setProperty(MESHCMS_RESOURCE,"meshcms/");
+		props.setProperty(FREEBOARD_URL,"/freeboard");
+		props.setProperty(FREEBOARD_RESOURCE,"freeboard/");
 		props.setProperty(MAPCACHE_RESOURCE,"./mapcache");
 		props.setProperty(MAPCACHE,"/mapcache");
 		props.setProperty(HTTP_PORT,"8080");

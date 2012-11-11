@@ -3,24 +3,35 @@
 <?script src="./js/tween-min.js"?>
 <?script src="./js/steelseries.js"?>
 <?script src="./js/logg.js"?>
-<zk>
-	
-		<hlayout >
-			<vlayout >
-				<html  style="">
-					<canvas id="canvasHeading" width="150px" height="100px">
-						No canvas in your browser...sorry...
-					</canvas>
-				</html>
-				<html >
-					<canvas id="canvasWaypoint" width="150px" height="100px" />
-				</html>
-			</vlayout>
-			<html >
-				<canvas id="canvasLog" width="300px" height="210px" />
-			</html>
-		</hlayout>
+<zk xmlns:w="http://www.zkoss.org/2005/zk/client">
+	<style>.z-panel-body { overflow: visible; }"</style>
 
-	
+	<hlayout style="overflow: visible">
+		<vlayout style="margin-left:auto; margin-right:auto; text-align:center;">
+
+			<html style="overflow: visible">
+				<canvas id="canvasHeading" width="150px"
+					height="100px">
+					No canvas in your browser...sorry...
+				</canvas>
+			</html>
+			<hlayout valign="middle">
+
+				<button id="logShrink"
+					image="./js/img/zoom-minus-mini.png" w:onClick="resizeLog(-0.2)" />
+				<button id="logGrow" image="./js/img/zoom-plus-mini.png"
+					w:onClick="resizeLog(0.2)" />
+			</hlayout>
+			<html>
+				<canvas id="canvasWaypoint" width="150px"
+					height="100px" />
+			</html>
+		</vlayout>
+		<html>
+			<canvas id="canvasLog" width="350px" height="240px" />
+		</html>
+	</hlayout>
+
+
 	<script type="text/javascript" defer="true">initLogg();</script>
 </zk>

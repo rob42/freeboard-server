@@ -1,6 +1,22 @@
-var radialLog, radialWindTrue, radialWindDirTrue
+//var  radialWindTrue, radialWindDirTrue
 var avgArray = [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ];
 var avgPos = 0;
+
+function resizeWind(amount){
+	var size = $("#canvasWindDirTrue").width();
+	$("#canvasWindDirTrue").width(size+(size*amount));
+	$("#canvasWindDirTrue").height(size+(size*amount));
+	$("#canvasWindDirApp").width(size+(size*amount));
+	$("#canvasWindDirApp").height(size+(size*amount));
+	var smallSize =  $("#canvasWindTrue").width();
+	$("#canvasWindTrue").width(smallSize+(smallSize*amount));
+	$("#canvasWindTrue").height(smallSize+(smallSize*amount));
+	$("#canvasWindApp").width(smallSize+(smallSize*amount));
+	$("#canvasWindApp").height(smallSize+(smallSize*amount));
+	this.initWind();
+	
+}
+
 function initWind() {
 
 	// Define some sections for wind
@@ -24,14 +40,6 @@ function initWind() {
 
 	// Initialzing gauges
 
-	// log
-	// radialLog = new steelseries.DisplaySingle('canvasLog', {
-	// //gaugeType : steelseries.GaugeType.TYPE4,
-	// width : document.getElementById('canvasLog').width,
-	// height : document.getElementById('canvasLog').height,
-	// lcdDecimals : 1,
-	// });
-
 	// wind app
 	// wind
 	radialWindApp = new steelseries.Radial('canvasWindApp', {
@@ -44,7 +52,9 @@ function initWind() {
 		// area: areas,
 		titleString : "WIND APPARENT",
 		unitString : "knots",
-		lcdVisible : true
+		lcdVisible : true,
+		lcdColor: steelseries.LcdColor.BEIGE,
+		backgroundColor: steelseries.BackgroundColor.CARBON,
 	});
 
 	// wind dir
@@ -56,9 +66,9 @@ function initWind() {
 		degreeScaleHalf : true,
 		section : areasCloseHaul,
 		area : areasCloseHaul,
+		backgroundColor: steelseries.BackgroundColor.CARBON,
 	});
-	// radialWindClose.setValue(0);
-
+	
 	// wind true
 	radialWindTrue = new steelseries.Radial('canvasWindTrue', {
 		gaugeType : steelseries.GaugeType.TYPE4,
@@ -68,7 +78,9 @@ function initWind() {
 		section : sections,
 		titleString : "WIND TRUE",
 		unitString : "knots",
-		lcdVisible : true
+		lcdVisible : true,
+		lcdColor: steelseries.LcdColor.BEIGE,
+		backgroundColor: steelseries.BackgroundColor.CARBON,
 	});
 
 	// wind dir
@@ -78,11 +90,13 @@ function initWind() {
 		titleString : "WIND     TRUE",
 		roseVisible : false,
 		lcdVisible : true,
+		lcdColor: steelseries.LcdColor.BEIGE,
 		pointSymbolsVisible : false,
 		// pointSymbols: ["N", "", "", "", "", "", "", ""]
 		lcdTitleStrings : [ "Latest", "Average" ],
 		pointerTypeLatest : steelseries.PointerType.TYPE8,
 		pointerTypeAverage : steelseries.PointerType.TYPE1,
+		backgroundColor: steelseries.BackgroundColor.CARBON,
 	});
 	// make a web socket
 	var location = "ws://" + window.location.hostname + ":9090/navData"
@@ -90,10 +104,7 @@ function initWind() {
 	this._ws.onopen = function() {
 	};
 	this._ws.onmessage = function(m) {
-		if (m.data && m.data.indexOf('LOG') >= 0) {
-			var c = m.data.substring(m.data.indexOf('LOG') + 4);
-			radialLog.setValue(parseFloat(c));
-		}
+		
 		if (m.data && m.data.indexOf('WSA') >= 0) {
 			var c = m.data.substring(m.data.indexOf('WSA') + 4);
 			radialWindApp.setValueAnimated(c);
@@ -103,12 +114,11 @@ function initWind() {
 			var c = m.data.substring(m.data.indexOf('WDA') + 4);
 			// -180 <> 180
 			if (parseFloat(c) >= 179) {
-				radialWindDirApp.setValueAnimated(-(360 - c));
+				radialWindDirApp.setValueAnimatedLatest(-(360 - c));
 			} else {
-				radialWindDirApp.setValueAnimated(c);
+				radialWindDirApp.setValueAnimatedLatest(c);
 			}
-			// radialWindDirApp.setValueAnimated(c);
-			// radialWindClose.setValueAnimated(c);
+			
 			radialWindDirTrue.setValueAnimatedLatest(c);
 			// make average
 			avgArray[avgPos] = parseFloat(c);
@@ -125,4 +135,5 @@ function initWind() {
 	this._ws.onclose = function() {
 		this._ws = null;
 	};
+	
 }
