@@ -13,7 +13,7 @@
 			<iframe src="/chartplotter/index.html" vflex="1"
 				hflex="1" />
 
-			<panel id="logg"
+			<panel id="logg" tooltiptext="click-drag the tab to move"
 				style="margin-bottom:10px; overflow: visible; position:relative; left:60%; bottom=-100%" movable="true"
 				title="Log" border="none" collapsible="true" 
 				floatable="true" visible="true" width="110px" height="40px">
@@ -24,7 +24,7 @@
 				</panelchildren>
 			</panel>
 			<!-- lower left -->
-			<panel id="wind"
+			<panel id="wind" tooltiptext="click-drag the tab to move"
 				style="margin-bottom:10px; overflow: visible; position:relative; left:10%; top:0px" movable="true"
 				title="Wind" border="none" collapsible="true" 
 				floatable="true" width="120px" height="40px" visible="true">

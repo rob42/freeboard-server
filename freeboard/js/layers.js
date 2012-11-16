@@ -12,6 +12,7 @@ function addLayers(map) {
 		numZoomLevels: 18,
 		minZoomLevel: 7,
 		maxZoomLevel: 12,
+		buffer : 0,
 		});
 	map.addLayer(NZ46);
 	
@@ -26,7 +27,8 @@ function addLayers(map) {
 		numZoomLevels : 18,
 		minZoomLevel : 7,
 		maxZoomLevel : 12,
-		buffer : 1
+		buffer : 0,
+	
 	});
 	map.addLayer(NZ61);
 		
@@ -41,7 +43,8 @@ function addLayers(map) {
 		numZoomLevels : 18,
 		minZoomLevel : 8,
 		maxZoomLevel : 13,
-		buffer : 1
+		buffer : 0,
+		
 	});
 	map.addLayer(NZ615);
 	
@@ -56,7 +59,7 @@ function addLayers(map) {
 				// maxResolution: "auto",
 				minZoomLevel : 8,
 				maxZoomLevel : 13,
-				buffer : 1
+				buffer : 0,
 			});
 	map.addLayer(NZ614);
 	
@@ -72,7 +75,7 @@ function addLayers(map) {
 				maxResolution : "auto",
 				minZoomLevel : 9,
 				maxZoomLevel : 15,
-				buffer : 1
+				buffer : 0,
 			});
 	map.addLayer(NZ6144);
 	
@@ -88,7 +91,7 @@ function addLayers(map) {
 				maxResolution : "auto",
 				minZoomLevel : 10,
 				maxZoomLevel : 15,
-				buffer : 1
+				buffer : 0,
 			});
 	map.addLayer(NZ6142_1);
 	
@@ -104,7 +107,7 @@ function addLayers(map) {
 				maxResolution : "auto",
 				minZoomLevel : 12,
 				maxZoomLevel : 17,
-				buffer : 1
+				buffer : 0,
 			});
 	map.addLayer(NZ6142_2);
 	// create TMS Overlay layer
@@ -120,7 +123,7 @@ function addLayers(map) {
 				maxResolution : "auto",
 				minZoomLevel : 12,
 				maxZoomLevel : 18,
-				buffer : 1
+				buffer : 0,
 			});
 	map.addLayer(NZ614_1);
 	var NZ6151_1 = new OpenLayers.Layer.TMS("NZ6151_1 ",
@@ -134,7 +137,7 @@ function addLayers(map) {
 				numZoomLevels : 18,
 				minZoomLevel : 10,
 				maxZoomLevel : 15,
-				buffer : 1
+				buffer : 0,
 			});
 	map.addLayer(NZ6151_1);
 	// if (OpenLayers.Util.alphaHack() == false) { tmsoverlay.setOpacity(0.7); }

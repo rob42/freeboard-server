@@ -11,6 +11,12 @@ function resizeLog(amount){
 	$("#canvasHeading").height(hsmallSize+(hsmallSize*amount));
 	$("#canvasWaypoint").width(wsmallSize+(wsmallSize*amount));
 	$("#canvasWaypoint").height(hsmallSize+(hsmallSize*amount));
+	var wLat =  $("#canvasLat").width();
+	var hLat =  $("#canvasLat").height();
+	$("#canvasLat").width(wLat+(wLat*amount));
+	$("#canvasLat").height(hLat+(hLat*amount));
+	$("#canvasLon").width(wLat+(wLat*amount));
+	$("#canvasLon").height(hLat+(hLat*amount));
 	this.initLogg();
 	
 }
@@ -19,17 +25,32 @@ function initLogg() {
 	// Define some sections for wind
 	
 
-	// Define value gradient for bargraph
-	valGrad = new steelseries.gradientWrapper(0, 25,
-			[ 0, 0.33, 0.66, 0.85, 1 ], [
-					new steelseries.rgbaColor(0, 0, 200, 1),
-					new steelseries.rgbaColor(0, 200, 0, 1),
-					new steelseries.rgbaColor(200, 200, 0, 1),
-					new steelseries.rgbaColor(200, 0, 0, 1),
-					new steelseries.rgbaColor(200, 0, 0, 1) ]);
 
-	// Initialzing gauges
+	// Initialzing lcds
+	// log
+	lcdLat = new steelseries.DisplaySingle('canvasLat', {
+		// gaugeType : steelseries.GaugeType.TYPE4,
+		width : document.getElementById('canvasLat').width,
+		height : document.getElementById('canvasLat').height,
+		lcdDecimals : 5,
+		lcdColor: steelseries.LcdColor.BEIGE,
+		//unitString:"",
+		unitStringVisible: false,
+		valuesNumeric: false	
 
+	});
+	lcdLon = new steelseries.DisplaySingle('canvasLon', {
+		// gaugeType : steelseries.GaugeType.TYPE4,
+		width : document.getElementById('canvasLon').width,
+		height : document.getElementById('canvasLon').height,
+		lcdDecimals : 5,
+		lcdColor: steelseries.LcdColor.BEIGE,
+		//unitString:"",
+		unitStringVisible: false,
+		valuesNumeric: false
+
+	});
+	
 	// log
 	lcdLog = new steelseries.DisplayMulti('canvasLog', {
 		// gaugeType : steelseries.GaugeType.TYPE4,
@@ -46,8 +67,7 @@ function initLogg() {
 
 	});
 	
-	// wind app
-	// wind
+	// heading
 	lcdHeading = new steelseries.DisplayMulti('canvasHeading', {
 		width : document.getElementById('canvasHeading').width,
 		height : document.getElementById('canvasHeading').height,
@@ -59,7 +79,7 @@ function initLogg() {
 		detailStringVisible : true,
 	});
 
-	// wind dir
+	// waypoint
 	lcdWaypoint = new steelseries.DisplayMulti('canvasWaypoint', {
 		width : document.getElementById('canvasWaypoint').width,
 		height : document.getElementById('canvasWaypoint').height,
@@ -80,6 +100,25 @@ function initLogg() {
 	};
 	this._ws.onmessage = function(m) {
 
+		if (m.data && m.data.indexOf('LAT') >= 0) {
+			var c = parseFloat(m.data.substring(m.data.indexOf('LAT') + 4));
+			//lcdLat.setValue(parseFloat(c));
+			if(c>0){
+				lcdLat.setValue(c.toFixed(5)+' N');
+			}else{
+				lcdLat.setValue(Math.abs(c.toFixed(5))+' S');
+			}
+
+		}
+		if (m.data && m.data.indexOf('LON') >= 0) {
+			var c = parseFloat(m.data.substring(m.data.indexOf('LON') + 4));
+			if(c>0){
+				lcdLon.setValue(c.toFixed(5)+' E');
+			}else{
+				lcdLon.setValue(c.toFixed(5)+' W');
+			}
+
+		}
 		if (m.data && m.data.indexOf('LOG') >= 0) {
 			var c = m.data.substring(m.data.indexOf('LOG') + 4);
 			lcdLog.setValue(parseFloat(c));

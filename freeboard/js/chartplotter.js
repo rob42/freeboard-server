@@ -26,7 +26,7 @@ function init() {
 		units : "nmi",
 		maxResolution : 156543.0339,
 		maxExtent : new OpenLayers.Bounds(-20037508, -20037508, 20037508,
-				20037508.34)
+				20037508.34),
 	};
 	map = new OpenLayers.Map('map', options);
 
@@ -121,6 +121,7 @@ function init() {
 	map.zoomTo(10);
 	document.getElementById('noneToggle').checked = true;
 
+	
 }
 
 
@@ -263,3 +264,4 @@ function posInit(){
 		this._ws = null;
 	};
 }
+

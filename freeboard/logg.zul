@@ -7,29 +7,42 @@
 	<style>.z-panel-body { overflow: visible; }"</style>
 
 	<hlayout style="overflow: visible">
-		<vlayout style="margin-left:auto; margin-right:auto; text-align:center;">
+		<vlayout>
+			<hlayout>
+				<vlayout
+					style="margin-left:auto; margin-right:auto; text-align:center;">
 
-			<html style="overflow: visible">
-				<canvas id="canvasHeading" width="150px"
-					height="100px">
-					No canvas in your browser...sorry...
-				</canvas>
-			</html>
-			<hlayout valign="middle">
+					<html style="overflow: visible">
+						<canvas id="canvasHeading" width="150px"
+							height="100px">
+							No canvas in your browser...sorry...
+						</canvas>
+					</html>
+					<hlayout valign="middle">
 
-				<button id="logShrink"
-					image="./js/img/zoom-minus-mini.png" w:onClick="resizeLog(-0.2)" />
-				<button id="logGrow" image="./js/img/zoom-plus-mini.png"
-					w:onClick="resizeLog(0.2)" />
+						<button id="logShrink" tooltiptext="Shrink the panel"
+							image="./js/img/zoom-minus-mini.png" w:onClick="resizeLog(-0.2)" />
+						<button id="logGrow" tooltiptext="Grow the panel"
+							image="./js/img/zoom-plus-mini.png" w:onClick="resizeLog(0.2)" />
+					</hlayout>
+					<html>
+						<canvas id="canvasWaypoint" width="150px"
+							height="100px" />
+					</html>
+				</vlayout>
+				<html>
+					<canvas id="canvasLog" width="350px" height="240px" />
+				</html>
 			</hlayout>
-			<html>
-				<canvas id="canvasWaypoint" width="150px"
-					height="100px" />
-			</html>
+			<hlayout>
+				<html>
+					<canvas id="canvasLon" width="245px" height="55px" />
+				</html>
+				<html>
+					<canvas id="canvasLat" width="245px" height="55px" />
+				</html>
+			</hlayout>
 		</vlayout>
-		<html>
-			<canvas id="canvasLog" width="350px" height="240px" />
-		</html>
 	</hlayout>
 
 
