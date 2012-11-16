@@ -30,6 +30,7 @@ public class ServerMain {
 	public static  final String CFG_DIR = "freeboard.cfg.dir";
 	public static  final String CFG_FILE = "freeboard.cfg.file";
 	public static final String SERIAL_URL = "freeboard.serial.demo.file";
+	public static final String VIRTUAL_URL = "freeboard.virtual.url";
 	
 	private static Server server;
 
@@ -67,7 +68,9 @@ public class ServerMain {
 		Connector connector = new SelectChannelConnector();
 		logger.info("  Webserver http port:"+config.getProperty(HTTP_PORT));
 		connector.setPort(Integer.valueOf(config.getProperty(HTTP_PORT)));
-		
+
+		//virtual hosts
+		String virtualHosts = config.getProperty(VIRTUAL_URL);
 		server = new Server();
 		server.addConnector(connector);
 
@@ -78,7 +81,9 @@ public class ServerMain {
 		logger.info("  Mapcache resource:"+config.getProperty(MAPCACHE_RESOURCE));
 		mapContext.setResourceBase(config.getProperty(MAPCACHE_RESOURCE));
 		mapContext.addServlet(DefaultServlet.class, "/*");
-
+		if(StringUtils.isNotBlank(virtualHosts)){
+			mapContext.setVirtualHosts(virtualHosts.split(","));
+		}
 		HandlerList handlers = new HandlerList();
 		handlers.addHandler(mapContext);
 
@@ -93,7 +98,10 @@ public class ServerMain {
 		wac.setContextPath(config.getProperty(FREEBOARD_URL));
 		wac.setServer(server);
 		wac.setParentLoaderPriority(true);
-
+		wac.setVirtualHosts(null);
+		if(StringUtils.isNotBlank(virtualHosts)){
+			wac.setVirtualHosts(virtualHosts.split(","));
+		}
 		handlers.addHandler(wac);
 		
 		server.setHandler(handlers);
@@ -135,6 +143,7 @@ public class ServerMain {
 		props.setProperty(CFG_FILE,"freeboard.cfg");
 		props.setProperty(DEMO,"false");
 		props.setProperty(SERIAL_URL,"./src/test/resources/motu.log&scanStream=true&scanStreamDelay=500");
+		props.setProperty(VIRTUAL_URL,"");
 	}
 
 	public static void main(String[] args) throws Exception {

@@ -9,5 +9,7 @@ FREEBOARD_HOME=/home/pi/freeboard
 JAR=freeboard-server-0.0.1-SNAPSHOT-jar-with-dependencies.jar
 EXT="-Djava.util.Arrays.useLegacyMergeSort=true -Djava.library.path=/usr/lib/rxtx:/usr/lib/jni"
 MEM=-Xmx128m
+LOG4J=-Dlog4j.configuration=./conf/log4j.properties
+
 cd $FREEBOARD_HOME
-$JAVA $EXT $MEM -jar target/$JAR >logs/start.log 2>&1 &
+$JAVA $EXT $MEM $LOG4J -jar target/$JAR >logs/start.log 2>&1 &
