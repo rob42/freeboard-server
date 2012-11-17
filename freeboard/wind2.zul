@@ -1,0 +1,56 @@
+<?page title="Wind" contentType="text/html;charset=UTF-8"?>
+<?script src="./js/jquery-1.8.2.min.js"?>
+<?script src="./js/tween-min.js"?>
+<?script src="./js/steelseries.js"?>
+<?script src="./js/wind2.js"?>
+<zk xmlns:w="http://www.zkoss.org/2005/zk/client">
+	<style>.z-panel-body { overflow: visible; }"</style>
+	<vlayout style="overflow: visible" >
+		<hlayout hflex="4" style="overflow: visible" >
+
+			<html style="overflow: visible" >
+				<canvas id="canvasWindDirTrue" style="overflow: visible" 
+					width="${mainWindow$composer.size}"
+					height="${mainWindow$composer.size}" >
+				</canvas>
+			</html>
+
+			<html style="overflow: visible" >
+				<canvas id="canvasWindDirApp" style="overflow: visible" 
+					width="${mainWindow$composer.size}"
+					height="${mainWindow$composer.size}">
+				</canvas>
+			</html>
+
+		</hlayout>
+		
+		<hlayout hflex="5" style="overflow: visible" >
+			<html style="overflow: visible" >
+				<canvas id="canvasWindTrue" style="overflow: visible" 
+					width="${mainWindow$composer.size*0.9}"
+					height="${mainWindow$composer.size/3}">
+				</canvas>
+			</html>
+
+			<vlayout style="overflow: visible" >
+
+				<button id="windShrink"
+					image="./js/img/zoom-minus-mini.png" w:onClick="resizeWind(-0.2)" />
+				<button id="windGrow"
+					image="./js/img/zoom-plus-mini.png" w:onClick="resizeWind(0.2)" />
+			</vlayout>
+
+			<html style="overflow: visible" >
+				<canvas id="canvasWindApp" style="overflow: visible" 
+					width="${mainWindow$composer.size*0.9}"
+					height="${mainWindow$composer.size/3}">
+					No canvas in your browser...sorry...
+				</canvas>
+			</html>
+		</hlayout>
+	</vlayout>
+	<script type="text/javascript" defer="true">
+		initWind(); 
+		resizeWind(-0.1)
+	</script>
+</zk>

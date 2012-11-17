@@ -1,0 +1,35 @@
+<?page title="Freeboard"?>
+<?script src="./js/jquery-1.8.2.min.js"?>
+<?script src="./js/tween-min.js"?>
+<?script src="./js/steelseries.js"?>
+<?script src="./js/logg.js"?>
+<?script src="./js/wind2.js"?>
+<zk>
+	<window id="mainWindow"
+		apply="nz.co.fortytwo.freeboard.zk.InstrumentViewModel" vflex="true"
+		style="margin-left:auto;background: white">
+		<borderlayout style="overflow: visible" >
+			<west splittable="true" collapsible="true" width="40%" style="overflow: visible" >
+				<borderlayout style="overflow: visible" >
+					<north splittable="true" collapsible="true" vflex="min" hflex="min" style="overflow: visible" >
+						<!-- upper left -->
+						<include src="./logg.zul" vflex="min"
+							hflex="min" style="overflow: visible" />
+					</north>
+					<center vflex="min" hflex="min" style="overflow: visible" >
+						<!-- lower left -->
+						<include src="./wind2.zul" vflex="min"
+							hflex="min" style="overflow: visible" />
+					</center>
+				</borderlayout>
+			</west>
+			<center hflex="1" vflex="1">
+				<iframe src="./chartplotter/index.html" vflex="1"
+					hflex="1" />
+			</center>
+		</borderlayout>
+
+
+
+	</window>
+</zk>

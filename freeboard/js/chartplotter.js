@@ -13,8 +13,9 @@ var shipMarker = new OpenLayers.Layer.Vector('Ship', {
 });
 
 // avoid pink tiles
-OpenLayers.IMAGE_RELOAD_ATTEMPTS = 3;
+//OpenLayers.IMAGE_RELOAD_ATTEMPTS = 1;
 OpenLayers.Util.onImageLoadErrorColor = "transparent";
+
 
 function init() {
 
@@ -137,12 +138,13 @@ function osm_getTileURL(bounds) {
 	var limit = Math.pow(2, z);
 
 	if (y < 0 || y >= limit) {
-		return "./blank.gif";
+		return "../js/img/blank.gif";
 	} else {
 		x = ((x % limit) + limit) % limit;
 		return this.url + z + "/" + x + "/" + y + "." + this.type;
 	}
 }
+
 
 function overlay_getTileURL(bounds) {
 	var res = this.map.getResolution();
@@ -151,13 +153,11 @@ function overlay_getTileURL(bounds) {
 	var y = Math.round((bounds.bottom - this.tileOrigin.lat)
 			/ (res * this.tileSize.h));
 	var z = this.map.getZoom();
-	
 	if (mapBounds.intersectsBounds(bounds) && z >= mapMinZoom
 			&& z <= mapMaxZoom) {
-		// console.log( this.url + z + "/" + x + "/" + y + "." + this.type);
 		return this.url + z + "/" + x + "/" + y + "." + this.type;
 	} else {
-		return "./blank.gif";
+		return "../js/img/blank.gif";
 	}
 
 }
