@@ -1,0 +1,65 @@
+<?page title="Freeboard"?>
+<?script src="./js/jquery-1.8.2.min.js"?>
+<?script src="./js/tween-min.js"?>
+<?script src="./js/steelseries.js"?>
+<?script src="./js/wind.js"?>
+<zk>
+	<style>
+		#map { height: 100%; border: 1px solid #888; }
+
+		.olImageLoadError { /* when OL encounters a 404, don't display
+		the pink image */ display: none !important; }
+		.hboxRemoveWhiteStrips td.z-hbox-sep { width: 0; padding: 0;}
+	</style>
+	<window id="mainWindow"
+		xmlns:w="http://www.zkoss.org/2005/zk/client"
+		apply="nz.co.fortytwo.freeboard.zk.InstrumentViewModel" vflex="true"
+		style="margin-left:auto;">
+		<borderlayout>
+			<center>
+				<div vflex="1" hflex="1"
+					style="background-color: white;">
+
+					<include src="./wind1.zul" vflex="min" hflex="min"
+						style="overflow: visible" />
+
+
+				</div>
+			</center>
+			<south>
+				<hbox pack="stretch" width="100%"
+					sclass="hboxRemoveWhiteStrips">
+					<toolbar orient="horizontal" align="start" hflex="1"
+						style="float:left; height: 20px;">
+						<toolbarbutton id="help" label="Help"
+							popup="helpPopup" />
+						<toolbarbutton label="Home" href="/index.zul" />
+						<toolbarbutton label="Quadrants"
+							href="/quadrants.zul" />
+						<toolbarbutton label="Plotter"
+							href="/chartplotter.zul" />
+						<toolbarbutton label="Wind + Log"
+							href="/windloggPage.zul" />
+						<toolbarbutton label="Log" href="/loggPage.zul" />
+					</toolbar>
+
+				</hbox>
+
+			</south>
+		</borderlayout>
+	</window>
+	<script type="text/javascript" defer="true">resizeWind(0.3)</script>
+	<popup id="helpPopup">
+		<html>
+
+
+			
+			<![CDATA[ <h2>Freeboard Help</H2> <p>To resize the
+			instruments use the + and - buttons within the
+			instruments</p> ]]>
+			
+			
+		
+		</html>
+	</popup>
+</zk>

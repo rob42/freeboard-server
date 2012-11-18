@@ -1,103 +1,44 @@
-<?page title="Freeboard"?>
-<?script src="./js/jquery-1.8.2.min.js"?>
-<?script src="./js/OpenLayers.js" ?>
-<?script src="./js/layers.js" ?>
-<?script src="./js/chartplotter.js" ?>
-<?script src="./js/tween-min.js"?>
-<?script src="./js/steelseries.js"?>
-<?script src="./js/logg.js"?>
-<?script src="./js/wind.js"?>
+<?page title="Freeboard" contentType="text/html;charset=UTF-8"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c" ?>
 <zk>
-<style>
-		#map { height: 100%; border: 1px solid #888; }
+	<window border="none" vflex="true">
 
-		.olImageLoadError { /* when OL encounters a 404, don't display the pink image */ 
-			display: none !important; }
-	</style>
-	<window id="mainWindow"
-	xmlns:w="http://www.zkoss.org/2005/zk/client"
-		apply="nz.co.fortytwo.freeboard.zk.InstrumentViewModel" vflex="true"
-		style="margin-left:auto;">
-		<borderlayout>
-			<center>
-				<div vflex="1" hflex="1"
-					style="background-color: white;">
-					<div vflex="1" hflex="1">
-					<html>
-						<div id="map"></div>
-					</html>
-					
-					<script type="text/javascript" defer="true">
-						initCharts(); 
-						posInit();
-						resize();
-					</script>
-				</div>
+		<vlayout vflex="1" hflex="min"
+			style="margin-left:auto; margin-right:auto; text-align:center;">
+			<image src="img/logo.png" />
+			
+				<hlayout hflex="1">
+					<groupbox mold="3d" >
+						<caption label="Chartplotter + Instruments" />
 
-					<panel id="logg"
-						tooltiptext="click-drag the tab to move"
-						style="margin-bottom:10px; overflow: visible; position:relative; left:60%; bottom=-100%"
-						movable="true" title="Log" border="none" collapsible="true"
-						floatable="true" visible="true" width="110px" height="40px">
-						<panelchildren
-							style="background-color: transparent; overflow: visible; position:relative; left:-100%;">
-							<include src="./logg.zul" vflex="min"
-								hflex="min" style="overflow: visible" />
-						</panelchildren>
-					</panel>
-					<!-- lower left -->
-					<panel id="wind"
-						tooltiptext="click-drag the tab to move"
-						style="margin-bottom:10px; overflow: visible; position:relative; left:10%; top:0px"
-						movable="true" title="Wind" border="none" collapsible="true"
-						floatable="true" width="120px" height="40px" visible="true">
+						<button label="Floating" mold="trendy" href="floating.zul"/>
+						<button label="Quadrants" mold="trendy" href="quadrants.zul"/>
+					</groupbox>
+				</hlayout>
+				<separator />
+				<hlayout hflex="1">
+					<groupbox mold="3d" >
+						<caption label="Instruments Only" />
 
-						<panelchildren
-							style="background-color: transparent; overflow: visible; position:relative; left:-100%;">
-							<include src="./wind.zul" vflex="min"
-								hflex="min" style="overflow: visible" />
-						</panelchildren>
-					</panel>
+						<button label="Wind + Log" mold="trendy" href="windloggPage.zul"/>
+						<button label="Log" mold="trendy" href="loggPage.zul"/>
+						<button label="Wind" mold="trendy" href="windPage1.zul"/>
+						<button label="Smartphone" mold="trendy" />
 
-				</div>
-			</center>
-			<south>
-				<div>`
-					<toolbar orient="horizontal" >
-					
-						<toolbarbutton id="help" label="Help"
-							popup="helpPopup" />
-						<toolbarbutton label="Quadrants" href="/quadrants.zul"/>
-						<label value="Mode: " style="padding-right:0px; padding-left:10px;"/>
-						<radiogroup name="type">
-							<radio value="none" id="noneToggle"
-								w:onClick="toggleControl('none');" checked="true" />
-							<label>Navigate</label>
-							<radio value="line" id="lineToggle"
-								w:onClick="toggleControl('line');" />
-							<label>Measure</label>
-						</radiogroup>
-						<label id="output" style="padding-right:0px; padding-left:10px;"/>
-						
-					</toolbar>
-					<popup id="helpPopup">
-						<html>
+					</groupbox>
+				</hlayout>
+				<separator />
+				<hlayout hflex="1">
+					<groupbox mold="3d" >
+						<caption label="Chartplotter Only" />
 
-							<![CDATA[ <h2>Freeboard Help</H2> 
-							<p>To resize the instruments use the + and - buttons within the instruments</p>
-							<p>To move the instruments click-drag the tab just 	above the instruments</p> <p>To close the
-							instruments click the ^ icon in the tab just
-							above the instruments</p> <p>Click-drag the
-							chart to scroll in any direction</p> <p>Use
-							the blue + and - buttons in top left to
-							zoom, or use mouse wheel</p> <p>The blue +
-							tab at the top right to manage chart
-							visibility</p> ]]>
-						
-						</html>
-					</popup>
-				</div>
-			</south>
-		</borderlayout>
+						<button label="Chartplotter" mold="trendy" href="chartplotter.zul"/>
+
+
+					</groupbox>
+				</hlayout>
+				
+		</vlayout>
+
 	</window>
 </zk>

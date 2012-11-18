@@ -10,8 +10,9 @@
 <zk>
 	<style>
 		#map { height: 100%; border: 1px solid #888; }
-
-		.olImageLoadError { /* when OL encounters a 404, don't display the pink image */ display: none !important; }
+		.hboxRemoveWhiteStrips td.z-hbox-sep { width: 0; padding: 0;}
+		.olImageLoadError { /* when OL encounters a 404, don't display
+		the pink image */ display: none !important; }
 	</style>
 	<window id="mainWindow"
 		xmlns:w="http://www.zkoss.org/2005/zk/client"
@@ -40,8 +41,33 @@
 					<html>
 						<div id="map"></div>
 					</html>
-					<toolbar orient="horizontal">
-						<label value="Mode: " style="padding-right:0px; padding-left:10px;"/>
+					<script type="text/javascript" defer="true">
+						initCharts(); posInit(); resize();
+					</script>
+				</div>
+			</center>
+			<south>
+				<hbox pack="stretch" width="100%"
+					sclass="hboxRemoveWhiteStrips">
+					<toolbar orient="horizontal" align="start" hflex="1"
+						style="float:left; ">
+						<toolbarbutton id="help" label="Help"
+							popup="helpPopup" />
+						<toolbarbutton label="Home" href="/index.zul" />
+						<toolbarbutton label="Floating"
+							href="/floating.zul" />
+						<toolbarbutton label="Plotter"
+							href="/chartplotter.zul" />
+						<toolbarbutton label="Wind + Log"
+							href="/windloggPage.zul" />
+						<toolbarbutton label="Wind"
+							href="/windPage1.zul" />
+						<toolbarbutton label="Log" href="/loggPage.zul" />
+					</toolbar>
+					<toolbar orient="horizontal" align="end" hflex="1"
+						style="float:right; vertical-align: middle; ">
+						<label value="Mode: "
+							style="padding-right:0px; padding-left:10px;" />
 						<radiogroup name="type">
 							<radio value="none" id="noneToggle"
 								w:onClick="toggleControl('none');" checked="true" />
@@ -50,48 +76,36 @@
 								w:onClick="toggleControl('line');" />
 							<label>Measure</label>
 						</radiogroup>
-						<label id="output" style="padding-right:0px; padding-left:10px;"/>
-						<label id="options" style="padding-right:0px; padding-left:10px;"/>
-						<label id="status" style="padding-right:0px; padding-left:10px;"/>
-					</toolbar>
-					<script type="text/javascript" defer="true">
-						initCharts(); 
-						posInit();
-						resize();
-					</script>
-				</div>
-			</center>
-			<south>
-				<div>
-					<toolbar orient="horizontal">
-						<toolbarbutton id="help" label="Help"
-							popup="helpPopup" />
-							<toolbarbutton label="Floating" href="/index.zul"/>
-					</toolbar>
-					
-					<popup id="helpPopup">
-						<html>
+						<label id="output"
+							style="padding-right:0px; padding-left:10px;padding-bottom: 4px;" />
 
-							
-							<![CDATA[ <h2>Freeboard Help</H2> <p>To
-							resize the instruments use the + and -
-							buttons within the instruments</p> <p>To
-							resize or collapse the panels click-drag on
-							the panel divider bar</p> <p>Click-drag the
-							chart to scroll in any direction</p> <p>Use
-							the blue + and - buttons in top left to zoom
-							the chart, or use mouse wheel</p> <p>The
-							blue + tab at the top right to manage chart
-							layers</p> ]]>
-							
-							
-						</html>
-					</popup>
-				</div>
+					</toolbar>
+
+				</hbox>
 			</south>
 		</borderlayout>
 
 	</window>
 
+	<popup id="helpPopup">
+		<html>
+
+
+
+			
+			<![CDATA[ <h2>Freeboard Help</H2> <p>To resize the
+			instruments use the + and - buttons within the
+			instruments</p> <p>To resize or collapse the panels
+			click-drag on the panel divider bar</p> <p>Click-drag the
+			chart to scroll in any direction</p> <p>Use the blue + and -
+			buttons in top left to zoom the chart, or use mouse
+			wheel</p> <p>The blue + tab at the top right to manage chart
+			layers</p> ]]>
+			
+			
+			
+			
+		</html>
+	</popup>
 
 </zk>

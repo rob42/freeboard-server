@@ -178,7 +178,7 @@ function getWindowWidth() {
 
 function resize() {
 	var map = document.getElementById("map");
-	map.style.height = (getWindowHeight() - 60) + "px";
+	map.style.height = getWindowHeight()  + "px";
 	map.style.width = (getWindowWidth() - 20) + "px";
 	if (map.updateSize) {
 		map.updateSize();

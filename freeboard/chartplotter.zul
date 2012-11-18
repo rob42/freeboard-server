@@ -1,0 +1,91 @@
+<?page title="Freeboard"?>
+<?script src="./js/jquery-1.8.2.min.js"?>
+<?script src="./js/OpenLayers.js" ?>
+<?script src="./js/layers.js" ?>
+<?script src="./js/chartplotter.js" ?>
+
+<zk>
+	<style>
+		#map { height: 100%; border: 1px solid #888; }
+
+		.olImageLoadError { /* when OL encounters a 404, don't display
+		the pink image */ display: none !important; }
+		.hboxRemoveWhiteStrips td.z-hbox-sep { width: 0; padding: 0;}
+	</style>
+	<window id="mainWindow"
+		xmlns:w="http://www.zkoss.org/2005/zk/client"
+		apply="nz.co.fortytwo.freeboard.zk.InstrumentViewModel" vflex="true"
+		style="margin-left:auto;">
+		<borderlayout>
+			<center>
+				<div vflex="1" hflex="1"
+					style="background-color: white;">
+					<div vflex="1" hflex="1">
+						<html>
+							<div id="map"></div>
+						</html>
+
+						<script type="text/javascript" defer="true">
+							initCharts(); posInit(); resize();
+						</script>
+					</div>
+
+
+
+				</div>
+			</center>
+			<south>
+				<hbox pack="stretch" width="100%"
+					sclass="hboxRemoveWhiteStrips">
+					<toolbar orient="horizontal" align="start" hflex="1"
+						style="float:left; height: 20px;">
+						<toolbarbutton id="help" label="Help"
+							popup="helpPopup" />
+						<toolbarbutton label="Home" href="/index.zul" />
+						<toolbarbutton label="Floating"
+							href="/floating.zul" />
+						<toolbarbutton label="Quadrants"
+							href="/quadrants.zul" />
+						<toolbarbutton label="Wind + Log"
+							href="/windloggPage.zul" />
+						<toolbarbutton label="Wind"
+							href="/windPage1.zul" />
+						<toolbarbutton label="Log" href="/loggPage.zul" />
+					</toolbar>
+					<toolbar orient="horizontal" align="end" hflex="1"
+						style="float:right;height: 20px;">
+
+						<label value="Mode: "
+							style="padding-right:0px; padding-left:10px;" />
+						<radiogroup name="type">
+							<radio value="none" id="noneToggle"
+								w:onClick="toggleControl('none');" checked="true" />
+							<label>Navigate</label>
+							<radio value="line" id="lineToggle"
+								w:onClick="toggleControl('line');" />
+							<label>Measure</label>
+						</radiogroup>
+						<label id="output"
+							style="padding-right:0px; padding-left:10px;" />
+
+					</toolbar>
+				</hbox>
+
+			</south>
+		</borderlayout>
+	</window>
+	<popup id="helpPopup">
+		<html>
+
+
+			
+			<![CDATA[ <h2>Freeboard Help</H2> <p>Click-drag the chart to
+			scroll in any direction</p> <p>Use the blue + and - buttons
+			in top left to zoom, or use mouse wheel</p> <p>The blue +
+			tab at the top right to manage chart visibility</p> ]]>
+			
+			
+		
+		</html>
+	</popup>
+</zk>
