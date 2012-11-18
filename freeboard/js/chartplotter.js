@@ -17,7 +17,7 @@ var shipMarker = new OpenLayers.Layer.Vector('Ship', {
 OpenLayers.Util.onImageLoadErrorColor = "transparent";
 
 
-function init() {
+function initCharts() {
 
 	var options = {
 		allOverlays: true,
@@ -120,7 +120,7 @@ function init() {
 
 	map.zoomToExtent(mapBounds.transform(map.displayProjection,	map.projection));
 	map.zoomTo(10);
-	document.getElementById('noneToggle').checked = true;
+	$("#noneToggle").checked = true;
 
 	
 }
@@ -178,7 +178,7 @@ function getWindowWidth() {
 
 function resize() {
 	var map = document.getElementById("map");
-	map.style.height = (getWindowHeight() - 80) + "px";
+	map.style.height = (getWindowHeight() - 60) + "px";
 	map.style.width = (getWindowWidth() - 20) + "px";
 	if (map.updateSize) {
 		map.updateSize();
@@ -197,21 +197,21 @@ function handleMeasurements(event) {
 	var order = event.order;
 	//convert to nautical miles
 	var measure = event.measure * 0.539957;
-	var element = document.getElementById('output');
+	
+	var element = zk.Widget.$("$output");
 	var out = "";
 	if (order == 1) {
-		out += "measure: " + measure.toFixed(3) + " Nm";
+		out += measure.toFixed(3) + " Nm";
 	} else {
-		out += "measure: " + measure.toFixed(3) + " Nm" + "<sup>2</"
-				+ "sup>";
+		out += measure.toFixed(3) + " Nm" + "<sup>2</sup>";
 	}
-	element.innerHTML = out;
+	element.setValue(out);
 }
 
-function toggleControl(element) {
+function toggleControl(cmd) {
 	for (key in measureControls) {
 		var control = measureControls[key];
-		if (element.value == key && element.checked) {
+		if (cmd == key ) {
 			control.activate();
 		} else {
 			control.deactivate();

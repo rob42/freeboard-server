@@ -48,11 +48,10 @@ function initWind() {
 		height : document.getElementById('canvasWindApp').height,
 		lcdDecimals : 1,
 		lcdColor: steelseries.LcdColor.BEIGE,
-		headerString : "Knots Apparent",
-		headerStringVisible : true,
+		unitString : "Knots(A)",
+		unitStringVisible : true,
 		detailString : "Avg: ",
 		detailStringVisible : true,
-		
 	});
 
 	// wind dir
@@ -73,8 +72,8 @@ function initWind() {
 		height : document.getElementById('canvasWindTrue').height,
 		lcdDecimals : 1,
 		lcdColor: steelseries.LcdColor.BEIGE,
-		headerString : "Knots True",
-		headerStringVisible : true,
+		unitString : "Knots(T)",
+		unitStringVisible : true,
 		detailString : "Avg: ",
 		detailStringVisible : true,
 	});
@@ -103,8 +102,8 @@ function initWind() {
 		
 		if (m.data && m.data.indexOf('WSA') >= 0) {
 			var c = m.data.substring(m.data.indexOf('WSA') + 4);
-			lcdWindApp.setValue(c);
-			lcdWindTrue.setValue(c);
+			lcdWindApp.setValue(parseFloat(c));
+			lcdWindTrue.setValue(parseFloat(c));
 		}
 		if (m.data && m.data.indexOf('WDA') >= 0) {
 			var c = m.data.substring(m.data.indexOf('WDA') + 4);

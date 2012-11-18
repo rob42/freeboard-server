@@ -1,22 +1,34 @@
 <?page title="Freeboard"?>
 <?script src="./js/jquery-1.8.2.min.js"?>
+<?script src="./js/OpenLayers.js" ?>
+<?script src="./js/layers.js" ?>
+<?script src="./js/chartplotter.js" ?>
 <?script src="./js/tween-min.js"?>
 <?script src="./js/steelseries.js"?>
 <?script src="./js/logg.js"?>
 <?script src="./js/wind2.js"?>
 <zk>
+	<style>
+		#map { height: 100%; border: 1px solid #888; }
+
+		.olImageLoadError { /* when OL encounters a 404, don't display the pink image */ display: none !important; }
+	</style>
 	<window id="mainWindow"
+		xmlns:w="http://www.zkoss.org/2005/zk/client"
 		apply="nz.co.fortytwo.freeboard.zk.InstrumentViewModel" vflex="true"
 		style="margin-left:auto;background: white">
-		<borderlayout style="overflow: visible" >
-			<west splittable="true" collapsible="true" width="40%" style="overflow: visible" >
-				<borderlayout style="overflow: visible" >
-					<north splittable="true" collapsible="true" vflex="min" hflex="min" style="overflow: visible" >
+		<borderlayout style="overflow: visible">
+			<west splittable="true" collapsible="true" width="40%"
+				style="overflow: visible">
+				<borderlayout style="overflow: visible">
+					<north splittable="true" collapsible="true"
+						vflex="min" hflex="min" style="overflow: visible">
 						<!-- upper left -->
 						<include src="./logg.zul" vflex="min"
 							hflex="min" style="overflow: visible" />
 					</north>
-					<center vflex="min" hflex="min" style="overflow: visible" >
+					<center vflex="min" hflex="min"
+						style="overflow: visible">
 						<!-- lower left -->
 						<include src="./wind2.zul" vflex="min"
 							hflex="min" style="overflow: visible" />
@@ -24,12 +36,62 @@
 				</borderlayout>
 			</west>
 			<center hflex="1" vflex="1">
-				<iframe src="./chartplotter/index.html" vflex="1"
-					hflex="1" />
+				<div vflex="1" hflex="1">
+					<html>
+						<div id="map"></div>
+					</html>
+					<toolbar orient="horizontal">
+						<label value="Mode: " style="padding-right:0px; padding-left:10px;"/>
+						<radiogroup name="type">
+							<radio value="none" id="noneToggle"
+								w:onClick="toggleControl('none');" checked="true" />
+							<label>Navigate</label>
+							<radio value="line" id="lineToggle"
+								w:onClick="toggleControl('line');" />
+							<label>Measure</label>
+						</radiogroup>
+						<label id="output" style="padding-right:0px; padding-left:10px;"/>
+						<label id="options" style="padding-right:0px; padding-left:10px;"/>
+						<label id="status" style="padding-right:0px; padding-left:10px;"/>
+					</toolbar>
+					<script type="text/javascript" defer="true">
+						initCharts(); 
+						posInit();
+						resize();
+					</script>
+				</div>
 			</center>
+			<south>
+				<div>
+					<toolbar orient="horizontal">
+						<toolbarbutton id="help" label="Help"
+							popup="helpPopup" />
+							<toolbarbutton label="Floating" href="/index.zul"/>
+					</toolbar>
+					
+					<popup id="helpPopup">
+						<html>
+
+							
+							<![CDATA[ <h2>Freeboard Help</H2> <p>To
+							resize the instruments use the + and -
+							buttons within the instruments</p> <p>To
+							resize or collapse the panels click-drag on
+							the panel divider bar</p> <p>Click-drag the
+							chart to scroll in any direction</p> <p>Use
+							the blue + and - buttons in top left to zoom
+							the chart, or use mouse wheel</p> <p>The
+							blue + tab at the top right to manage chart
+							layers</p> ]]>
+							
+							
+						</html>
+					</popup>
+				</div>
+			</south>
 		</borderlayout>
 
-
-
 	</window>
+
+
 </zk>

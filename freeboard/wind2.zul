@@ -51,6 +51,6 @@
 	</vlayout>
 	<script type="text/javascript" defer="true">
 		initWind(); 
-		resizeWind(-0.1)
+		resizeWind(-0.4)
 	</script>
 </zk>
