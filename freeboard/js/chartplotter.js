@@ -6,7 +6,7 @@ var chartProjection = new OpenLayers.Projection("EPSG:900913");
 var screenProjection = new OpenLayers.Projection("EPSG:4326");
 var shipMarker = new OpenLayers.Layer.Vector('Ship', {
     styleMap: new OpenLayers.StyleMap({
-        externalGraphic: '../js/img/marker.png',
+        externalGraphic: './js/img/marker.png',
         graphicWidth: 20, graphicHeight: 24, graphicYOffset: -24,
         title: '${tooltip}'
     })
