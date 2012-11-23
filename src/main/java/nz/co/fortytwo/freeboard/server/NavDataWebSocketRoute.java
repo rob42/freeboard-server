@@ -81,7 +81,7 @@ public class NavDataWebSocketRoute extends RouteBuilder {
 		from("seda:input")
 			.process(nmeaProcessor)
 			.process(imuProcessor)
-			.split(body(String.class).tokenize("\n"))
+			//.split(body(String.class).tokenize("\n"))
 			.to("log:nz.co.fortytwo?level=DEBUG")
 			// and push to all web socket subscribers 
 			.to("websocket:navData?sendToAll=true");

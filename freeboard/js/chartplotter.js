@@ -238,21 +238,23 @@ function setPosition(lat, lon){
 
 function ChartPlotter () {
 	this.onmessage = function (m) {
-
+		var mArray=m.data.split(",");
+		jQuery.each(mArray, function(i, data) {
+			
+			if (data && data.indexOf('LAT') >= 0) {
+				var c = data.substring(data.indexOf('LAT') + 4);
+				lat=c;
+				//alert(lat);
+				setPosition(lat,lon);
+			}
+			if (data && data.indexOf('LON') >= 0) {
+				var c = data.substring(data.indexOf('LON') + 4);
+				lon=c;
+				setPosition(lat,lon);
+			}
+		});
 		
-		if (m.data && m.data.indexOf('LAT') >= 0) {
-			var c = m.data.substring(m.data.indexOf('LAT') + 4);
-			lat=c;
-			//alert(lat);
-			setPosition(lat,lon);
-		}
-		if (m.data && m.data.indexOf('LON') >= 0) {
-			var c = m.data.substring(m.data.indexOf('LON') + 4);
-			lon=c;
-			setPosition(lat,lon);
-		}
-		
-	};
+	}
 	
 }
 function posInit(){
