@@ -1,3 +1,5 @@
+
+#if BOARD_VERSION < 3
 // We are using an oversampling and averaging method to increase the ADC resolution
 // The theorical ADC resolution is now 11.7 bits. Now we store the ADC readings in float format
 void Read_adc_raw(void)
@@ -36,7 +38,7 @@ float read_adc(int select)
     Serial.print("!!!ADC:1,VAL:");
     Serial.print (temp);
     Serial.print (",TOW:");
-    Serial.print (iTOW);  
+    Serial.print (GPS.time);  
     Serial.println("***");
 #endif
 #if PERFORMANCE_REPORTING == 1
@@ -51,7 +53,7 @@ float read_adc(int select)
     Serial.print("!!!ADC:2,VAL:");
     Serial.print (temp);
     Serial.print (",TOW:");
-    Serial.print (iTOW);  
+    Serial.print (GPS.time);  
     Serial.println("***");
 #endif    
 #if PERFORMANCE_REPORTING == 1
@@ -93,3 +95,29 @@ ISR(ADC_vect)
   // start the conversion
   ADCSRA|= (1<<ADSC);
 }
+#endif
+
+#if BOARD_VERSION == 3
+// Assign sensor values to AN[] array (we use this function for compatibility)
+void Read_adc_raw()
+{
+  MPU6000_Read();    // Read MPU6000 sensor values
+  AN[0] = gyroX;   
+  AN[1] = gyroY;
+  AN[2] = gyroZ;
+  AN[3] = accelX;
+  AN[4] = accelY;
+  AN[5] = accelZ;  
+}
+
+// Returns an analog value with the offset corrected (calibrated value)
+float read_adc(int select)
+{
+  if (SENSOR_SIGN[select]<0) {
+    return (AN_OFFSET[select]-AN[select]);
+  }
+  else {
+    return (AN[select]-AN_OFFSET[select]);
+  }
+}
+#endif

@@ -60,9 +60,9 @@ public:
 
 private:
     const char  *_name;         ///< name of the current test
-    bool        _fail;          ///< set if any ::require calls indicate the test failed
-    static int  _passed;        ///< global pass count
-    static int  _failed;        ///< global fail count
+    bool _fail;                 ///< set if any ::require calls indicate the test failed
+    static int16_t _passed;             ///< global pass count
+    static int16_t _failed;             ///< global fail count
 };
 
 /// Constructor
@@ -104,8 +104,8 @@ Test::report()
     Serial.printf("\n%d passed  %d failed\n", _passed, _failed);
 }
 
-int Test::_passed = 0;
-int Test::_failed = 0;
+int16_t Test::_passed = 0;
+int16_t Test::_failed = 0;
 
 /// Start a new test.
 ///
@@ -115,7 +115,7 @@ int Test::_failed = 0;
 /// the end of the block (or until the _test object that is created otherwise
 /// goes out of scope).
 ///
-#define TEST(name)      Test _test(#name)
+#define TEST(name)      Test _test(# name)
 
 /// Attach an expression to the test's success criteria.
 ///
@@ -123,5 +123,5 @@ int Test::_failed = 0;
 /// it does not, the text of the expression is output as a diagnostic
 /// and the test is marked as a failure.
 ///
-#define REQUIRE(expr)   _test.require(expr, #expr)
+#define REQUIRE(expr)   _test.require(expr, # expr)
 

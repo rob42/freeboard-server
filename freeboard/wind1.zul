@@ -2,6 +2,7 @@
 <?script src="./js/jquery-1.8.2.min.js"?>
 <?script src="./js/tween-min.js"?>
 <?script src="./js/steelseries.js"?>
+<?script src="./js/websocket.js"?>
 <?script src="./js/wind.js"?>
 <zk xmlns:w="http://www.zkoss.org/2005/zk/client">
 <style>
@@ -45,5 +46,5 @@
 		</html>
 
 	</hlayout>
-	<script type="text/javascript" defer="true">initWind(); resizeWind(-0.3)</script>
+	<script type="text/javascript" defer="true">initSocket();initWind(); resizeWind(-0.3)</script>
 </zk>

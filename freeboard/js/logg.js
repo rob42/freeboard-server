@@ -20,11 +20,52 @@ function resizeLog(amount){
 	this.initLogg();
 	
 }
+function Logg () {
+	this.onmessage = function (m) {
+		if (m.data && m.data.indexOf('LAT') >= 0) {
+			var c = parseFloat(m.data.substring(m.data.indexOf('LAT') + 4));
+			//lcdLat.setValue(parseFloat(c));
+			if(c>0){
+				lcdLat.setValue(c.toFixed(5)+' N');
+			}else{
+				lcdLat.setValue(Math.abs(c.toFixed(5))+' S');
+			}
+
+		}
+		if (m.data && m.data.indexOf('LON') >= 0) {
+			var c = parseFloat(m.data.substring(m.data.indexOf('LON') + 4));
+			if(c>0){
+				lcdLon.setValue(c.toFixed(5)+' E');
+			}else{
+				lcdLon.setValue(c.toFixed(5)+' W');
+			}
+
+		}
+		if (m.data && m.data.indexOf('SOG') >= 0) {
+			var c = m.data.substring(m.data.indexOf('SOG') + 4);
+			lcdLog.setValue(parseFloat(c));
+
+		}
+		if (m.data && m.data.indexOf('MGH') >= 0) {
+			var c = m.data.substring(m.data.indexOf('MGH') + 4);
+			lcdHeading.setValue(parseFloat(c));
+		}
+		if (m.data && m.data.indexOf('YAW') >= 0) {
+			var c = m.data.substring(m.data.indexOf('YAW') + 4);
+			// lcdWaypoint.setValue(parseFloat(c));
+			// -180 <> 180
+			if (parseFloat(c) >= 179) {
+				lcdWaypoint.setValue(-(360 - parseFloat(c)));
+			} else {
+				lcdWaypoint.setValue(parseFloat(c));
+			}
+		}
+	};
+}
+
+
+
 function initLogg() {
-
-	// Define some sections for wind
-	
-
 
 	// Initialzing lcds
 	// log
@@ -92,54 +133,6 @@ function initLogg() {
 	});
 	lcdWaypoint.setValue(0);
 
-	// make a web socket
 
-	var location = "ws://" + window.location.hostname + ":9090/navData";
-	this._ws = new WebSocket(location);
-	this._ws.onopen = function() {
-	};
-	this._ws.onmessage = function(m) {
-
-		if (m.data && m.data.indexOf('LAT') >= 0) {
-			var c = parseFloat(m.data.substring(m.data.indexOf('LAT') + 4));
-			//lcdLat.setValue(parseFloat(c));
-			if(c>0){
-				lcdLat.setValue(c.toFixed(5)+' N');
-			}else{
-				lcdLat.setValue(Math.abs(c.toFixed(5))+' S');
-			}
-
-		}
-		if (m.data && m.data.indexOf('LON') >= 0) {
-			var c = parseFloat(m.data.substring(m.data.indexOf('LON') + 4));
-			if(c>0){
-				lcdLon.setValue(c.toFixed(5)+' E');
-			}else{
-				lcdLon.setValue(c.toFixed(5)+' W');
-			}
-
-		}
-		if (m.data && m.data.indexOf('LOG') >= 0) {
-			var c = m.data.substring(m.data.indexOf('LOG') + 4);
-			lcdLog.setValue(parseFloat(c));
-
-		}
-		if (m.data && m.data.indexOf('HDG') >= 0) {
-			var c = m.data.substring(m.data.indexOf('HDG') + 4);
-			lcdHeading.setValue(parseFloat(c));
-		}
-		if (m.data && m.data.indexOf('WPT') >= 0) {
-			var c = m.data.substring(m.data.indexOf('WPT') + 4);
-			// lcdWaypoint.setValue(parseFloat(c));
-			// -180 <> 180
-			if (parseFloat(c) >= 179) {
-				lcdWaypoint.setValue(-(360 - parseFloat(c)));
-			} else {
-				lcdWaypoint.setValue(parseFloat(c));
-			}
-		}
-	};
-	this._ws.onclose = function() {
-		this._ws = null;
-	};
+wsList.push(new Logg());
 }

@@ -30,7 +30,7 @@ void Normalize(void)
     Serial.print (",ERR:");
     Serial.print (error);
     Serial.print (",TOW:");
-    Serial.print (iTOW);  
+    Serial.print (GPS.time);  
     Serial.println("***");    
 #endif
   } else {
@@ -44,7 +44,7 @@ void Normalize(void)
     Serial.print (",ERR:");
     Serial.print (error);
     Serial.print (",TOW:");
-    Serial.print (iTOW);  
+    Serial.print (GPS.time);  
     Serial.println("***");    
 #endif
   }
@@ -64,7 +64,7 @@ void Normalize(void)
     Serial.print (",ERR:");
     Serial.print (error);
     Serial.print (",TOW:");
-    Serial.print (iTOW);  
+    Serial.print (GPS.time);  
     Serial.println("***");    
 #endif
   } else {
@@ -78,7 +78,7 @@ void Normalize(void)
     Serial.print (",ERR:");
     Serial.print (error);
     Serial.print (",TOW:");
-    Serial.print (iTOW);  
+    Serial.print (GPS.time);  
     Serial.println("***");    
 #endif
   }
@@ -98,7 +98,7 @@ void Normalize(void)
     Serial.print (",ERR:");
     Serial.print (error);
     Serial.print (",TOW:");
-    Serial.print (iTOW);  
+    Serial.print (GPS.time);  
     Serial.println("***");    
 #endif
   } else {
@@ -110,7 +110,7 @@ void Normalize(void)
     Serial.print("???PRB:3,RNM:");
     Serial.print (renorm);
     Serial.print (",TOW:");
-    Serial.print (iTOW);  
+    Serial.print (GPS.time);  
     Serial.println("***");    
 #endif
   }
@@ -168,9 +168,13 @@ void Drift_correction(void)
   
   #if USE_MAGNETOMETER==1 
     // We make the gyro YAW drift correction based on compass magnetic heading
-    mag_heading_x = cos(MAG_Heading);
-    mag_heading_y = sin(MAG_Heading);
-    errorCourse=(DCM_Matrix[0][0]*mag_heading_y) - (DCM_Matrix[1][0]*mag_heading_x);  //Calculating YAW error
+    #if BOARD_VERSION < 3
+    errorCourse=(DCM_Matrix[0][0]*APM_Compass.Heading_Y) - (DCM_Matrix[1][0]*APM_Compass.Heading_X);  //Calculating YAW error
+    #endif
+    #if BOARD_VERSION == 3
+    errorCourse=(DCM_Matrix[0][0]*Heading_Y) - (DCM_Matrix[1][0]*Heading_X);  //Calculating YAW error
+    #endif
+    Serial.println(ToDeg(errorCourse));
     Vector_Scale(errorYaw,&DCM_Matrix[2][0],errorCourse); //Applys the yaw correction to the XYZ rotation of the aircraft, depeding the position.
     
     Vector_Scale(&Scaled_Omega_P[0],&errorYaw[0],Kp_YAW);
@@ -179,10 +183,10 @@ void Drift_correction(void)
     Vector_Scale(&Scaled_Omega_I[0],&errorYaw[0],Ki_YAW);
     Vector_Add(Omega_I,Omega_I,Scaled_Omega_I);//adding integrator to the Omega_I   
   #else  // Use GPS Ground course to correct yaw gyro drift
-  if(ground_speed>=SPEEDFILT)
+  if(GPS.ground_speed>=SPEEDFILT*100)		// Ground speed from GPS is in m/s
   {
-    COGX = cos(ToRad(ground_course));
-    COGY = sin(ToRad(ground_course));
+	COGX = cos(ToRad(GPS.ground_course/100.0));
+	COGY = sin(ToRad(GPS.ground_course/100.0));
     errorCourse=(DCM_Matrix[0][0]*COGY) - (DCM_Matrix[1][0]*COGX);  //Calculating YAW error
     Vector_Scale(errorYaw,&DCM_Matrix[2][0],errorCourse); //Applys the yaw correction to the XYZ rotation of the aircraft, depeding the position.
   
@@ -202,7 +206,7 @@ void Drift_correction(void)
     Serial.print (ToDeg(Integrator_magnitude));
 
     Serial.print (",TOW:");
-    Serial.print (iTOW);  
+    Serial.print (GPS.time);  
     Serial.println("***");    
 #endif
   }
@@ -212,8 +216,8 @@ void Drift_correction(void)
 /**************************************************/
 void Accel_adjust(void)
 {
- Accel_Vector[1] += Accel_Scale(speed_3d*Omega[2]);  // Centrifugal force on Acc_y = GPS_speed*GyroZ
- Accel_Vector[2] -= Accel_Scale(speed_3d*Omega[1]);  // Centrifugal force on Acc_z = GPS_speed*GyroY 
+ Accel_Vector[1] += Accel_Scale((GPS.ground_speed/100)*Omega[2]);  // Centrifugal force on Acc_y = GPS ground speed (m/s) * GyroZ
+ Accel_Vector[2] -= Accel_Scale((GPS.ground_speed/100)*Omega[1]);  // Centrifugal force on Acc_z = GPS ground speed (m/s) * GyroY 
 }
 /**************************************************/
 
@@ -223,9 +227,9 @@ void Matrix_update(void)
   Gyro_Vector[1]=Gyro_Scaled_Y(read_adc(1)); //gyro y pitch
   Gyro_Vector[2]=Gyro_Scaled_Z(read_adc(2)); //gyro Z yaw
   
-  Accel_Vector[0]=read_adc(3); // acc x
-  Accel_Vector[1]=read_adc(4); // acc y
-  Accel_Vector[2]=read_adc(5); // acc z
+  Accel_Vector[0]=Accel_Scale(read_adc(3)); // acc x
+  Accel_Vector[1]=Accel_Scale(read_adc(4)); // acc y
+  Accel_Vector[2]=Accel_Scale(read_adc(5)); // acc z
   
   Vector_Add(&Omega[0], &Gyro_Vector[0], &Omega_I[0]);  //adding proportional term
   Vector_Add(&Omega_Vector[0], &Omega[0], &Omega_P[0]); //adding Integrator term
@@ -268,12 +272,12 @@ void Matrix_update(void)
 void Euler_angles(void)
 {
   #if (OUTPUTMODE==2)         // Only accelerometer info (debugging purposes)
-    roll = atan2(Accel_Vector[1],Accel_Vector[2]);    // atan2(acc_y,acc_z)
-    pitch = -asin((Accel_Vector[0])/(double)GRAVITY); // asin(acc_x)
+    roll = 1.9*atan2(Accel_Vector[1],Accel_Vector[2]);    // atan2(acc_y,acc_z)
+    pitch = -1.9*asin((Accel_Vector[0])/(double)GRAVITY); // asin(acc_x)
     yaw = 0;
   #else
-    pitch = -asin(DCM_Matrix[2][0]);
-    roll = atan2(DCM_Matrix[2][1],DCM_Matrix[2][2]);
+    pitch = -1.9*asin(DCM_Matrix[2][0]);
+    roll = 1.9*atan2(DCM_Matrix[2][1],DCM_Matrix[2][2]);
     yaw = atan2(DCM_Matrix[1][0],DCM_Matrix[0][0]);
   #endif
 }

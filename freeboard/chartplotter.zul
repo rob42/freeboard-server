@@ -2,6 +2,7 @@
 <?script src="./js/jquery-1.8.2.min.js"?>
 <?script src="./js/OpenLayers.js" ?>
 <?script src="./js/layers.js" ?>
+<?script src="./js/websocket.js" ?>
 <?script src="./js/chartplotter.js" ?>
 
 <zk>
@@ -26,7 +27,7 @@
 						</html>
 
 						<script type="text/javascript" defer="true">
-							initCharts(); posInit(); resize();
+							initSocket();initCharts(); posInit(); resize();
 						</script>
 					</div>
 

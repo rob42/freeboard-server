@@ -17,6 +17,37 @@ function resizeWind(amount){
 	this.initWind();
 	
 }
+function Wind2 () {
+	this.onmessage = function (m) {
+	
+		if (m.data && m.data.indexOf('WSA') >= 0) {
+			var c = m.data.substring(m.data.indexOf('WSA') + 4);
+			lcdWindApp.setValue(parseFloat(c));
+			lcdWindTrue.setValue(parseFloat(c));
+		}
+		if (m.data && m.data.indexOf('WDA') >= 0) {
+			var c = m.data.substring(m.data.indexOf('WDA') + 4);
+			// -180 <> 180
+			if (parseFloat(c) >= 179) {
+				radialWindDirApp.setValueAnimatedLatest(-(360 - c));
+			} else {
+				radialWindDirApp.setValueAnimatedLatest(c);
+			}
+			
+			radialWindDirTrue.setValueAnimatedLatest(c);
+			// make average
+			avgArray[avgPos] = parseFloat(c);
+			avgPos = avgPos + 1;
+			if (avgPos >= avgArray.length)
+				avgPos = 0;
+			var v = 0;
+			for ( var i = 0; i < avgArray.length; i++) {
+				v = v + avgArray[i];
+			}
+			radialWindDirTrue.setValueAnimatedAverage(v / avgArray.length);
+		}
+	};
+}
 
 function initWind() {
 
@@ -93,42 +124,7 @@ function initWind() {
 		pointerTypeAverage : steelseries.PointerType.TYPE1,
 		backgroundColor: steelseries.BackgroundColor.CARBON,
 	});
-	// make a web socket
-	var location = "ws://" + window.location.hostname + ":9090/navData"
-	this._ws = new WebSocket(location);
-	this._ws.onopen = function() {
-	};
-	this._ws.onmessage = function(m) {
-		
-		if (m.data && m.data.indexOf('WSA') >= 0) {
-			var c = m.data.substring(m.data.indexOf('WSA') + 4);
-			lcdWindApp.setValue(parseFloat(c));
-			lcdWindTrue.setValue(parseFloat(c));
-		}
-		if (m.data && m.data.indexOf('WDA') >= 0) {
-			var c = m.data.substring(m.data.indexOf('WDA') + 4);
-			// -180 <> 180
-			if (parseFloat(c) >= 179) {
-				radialWindDirApp.setValueAnimatedLatest(-(360 - c));
-			} else {
-				radialWindDirApp.setValueAnimatedLatest(c);
-			}
-			
-			radialWindDirTrue.setValueAnimatedLatest(c);
-			// make average
-			avgArray[avgPos] = parseFloat(c);
-			avgPos = avgPos + 1;
-			if (avgPos >= avgArray.length)
-				avgPos = 0;
-			var v = 0;
-			for ( var i = 0; i < avgArray.length; i++) {
-				v = v + avgArray[i];
-			}
-			radialWindDirTrue.setValueAnimatedAverage(v / avgArray.length);
-		}
-	};
-	this._ws.onclose = function() {
-		this._ws = null;
-	};
+	
+	wsList.push(new Wind2());
 	
 }

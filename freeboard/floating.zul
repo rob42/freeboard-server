@@ -1,6 +1,7 @@
 <?page title="Freeboard"?>
 <?script src="./js/jquery-1.8.2.min.js"?>
 <?script src="./js/OpenLayers.js" ?>
+<?script src="./js/websocket.js"?>
 <?script src="./js/layers.js" ?>
 <?script src="./js/chartplotter.js" ?>
 <?script src="./js/tween-min.js"?>

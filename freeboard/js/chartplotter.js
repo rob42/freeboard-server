@@ -1,7 +1,8 @@
 //var map;
 var mapMinZoom = 7;
 var mapMaxZoom = 18;
-
+var lat=0;
+var lon=0;
 var chartProjection = new OpenLayers.Projection("EPSG:900913");
 var screenProjection = new OpenLayers.Projection("EPSG:4326");
 var shipMarker = new OpenLayers.Layer.Vector('Ship', {
@@ -235,17 +236,9 @@ function setPosition(lat, lon){
 
 }
 
-function posInit(){
-	//make a web socket
-	
-	var location = "ws://"+window.location.hostname+":9090/navData";
-	//alert(location);
-	var lat = 0;
-	var lon = 0;
-	this._ws = new WebSocket(location);
-	this._ws.onopen = function() {
-	};
-	this._ws.onmessage = function(m) {
+function ChartPlotter () {
+	this.onmessage = function (m) {
+
 		
 		if (m.data && m.data.indexOf('LAT') >= 0) {
 			var c = m.data.substring(m.data.indexOf('LAT') + 4);
@@ -260,8 +253,9 @@ function posInit(){
 		}
 		
 	};
-	this._ws.onclose = function() {
-		this._ws = null;
-	};
+	
+}
+function posInit(){
+	wsList.push(new ChartPlotter());
 }
 

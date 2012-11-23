@@ -13,7 +13,7 @@
  
  */
  
-#if USE_MAGNETOMETER == 1
+#if PRINT_MAGNETOMETER == 1
 
 // AVR LibC Includes
 #include <math.h>

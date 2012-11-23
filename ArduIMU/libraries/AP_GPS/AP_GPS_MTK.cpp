@@ -28,8 +28,14 @@ AP_GPS_MTK::init(enum GPS_Engine_Setting nav_setting)
     // XXX should assume binary, let GPS_AUTO handle dynamic config?
     _port->print(MTK_SET_BINARY);
 
-    // set 4Hz update rate
-    _port->print(MTK_OUTPUT_4HZ);
+    // set 5Hz update rate
+    _port->print(MTK_OUTPUT_5HZ);
+
+    // set SBAS on
+    _port->print(SBAS_ON);
+
+    // set WAAS on
+    _port->print(WAAS_ON);
 
     // set initial epoch code
     _epoch = TIME_OF_DAY;
@@ -51,12 +57,12 @@ AP_GPS_MTK::init(enum GPS_Engine_Setting nav_setting)
 bool
 AP_GPS_MTK::read(void)
 {
-    uint8_t	data;
-    int		numc;
-    bool	parsed = false;
+    uint8_t data;
+    int16_t numc;
+    bool parsed = false;
 
     numc = _port->available();
-    for (int i = 0; i < numc; i++) {	// Process bytes received
+    for (int16_t i = 0; i < numc; i++) {        // Process bytes received
 
         // read the next byte
         data = _port->read();
@@ -64,15 +70,15 @@ AP_GPS_MTK::read(void)
 restart:
         switch(_step) {
 
-            // Message preamble, class, ID detection
-            //
-            // If we fail to match any of the expected bytes, we
-            // reset the state machine and re-consider the failed
-            // byte as the first byte of the preamble.  This
-            // improves our chances of recovering from a mismatch
-            // and makes it less likely that we will be fooled by
-            // the preamble appearing as data in some other message.
-            //
+        // Message preamble, class, ID detection
+        //
+        // If we fail to match any of the expected bytes, we
+        // reset the state machine and re-consider the failed
+        // byte as the first byte of the preamble.  This
+        // improves our chances of recovering from a mismatch
+        // and makes it less likely that we will be fooled by
+        // the preamble appearing as data in some other message.
+        //
         case 0:
             if(PREAMBLE1 == data)
                 _step++;
@@ -87,9 +93,9 @@ restart:
         case 2:
             if (MESSAGE_CLASS == data) {
                 _step++;
-                _ck_b = _ck_a = data;					// reset the checksum accumulators
+                _ck_b = _ck_a = data;                                   // reset the checksum accumulators
             } else {
-                _step = 0;							// reset and wait for a message of the right class
+                _step = 0;                                                      // reset and wait for a message of the right class
                 goto restart;
             }
             break;
@@ -104,8 +110,8 @@ restart:
             }
             break;
 
-            // Receive message data
-            //
+        // Receive message data
+        //
         case 4:
             _buffer.bytes[_payload_counter++] = data;
             _ck_b += (_ck_a += data);
@@ -113,8 +119,8 @@ restart:
                 _step++;
             break;
 
-            // Checksum and message processing
-            //
+        // Checksum and message processing
+        //
         case 5:
             _step++;
             if (_ck_a != data) {
@@ -129,17 +135,18 @@ restart:
                 break;
             }
 
-            fix				= (_buffer.msg.fix_type == FIX_3D);
-            latitude		= _swapl(&_buffer.msg.latitude)  * 10;
-            longitude		= _swapl(&_buffer.msg.longitude) * 10;
-            altitude		= _swapl(&_buffer.msg.altitude);
-            ground_speed	= _swapl(&_buffer.msg.ground_speed);
-            ground_course	= _swapl(&_buffer.msg.ground_course) / 10000;
-            num_sats		= _buffer.msg.satellites;
+            fix                         = ((_buffer.msg.fix_type == FIX_3D) ||
+                                           (_buffer.msg.fix_type == FIX_3D_SBAS));
+            latitude            = _swapl(&_buffer.msg.latitude)  * 10;
+            longitude           = _swapl(&_buffer.msg.longitude) * 10;
+            altitude            = _swapl(&_buffer.msg.altitude);
+            ground_speed        = _swapl(&_buffer.msg.ground_speed);
+            ground_course       = _swapl(&_buffer.msg.ground_course) / 10000;
+            num_sats            = _buffer.msg.satellites;
 
             // time from gps is UTC, but convert here to msToD
-            long time_utc	= _swapl(&_buffer.msg.utc_time);
-            long temp = (time_utc/10000000);
+            int32_t time_utc    = _swapl(&_buffer.msg.utc_time);
+            int32_t temp = (time_utc/10000000);
             time_utc -= temp*10000000;
             time = temp * 3600000;
             temp = (time_utc/100000);
@@ -150,4 +157,63 @@ restart:
         }
     }
     return parsed;
+}
+
+/*
+  detect a MTK GPS
+ */
+bool
+AP_GPS_MTK::_detect(uint8_t data)
+{
+	static uint8_t payload_counter;
+	static uint8_t step;
+	static uint8_t ck_a, ck_b;
+
+	switch(step) {
+        case 1:
+            if (PREAMBLE2 == data) {
+                step++;
+                break;
+            }
+            step = 0;
+        case 0:
+			ck_b = ck_a = payload_counter = 0;
+            if(PREAMBLE1 == data)
+                step++;
+            break;
+        case 2:
+            if (MESSAGE_CLASS == data) {
+                step++;
+                ck_b = ck_a = data;
+            } else {
+                step = 0;
+            }
+            break;
+        case 3:
+            if (MESSAGE_ID == data) {
+                step++;
+                ck_b += (ck_a += data);
+                payload_counter = 0;
+            } else {
+                step = 0;
+            }
+            break;
+        case 4:
+            ck_b += (ck_a += data);
+            if (++payload_counter == sizeof(struct diyd_mtk_msg))
+                step++;
+            break;
+        case 5:
+            step++;
+            if (ck_a != data) {
+                step = 0;
+            }
+            break;
+        case 6:
+            step = 0;
+            if (ck_b == data) {
+				return true;
+            }
+	}
+    return false;
 }

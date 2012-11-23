@@ -2,6 +2,7 @@
 <?script src="./js/jquery-1.8.2.min.js"?>
 <?script src="./js/tween-min.js"?>
 <?script src="./js/steelseries.js"?>
+<?script src="./js/websocket.js"?>
 <?script src="./js/wind.js"?>
 <zk>
 	<style>

@@ -1,0 +1,4 @@
+eclipse.preferences.version=1
+visualeditor.custom_web_content_path=/freeboard-server
+visualeditor.custom_zk_package=zkee-bin-eval-6.5.0
+visualeditor.is_use_zks_lib=true

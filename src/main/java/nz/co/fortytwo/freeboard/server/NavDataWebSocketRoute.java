@@ -29,6 +29,7 @@ public class NavDataWebSocketRoute extends RouteBuilder {
 	private int port = 9090;
 	private String serialUrl;
 	private Processor nmeaProcessor= new NMEAProcessor();
+	private Processor imuProcessor= new IMUProcessor();
 	private String serialPort;
 	private SerialPortReader serial;
 	private Properties config;
@@ -79,6 +80,7 @@ public class NavDataWebSocketRoute extends RouteBuilder {
 		
 		from("seda:input")
 			.process(nmeaProcessor)
+			.process(imuProcessor)
 			.split(body(String.class).tokenize("\n"))
 			.to("log:nz.co.fortytwo?level=DEBUG")
 			// and push to all web socket subscribers 
@@ -107,35 +109,35 @@ public class NavDataWebSocketRoute extends RouteBuilder {
 				if(evt.getSentence() instanceof PositionSentence){
 					PositionSentence sen = (PositionSentence) evt.getSentence();
 					if(sen.getPosition().getLatHemisphere()==CompassPoint.SOUTH){
-						body.append("LAT=-"+sen.getPosition().getLatitude()+"\n");
+						body.append(Constants.LAT+"=-"+sen.getPosition().getLatitude()+"\n");
 					}else{
-						body.append("LAT="+sen.getPosition().getLatitude()+"\n");
+						body.append(Constants.LAT+"="+sen.getPosition().getLatitude()+"\n");
 					}
 					if(sen.getPosition().getLonHemisphere()==CompassPoint.WEST){
-						body.append("LON=-"+sen.getPosition().getLongitude()+"\n");
+						body.append(Constants.LON+"=-"+sen.getPosition().getLongitude()+"\n");
 					}else{
-						body.append("LON="+sen.getPosition().getLongitude()+"\n");
+						body.append(Constants.LON+"="+sen.getPosition().getLongitude()+"\n");
 					}
 				}
 				if(evt.getSentence() instanceof HeadingSentence){
 					HeadingSentence sen = (HeadingSentence) evt.getSentence();
 					if(sen.isTrue()){
-						body.append("HDT="+sen.getHeading()+"\n");
+						body.append(Constants.COG+"="+sen.getHeading()+"\n");
 					}else{
-						body.append("HDM="+sen.getHeading()+"\n");
+						body.append(Constants.MGH+"="+sen.getHeading()+"\n");
 					}
 				}
 				if(evt.getSentence() instanceof RMCSentence){
 					//;
 					RMCSentence sen = (RMCSentence) evt.getSentence();
-						body.append("LOG="+sen.getSpeed()+"\n");
+						body.append(Constants.SOG+"="+sen.getSpeed()+"\n");
 					}
 				if(evt.getSentence() instanceof VHWSentence){
 					//;
 					VHWSentence sen = (VHWSentence) evt.getSentence();
-						body.append("LOG="+sen.getSpeedKnots()+"\n");
-						body.append("HDM="+sen.getMagneticHeading()+"\n");
-						body.append("HDT="+sen.getHeading()+"\n");
+						body.append(Constants.SOG+"="+sen.getSpeedKnots()+"\n");
+						body.append(Constants.MGH+"="+sen.getMagneticHeading()+"\n");
+						body.append(Constants.COG+"="+sen.getHeading()+"\n");
 					}
 				
 				
@@ -143,13 +145,13 @@ public class NavDataWebSocketRoute extends RouteBuilder {
 				if(evt.getSentence() instanceof MWVSentence){
 					MWVSentence sen = (MWVSentence) evt.getSentence();
 					if(sen.isTrue()){
-						body.append("WDT="+sen.getAngle()+"\n"
-							+"WST="+sen.getSpeed()+"\n" 
-							+"WSU="+sen.getSpeedUnit()+"\n");
+						body.append(Constants.WDT+"="+sen.getAngle()+"\n"
+							+Constants.WST+"="+sen.getSpeed()+"\n" 
+							+Constants.WSU+"="+sen.getSpeedUnit()+"\n");
 					}else{
-						body.append("WDA="+sen.getAngle()+"\n"
-							+"WSA="+sen.getSpeed()+"\n" 
-							+"WSU="+sen.getSpeedUnit()+"\n");
+						body.append(Constants.WDA+"="+sen.getAngle()+"\n"
+							+Constants.WDA+"="+sen.getSpeed()+"\n" 
+							+Constants.WSU+"="+sen.getSpeedUnit()+"\n");
 					}
 				}
 				exchange.getOut().setBody(body);
