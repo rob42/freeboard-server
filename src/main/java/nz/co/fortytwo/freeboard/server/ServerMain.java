@@ -60,7 +60,7 @@ public class ServerMain {
 		route.setSerialUrl(config.getProperty(SERIAL_URL));
 		
 		logger.info("  Serial port:"+config.getProperty(SERIAL_PORT));
-		route.setSerialPort(config.getProperty(SERIAL_PORT));
+		route.setSerialPorts(config.getProperty(SERIAL_PORT));
 		
 		// add our routes to Camel
 		main.addRouteBuilder(route);

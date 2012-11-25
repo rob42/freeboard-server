@@ -1,8 +1,11 @@
 package nz.co.fortytwo.freeboard.server;
 
+import gnu.io.NoSuchPortException;
+
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 
-import gnu.io.NoSuchPortException;
 import net.sf.marineapi.nmea.event.SentenceEvent;
 import net.sf.marineapi.nmea.event.SentenceListener;
 import net.sf.marineapi.nmea.sentence.HeadingSentence;
@@ -17,7 +20,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.websocket.WebsocketComponent;
-import org.apache.commons.lang3.StringUtils;
 
 /**
  * Main camel route definition to handle Arduino to web processing
@@ -30,8 +32,8 @@ public class NavDataWebSocketRoute extends RouteBuilder {
 	private String serialUrl;
 	private Processor nmeaProcessor= new NMEAProcessor();
 	private Processor imuProcessor= new IMUProcessor();
-	private String serialPort;
-	private SerialPortReader serial;
+	private String serialPorts;
+	private List<SerialPortReader> serialPortList = new ArrayList<SerialPortReader>();
 	private Properties config;
 
 	public NavDataWebSocketRoute(Properties config) {
@@ -60,29 +62,34 @@ public class NavDataWebSocketRoute extends RouteBuilder {
 		if(Boolean.valueOf(config.getProperty(ServerMain.DEMO))){
 			
 			from("stream:file?fileName=" + serialUrl).
-			to("seda:input");
+			to("seda:input?multipleConsumers=true");
 		
 		}else{
 			// start a serial port reader
-			ProducerTemplate producer = wc.getCamelContext().createProducerTemplate();
-			serial = new SerialPortReader();
-			serial.setProducer(producer);
-			try{
-				serial.connect(serialPort);
-			}catch(NoSuchPortException nsp){
-				//TODO: notify to plug in the arduino!
-				nsp.printStackTrace();
-			}catch(Exception e){
-				//TODO: what should we do here?
-				e.printStackTrace();
+			//we could have several serial ports
+			String[] ports = serialPorts.split(",");
+			for (String port: ports){
+				ProducerTemplate producer = wc.getCamelContext().createProducerTemplate();
+				SerialPortReader serial = new SerialPortReader();
+				serial.setProducer(producer);
+				try{
+					serial.connect(port);
+					serialPortList.add(serial);
+				}catch(NoSuchPortException nsp){
+					//TODO: notify to plug in the arduino!
+					nsp.printStackTrace();
+				}catch(Exception e){
+					//TODO: what should we do here?
+					e.printStackTrace();
+				}
 			}
 		}
-		
-		from("seda:input")
+		//send to listeners
+		from("seda:input?multipleConsumers=true")
 			.process(nmeaProcessor)
 			.process(imuProcessor)
-			//.split(body(String.class).tokenize("\n"))
-			.to("log:nz.co.fortytwo?level=DEBUG")
+			//.split(body(String.class).tokenize(","))
+			.to("log:nz.co.fortytwo?level=INFO")
 			// and push to all web socket subscribers 
 			.to("websocket:navData?sendToAll=true");
 	}
@@ -109,35 +116,35 @@ public class NavDataWebSocketRoute extends RouteBuilder {
 				if(evt.getSentence() instanceof PositionSentence){
 					PositionSentence sen = (PositionSentence) evt.getSentence();
 					if(sen.getPosition().getLatHemisphere()==CompassPoint.SOUTH){
-						body.append(Constants.LAT+"=-"+sen.getPosition().getLatitude()+"\n");
+						body.append(Constants.LAT+"=-"+sen.getPosition().getLatitude()+",");
 					}else{
-						body.append(Constants.LAT+"="+sen.getPosition().getLatitude()+"\n");
+						body.append(Constants.LAT+"="+sen.getPosition().getLatitude()+",");
 					}
 					if(sen.getPosition().getLonHemisphere()==CompassPoint.WEST){
-						body.append(Constants.LON+"=-"+sen.getPosition().getLongitude()+"\n");
+						body.append(Constants.LON+"=-"+sen.getPosition().getLongitude()+",");
 					}else{
-						body.append(Constants.LON+"="+sen.getPosition().getLongitude()+"\n");
+						body.append(Constants.LON+"="+sen.getPosition().getLongitude()+",");
 					}
 				}
 				if(evt.getSentence() instanceof HeadingSentence){
 					HeadingSentence sen = (HeadingSentence) evt.getSentence();
 					if(sen.isTrue()){
-						body.append(Constants.COG+"="+sen.getHeading()+"\n");
+						body.append(Constants.COG+"="+sen.getHeading()+",");
 					}else{
-						body.append(Constants.MGH+"="+sen.getHeading()+"\n");
+						body.append(Constants.MGH+"="+sen.getHeading()+",");
 					}
 				}
 				if(evt.getSentence() instanceof RMCSentence){
 					//;
 					RMCSentence sen = (RMCSentence) evt.getSentence();
-						body.append(Constants.SOG+"="+sen.getSpeed()+"\n");
+						body.append(Constants.SOG+"="+sen.getSpeed()+",");
 					}
 				if(evt.getSentence() instanceof VHWSentence){
 					//;
 					VHWSentence sen = (VHWSentence) evt.getSentence();
-						body.append(Constants.SOG+"="+sen.getSpeedKnots()+"\n");
-						body.append(Constants.MGH+"="+sen.getMagneticHeading()+"\n");
-						body.append(Constants.COG+"="+sen.getHeading()+"\n");
+						body.append(Constants.SOG+"="+sen.getSpeedKnots()+",");
+						body.append(Constants.MGH+"="+sen.getMagneticHeading()+",");
+						body.append(Constants.COG+"="+sen.getHeading()+",");
 					}
 				
 				
@@ -145,13 +152,13 @@ public class NavDataWebSocketRoute extends RouteBuilder {
 				if(evt.getSentence() instanceof MWVSentence){
 					MWVSentence sen = (MWVSentence) evt.getSentence();
 					if(sen.isTrue()){
-						body.append(Constants.WDT+"="+sen.getAngle()+"\n"
-							+Constants.WST+"="+sen.getSpeed()+"\n" 
-							+Constants.WSU+"="+sen.getSpeedUnit()+"\n");
+						body.append(Constants.WDT+"="+sen.getAngle()+","
+							+Constants.WST+"="+sen.getSpeed()+"," 
+							+Constants.WSU+"="+sen.getSpeedUnit()+",");
 					}else{
-						body.append(Constants.WDA+"="+sen.getAngle()+"\n"
-							+Constants.WDA+"="+sen.getSpeed()+"\n" 
-							+Constants.WSU+"="+sen.getSpeedUnit()+"\n");
+						body.append(Constants.WDA+"="+sen.getAngle()+","
+							+Constants.WSA+"="+sen.getSpeed()+"," 
+							+Constants.WSU+"="+sen.getSpeedUnit()+",");
 					}
 				}
 				exchange.getOut().setBody(body);
@@ -163,12 +170,12 @@ public class NavDataWebSocketRoute extends RouteBuilder {
 		});
 	}
 
-	public String getSerialPort() {
-		return serialPort;
+	public String getSerialPorts() {
+		return serialPorts;
 	}
 
-	public void setSerialPort(String serialPort) {
-		this.serialPort = serialPort;
+	public void setSerialPorts(String serialPorts) {
+		this.serialPorts = serialPorts;
 	}
 	
 	/**
@@ -176,8 +183,10 @@ public class NavDataWebSocketRoute extends RouteBuilder {
 	 * down the readers, which are in their own threads.
 	 */
 	public void stopSerial(){
-		if(serial != null){
-			serial.setRunning(false);
+		for(SerialPortReader serial: serialPortList){
+			if(serial != null){
+				serial.setRunning(false);
+			}
 		}
 		
 	}

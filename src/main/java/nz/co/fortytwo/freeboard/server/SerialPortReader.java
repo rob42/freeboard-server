@@ -37,6 +37,7 @@ public class SerialPortReader {
 	 */
 	void connect ( String portName ) throws Exception
     {
+		
         CommPortIdentifier portIdentifier = CommPortIdentifier.getPortIdentifier(portName);
         if ( portIdentifier.isCurrentlyOwned() )
         {
@@ -84,7 +85,7 @@ public class SerialPortReader {
                 while ( running )
                 {
                     //System.out.print(new String(buffer,0,len));
-                    producer.asyncSendBody("seda:input", in.readLine());
+                    producer.asyncSendBody("seda:input?multipleConsumers=true", in.readLine());
                 }
             }
             catch ( IOException e )
