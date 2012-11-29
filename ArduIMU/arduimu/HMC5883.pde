@@ -123,7 +123,9 @@ void HMC5883_read()
     mag_x = ((((int)buff[0]) << 8) | buff[1])*SENSOR_SIGN[6] + mag_offset[0];    // X axis
     mag_y = ((((int)buff[4]) << 8) | buff[5])*SENSOR_SIGN[7] + mag_offset[1];    // Y axis
     mag_z = ((((int)buff[2]) << 8) | buff[3])*SENSOR_SIGN[8] + mag_offset[2];    // Z axis
-   
+    mag_x=mag_x*MAG_SCALE_X;
+    mag_y=mag_y*MAG_SCALE_Y;
+    mag_z=mag_z*MAG_SCALE_Z;
   }
 }
 
@@ -141,14 +143,21 @@ void HMC5883_calculate(float roll, float pitch)
   cos_pitch = cos(pitch);
   sin_pitch = sin(pitch);
   
+  //Example 1
+  //Xh = XM * cos(Pitch) + ZM * sin(Pitch)
+  //Yh = XM * sin(Roll) * sin(Pitch) + YM * cos(Roll) - ZM * sin(Roll) * cos(Pitch) 
+  
+  //Example2
   //Xh = bx * cos(theta) + by * sin(phi) * sin(theta) + bz * cos(phi) * sin(theta)
   //Yh = by * cos(phi) - bz * sin(phi)
-   //return wrap((atan2(-Yh, Xh) + variation))
+  //return wrap((atan2(-Yh, Xh) + variation))
     
   // Tilt compensated Magnetic field X component:
   Head_X = mag_x*cos_pitch+mag_y*sin_roll*sin_pitch+mag_z*cos_roll*sin_pitch;
+  
   // Tilt compensated Magnetic field Y component:
   Head_Y = mag_y*cos_roll-mag_z*sin_roll;
+  
   // Magnetic Heading
   Heading = atan2(-Head_Y,Head_X);
   

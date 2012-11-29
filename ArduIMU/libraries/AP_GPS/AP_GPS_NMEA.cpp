@@ -50,7 +50,8 @@ const prog_char AP_GPS_NMEA::_SiRF_init_string[] PROGMEM =
     "$PSRF103,6,0,0,1*22\r\n"   // MSS off
     "$PSRF103,8,0,0,1*2C\r\n"   // ZDA off
     "$PSRF151,1*3F\r\n"                 // WAAS on (not always supported)
-    "$PSRF106,21*0F\r\n"                // datum = WGS84
+    "$PSRF106,21*0F\r\n"		// datum = WGS84
+    //"$PSRF100,1,38400,8,1,0*3D\r\n"	//38400 baud 
     "";
 
 // MediaTek init messages //////////////////////////////////////////////////////

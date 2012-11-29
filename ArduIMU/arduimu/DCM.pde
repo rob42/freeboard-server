@@ -174,7 +174,7 @@ void Drift_correction(void)
     #if BOARD_VERSION == 3
     errorCourse=(DCM_Matrix[0][0]*Heading_Y) - (DCM_Matrix[1][0]*Heading_X);  //Calculating YAW error
     #endif
-    Serial.println(ToDeg(errorCourse));
+    //Serial.println(ToDeg(errorCourse));
     Vector_Scale(errorYaw,&DCM_Matrix[2][0],errorCourse); //Applys the yaw correction to the XYZ rotation of the aircraft, depeding the position.
     
     Vector_Scale(&Scaled_Omega_P[0],&errorYaw[0],Kp_YAW);

@@ -86,9 +86,6 @@ void printdata(void)
 		}else{
 			Serial.print(hdg);
 		}
-                Serial.print (",TTT:");
-                Serial.print(compHeading);
-		Serial.print (",");
                 #endif
 	#endif
       

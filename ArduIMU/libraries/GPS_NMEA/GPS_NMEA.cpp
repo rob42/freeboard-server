@@ -1,6 +1,6 @@
 /*
 	GPS_NMEA.cpp - Generic NMEA GPS library for Arduino
-	Code by Jordi Muñoz and Jose Julio. DIYDrones.com
+	Code by Jordi Muï¿½oz and Jose Julio. DIYDrones.com
 	This code works with boards based on ATMega168/328 and ATMega1280 (Serial port 1)
 
 	This library is free software; you can redistribute it and/or
@@ -66,7 +66,7 @@ void GPS_NMEA_Class::Init(void)
 	#endif
 }
 
-// This code don´t wait for data, only proccess the data available on serial port
+// This code donï¿½t wait for data, only proccess the data available on serial port
 // We can call this function on the main loop (50Hz loop)
 // If we get a complete packet this function call parse_nmea_gps() to parse and update the GPS info.
 void GPS_NMEA_Class::Read(void)
@@ -117,6 +117,7 @@ void GPS_NMEA_Class::Read(void)
  * 
  ****************************************************************/
 // Private Methods //////////////////////////////////////////////////////////////
+
 void GPS_NMEA_Class::parse_nmea_gps(void)
 {
   byte NMEA_check;

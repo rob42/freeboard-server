@@ -18,7 +18,7 @@
 #include <FastSerial.h>		// ArduPilot Fast Serial Library
 #include <AP_GPS.h>			// ArduPilot GPS library
 
-#include <Comp6DOF_n0m1.h>
+
 //**********************************************************************
 //  This section contains USER PARAMETERS !!!
 //
@@ -68,9 +68,24 @@
 // I use this web : http://www.ngdc.noaa.gov/geomagmodels/Declination.jsp
 #define MAGNETIC_DECLINATION 0.0 //21.75    // corrects magnetic bearing to true north
 // Magnetometer OFFSETS (magnetometer calibration) (only for ArduIMU v3)
-#define MAG_OFFSET_X -5
-#define MAG_OFFSET_Y 100
-#define MAG_OFFSET_Z 230
+//#define MAG_OFFSET_X -5
+//#define MAG_OFFSET_Y 100
+//#define MAG_OFFSET_Z 230
+#define MAG_OFFSET_X -11
+#define MAG_OFFSET_Y 102
+#define MAG_OFFSET_Z -306
+#define MAG_SCALE_X 1.0
+#define MAG_SCALE_Y 1.0
+#define MAG_SCALE_Z 1.05
+
+#define ACC_OFFSET_X 250
+#define ACC_OFFSET_Y -900
+#define ACC_OFFSET_Z 75
+
+//#define ACC_OFFSET_X 0
+//#define ACC_OFFSET_Y 0
+//#define ACC_OFFSET_Z 0
+
 
 /* Support for optional barometer (1 enabled, 0 dissabled) */
 #define USE_BAROMETER 0 	// use 1 if you want to get altitude using the optional absolute pressure sensor                  
@@ -81,7 +96,7 @@
 //**********************************************************************
 
 #define SOFTWARE_VER "1.9"
-Comp6DOF_n0m1 sixDOF;
+
 // GPS Selection
 FastSerialPort0(Serial);		// Instantiate the fast serial driver
 #if   GPS_PROTOCOL == 1
@@ -125,14 +140,19 @@ AP_GPS_MTK		GPS(&Serial);
 #define RED_LED_PIN 5
 #define BLUE_LED_PIN 6
 #define YELLOW_LED_PIN 5   // Yellow led is not used on ArduIMU v3
+// MPU6000 2g range ==> 16384
 // MPU6000 4g range => g = 4096 - later chips need 8192
 #define GRAVITY 8192  // This equivalent to 1G in the raw data coming from the accelerometer 
 #define Accel_Scale(x) x*(GRAVITY/9.81)//Scaling the raw data of the accel to actual acceleration in meters for seconds square
 
 // MPU6000 sensibility  (theorical 0.0152 => 1/65.6LSB/deg/s at 500deg/s) (theorical 0.0305 => 1/32.8LSB/deg/s at 1000deg/s) ( 0.0609 => 1/16.4LSB/deg/s at 2000deg/s)
-#define Gyro_Gain_X 0.0329
-#define Gyro_Gain_Y 0.0329
-#define Gyro_Gain_Z 0.0329
+// 250deg/s = .007633 =  1/131 LSBs/dps  
+
+
+//2000deg/sec
+#define Gyro_Gain_X 0.0305
+#define Gyro_Gain_Y 0.0305
+#define Gyro_Gain_Z 0.0305
 
 #define Gyro_Scaled_X(x) x*ToRad(Gyro_Gain_X) //Return the scaled ADC raw data of the gyro in radians for second
 #define Gyro_Scaled_Y(x) x*ToRad(Gyro_Gain_Y) //Return the scaled ADC raw data of the gyro in radians for second
@@ -144,8 +164,9 @@ AP_GPS_MTK		GPS(&Serial);
 
 #define Kp_ROLLPITCH 0.015
 #define Ki_ROLLPITCH 0.000010
-//#define Kp_YAW 1.2 //std
-#define Kp_YAW 0.015
+
+#define Kp_YAW 1.2 //std
+//#define Kp_YAW 0.015
 //#define Kp_YAW 2.5      //High yaw drift correction gain - use with caution!
 #define Ki_YAW 0.000005
 
@@ -259,19 +280,30 @@ volatile uint8_t analog_count[8];
  float Heading;
  float Heading_X;
  float Heading_Y;
- float compHeading;
  #endif
 //*****************************************************************************************
 void setup()
 { 
+ pinMode(SERIAL_MUX_PIN,OUTPUT);
+ if (GPS_CONNECTION == 0){
+    digitalWrite(SERIAL_MUX_PIN,HIGH); //Serial Mux
+ 
+     //check the GPS is at the right baud
+     int baud = autobaud();
+        //reset GPS.
+     Serial.print("$PSRF100,1,38400,8,1,0*3D\r\n");
+     Serial.flush();
+     Serial.end();
+  }
+  delay(2000);
+  //now start setup proper.
   Serial.begin(38400, 128, 16);
-  pinMode(SERIAL_MUX_PIN,OUTPUT); //Serial Mux
+  
   if (GPS_CONNECTION == 0){
     digitalWrite(SERIAL_MUX_PIN,HIGH); //Serial Mux
   } else {
     digitalWrite(SERIAL_MUX_PIN,LOW); //Serial Mux
   }
-
   pinMode(RED_LED_PIN,OUTPUT); //Red LED
   pinMode(BLUE_LED_PIN,OUTPUT); // Blue LED
   pinMode(YELLOW_LED_PIN,OUTPUT); // Yellow LED
@@ -320,6 +352,7 @@ void setup()
     #endif
     #if BOARD_VERSION == 3
       HMC5883_init();
+    
       HMC5883_set_offset(MAG_OFFSET_X,MAG_OFFSET_Y,MAG_OFFSET_Z);
     #endif
       debug_handler(3);
@@ -382,11 +415,7 @@ void loop() //Main Loop
     //Serial.print(ToDeg(yaw));
     //Serial.println();
      //enter compass data and accel data for calculation
-  sixDOF.compCompass((mag_z), (mag_x), mag_y, (accelZ), (accelX), accelY, true);
-
-  compHeading = sixDOF.atan2Int(sixDOF.yAxisComp(), sixDOF.xAxisComp());
-  compHeading = compHeading /100;
-  //compHeading += 180;
+ 
 
     #if PRINT_BINARY == 1
       printdata(); //Send info via serial
@@ -395,7 +424,7 @@ void loop() //Main Loop
     //Turn on the LED when you saturate any of the gyros.
     if((abs(Gyro_Vector[0])>=ToRad(300))||(abs(Gyro_Vector[1])>=ToRad(300))||(abs(Gyro_Vector[2])>=ToRad(300)))
     {
-      gyro_sat=1;
+      if(gyro_sat==0) gyro_sat++;
 #if PERFORMANCE_REPORTING == 1
       gyro_sat_count++;
 #endif
@@ -488,6 +517,7 @@ void loop() //Main Loop
 					printdata(); //Send info via serial
 				#endif
 				break;
+                     
 		}
      
   
@@ -667,6 +697,67 @@ void debug_handler(byte message)
 	#endif
   
 }
+
+bool testMsg(){
+	//clear buffer of rubbish
+	int x =0;
+	while( x<100){
+		if(Serial.available()){
+			Serial.read();
+			x++;
+		}
+	}
+	//5 secs
+	unsigned long now = millis();
+	bool valid=true;
+	while(now+5000>millis() && valid){
+		if(Serial.available()){
+			int c = Serial.read();
+			//Serial.print(c);
+			//Serial.print(",");
+			//not Cntrl-n or printable so invalid
+			if( c>128)valid=false;
+		}
+	}
+
+	return valid;
+}
+
+int autobaud(){
+	//try the various baud rates until one makes sense
+	//should only output simple NMEA [$A-Z0-9*\r\c]
+
+
+	//if(DEBUG)Serial.println("   try autobaud 4800..");
+	Serial.begin(4800,128, 16);
+        digitalWrite(SERIAL_MUX_PIN,HIGH); //Serial Mux
+	if(testMsg())return 4800;
+	Serial.end();
+	//if(DEBUG)Serial.println("   try autobaud 9600..");
+	Serial.begin(9600,128, 16);
+        digitalWrite(SERIAL_MUX_PIN,HIGH); //Serial Mux
+	if(testMsg())return 9600;
+	Serial.end();
+	//if(DEBUG)Serial.println("   try autobaud 19200..");
+	Serial.begin(19200,128, 16);
+        digitalWrite(SERIAL_MUX_PIN,HIGH); //Serial Mux
+	if(testMsg())return 19200;
+	Serial.end();
+	//if(DEBUG)Serial.println("   try autobaud 38400..");
+        Serial.begin(38400,128, 16);
+        digitalWrite(SERIAL_MUX_PIN,HIGH); //Serial Mux
+	if(testMsg())return 38400;
+	Serial.end();
+	//if(DEBUG)Serial.println("   try autobaud 57600..");
+	Serial.begin(57600,128, 16);
+        digitalWrite(SERIAL_MUX_PIN,HIGH); //Serial Mux
+	if(testMsg())return 57600;
+	Serial.end();
+	//if(DEBUG)Serial.println("   default to 4800..");
+	return 4800;
+}
+
+
    
 /*
 EEPROM memory map

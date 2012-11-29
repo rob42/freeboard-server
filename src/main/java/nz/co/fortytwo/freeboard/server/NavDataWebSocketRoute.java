@@ -74,13 +74,12 @@ public class NavDataWebSocketRoute extends RouteBuilder {
 				serial.setProducer(producer);
 				try{
 					serial.connect(port);
+					log.info("Comm port "+serial+" found and connected");
 					serialPortList.add(serial);
 				}catch(NoSuchPortException nsp){
-					//TODO: notify to plug in the arduino!
-					nsp.printStackTrace();
+					log.info("Comm port "+serial+" not found, or nothing connected");
 				}catch(Exception e){
-					//TODO: what should we do here?
-					e.printStackTrace();
+					log.error("Port "+serial+" failed",e);
 				}
 			}
 		}
