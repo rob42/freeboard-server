@@ -1,0 +1,44 @@
+<?page title="Freeboard"?>
+<?script src="./js/jquery-1.8.2.min.js"?>
+<?script src="./js/tween-min.js"?>
+<?script src="./js/steelseries.js"?>
+<?script src="./js/websocket.js"?>
+<?script src="./js/calibrate.js"?>
+
+<zk>
+	<style>
+		#map { height: 100%; border: 1px solid #888; }
+		.hboxRemoveWhiteStrips td.z-hbox-sep { width: 0; padding: 0;}
+		.olImageLoadError { /* when OL encounters a 404, don't display
+		the pink image */ display: none !important; }
+	</style>
+	<window id="mainWindow"
+		xmlns:w="http://www.zkoss.org/2005/zk/client"
+		apply="nz.co.fortytwo.freeboard.zk.InstrumentViewModel" vflex="true"
+		style="margin-left:auto;background: white">
+		<grid>
+			<columns>
+				<column></column>
+				<column>Min</column>
+				<column>Max</column>
+				<column>Offset</column>
+			</columns>
+			<rows>
+				<row><label value="X-Axis Accel"/><label id="x_min" value="test"/><label id="x_max"/><label id="x_cal"/></row>
+				<row><label value="Y-Axis Accel"/><label id="y_min"/><label id="y_max"/><label id="y_cal"/></row>
+				<row><label value="Z-Axis Accel"/><label id="z_min"/><label id="z_max"/><label id="z_cal"/></row>
+				<row></row>
+				<row><label value="X-Axis gyro"/><label id="x_gyromin"/><label id="x_gyromax"/><label id="x_gyrocal"/></row>
+				<row><label value="Y-Axis gyro"/><label id="y_gyromin"/><label id="y_gyromax"/><label id="y_gyrocal"/></row>
+				<row><label value="Z-Axis gyro"/><label id="z_gyromin"/><label id="z_gyromax"/><label id="z_gyrocal"/></row>
+				<row></row>
+				<row><label value="X-Axis Mag"/><label id="x_magmin"/><label id="x_magmax"/><label id="x_magcal"/></row>
+				<row><label value="Y-Axis Mag"/><label id="y_magmin"/><label id="y_magmax"/><label id="y_magcal"/></row>
+				<row><label value="Z-Axis Mag"/><label id="z_magmin"/><label id="z_magmax"/><label id="z_magcal"/></row>
+			</rows>
+		</grid>
+		
+		<script type="text/javascript" defer="true">initSocket();initCal();</script>
+	</window>
+
+</zk>

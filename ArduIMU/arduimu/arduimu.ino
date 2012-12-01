@@ -50,7 +50,7 @@
 #define OUTPUTMODE 1
 
 #define PRINT_DCM 0     //Will print the whole direction cosine matrix
-#define PRINT_ANALOGS 0 //Will print the analog raw data
+#define PRINT_ANALOGS 1 //Will print the analog raw data
 #define PRINT_EULER 1   //Will print the Euler angles Roll, Pitch and Yaw
 #define PRINT_GPS 1     //Will print GPS data
 #define PRINT_MAGNETOMETER 1     //Will print Magnetometer data (if magnetometer is enabled)
@@ -62,7 +62,7 @@
 #define PERFORMANCE_REPORTING 0  //Will include performance reports in the binary output ~ 1/2 min
 
 /* Support for optional magnetometer (1 enabled, 0 dissabled) */
-#define USE_MAGNETOMETER 0 // use 1 if you want to make yaw gyro drift corrections using the optional magnetometer   
+#define USE_MAGNETOMETER 1 // use 1 if you want to make yaw gyro drift corrections using the optional magnetometer   
  
 // Local magnetic declination (in degrees)
 // I use this web : http://www.ngdc.noaa.gov/geomagmodels/Declination.jsp
@@ -71,20 +71,20 @@
 //#define MAG_OFFSET_X -5
 //#define MAG_OFFSET_Y 100
 //#define MAG_OFFSET_Z 230
-#define MAG_OFFSET_X -11
-#define MAG_OFFSET_Y 102
-#define MAG_OFFSET_Z -306
-#define MAG_SCALE_X 1.0
+#define MAG_OFFSET_X 0
+#define MAG_OFFSET_Y 140
+#define MAG_OFFSET_Z -308
+#define MAG_SCALE_X 0.97
 #define MAG_SCALE_Y 1.0
-#define MAG_SCALE_Z 1.05
+#define MAG_SCALE_Z 1.075
 
-#define ACC_OFFSET_X 250
-#define ACC_OFFSET_Y -900
-#define ACC_OFFSET_Z 75
+//#define ACC_OFFSET_X -300
+//#define ACC_OFFSET_Y 210
+//#define ACC_OFFSET_Z 200
 
-//#define ACC_OFFSET_X 0
-//#define ACC_OFFSET_Y 0
-//#define ACC_OFFSET_Z 0
+#define ACC_OFFSET_X 0
+#define ACC_OFFSET_Y 0
+#define ACC_OFFSET_Z 0
 
 
 /* Support for optional barometer (1 enabled, 0 dissabled) */
@@ -143,16 +143,16 @@ AP_GPS_MTK		GPS(&Serial);
 // MPU6000 2g range ==> 16384
 // MPU6000 4g range => g = 4096 - later chips need 8192
 #define GRAVITY 8192  // This equivalent to 1G in the raw data coming from the accelerometer 
-#define Accel_Scale(x) x*(GRAVITY/9.81)//Scaling the raw data of the accel to actual acceleration in meters for seconds square
+#define Accel_Scale(x) x*(GRAVITY/9.81/10)//Scaling the raw data of the accel to actual acceleration in meters for seconds square
 
 // MPU6000 sensibility  (theorical 0.0152 => 1/65.6LSB/deg/s at 500deg/s) (theorical 0.0305 => 1/32.8LSB/deg/s at 1000deg/s) ( 0.0609 => 1/16.4LSB/deg/s at 2000deg/s)
 // 250deg/s = .007633 =  1/131 LSBs/dps  
 
 
 //2000deg/sec
-#define Gyro_Gain_X 0.0305
-#define Gyro_Gain_Y 0.0305
-#define Gyro_Gain_Z 0.0305
+#define Gyro_Gain_X 0.0605
+#define Gyro_Gain_Y 0.0605
+#define Gyro_Gain_Z 0.0605
 
 #define Gyro_Scaled_X(x) x*ToRad(Gyro_Gain_X) //Return the scaled ADC raw data of the gyro in radians for second
 #define Gyro_Scaled_Y(x) x*ToRad(Gyro_Gain_Y) //Return the scaled ADC raw data of the gyro in radians for second
@@ -165,8 +165,8 @@ AP_GPS_MTK		GPS(&Serial);
 #define Kp_ROLLPITCH 0.015
 #define Ki_ROLLPITCH 0.000010
 
-#define Kp_YAW 1.2 //std
-//#define Kp_YAW 0.015
+//#define Kp_YAW 1.2 //std
+#define Kp_YAW 0.6
 //#define Kp_YAW 2.5      //High yaw drift correction gain - use with caution!
 #define Ki_YAW 0.000005
 
@@ -282,8 +282,15 @@ volatile uint8_t analog_count[8];
  float Heading_Y;
  #endif
 //*****************************************************************************************
+String inputSerial = "";         // a string to hold incoming data
+boolean inputSerialComplete = false;  // whether the string is complete
+
 void setup()
 { 
+  pinMode(RED_LED_PIN,OUTPUT); //Red LED
+  pinMode(BLUE_LED_PIN,OUTPUT); // Blue LED
+  pinMode(YELLOW_LED_PIN,OUTPUT); // Yellow LED
+
  pinMode(SERIAL_MUX_PIN,OUTPUT);
  if (GPS_CONNECTION == 0){
     digitalWrite(SERIAL_MUX_PIN,HIGH); //Serial Mux
@@ -295,7 +302,7 @@ void setup()
      Serial.flush();
      Serial.end();
   }
-  delay(2000);
+  delay(1000);
   //now start setup proper.
   Serial.begin(38400, 128, 16);
   
@@ -304,9 +311,6 @@ void setup()
   } else {
     digitalWrite(SERIAL_MUX_PIN,LOW); //Serial Mux
   }
-  pinMode(RED_LED_PIN,OUTPUT); //Red LED
-  pinMode(BLUE_LED_PIN,OUTPUT); // Blue LED
-  pinMode(YELLOW_LED_PIN,OUTPUT); // Yellow LED
   pinMode(GROUNDSTART_PIN,INPUT);  // Remove Before Fly flag (pin 6 on ArduPilot)
   digitalWrite(GROUNDSTART_PIN,HIGH);
   
@@ -449,7 +453,7 @@ void loop() //Main Loop
 				break;
 				
 			case(2):
-				
+                               
 				break;
 				
 			case(3):
@@ -600,7 +604,7 @@ void startup_ground(void)
 	}
 
 	while (gps_fix_count > 0 && USE_BAROMETER) {
-		GPS.update();
+		//GPS.update();
 //  Serial.print(gpsFix);
 //  Serial.print(", ");
 //  Serial.println(gpsFixnew);
@@ -708,6 +712,7 @@ bool testMsg(){
 		}
 	}
 	//5 secs
+
 	unsigned long now = millis();
 	bool valid=true;
 	while(now+5000>millis() && valid){
@@ -726,29 +731,46 @@ bool testMsg(){
 int autobaud(){
 	//try the various baud rates until one makes sense
 	//should only output simple NMEA [$A-Z0-9*\r\c]
-
+        //blue led flashes once for each baud rate step. eg 4 flashes = 38400baud
 
 	//if(DEBUG)Serial.println("   try autobaud 4800..");
+        digitalWrite(BLUE_LED_PIN,HIGH);
+        delay(500);
+        digitalWrite(BLUE_LED_PIN,LOW);
 	Serial.begin(4800,128, 16);
         digitalWrite(SERIAL_MUX_PIN,HIGH); //Serial Mux
 	if(testMsg())return 4800;
+      
 	Serial.end();
+
 	//if(DEBUG)Serial.println("   try autobaud 9600..");
+        digitalWrite(BLUE_LED_PIN,HIGH);
+        delay(500);
+        digitalWrite(BLUE_LED_PIN,LOW);
 	Serial.begin(9600,128, 16);
         digitalWrite(SERIAL_MUX_PIN,HIGH); //Serial Mux
 	if(testMsg())return 9600;
 	Serial.end();
 	//if(DEBUG)Serial.println("   try autobaud 19200..");
+        digitalWrite(BLUE_LED_PIN,HIGH);
+        delay(500);
+        digitalWrite(BLUE_LED_PIN,LOW);
 	Serial.begin(19200,128, 16);
         digitalWrite(SERIAL_MUX_PIN,HIGH); //Serial Mux
 	if(testMsg())return 19200;
 	Serial.end();
 	//if(DEBUG)Serial.println("   try autobaud 38400..");
+        digitalWrite(BLUE_LED_PIN,HIGH);
+        delay(500);
+        digitalWrite(BLUE_LED_PIN,LOW);
         Serial.begin(38400,128, 16);
         digitalWrite(SERIAL_MUX_PIN,HIGH); //Serial Mux
 	if(testMsg())return 38400;
 	Serial.end();
 	//if(DEBUG)Serial.println("   try autobaud 57600..");
+        digitalWrite(BLUE_LED_PIN,HIGH);
+        delay(500);
+        digitalWrite(BLUE_LED_PIN,LOW);
 	Serial.begin(57600,128, 16);
         digitalWrite(SERIAL_MUX_PIN,HIGH); //Serial Mux
 	if(testMsg())return 57600;

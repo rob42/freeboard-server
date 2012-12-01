@@ -86,19 +86,19 @@ void MPU6000_Read()
     byte_H = MPU6000_SPI_read(MPUREG_ACCEL_XOUT_H);
     byte_L = MPU6000_SPI_read(MPUREG_ACCEL_XOUT_L);
     accelX = (byte_H<<8)| byte_L;
-    accelX+=ACC_OFFSET_X;
+    accelX=accelX+ACC_OFFSET_X;
     
     // Read AccelY
     byte_H = MPU6000_SPI_read(MPUREG_ACCEL_YOUT_H);
     byte_L = MPU6000_SPI_read(MPUREG_ACCEL_YOUT_L);
     accelY = (byte_H<<8)| byte_L;
-    accelY+=ACC_OFFSET_Y;
+    accelY=accelY+ACC_OFFSET_Y;
     
     // Read AccelZ
     byte_H = MPU6000_SPI_read(MPUREG_ACCEL_ZOUT_H);
     byte_L = MPU6000_SPI_read(MPUREG_ACCEL_ZOUT_L);
     accelZ = (byte_H<<8)| byte_L;
-    accelZ+=ACC_OFFSET_Z;
+    accelZ=accelZ+ACC_OFFSET_Z;
     
     // Read Temp
     //byte_H = MPU6000_SPI_read(MPUREG_TEMP_OUT_H);

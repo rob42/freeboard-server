@@ -9,13 +9,13 @@ void printdata(void)
 	Serial.print(",");
 	
 	#if PRINT_ANALOGS==1
-		Serial.print("AN0:");
+		Serial.print("AN0:"); //0,1,2 = gyro
 		Serial.print(read_adc(0)); //Reversing the sign. 
 		Serial.print(",AN1:");
 		Serial.print(read_adc(1));
 		Serial.print(",AN2:");
 		Serial.print(read_adc(2));  
-		Serial.print(",AN3:");
+		Serial.print(",AN3:"); //3,4,5 = accelerometer
 		Serial.print(read_adc(3));
 		Serial.print (",AN4:");
 		Serial.print(read_adc(4));
