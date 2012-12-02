@@ -25,7 +25,7 @@ function Logg () {
 		var mArray=m.data.split(",");
 		jQuery.each(mArray, function(i, data) {
 			if (data && data.indexOf('LAT') >= 0) {
-				var c = parseFloat(data.substring(data.indexOf('LAT') + 4));
+				var c = parseFloat(data.substring(4));
 				//lcdLat.setValue(parseFloat(c));
 				if(c>0){
 					lcdLat.setValue(c.toFixed(5)+' N');
@@ -35,7 +35,7 @@ function Logg () {
 	
 			}
 			if (data && data.indexOf('LON') >= 0) {
-				var c = parseFloat(data.substring(data.indexOf('LON') + 4));
+				var c = parseFloat(data.substring(4));
 				if(c>0){
 					lcdLon.setValue(c.toFixed(5)+' E');
 				}else{
@@ -44,16 +44,16 @@ function Logg () {
 	
 			}
 			if (data && data.indexOf('SOG') >= 0) {
-				var c = data.substring(data.indexOf('SOG') + 4);
+				var c = data.substring(4);
 				lcdLog.setValue(parseFloat(c));
 	
 			}
 			if (data && data.indexOf('MGH') >= 0) {
-				var c = data.substring(data.indexOf('MGH') + 4);
+				var c = data.substring(4);
 				lcdHeading.setValue(parseFloat(c));
 			}
 			if (data && data.indexOf('YAW') >= 0) {
-				var c = data.substring(data.indexOf('YAW') + 4);
+				var c = data.substring(4);
 				// lcdWaypoint.setValue(parseFloat(c));
 				// -180 <> 180
 				if (parseFloat(c) >= 179) {

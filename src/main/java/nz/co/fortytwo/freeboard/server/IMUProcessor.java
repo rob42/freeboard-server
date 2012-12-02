@@ -63,10 +63,10 @@ public class IMUProcessor implements Processor {
 				// trim start end.
 				bodyStr=bodyStr.substring(bodyStr.indexOf(",") + 1, bodyStr.lastIndexOf("***"));
 						//LAT:-412937350,LON:1732472000
-				String [] bodyArray=bodyStr.split(",");
-				for(String s:bodyArray){
+				//String [] bodyArray=bodyStr.split(",");
+				//for(String s:bodyArray){
 					
-				}
+				//}
 				exchange.getOut().setBody(bodyStr);
 
 			} catch (Exception e) {

@@ -86,6 +86,7 @@ void printdata(void)
 		}else{
 			Serial.print(hdg);
 		}
+                Serial.print (",");
                 #endif
 	#endif
       

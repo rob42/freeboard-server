@@ -35,6 +35,7 @@ public class NavDataWebSocketRoute extends RouteBuilder {
 	private String serialPorts;
 	private List<SerialPortReader> serialPortList = new ArrayList<SerialPortReader>();
 	private Properties config;
+	private Processor windProcessor = new WindProcessor();
 
 	public NavDataWebSocketRoute(Properties config) {
 		this.config=config;
@@ -87,7 +88,7 @@ public class NavDataWebSocketRoute extends RouteBuilder {
 		from("seda:input?multipleConsumers=true")
 			.process(nmeaProcessor)
 			.process(imuProcessor)
-			//.split(body(String.class).tokenize(","))
+			.process(windProcessor )
 			.to("log:nz.co.fortytwo?level=INFO")
 			// and push to all web socket subscribers 
 			.to("websocket:navData?sendToAll=true");

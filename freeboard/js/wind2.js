@@ -1,6 +1,8 @@
 //var  lcdWindTrue, radialWindDirTrue
-var avgArray = [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ];
-var avgPos = 0;
+var avgArrayA = [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ];
+var avgPosA = 0;
+var avgArrayT = [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ];
+var avgPosT = 0;
 
 function resizeWind(amount){
 	var size = $("#canvasWindDirTrue").width();
@@ -22,12 +24,15 @@ function Wind2 () {
 		var mArray=m.data.split(",");
 		jQuery.each(mArray, function(i, data) {
 			if (data && data.indexOf('WSA') >= 0) {
-				var c = data.substring(data.indexOf('WSA') + 4);
-				lcdWindApp.setValue(parseFloat(c));
-				lcdWindTrue.setValue(parseFloat(c));
+				var c = data.substring(4);
+				radialWindApp.setValueAnimated(c);
+			}
+			if (data && data.indexOf('WST') >= 0) {
+				var c = data.substring(4);
+				radialWindTrue.setValueAnimated(c);
 			}
 			if (data && data.indexOf('WDA') >= 0) {
-				var c = data.substring(data.indexOf('WDA') + 4);
+				var c = data.substring(4);
 				// -180 <> 180
 				if (parseFloat(c) >= 179) {
 					radialWindDirApp.setValueAnimatedLatest(-(360 - c));
@@ -35,17 +40,35 @@ function Wind2 () {
 					radialWindDirApp.setValueAnimatedLatest(c);
 				}
 				
+				// make average
+				avgArrayA[avgPosA] = parseFloat(c);
+				avgPosA = avgPosA + 1;
+				if (avgPosA >= avgArrayA.length)
+					avgPosA = 0;
+				var v = 0;
+				for ( var i = 0; i < avgArrayA.length; i++) {
+					v = v + avgArrayA[i];
+				}
+				if (parseFloat(c) >= 179) {
+					radialWindDirApp.setValueAnimatedAverage(-(360 - (v / avgArrayA.length)));
+				} else {
+					radialWindDirApp.setValueAnimatedAverage(v / avgArrayA.length);
+				}
+			}
+			if (data && data.indexOf('WDT') >= 0) {
+				var c = data.substring(4);
+				
 				radialWindDirTrue.setValueAnimatedLatest(c);
 				// make average
-				avgArray[avgPos] = parseFloat(c);
-				avgPos = avgPos + 1;
-				if (avgPos >= avgArray.length)
-					avgPos = 0;
+				avgArrayT[avgPosT] = parseFloat(c);
+				avgPosT = avgPosT + 1;
+				if (avgPosT >= avgArrayT.length)
+					avgPosT = 0;
 				var v = 0;
-				for ( var i = 0; i < avgArray.length; i++) {
-					v = v + avgArray[i];
+				for ( var i = 0; i < avgArrayT.length; i++) {
+					v = v + avgArrayT[i];
 				}
-				radialWindDirTrue.setValueAnimatedAverage(v / avgArray.length);
+				radialWindDirTrue.setValueAnimatedAverage(v / avgArrayT.length);
 			}
 		});
 	}

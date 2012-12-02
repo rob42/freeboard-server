@@ -150,9 +150,9 @@ AP_GPS_MTK		GPS(&Serial);
 
 
 //2000deg/sec
-#define Gyro_Gain_X 0.0605
-#define Gyro_Gain_Y 0.0605
-#define Gyro_Gain_Z 0.0605
+#define Gyro_Gain_X 0.032
+#define Gyro_Gain_Y 0.032
+#define Gyro_Gain_Z 0.0320
 
 #define Gyro_Scaled_X(x) x*ToRad(Gyro_Gain_X) //Return the scaled ADC raw data of the gyro in radians for second
 #define Gyro_Scaled_Y(x) x*ToRad(Gyro_Gain_Y) //Return the scaled ADC raw data of the gyro in radians for second
@@ -298,11 +298,11 @@ void setup()
      //check the GPS is at the right baud
      int baud = autobaud();
         //reset GPS.
-     Serial.print("$PSRF100,1,38400,8,1,0*3D\r\n");
-     Serial.flush();
+     Serial.println("$PSRF100,1,38400,8,1,0*3D\r\n");
+     delay(1000);
      Serial.end();
   }
-  delay(1000);
+digitalWrite(SERIAL_MUX_PIN,HIGH); //Serial Mux
   //now start setup proper.
   Serial.begin(38400, 128, 16);
   

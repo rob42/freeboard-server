@@ -242,13 +242,13 @@ function ChartPlotter () {
 		jQuery.each(mArray, function(i, data) {
 			
 			if (data && data.indexOf('LAT') >= 0) {
-				var c = data.substring(data.indexOf('LAT') + 4);
+				var c = data.substring(4);
 				lat=c;
 				//alert(lat);
 				setPosition(lat,lon);
 			}
 			if (data && data.indexOf('LON') >= 0) {
-				var c = data.substring(data.indexOf('LON') + 4);
+				var c = data.substring(4);
 				lon=c;
 				setPosition(lat,lon);
 			}
