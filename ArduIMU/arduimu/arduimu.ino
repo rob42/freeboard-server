@@ -50,7 +50,7 @@
 #define OUTPUTMODE 1
 
 #define PRINT_DCM 0     //Will print the whole direction cosine matrix
-#define PRINT_ANALOGS 1 //Will print the analog raw data
+#define PRINT_ANALOGS 0 //Will print the analog raw data
 #define PRINT_EULER 1   //Will print the Euler angles Roll, Pitch and Yaw
 #define PRINT_GPS 1     //Will print GPS data
 #define PRINT_MAGNETOMETER 1     //Will print Magnetometer data (if magnetometer is enabled)
@@ -62,7 +62,7 @@
 #define PERFORMANCE_REPORTING 0  //Will include performance reports in the binary output ~ 1/2 min
 
 /* Support for optional magnetometer (1 enabled, 0 dissabled) */
-#define USE_MAGNETOMETER 1 // use 1 if you want to make yaw gyro drift corrections using the optional magnetometer   
+#define USE_MAGNETOMETER 0 // use 1 if you want to make yaw gyro drift corrections using the optional magnetometer   
  
 // Local magnetic declination (in degrees)
 // I use this web : http://www.ngdc.noaa.gov/geomagmodels/Declination.jsp
@@ -71,12 +71,12 @@
 //#define MAG_OFFSET_X -5
 //#define MAG_OFFSET_Y 100
 //#define MAG_OFFSET_Z 230
-#define MAG_OFFSET_X 0
-#define MAG_OFFSET_Y 140
-#define MAG_OFFSET_Z -308
-#define MAG_SCALE_X 0.97
+#define MAG_OFFSET_X -4
+#define MAG_OFFSET_Y 115
+#define MAG_OFFSET_Z -299
+#define MAG_SCALE_X 1.0
 #define MAG_SCALE_Y 1.0
-#define MAG_SCALE_Z 1.075
+#define MAG_SCALE_Z 1.08
 
 //#define ACC_OFFSET_X -300
 //#define ACC_OFFSET_Y 210
@@ -465,6 +465,7 @@ void loop() //Main Loop
                                   #if BOARD_VERSION == 3
                                     HMC5883_read();                   // Read magnetometer
                                     HMC5883_calculate(roll, pitch);   // Calculate heading 
+                                    //HMC5883_calculate(atan2(-accelY, -accelZ) , atan2( accelX, sqrt( accelY * accelY + accelZ * accelZ)));   // Calculate heading 
                                   #endif
 				#endif
 				break;
