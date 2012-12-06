@@ -60,8 +60,8 @@ public class IMUProcessor implements Processor {
 		String bodyStr = exchange.getIn().getBody(String.class).trim();
 		if (bodyStr.startsWith("!!!VER:")) {
 			try {
-				// trim start end.
-				bodyStr=bodyStr.substring(bodyStr.indexOf(",") + 1, bodyStr.lastIndexOf("***"));
+				// trim start/end, add comma
+				bodyStr=bodyStr.substring(bodyStr.indexOf(",") + 1, bodyStr.lastIndexOf("***"))+",";
 						//LAT:-412937350,LON:1732472000
 				//String [] bodyArray=bodyStr.split(",");
 				//for(String s:bodyArray){

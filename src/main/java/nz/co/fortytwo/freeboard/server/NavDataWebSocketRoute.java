@@ -116,35 +116,35 @@ public class NavDataWebSocketRoute extends RouteBuilder {
 				if(evt.getSentence() instanceof PositionSentence){
 					PositionSentence sen = (PositionSentence) evt.getSentence();
 					if(sen.getPosition().getLatHemisphere()==CompassPoint.SOUTH){
-						body.append(Constants.LAT+"=-"+sen.getPosition().getLatitude()+",");
+						body.append(Constants.LAT+":-"+sen.getPosition().getLatitude()+",");
 					}else{
-						body.append(Constants.LAT+"="+sen.getPosition().getLatitude()+",");
+						body.append(Constants.LAT+":"+sen.getPosition().getLatitude()+",");
 					}
 					if(sen.getPosition().getLonHemisphere()==CompassPoint.WEST){
-						body.append(Constants.LON+"=-"+sen.getPosition().getLongitude()+",");
+						body.append(Constants.LON+":-"+sen.getPosition().getLongitude()+",");
 					}else{
-						body.append(Constants.LON+"="+sen.getPosition().getLongitude()+",");
+						body.append(Constants.LON+":"+sen.getPosition().getLongitude()+",");
 					}
 				}
 				if(evt.getSentence() instanceof HeadingSentence){
 					HeadingSentence sen = (HeadingSentence) evt.getSentence();
 					if(sen.isTrue()){
-						body.append(Constants.COG+"="+sen.getHeading()+",");
+						body.append(Constants.COG+":"+sen.getHeading()+",");
 					}else{
-						body.append(Constants.MGH+"="+sen.getHeading()+",");
+						body.append(Constants.MGH+":"+sen.getHeading()+",");
 					}
 				}
 				if(evt.getSentence() instanceof RMCSentence){
 					//;
 					RMCSentence sen = (RMCSentence) evt.getSentence();
-						body.append(Constants.SOG+"="+sen.getSpeed()+",");
+						body.append(Constants.SOG+":"+sen.getSpeed()+",");
 					}
 				if(evt.getSentence() instanceof VHWSentence){
 					//;
 					VHWSentence sen = (VHWSentence) evt.getSentence();
-						body.append(Constants.SOG+"="+sen.getSpeedKnots()+",");
-						body.append(Constants.MGH+"="+sen.getMagneticHeading()+",");
-						body.append(Constants.COG+"="+sen.getHeading()+",");
+						body.append(Constants.SOG+":"+sen.getSpeedKnots()+",");
+						body.append(Constants.MGH+":"+sen.getMagneticHeading()+",");
+						body.append(Constants.COG+":"+sen.getHeading()+",");
 					}
 				
 				
@@ -152,13 +152,13 @@ public class NavDataWebSocketRoute extends RouteBuilder {
 				if(evt.getSentence() instanceof MWVSentence){
 					MWVSentence sen = (MWVSentence) evt.getSentence();
 					if(sen.isTrue()){
-						body.append(Constants.WDT+"="+sen.getAngle()+","
-							+Constants.WST+"="+sen.getSpeed()+"," 
-							+Constants.WSU+"="+sen.getSpeedUnit()+",");
+						body.append(Constants.WDT+":"+sen.getAngle()+","
+							+Constants.WST+":"+sen.getSpeed()+"," 
+							+Constants.WSU+":"+sen.getSpeedUnit()+",");
 					}else{
-						body.append(Constants.WDA+"="+sen.getAngle()+","
-							+Constants.WSA+"="+sen.getSpeed()+"," 
-							+Constants.WSU+"="+sen.getSpeedUnit()+",");
+						body.append(Constants.WDA+":"+sen.getAngle()+","
+							+Constants.WSA+":"+sen.getSpeed()+"," 
+							+Constants.WSU+":"+sen.getSpeedUnit()+",");
 					}
 				}
 				exchange.getOut().setBody(body);

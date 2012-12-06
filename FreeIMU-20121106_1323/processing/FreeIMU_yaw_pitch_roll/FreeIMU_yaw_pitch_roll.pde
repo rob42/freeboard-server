@@ -243,8 +243,8 @@ void getMagHeading(float[] q, float[] ypr){
   float cos_pitch;
   float sin_pitch;
   
-  cos_roll = cos(ypr[2]);
-  sin_roll = sin(ypr[2]);
+  cos_roll = cos(-ypr[2]);
+  sin_roll = sin(-ypr[2]);
   cos_pitch = cos(ypr[1]);
   sin_pitch = sin(ypr[1]);
   
@@ -264,7 +264,7 @@ void getMagHeading(float[] q, float[] ypr){
   Head_Y = q[5]*cos_roll-q[6]*sin_roll;
   //Head_Y = q[4]* sin_roll * sin_pitch + q[5]*cos_roll - q[6]*sin_roll * cos_pitch;
   // Magnetic Heading
-  ypr[0] = atan2(-Head_Y,Head_X);
+  ypr[0] = atan2(-Head_Y,-Head_X);
   
 }
 

@@ -10,7 +10,8 @@
 #include <I2Cdev.h>
 #include <MPU60X0.h>
 #include <EEPROM.h>
-
+#include <FlexiTimer2.h>
+#include <AverageList.h>
 
 //#define DEBUG
 #include "DebugUtils.h"
@@ -19,48 +20,64 @@
 #include <Wire.h>
 #include <SPI.h>
 
-
+volatile boolean execute = false;
+volatile int interval = 0;
 float q[4];
 float qm[7];
-float m[3];
-int raw_values[9];
+//float m[3];
+int raw_values[11];
 float ypr[3]; // yaw pitch roll
+float yprm[4]; // yaw, pitch, roll, mag heading
 char str[256];
 float val[9];
 
+typedef volatile float rval; //change float to the datatype you want to use
+const byte MAX_NUMBER_OF_READINGS = 5;
+rval mghStorage[MAX_NUMBER_OF_READINGS] = {0.0};
+AverageList<rval> mghList = AverageList<rval>( mghStorage, MAX_NUMBER_OF_READINGS );
 
 // Set the FreeIMU object
 FreeIMU my3IMU = FreeIMU();
 //The command from the PC
 char cmd;
 
+/*
+ * Timer interrupt driven method to do time sensitive calculations
+ * The calc flag causes the main loop to execute other less sensitive calls.
+ */
+void calculate() {
+	//we create 100ms pings here
+	execute = true;
+	//we record the ping count out to 2 secs
+	interval++;
+	interval = interval % 20;
+}
+
 void setup() {
   Serial.begin(38400);
   Wire.begin();
+  
   my3IMU.init(true);
   
+  //setup timers
+  FlexiTimer2::set(100, calculate); // 100ms period
+  FlexiTimer2::start();
   // LED
   pinMode(13, OUTPUT);
+  mghList.reset();
 }
 
 
 void loop() {
   if(Serial.available()) {
     cmd = Serial.read();
+    //version
     if(cmd=='v') {
       sprintf(str, "FreeIMU library by %s, FREQ:%s, LIB_VERSION: %s, IMU: %s", FREEIMU_DEVELOPER, FREEIMU_FREQ, FREEIMU_LIB_VERSION, FREEIMU_ID);
       Serial.print(str);
       Serial.print('\n');
     }
-    else if(cmd=='r') {
-      uint8_t count = serial_busy_wait();
-      for(uint8_t i=0; i<count; i++) {
-        my3IMU.getRawValues(raw_values);
-        sprintf(str, "%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,", raw_values[0], raw_values[1], raw_values[2], raw_values[3], raw_values[4], raw_values[5], raw_values[6], raw_values[7], raw_values[8], raw_values[9], raw_values[10]);
-        Serial.print(str);
-        Serial.print('\n');
-      }
-    }
+    //used for calibration
     else if(cmd=='b') {
       uint8_t count = serial_busy_wait();
       for(uint8_t i=0; i<count; i++) {
@@ -78,6 +95,7 @@ void loop() {
         Serial.println();
       }
     }
+    //processing gui
     else if(cmd == 'q') {
       uint8_t count = serial_busy_wait();
       for(uint8_t i=0; i<count; i++) {
@@ -91,14 +109,14 @@ void loop() {
         qm[5]=val[7];
         qm[6]=val[8];
         //convert to YPR
-        my3IMU.getYawPitchRoll(ypr);
+        //my3IMU.getYawPitchRoll(yprm);
         //convert to magnetic heading
-        calcMagHeading();
+        //calcMagHeading();
         serialPrintFloatArr(qm, 7);
         Serial.println("");
       }
     }
-   
+   //write eeprom
     else if(cmd == 'c') {
       const uint8_t eepromsize = sizeof(float) * 6 + sizeof(int) * 6;
       while(Serial.available() < eepromsize) ; // wait until all calibration data are received
@@ -166,40 +184,46 @@ void loop() {
       }
     }
   }
-    
-       //!!!VER:1.9,RLL:-0.52,PCH:0.06,YAW:80.24,IMUH:253,MGX:44,MGY:-254,MGZ:-257,MGH:80.11,LAT:-412937350,LON:1732472000,ALT:14,COG:116,SOG:0,FIX:1,SAT:5,TOW:22504700***
-      //uint8_t count = serial_busy_wait();
-      //for(uint8_t i=0; i<count; i++) {
-        //quarternary
-        my3IMU.getQ(q);
-        qm[0]=q[0];
-        qm[1]=q[1];
-        qm[2]=q[2];
-        qm[3]=q[3];
-        //mag 
-        my3IMU.getValues(val);
-        qm[4]=val[6];
-        qm[5]=val[7];
-        qm[6]=val[8];
-        //convert to YPR
-        my3IMU.getYawPitchRollRad(ypr);
-        //convert to magnetic heading
-        calcMagHeading();
-        Serial.print("!!!VER:1.9,");
-        Serial.print("MGH:");
-        float h = degrees(ypr[0]);
-        if(h<0){
-          Serial.print(360.0+h);
-        }else{
-          Serial.print(h);
-        }
-        Serial.print(",PCH:");
-        Serial.print(degrees(ypr[1]));
-        Serial.print(",RLL:");
-        Serial.print(degrees(ypr[2]));
-        Serial.println("***");
+  if (execute) {
+    //do these every 100ms
+    //quarternary, updates AHRS
+    my3IMU.getQ(q);
+    if (interval % 2 == 0) {
+      // do every 200ms
+          //mag 
+          my3IMU.getValues(val);
        
-    
+          //convert to YPR
+          my3IMU.getYawPitchRollRad(yprm);
+          //convert to magnetic heading
+          calcMagHeading();
+          mghList.addValue(yprm[3]);
+    }
+    if (interval % 5 == 0) {
+	//do every 500ms
+
+         //ArduIMU output format
+         //!!!VER:1.9,RLL:-0.52,PCH:0.06,YAW:80.24,IMUH:253,MGX:44,MGY:-254,MGZ:-257,MGH:80.11,LAT:-412937350,LON:1732472000,ALT:14,COG:116,SOG:0,FIX:1,SAT:5,TOW:22504700***
+ 
+          Serial.print("!!!VER:1.9,");
+          Serial.print("MGH:");
+          float h = degrees(mghList.getTotalAverage());
+          if(h<0.0){
+            Serial.print(360.0+h);
+          }else{
+            Serial.print(h);
+          }
+          Serial.print(",YAW:");
+          Serial.print(degrees(yprm[0]));
+          Serial.print(",PCH:");
+          Serial.print(degrees(yprm[1]));
+          Serial.print(",RLL:");
+          Serial.print(degrees(yprm[2]));
+          Serial.println("***");
+          
+        }
+        execute = false;
+  }
     
   
 }
@@ -212,35 +236,27 @@ void calcMagHeading(){
   float cos_pitch;
   float sin_pitch;
   
-  cos_roll = cos(-ypr[2]);
-  sin_roll = sin(-ypr[2]);
-  cos_pitch = cos(ypr[1]);
-  sin_pitch = sin(ypr[1]);
+  cos_roll = cos(-yprm[2]);
+  sin_roll = sin(-yprm[2]);
+  cos_pitch = cos(yprm[1]);
+  sin_pitch = sin(yprm[1]);
   
-  //Example 1
-  //Xh = XM * cos(Pitch) + ZM * sin(Pitch)
-  //Yh = XM * sin(Roll) * sin(Pitch) + YM * cos(Roll) - ZM * sin(Roll) * cos(Pitch) 
-  
-  //Example2
+  //Example calc
   //Xh = bx * cos(theta) + by * sin(phi) * sin(theta) + bz * cos(phi) * sin(theta)
   //Yh = by * cos(phi) - bz * sin(phi)
   //return wrap((atan2(-Yh, Xh) + variation))
     
   // Tilt compensated Magnetic field X component:
-  Head_X = qm[4]*cos_pitch+qm[5]*sin_roll*sin_pitch+qm[6]*cos_roll*sin_pitch;
-  //Head_X = q[4]*cos_pitch +q[6]*sin_pitch;
+  Head_X = val[6]*cos_pitch+val[7]*sin_roll*sin_pitch+val[8]*cos_roll*sin_pitch;
   // Tilt compensated Magnetic field Y component:
-  Head_Y = qm[5]*cos_roll-qm[6]*sin_roll;
-  //Head_Y = q[4]* sin_roll * sin_pitch + q[5]*cos_roll - q[6]*sin_roll * cos_pitch;
+  Head_Y = val[7]*cos_roll-val[8]*sin_roll;
   // Magnetic Heading
-  ypr[0] = atan2(-Head_Y,-Head_X);
+  yprm[3] = atan2(-Head_Y,-Head_X);
   
 }
 
 char serial_busy_wait() {
-  //fire every 500ms
-  int now = millis();
-  while(!Serial.available()&& millis()>now+500) {
+  while(!Serial.available()) {
     ; // do nothing until ready
   }
   return Serial.read();

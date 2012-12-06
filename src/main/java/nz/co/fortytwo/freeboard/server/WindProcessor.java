@@ -17,35 +17,51 @@ public class WindProcessor implements Processor {
 				int apparentWind=0;
 				int apparentDirection=0;
 				float vesselSpeed=0;
+				boolean valid=false;
 				//int heading=0;
 				String [] bodyArray=bodyStr.split(",");
 				for(String s:bodyArray){
 					// we need HDG, and LOG
 					if(s.startsWith(Constants.SOG)){
-						vesselSpeed= Float.valueOf(s.substring(s.indexOf("=")+1));
+						vesselSpeed= Float.valueOf(s.substring(4));
+						valid=true;
 					}
 					if(s.startsWith(Constants.WSA)){
-						apparentWind= Integer.valueOf(s.substring(s.indexOf("=")+1));
+						apparentWind= Integer.valueOf(s.substring(4));
+						valid=true;
 					}
 					if(s.startsWith(Constants.WDA)){
-						apparentDirection= Integer.valueOf(s.substring(s.indexOf("=")+1));
+						apparentDirection= Integer.valueOf(s.substring(4));
+						valid=true;
 					}
 					//if(s.startsWith(Constants.COG)){
-					//	heading= Integer.valueOf(s.substring(s.indexOf("=")+1));
+					//	heading= Integer.valueOf(s.substring(4));
 					//}
 				}
-				//now calc and add to body
-				int trueWindSpeed = calcTrueWindSpeed(apparentWind, apparentDirection, vesselSpeed);
-				int trueWindDir = calcTrueWindDirection(apparentWind,apparentDirection, vesselSpeed);
-				bodyStr=bodyStr+",WDT="+trueWindDir+",WST="+trueWindSpeed;
-				
-				exchange.getOut().setBody(bodyStr);
+				if(valid){
+					//now calc and add to body
+					double trueWindSpeed = calcTrueWindSpeed(apparentWind, apparentDirection, vesselSpeed);
+					double trueWindDir = calcTrueWindDirection(apparentWind,apparentDirection, vesselSpeed);
+					if(!Double.isNaN(trueWindDir)){
+						bodyStr=bodyStr+"WDT:"+round(trueWindDir,1)+",";
+					}
+					if(!Double.isNaN(trueWindSpeed)){
+						bodyStr=bodyStr+"WST:"+round(trueWindSpeed,2)+",";
+					}
+					exchange.getOut().setBody(bodyStr);
+				}
 
 			} catch (Exception e) {
 				// e.printStackTrace();
 			}
 		
 
+	}
+	
+	double round(double val, int places){
+		double scale = Math.pow(10, places);
+		long iVal = Math.round (val*scale);
+		return iVal/scale;
 	}
 	
 	/**
@@ -57,7 +73,7 @@ public class WindProcessor implements Processor {
 	 * @param vesselSpeed
 	 * @return trueDirection 0 to 360 deg to the bow
 	 */
-	int calcTrueWindDirection(int apparentWind, int apparentDirection, float vesselSpeed){
+	double calcTrueWindDirection(int apparentWind, int apparentDirection, float vesselSpeed){
 		/*
 			 Y = 90 - D
 			a = AW * ( cos Y )
@@ -67,16 +83,16 @@ public class WindProcessor implements Processor {
 			True-Wind Angle = 90-arctangent ( b / a )
 		*/
                 apparentDirection=apparentDirection%360;
-		boolean stbd = apparentDirection<180;
-                if(!stbd){
-                   apparentDirection=360-apparentDirection; 
-                }
+		boolean stbd = apparentDirection<=180;
+        if(!stbd){
+           apparentDirection=360-apparentDirection; 
+        }
 		double y = 90-apparentDirection;
 		double a = apparentWind * Math.cos(Math.toRadians(y));
 		double b = (apparentWind * Math.sin(Math.toRadians(y)))-vesselSpeed;
 		double td = 90-Math.toDegrees(Math.atan((b/a)));
-		if(!stbd)return (int)(360-td);
-		return (int)td;
+		if(!stbd)return (360-td);
+		return td;
 				
 	}
 	
@@ -88,7 +104,7 @@ public class WindProcessor implements Processor {
 	 * @param vesselSpeed
 	 * @return
 	 */
-        int calcTrueWindSpeed(int apparentWind, int apparentDirection, float vesselSpeed){
+        double calcTrueWindSpeed(int apparentWind, int apparentDirection, float vesselSpeed){
                 apparentDirection=apparentDirection%360;
                 if(apparentDirection>180){
                    apparentDirection=360-apparentDirection; 
@@ -96,7 +112,7 @@ public class WindProcessor implements Processor {
 		double y = 90-apparentDirection;
 		double a = apparentWind * Math.cos(Math.toRadians(y));
 		double b = (apparentWind * Math.sin(Math.toRadians(y)))-vesselSpeed;
-		return (int)(Math.sqrt((a*a)+(b*b)));
+		return (Math.sqrt((a*a)+(b*b)));
 	}
 
 
