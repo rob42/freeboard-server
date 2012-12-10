@@ -15,6 +15,7 @@ import net.sf.marineapi.nmea.sentence.RMCSentence;
 import net.sf.marineapi.nmea.sentence.VHWSentence;
 import net.sf.marineapi.nmea.util.CompassPoint;
 
+import org.apache.camel.ConsumerTemplate;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
@@ -30,12 +31,13 @@ import org.apache.camel.component.websocket.WebsocketComponent;
 public class NavDataWebSocketRoute extends RouteBuilder {
 	private int port = 9090;
 	private String serialUrl;
-	private Processor nmeaProcessor= new NMEAProcessor();
-	private Processor imuProcessor= new IMUProcessor();
+	private NMEAProcessor nmeaProcessor= new NMEAProcessor();
+	private IMUProcessor imuProcessor= new IMUProcessor();
 	private String serialPorts;
 	private List<SerialPortReader> serialPortList = new ArrayList<SerialPortReader>();
 	private Properties config;
-	private Processor windProcessor = new WindProcessor();
+	private WindProcessor windProcessor = new WindProcessor();
+	private CommandProcessor commandProcessor = new CommandProcessor();
 
 	public NavDataWebSocketRoute(Properties config) {
 		this.config=config;
@@ -58,8 +60,13 @@ public class NavDataWebSocketRoute extends RouteBuilder {
 		wc.setPort(port);
 		// we can serve static resources from the classpath: or file: system
 		wc.setStaticResources("classpath:.");
-
+		
+		//init commandProcessor
+		commandProcessor.setProducer(wc.getCamelContext().createProducerTemplate());
+		
+		//init NMEAProcessor
 		setNMEAListeners((NMEAProcessor) nmeaProcessor);
+		
 		if(Boolean.valueOf(config.getProperty(ServerMain.DEMO))){
 			
 			from("stream:file?fileName=" + serialUrl).
@@ -71,8 +78,10 @@ public class NavDataWebSocketRoute extends RouteBuilder {
 			String[] ports = serialPorts.split(",");
 			for (String port: ports){
 				ProducerTemplate producer = wc.getCamelContext().createProducerTemplate();
+				ConsumerTemplate consumer = wc.getCamelContext().createConsumerTemplate();
 				SerialPortReader serial = new SerialPortReader();
 				serial.setProducer(producer);
+				serial.setConsumer(consumer);
 				try{
 					serial.connect(port);
 					log.info("Comm port "+serial+" found and connected");
@@ -89,9 +98,14 @@ public class NavDataWebSocketRoute extends RouteBuilder {
 			.process(nmeaProcessor)
 			.process(imuProcessor)
 			.process(windProcessor )
-			.to("log:nz.co.fortytwo?level=INFO")
+			.process(commandProcessor )
+			.to("log:nz.co.fortytwo.navdata?level=INFO")
 			// and push to all web socket subscribers 
 			.to("websocket:navData?sendToAll=true");
+		
+		// log commands
+		from("seda:output?multipleConsumers=true")
+		.to("log:nz.co.fortytwo.command?level=INFO");
 	}
 
 	public String getSerialUrl() {

@@ -9,7 +9,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.util.HashMap;
+import java.util.Map;
 
+import org.apache.camel.ConsumerTemplate;
+import org.apache.camel.Exchange;
 import org.apache.camel.ProducerTemplate;
 
 /**
@@ -22,8 +26,10 @@ import org.apache.camel.ProducerTemplate;
 public class SerialPortReader {
 
 	private ProducerTemplate producer;
+	private ConsumerTemplate consumer;
 
 	private boolean running=true;
+	private Map<String, String> deviceMap = new HashMap<String, String>();
 	
 	public SerialPortReader() {
 		super();
@@ -54,9 +60,9 @@ public class SerialPortReader {
                 
                 InputStream in = serialPort.getInputStream();
                 OutputStream out = serialPort.getOutputStream();
-                
-                (new Thread(new SerialReader(in))).start();
-                (new Thread(new SerialWriter(out))).start();
+                deviceMap.put(portName,null);
+                (new Thread(new SerialReader(in,portName))).start();
+                (new Thread(new SerialWriter(out,portName))).start();
 
             }
             else
@@ -70,11 +76,14 @@ public class SerialPortReader {
     public  class SerialReader implements Runnable 
     {
     	BufferedReader in;
+    	private String portName;
+    	private boolean mapped=false;
 		
         
-        public SerialReader ( InputStream in )
+        public SerialReader ( InputStream in, String portName  )
         {
             this.in = new BufferedReader(new InputStreamReader(in));
+            this.portName=portName;
         }
         
         public void run ()
@@ -85,7 +94,15 @@ public class SerialPortReader {
                 while ( running )
                 {
                     //System.out.print(new String(buffer,0,len));
-                    producer.asyncSendBody("seda:input?multipleConsumers=true", in.readLine());
+                	String line = in.readLine();
+                	if(!mapped && line.indexOf(Constants.UID)>0){
+                		//add to map
+                		int pos = line.indexOf(Constants.UID+4);
+                		String type = line.substring(pos,line.indexOf(",",pos));
+                		deviceMap.put(portName, type);
+                		mapped=true;
+                	}
+                    producer.asyncSendBody("seda:input", in.readLine());
                 }
             }
             catch ( IOException e )
@@ -105,20 +122,34 @@ public class SerialPortReader {
     public  class SerialWriter implements Runnable 
     {
         OutputStream out;
+		private String portName;
+		private boolean mapped=false;
+		private String type = null;
         
-        public SerialWriter ( OutputStream out )
+        public SerialWriter ( OutputStream out, String portName )
         {
             this.out = out;
+            this.portName=portName;
+            
         }
         
         public void run ()
         {
             try
             {                
-                int c = 0;
-                while ( running && ( c = System.in.read()) > -1 )
+                while ( running )
                 {
-                    this.out.write(c);
+                	Exchange ex = consumer.receive("seda:output?multipleConsumers=true",1000);
+                	String message = ex.getIn().getBody(String.class);
+                	if(!mapped ){
+                		//add to map
+                		type = deviceMap.get(portName);
+                		if (type!=null) mapped=true;
+                	}
+                	//check its valid for this device
+                	if(type==null || message.contains(Constants.UID+":"+type)){
+                		this.out.write((message+"\n").getBytes());
+                	}
                 }                
             }
             catch ( IOException e )
@@ -152,6 +183,10 @@ public class SerialPortReader {
 	 */
 	public void setRunning(boolean running) {
 		this.running = running;
+	}
+
+	public void setConsumer(ConsumerTemplate consumer) {
+		this.consumer = consumer;
 	}
 
 }
