@@ -1,19 +1,22 @@
+/*
+ * Copyright 2012,2013 Robert Huitema robert@42.co.nz
+ * 
+ * This file is part of FreeBoard. (http://www.42.co.nz/freeboard)
+ *
+ *  FreeBoard is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+
+ *  FreeBoard is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+
+ *  You should have received a copy of the GNU General Public License
+ *  along with FreeBoard.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package nz.co.fortytwo.freeboard.server;
-
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.Vector;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
-
-import net.sf.marineapi.nmea.event.SentenceEvent;
-import net.sf.marineapi.nmea.event.SentenceListener;
-import net.sf.marineapi.nmea.parser.SentenceFactory;
-import net.sf.marineapi.nmea.sentence.PositionSentence;
-import net.sf.marineapi.nmea.sentence.Sentence;
-import net.sf.marineapi.nmea.sentence.SentenceId;
-import net.sf.marineapi.nmea.util.CompassPoint;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -48,10 +51,6 @@ import org.apache.commons.lang3.StringUtils;
  */
 public class IMUProcessor implements Processor {
 
-	private static final String DISPATCH_ALL = "DISPATCH_ALL";
-
-	// map of sentence listeners
-	private ConcurrentMap<String, List<SentenceListener>> listeners = new ConcurrentHashMap<String, List<SentenceListener>>();
 
 	public void process(Exchange exchange) throws Exception {
 		if (StringUtils.isEmpty(exchange.getIn().getBody(String.class)))

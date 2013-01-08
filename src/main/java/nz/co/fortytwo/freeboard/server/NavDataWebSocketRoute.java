@@ -1,3 +1,21 @@
+/*
+ * Copyright 2012,2013 Robert Huitema robert@42.co.nz
+ * 
+ * This file is part of FreeBoard. (http://www.42.co.nz/freeboard)
+ *
+ *  FreeBoard is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+
+ *  FreeBoard is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+
+ *  You should have received a copy of the GNU General Public License
+ *  along with FreeBoard.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package nz.co.fortytwo.freeboard.server;
 
 import gnu.io.NoSuchPortException;
@@ -31,6 +49,7 @@ import org.apache.camel.component.websocket.WebsocketComponent;
 public class NavDataWebSocketRoute extends RouteBuilder {
 	private int port = 9090;
 	private String serialUrl;
+	private InputFilterProcessor inputFilterProcessor = new InputFilterProcessor();
 	private NMEAProcessor nmeaProcessor= new NMEAProcessor();
 	private IMUProcessor imuProcessor= new IMUProcessor();
 	private String serialPorts;
@@ -95,17 +114,24 @@ public class NavDataWebSocketRoute extends RouteBuilder {
 		}
 		//send to listeners
 		from("seda:input?multipleConsumers=true")
+			.process(inputFilterProcessor)
 			.process(nmeaProcessor)
 			.process(imuProcessor)
 			.process(windProcessor )
 			.process(commandProcessor )
 			.to("log:nz.co.fortytwo.navdata?level=INFO")
 			// and push to all web socket subscribers 
-			.to("websocket:navData?sendToAll=true");
+			.to("websocket:navData?sendToAll=true")
+			.onException(Exception.class)
+		    .handled(true).maximumRedeliveries(0)
+		    .to("log:nz.co.fortytwo.navdata?level=ERROR");
 		
 		// log commands
 		from("seda:output?multipleConsumers=true")
-		.to("log:nz.co.fortytwo.command?level=INFO");
+			.to("log:nz.co.fortytwo.command?level=INFO")
+			.onException(Exception.class)
+		    .handled(true).maximumRedeliveries(0)
+		    .to("log:nz.co.fortytwo.navdata?level=ERROR");
 	}
 
 	public String getSerialUrl() {

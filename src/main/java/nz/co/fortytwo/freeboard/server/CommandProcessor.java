@@ -1,3 +1,21 @@
+/*
+ * Copyright 2012,2013 Robert Huitema robert@42.co.nz
+ * 
+ * This file is part of FreeBoard. (http://www.42.co.nz/freeboard)
+ *
+ *  FreeBoard is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+
+ *  FreeBoard is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+
+ *  You should have received a copy of the GNU General Public License
+ *  along with FreeBoard.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package nz.co.fortytwo.freeboard.server;
 
 import org.apache.camel.Exchange;
@@ -15,26 +33,31 @@ public class CommandProcessor implements Processor {
 	private ProducerTemplate producer;
 	
 	public void process(Exchange exchange) throws Exception {
-		String msg = (String) exchange.getIn().getBody();
+		String msg = (String) exchange.getIn().getBody(String.class);
 		String[] data = msg.split(",");
 		StringBuffer outMsg = new StringBuffer();
-		outMsg.append(Constants.UID+":"+Constants.MEGA+",");
 		for(String m:data){
 			//send to MEGA for anchor alarms, and autopilot
-			if(m.startsWith(Constants.WST))outMsg.append(m+",");
-			if(m.startsWith(Constants.WSA))outMsg.append(m+",");
-			if(m.startsWith(Constants.WDT))outMsg.append(m+",");
-			if(m.startsWith(Constants.WDA))outMsg.append(m+",");
-			if(m.startsWith(Constants.WSU))outMsg.append(m+",");
-			if(m.startsWith(Constants.LAT))outMsg.append(m+",");
-			if(m.startsWith(Constants.LON))outMsg.append(m+",");
-			if(m.startsWith(Constants.COG))outMsg.append(m+",");
-			if(m.startsWith(Constants.MGH))outMsg.append(m+",");
-			if(m.startsWith(Constants.SOG))outMsg.append(m+",");
-			if(m.startsWith(Constants.YAW))outMsg.append(m+",");
+			//be careful to avoid misc arduino error/debug messages
+			if(m.startsWith(Constants.WST+":"))outMsg.append(m+",");
+			if(m.startsWith(Constants.WSA+":"))outMsg.append(m+",");
+			if(m.startsWith(Constants.WDT+":"))outMsg.append(m+",");
+			if(m.startsWith(Constants.WDA+":"))outMsg.append(m+",");
+			if(m.startsWith(Constants.WSU+":"))outMsg.append(m+",");
+			if(m.startsWith(Constants.LAT+":"))outMsg.append(m+",");
+			if(m.startsWith(Constants.LON+":"))outMsg.append(m+",");
+			if(m.startsWith(Constants.COG+":"))outMsg.append(m+",");
+			if(m.startsWith(Constants.MGH+":"))outMsg.append(m+",");
+			if(m.startsWith(Constants.SOG+":"))outMsg.append(m+",");
+			if(m.startsWith(Constants.YAW+":"))outMsg.append(m+",");
+			if(m.startsWith(Constants.PCH+":"))outMsg.append(m+",");
+			if(m.startsWith(Constants.RLL+":"))outMsg.append(m+",");
 		}
 		//now send to output queue
-        producer.asyncSendBody("seda:output", outMsg);
+		if(outMsg.length()>0){
+			outMsg.insert(0, Constants.UID+":"+Constants.MEGA+",");
+			producer.asyncSendBody("seda:output", outMsg);
+		}
 	}
 
 	public void setProducer(ProducerTemplate producer) {

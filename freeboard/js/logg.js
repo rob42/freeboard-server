@@ -1,3 +1,21 @@
+/*
+ * Copyright 2012,2013 Robert Huitema robert@42.co.nz
+ * 
+ * This file is part of FreeBoard. (http://www.42.co.nz/freeboard)
+ *
+ *  FreeBoard is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+
+ *  FreeBoard is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+
+ *  You should have received a copy of the GNU General Public License
+ *  along with FreeBoard.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
 odoValue = 99998.2;
 function resizeLog(amount){
@@ -24,7 +42,12 @@ function Logg () {
 	this.onmessage = function (m) {
 		var mArray=m.data.split(",");
 		jQuery.each(mArray, function(i, data) {
-			if (data && data.indexOf('LAT') >= 0) {
+			if(data){
+				var textConsole = zk.Widget.$("$textConsole");
+				var s = textConsole.getValue();
+				textConsole.setValue(s+'\n'+data);
+			}
+			if (data && data.indexOf('LAT:') >= 0) {
 				var c = parseFloat(data.substring(4));
 				//lcdLat.setValue(parseFloat(c));
 				if(c>0){
@@ -34,7 +57,7 @@ function Logg () {
 				}
 	
 			}
-			if (data && data.indexOf('LON') >= 0) {
+			if (data && data.indexOf('LON:') >= 0) {
 				var c = parseFloat(data.substring(4));
 				if(c>0){
 					lcdLon.setValue(c.toFixed(5)+' E');
@@ -43,16 +66,16 @@ function Logg () {
 				}
 	
 			}
-			if (data && data.indexOf('SOG') >= 0) {
+			if (data && data.indexOf('SOG:') >= 0) {
 				var c = data.substring(4);
 				lcdLog.setValue(parseFloat(c));
 	
 			}
-			if (data && data.indexOf('MGH') >= 0) {
+			if (data && data.indexOf('MGH:') >= 0) {
 				var c = data.substring(4);
 				lcdHeading.setValue(parseFloat(c));
 			}
-			if (data && data.indexOf('YAW') >= 0) {
+			if (data && data.indexOf('YAW:') >= 0) {
 				var c = data.substring(4);
 				// lcdWaypoint.setValue(parseFloat(c));
 				// -180 <> 180
