@@ -27,14 +27,15 @@ import org.apache.camel.Processor;
  *
  */
 public class WindProcessor implements Processor {
-
+	double apparentWind=0;
+	int apparentDirection=0;
+	float vesselSpeed=0;
+	
 	public void process(Exchange exchange) throws Exception {
 		String bodyStr = exchange.getIn().getBody(String.class).trim();
 		
 			try {
-				int apparentWind=0;
-				int apparentDirection=0;
-				float vesselSpeed=0;
+				
 				boolean valid=false;
 				//int heading=0;
 				String [] bodyArray=bodyStr.split(",");
@@ -45,7 +46,7 @@ public class WindProcessor implements Processor {
 						valid=true;
 					}
 					if(s.startsWith(Constants.WSA)){
-						apparentWind= Integer.valueOf(s.substring(4));
+						apparentWind= Double.valueOf(s.substring(4));
 						valid=true;
 					}
 					if(s.startsWith(Constants.WDA)){
@@ -91,7 +92,7 @@ public class WindProcessor implements Processor {
 	 * @param vesselSpeed
 	 * @return trueDirection 0 to 360 deg to the bow
 	 */
-	double calcTrueWindDirection(int apparentWind, int apparentDirection, float vesselSpeed){
+	double calcTrueWindDirection(double apparentWind, int apparentDirection, float vesselSpeed){
 		/*
 			 Y = 90 - D
 			a = AW * ( cos Y )
@@ -122,7 +123,7 @@ public class WindProcessor implements Processor {
 	 * @param vesselSpeed
 	 * @return
 	 */
-        double calcTrueWindSpeed(int apparentWind, int apparentDirection, float vesselSpeed){
+        double calcTrueWindSpeed(double apparentWind, int apparentDirection, float vesselSpeed){
                 apparentDirection=apparentDirection%360;
                 if(apparentDirection>180){
                    apparentDirection=360-apparentDirection; 

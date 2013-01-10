@@ -59,7 +59,7 @@ function Wind () {
 				}
 				
 				// make average
-				avgArrayA[avgPosA] = parseFloat(c);
+				/*avgArrayA[avgPosA] = parseFloat(c);
 				avgPosA = avgPosA + 1;
 				if (avgPosA >= avgArrayA.length)
 					avgPosA = 0;
@@ -71,14 +71,14 @@ function Wind () {
 					radialWindDirApp.setValueAnimatedAverage(-(360 - (v / avgArrayA.length)));
 				} else {
 					radialWindDirApp.setValueAnimatedAverage(v / avgArrayA.length);
-				}
+				}*/
 			}
 			if (data && data.indexOf('WDT') >= 0) {
 				var c = data.substring(4);
 				
 				radialWindDirTrue.setValueAnimatedLatest(c);
 				// make average
-				avgArrayT[avgPosT] = parseFloat(c);
+				/*avgArrayT[avgPosT] = parseFloat(c);
 				avgPosT = avgPosT + 1;
 				if (avgPosT >= avgArrayT.length)
 					avgPosT = 0;
@@ -87,6 +87,7 @@ function Wind () {
 					v = v + avgArrayT[i];
 				}
 				radialWindDirTrue.setValueAnimatedAverage(v / avgArrayT.length);
+				*/
 			}
 		});
 	}
