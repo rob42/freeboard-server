@@ -17,7 +17,7 @@
  *  along with FreeBoard.  If not, see <http://www.gnu.org/licenses/>.
  */
 //var map;
-var mapMinZoom = 7;
+var mapMinZoom = 0;
 var mapMaxZoom = 18;
 var lat=0;
 var lon=0;

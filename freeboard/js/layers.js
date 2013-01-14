@@ -16,9 +16,25 @@
  *  You should have received a copy of the GNU General Public License
  *  along with FreeBoard.  If not, see <http://www.gnu.org/licenses/>.
  */
-var mapBounds = new OpenLayers.Bounds( 171.67265853743078, -41.37858426341804, 174.19399117138440, -40.10362112608023);
+var mapBounds = new OpenLayers.Bounds( -180.0, -80.9971907157, 179.997075819, 81.0);
 function addLayers(map) {
-
+	var WORLDBounds = new OpenLayers.Bounds( -180.0, -80.9971907157, 179.997075819, 81.0);
+	mapBounds.extend(WORLDBounds );
+	var WORLD = new OpenLayers.Layer.TMS( "Blue Marble", "../../mapcache/WORLD/",
+			{ layername: '../../mapcache/WORLD/',
+			type: 'png', 
+			getURL: overlay_getTileURL, 
+			alpha: true,
+			isBaseLayer: true,
+			visibility: true,
+			//maxResolution : "auto",
+			numZoomLevels: 18,
+			minZoomLevel: 0,
+			maxZoomLevel: 7,
+			buffer : 0,
+			});
+	map.addLayer(WORLD);
+	
 	var NZ46Bounds = new OpenLayers.Bounds( 173.86895223488963, -42.08918277388398, 175.46413452268570, -40.23603745695969);
 	mapBounds.extend(NZ46Bounds );
 	var NZ46 = new OpenLayers.Layer.TMS( "NZ46 Cook Strait", "../../mapcache/NZ46/",

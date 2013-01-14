@@ -22,6 +22,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 
@@ -58,10 +60,31 @@ public class ChartProcessor {
 				if(!chartFile.exists()){
 					logger.error("No file at "+chartFile.getAbsolutePath());
 				}
-				//we have the file - assume kap for now
-				processKapChart(chartFile);
+				//for WORLD.tif (Blue Marble) we need 
+				//'gdal_translate -a_ullr -180.0 90.0 180.0 -90.0 -a_srs "EPSG:4326" -of vrt  WORLD.tif temp.vrt'
+				//to add Georef info
+				if(chartFile.getName().toUpperCase().equals("WORLD.tif")){
+					processWorldChart(chartFile);
+				}
+				//we have a KAP file
+				if(chartFile.getName().toUpperCase().endsWith("KAP")){
+					processKapChart(chartFile);
+				}
 		
 	}
+	private void processWorldChart(File chartFile) throws Exception {
+		String chartName = chartFile.getName();
+		chartName = chartName.substring(0,chartName.lastIndexOf("."));
+		File dir = new File(chartFile.getParentFile(),chartName);
+		logger.debug("Chart tag:"+chartName);
+		logger.debug("Chart dir:"+dir.getPath());
+		//start by running the gdal script
+		executeGdal(chartFile, chartName,
+				Arrays.asList("gdal_translate", "-co","COMPRESS=PACKBITS", "-a_ullr","-180.0","90.0","180.0","-90.0","-a_srs","\"EPSG:4326\"", "-if","GTiff", "-of", "vrt", chartFile.getName(),"temp.vrt"),
+				Arrays.asList("gdal2tiles.py", "-z", "0-6", "temp.vrt", chartName));
+		
+	}
+
 	/**
 	 * Reads the .kap file, and the generated tilesresource.xml to get
 	 * chart desc, bounding box, and zoom levels 
@@ -75,7 +98,10 @@ public class ChartProcessor {
 		logger.debug("Chart tag:"+chartName);
 		logger.debug("Chart dir:"+dir.getPath());
 		//start by running the gdal script
-		executeGdal(chartFile, chartName);
+		
+		executeGdal(chartFile, chartName, 
+				Arrays.asList("gdal_translate", "-if","GTiff", "-of", "vrt", "-expand", "rgba",chartFile.getName(),"temp.vrt"),
+				Arrays.asList("gdal2tiles.py", "temp.vrt", chartName));
 		//now get the Chart Name from the kap file
 		FileReader fileReader = new FileReader(chartFile);
 		char[] chars = new char[4096];
@@ -126,7 +152,15 @@ public class ChartProcessor {
         		"\t\t});\n" +
         		"\tmap.addLayer("+chartName+");\n";
         logger.debug(snippet);
-		
+		//add it to layers.js
+        File layers = new File("../freeboard/js/layers.js");
+        String layersStr = FileUtils.readFileToString(layers);
+        //remove the closing }
+        if(layersStr.trim().endsWith("}")){
+        	layersStr = layersStr.substring(0,layersStr.lastIndexOf("}"));
+        }
+        layersStr = "\n"+layersStr+"\n"+bounds+"\n"+snippet+"\n}\n";
+        FileUtils.writeStringToFile(layers, layersStr);
 	}
 
 	/**
@@ -136,14 +170,15 @@ public class ChartProcessor {
 	 * @param config2
 	 * @param chartFile
 	 * @param chartName
+	 * @param list 
 	 * @throws IOException 
 	 * @throws InterruptedException 
 	 */
-	private void executeGdal( File chartFile, String chartName) throws IOException, InterruptedException {
+	private void executeGdal( File chartFile, String chartName, List<String> argList, List<String> tilesList ) throws IOException, InterruptedException {
 		File dir = new File(config.getProperty(ServerMain.MAPCACHE_RESOURCE));
 		//mkdir $1
 		//gdal_translate -of vrt -expand rgba $1.kap temp.vrt
-		 ProcessBuilder pb = new ProcessBuilder("gdal_translate", "-of", "vrt", "-expand", "rgba",chartFile.getName(),"temp.vrt");
+		 ProcessBuilder pb = new ProcessBuilder(argList);
 		 pb.directory(dir);
 		 pb.inheritIO();
 		 Process p = pb.start();

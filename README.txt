@@ -2,7 +2,11 @@ Freeboard Notes
 
 This is the main freeboard server, which runs in java on the Raspberry Pi. The arduino based ArduIMU and FreeboardPLC connect to this via a (powered) USB hub. Using a decent powered hub is important - see the Raspberry Pi site.
 
+This has been developed in Eclipse Juno, with maven3 and zk plugins (among others)
+
 This is only just uploaded, so expect some pain getting it all setup/building/etc. Email me for help.
+
+**NOTE** NOTE: This project uses nrjavaserial-3.8.4.jar from http://code.google.com/p/nrjavaserial/downloads/ not rxtx.jar. Since the last maven version is 3.7.5, you will need to manually add it to the local maven respoitory!!
 
 Hardware:
 	Raspberry Pi (Model B, 256 Mb RAM) - currently using soft-fp image (for sun java)
