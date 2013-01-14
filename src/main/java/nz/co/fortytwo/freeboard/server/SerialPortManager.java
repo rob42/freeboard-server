@@ -43,7 +43,6 @@ public class SerialPortManager implements Runnable {
 
 	private static Logger logger = Logger.getLogger(SerialPortManager.class);
 
-	private String serialPorts;
 	private WebsocketComponent wc;
 	private List<SerialPortReader> serialPortList = new ArrayList<SerialPortReader>();
 
@@ -120,14 +119,6 @@ public class SerialPortManager implements Runnable {
 		}
 		running = false;
 
-	}
-
-	public String getSerialPorts() {
-		return serialPorts;
-	}
-
-	public void setSerialPorts(String serialPorts) {
-		this.serialPorts = serialPorts;
 	}
 
 	public WebsocketComponent getWc() {

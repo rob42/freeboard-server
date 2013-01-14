@@ -45,7 +45,6 @@ public class ServerMain {
 	public static  final String MAPCACHE = "freeboard.mapcache.url";
 	public static  final String HTTP_PORT = "freeboard.http.port";
 	public static  final String WEBSOCKET_PORT = "freeboard.websocket.port";
-	public static  final String SERIAL_PORT = "freeboard.serial.port";
 	public static  final String CFG_DIR = "freeboard.cfg.dir";
 	public static  final String CFG_FILE = "freeboard.cfg.file";
 	public static final String SERIAL_URL = "freeboard.serial.demo.file";
@@ -77,9 +76,6 @@ public class ServerMain {
 		
 		logger.info("  Serial url:"+config.getProperty(SERIAL_URL));
 		route.setSerialUrl(config.getProperty(SERIAL_URL));
-		
-		logger.info("  Serial port:"+config.getProperty(SERIAL_PORT));
-		route.setSerialPorts(config.getProperty(SERIAL_PORT));
 		
 		// add our routes to Camel
 		main.addRouteBuilder(route);
@@ -157,7 +153,6 @@ public class ServerMain {
 		props.setProperty(MAPCACHE,"/mapcache");
 		props.setProperty(HTTP_PORT,"8080");
 		props.setProperty(WEBSOCKET_PORT,"9090");
-		props.setProperty(SERIAL_PORT,"/dev/ttyUSB0");
 		props.setProperty(CFG_DIR,"./conf/");
 		props.setProperty(CFG_FILE,"freeboard.cfg");
 		props.setProperty(DEMO,"false");

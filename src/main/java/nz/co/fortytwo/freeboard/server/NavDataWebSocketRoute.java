@@ -45,7 +45,6 @@ public class NavDataWebSocketRoute extends RouteBuilder {
 	private InputFilterProcessor inputFilterProcessor = new InputFilterProcessor();
 	private NMEAProcessor nmeaProcessor= new NMEAProcessor();
 	private IMUProcessor imuProcessor= new IMUProcessor();
-	private String serialPorts;
 	private SerialPortManager serialPortManager;
 	
 	private Properties config;
@@ -87,7 +86,6 @@ public class NavDataWebSocketRoute extends RouteBuilder {
 			// start a serial port manager
 			
 			serialPortManager=new SerialPortManager();
-			serialPortManager.setSerialPorts(serialPorts);
 			serialPortManager.setWc(wc);
 			new Thread(serialPortManager).start();
 		}
@@ -119,15 +117,6 @@ public class NavDataWebSocketRoute extends RouteBuilder {
 
 	public void setSerialUrl(String serialUrl) {
 		this.serialUrl = serialUrl;
-	}
-	
-
-	public String getSerialPorts() {
-		return serialPorts;
-	}
-
-	public void setSerialPorts(String serialPorts) {
-		this.serialPorts = serialPorts;
 	}
 	
 	/**
