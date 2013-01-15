@@ -18,9 +18,9 @@
  */
 package nz.co.fortytwo.freeboard.server;
 
-import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.log4j.Logger;
 
 /**
  * Churns through incoming nav data and filters out misc debug and unnecessary messages from the other devices
@@ -29,6 +29,7 @@ import org.apache.camel.Processor;
  *
  */
 public class InputFilterProcessor implements Processor {
+	private static Logger logger = Logger.getLogger(InputFilterProcessor.class);
 	
 	public void process(Exchange exchange) throws Exception {
 		String msg = (String) exchange.getIn().getBody(String.class);
@@ -46,7 +47,9 @@ public class InputFilterProcessor implements Processor {
 				return;
 			}
 			//uh-oh log it, squash it
-			throw new CamelExchangeException("Invalid msg", exchange);
+			exchange.getUnitOfWork().done(exchange);
+			logger.info("Dropped invalid message:"+msg);
+			//throw new CamelExchangeException("Invalid msg", exchange);
 		}
 		
 	}

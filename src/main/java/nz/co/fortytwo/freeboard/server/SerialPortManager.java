@@ -19,11 +19,10 @@
 
 package nz.co.fortytwo.freeboard.server;
 
-import gnu.io.CommPortIdentifier;
 import gnu.io.NoSuchPortException;
 
+import java.io.File;
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.List;
 
 import org.apache.camel.ConsumerTemplate;
@@ -44,31 +43,44 @@ public class SerialPortManager implements Runnable {
 	private static Logger logger = Logger.getLogger(SerialPortManager.class);
 
 	private WebsocketComponent wc;
+	private ProducerTemplate producer;
+	private ConsumerTemplate consumer;
 	private List<SerialPortReader> serialPortList = new ArrayList<SerialPortReader>();
 
 	private boolean running = true;
 
 	public void run() {
+		// not running, start now.
+		ProducerTemplate producer = wc.getCamelContext().createProducerTemplate();
+		producer.setDefaultEndpointUri("seda://input?multipleConsumers=true");
+
+		ConsumerTemplate consumer = wc.getCamelContext().createConsumerTemplate();
+		
 		while (running) {
 			// remove any stopped readers
 			List<SerialPortReader> tmpPortList = new ArrayList<SerialPortReader>();
 			for (SerialPortReader reader : serialPortList) {
 				if (!reader.isRunning()) {
+					logger.debug("Comm port " + reader.getPortName() + " finished and marked for removal");
 					tmpPortList.add(reader);
 				}
+				logger.debug("Comm port " + reader.getPortName() + " currently running");
 			}
 			serialPortList.removeAll(tmpPortList);
+			
+			//not reliable, cant properly deal with hot-plug
+			//Enumeration<CommPortIdentifier> ports = CommPortIdentifier.getPortIdentifiers();
+			
 
-			Enumeration<CommPortIdentifier> ports = CommPortIdentifier.getPortIdentifiers();
-
-			// String[] ports = serialPorts.split(",");
-			while (ports.hasMoreElements()) {
+			String[] ports = {"/dev/ttyUSB0","/dev/ttyUSB1","/dev/ttyUSB2","/dev/ttyUSB3","/dev/ttyUSB4","/dev/ttyUSB5","/dev/ttyUSB6"};
+			for (String port:ports) {
 				boolean portOk = false;
-				String port = null;
+				File portFile = new File(port);
 				try {
-					port = ports.nextElement().getName();
-					if (port == null)
+					if (!portFile.exists()){
+						logger.debug("Comm port "+port+" doesnt exist");
 						continue;
+					}
 					for (SerialPortReader reader : serialPortList) {
 						if (StringUtils.equals(port, reader.getPortName())) {
 							// its already up and running
@@ -76,17 +88,16 @@ public class SerialPortManager implements Runnable {
 						}
 					}
 					// if its running, ignore
-					if (portOk)
+					if (portOk){
+						logger.debug("Comm port " + port + " found already connected");
 						continue;
+					}
 
-					// not running, start now.
-					ProducerTemplate producer = wc.getCamelContext().createProducerTemplate();
-					producer.setDefaultEndpointUri("seda://input?multipleConsumers=true");
-					ConsumerTemplate consumer = wc.getCamelContext().createConsumerTemplate();
+					
 					SerialPortReader serial = new SerialPortReader();
 					serial.setProducer(producer);
 					serial.setConsumer(consumer);
-
+					logger.debug("Comm port " + port + " found and connecting...");
 					serial.connect(port);
 					logger.info("Comm port " + port + " found and connected");
 					serialPortList.add(serial);

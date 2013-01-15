@@ -20,16 +20,6 @@ package nz.co.fortytwo.freeboard.server;
 
 import java.util.Properties;
 
-import net.sf.marineapi.nmea.event.SentenceEvent;
-import net.sf.marineapi.nmea.event.SentenceListener;
-import net.sf.marineapi.nmea.sentence.HeadingSentence;
-import net.sf.marineapi.nmea.sentence.MWVSentence;
-import net.sf.marineapi.nmea.sentence.PositionSentence;
-import net.sf.marineapi.nmea.sentence.RMCSentence;
-import net.sf.marineapi.nmea.sentence.VHWSentence;
-import net.sf.marineapi.nmea.util.CompassPoint;
-
-import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.websocket.WebsocketComponent;
 
@@ -96,19 +86,19 @@ public class NavDataWebSocketRoute extends RouteBuilder {
 			.process(imuProcessor)
 			.process(windProcessor )
 			.process(commandProcessor )
-			.to("log:nz.co.fortytwo.navdata?level=INFO")
+			.to("log:nz.co.fortytwo.freeboard.navdata?level=INFO")
 			// and push to all web socket subscribers 
-			.to("websocket:navData?sendToAll=true");
-			//.onException(Exception.class)
-		   // .handled(true).maximumRedeliveries(0)
-		    //.to("log:nz.co.fortytwo.navdata?level=ERROR");
+			.to("websocket:navData?sendToAll=true")
+			.onException(Exception.class)
+			.handled(true).maximumRedeliveries(0)
+		    .to("log:nz.co.fortytwo.freeboard.navdata?level=ERROR");
 		
 		// log commands
 		from("seda:output?multipleConsumers=true")
-			.to("log:nz.co.fortytwo.command?level=INFO")
+			.to("log:nz.co.fortytwo.freeboard.command?level=INFO")
 			.onException(Exception.class)
 		    .handled(true).maximumRedeliveries(0)
-		    .to("log:nz.co.fortytwo.navdata?level=ERROR");
+		    .to("log:nz.co.fortytwo.freeboard.navdata?level=ERROR");
 	}
 
 	public String getSerialUrl() {

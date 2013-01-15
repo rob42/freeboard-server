@@ -56,7 +56,7 @@ public class CommandProcessor implements Processor {
 		//now send to output queue
 		if(outMsg.length()>0){
 			outMsg.insert(0, Constants.UID+":"+Constants.MEGA+",");
-			producer.asyncSendBody("seda:output", outMsg);
+			producer.sendBody("seda:output?multipleConsumers=true", outMsg);
 		}
 	}
 

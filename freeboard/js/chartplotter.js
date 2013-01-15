@@ -138,7 +138,7 @@ function initCharts() {
 	//switcherControl.maximizeControl();
 
 	map.zoomToExtent(mapBounds.transform(map.displayProjection,	map.projection));
-	map.zoomTo(10);
+	//map.zoomTo(2);
 	$("#noneToggle").checked = true;
 
 	

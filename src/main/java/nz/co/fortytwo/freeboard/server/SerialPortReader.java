@@ -20,17 +20,15 @@ package nz.co.fortytwo.freeboard.server;
 
 import gnu.io.NRSerialPort;
 
+import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
 
 import org.apache.camel.ConsumerTemplate;
 import org.apache.camel.ProducerTemplate;
-import org.apache.camel.component.seda.SedaEndpoint;
-import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
-import org.eclipse.jetty.io.EndPoint;
 
 /**
  * Wrapper to read serial port via rxtx, then fire messages into the camel route
@@ -43,6 +41,7 @@ public class SerialPortReader {
 
 	private static Logger logger = Logger.getLogger(SerialPortReader.class);
 	private String portName;
+	private File portFile;
 	private ProducerTemplate producer;
 	private ConsumerTemplate consumer;
 
@@ -60,21 +59,23 @@ public class SerialPortReader {
 	 * Opens a connection to the serial port, and starts two threads, one to read, one to write.
 	 * A background thread looks for new/lost USB devices and (re)attaches them
 	 * 
-	 * NOTE: This uses nrjavaserial-3.8.4.jar from http://code.google.com/p/nrjavaserial/downloads/ not rxtx.jar.
-	 * Since the last maven version is 3.7.5, you will need to manually add it to the local maven respoitory!!
+	 * NOTE: This uses nrjavaserial-3.7.7.jar built from the src, with a few minor mods to deal with timeouts etc
+	 * see http://code.google.com/p/nrjavaserial/
+	 * Since the last maven version is 3.7.5, you will need to build it, which will add it to the local maven respoitory!!
 	 * 
 	 * @param portName
 	 * @throws Exception
 	 */
 	void connect(String portName) throws Exception {
 		this.portName = portName;
-
+		this.portFile = new File(portName);
 		serialPort = new NRSerialPort(portName, 38400);
 
 		serialPort.connect();
 		(new Thread(new SerialReader())).start();
 		(new Thread(new SerialWriter())).start();
 	}
+
 
 	/** */
 	public class SerialReader implements Runnable {
@@ -100,13 +101,19 @@ public class SerialPortReader {
 								int pos1 = line.indexOf(",", pos);
 								if (pos1 < 0)
 									pos1 = line.length();
-								logger.debug(portName + ":  pos:" + pos + " pos1:" + pos1);
+								
 								String type = line.substring(pos, pos1);
+								logger.debug(portName + ":  device name:" + type);
 								deviceType = type.trim();
 								mapped = true;
 							}
 
 							producer.sendBody(line);
+						}
+						// delay for 100 msecs, we dont want to burn up CPU for nothing
+						try {
+							Thread.currentThread().sleep(100);
+						} catch (InterruptedException ie) {
 						}
 					}
 				} catch (IOException e) {
@@ -121,6 +128,7 @@ public class SerialPortReader {
 			} finally {
 				if (serialPort.isConnected())
 					serialPort.disconnect();
+				
 			}
 		}
 
@@ -129,25 +137,31 @@ public class SerialPortReader {
 	/** */
 	public class SerialWriter implements Runnable {
 
-		OutputStream out;
+		BufferedOutputStream out;
 
 		public SerialWriter() throws Exception {
-			out = serialPort.getOutputStream();
+			out = new BufferedOutputStream(serialPort.getOutputStream());
 		}
 
 		public void run() {
 			try {
 				try {
 					while (running) {
-						String message = consumer.receiveBody("seda:output", 1000, String.class);
-						if (message != null) {
 
+						String message = consumer.receiveBodyNoWait("seda:output?multipleConsumers=true", String.class);
+						//logger.debug(portName + ":Serial output read:" + message);
+						if (message != null) {
 							// check its valid for this device
 							if (deviceType == null || message.contains(Constants.UID + ":" + deviceType)) {
 								logger.debug(portName + ":Serial written:" + message);
-								this.out.write((message + "\n").getBytes());
-								this.out.flush();
+								out.write((message + "\n").getBytes());
+								out.flush();
 							}
+						}
+						// delay for 100 msecs, we dont want to burn up CPU for nothing
+						try {
+							Thread.currentThread().sleep(100);
+						} catch (InterruptedException ie) {
 						}
 					}
 				} catch (IOException e) {
@@ -155,14 +169,15 @@ public class SerialPortReader {
 					logger.error(portName, e);
 				}
 
-				try {
-					consumer.stop();
-				} catch (Exception e) {
-					logger.error(portName, e);
-				}
+//				try {
+//					consumer.stop();
+//				} catch (Exception e) {
+//					logger.error(portName, e);
+//				}
 			} finally {
 				if (serialPort.isConnected())
 					serialPort.disconnect();
+				
 			}
 		}
 	}
@@ -183,6 +198,10 @@ public class SerialPortReader {
 	 * @return
 	 */
 	public boolean isRunning() {
+		if (!portFile.exists()) {
+			serialPort.disconnect();
+			running = false;
+		}
 		return running;
 	}
 
