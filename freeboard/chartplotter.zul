@@ -73,7 +73,21 @@
 					</toolbar>
 					<toolbar orient="horizontal" align="end" hflex="1"
 						style="float:right;height: 20px;">
-
+						<!-- ship pos -->
+						<label value="Boat: "
+							style="padding-right:0px; padding-left:10px;" />
+						<label id="posLat" value=""
+							style="padding-right:0px; padding-left:10px;" />
+						<label id="posLon" value=""
+							style="padding-right:0px; padding-left:10px;" />
+						<separator visible="true"  orient="vertical" bar="true" />
+						<!-- menu/centre buttons -->
+						<toolbarbutton label="Menu"
+							 />
+						<toolbarbutton label="Find boat"
+							w:onClick="centerBoat()" />
+						<toolbarbutton label="Follow Boat" w:onClick="followBoatPosition()"/>
+						<separator visible="true"  orient="vertical" bar="true" />
 						<label value="Mode: "
 							style="padding-right:0px; padding-left:10px;" />
 						<radiogroup name="type">

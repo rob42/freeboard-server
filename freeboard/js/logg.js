@@ -42,11 +42,11 @@ function Logg () {
 	this.onmessage = function (m) {
 		var mArray=m.data.split(",");
 		jQuery.each(mArray, function(i, data) {
-			if(data){
-				var textConsole = zk.Widget.$("$textConsole");
-				var s = textConsole.getValue();
-				textConsole.setValue(s+'\n'+data);
-			}
+//			if(data){
+//				var textConsole = zk.Widget.$("$textConsole");
+//				var s = textConsole.getValue();
+//				textConsole.setValue(s+'\n'+data);
+//			}
 			if (data && data.indexOf('LAT:') >= 0) {
 				var c = parseFloat(data.substring(4));
 				//lcdLat.setValue(parseFloat(c));

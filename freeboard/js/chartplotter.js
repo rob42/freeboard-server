@@ -24,6 +24,9 @@ var lon=0.0;
 var heading=0.0;
 var speed=0.0;
 var declination=0.0;
+
+var followBoat=false;
+
 var chartProjection = new OpenLayers.Projection("EPSG:900913");
 var screenProjection = new OpenLayers.Projection("EPSG:4326");
 var shipMarker = new OpenLayers.Layer.Vector('Ship', {
@@ -261,27 +264,47 @@ function toggleControl(cmd) {
 	}
 }
 
+function followBoatPosition(){
+	followBoat=!followBoat;
+}
+function centerBoat(){
+	centerOnBoat=true;
+	map.moveTo(new OpenLayers.LonLat(lon,lat).transform(screenProjection, chartProjection));
+}
 
-
-function setPosition(lat, lon, brng, speed){
+function setPosition(llat, llon, brng, spd){
+	
+	var eLat = zk.Widget.$("$posLat");
+	if(llat>0){
+		eLat.setValue(llat.toFixed(5)+' N');
+	}else{
+		eLat.setValue(Math.abs(llat.toFixed(5))+' S');
+	}
+	var eLon = zk.Widget.$("$posLon");
+	if(llon>0){
+		eLon.setValue(llon.toFixed(5)+' E');
+	}else{
+		eLon.setValue(llon.toFixed(5)+' W');
+	}
 	 shipMarker.removeAllFeatures();
 	 hdgLayer.removeAllFeatures();
 	 bearingLayer.removeAllFeatures();
 	// The location of our marker and popup. We usually think in geographic
     // coordinates ('EPSG:4326'), but the map is projected ('EPSG:3857').
-    var shipLocation = new OpenLayers.Geometry.Point(lon, lat) //new OpenLayers.Geometry.Point(lonLat);
+    var shipLocation = new OpenLayers.Geometry.Point(llon, llat) //new OpenLayers.Geometry.Point(lonLat);
         .transform(screenProjection, chartProjection);
-    // We add the marker with a tooltip text to the overlay
-   
     
     shipMarker.addFeatures([
         new OpenLayers.Feature.Vector(shipLocation, {angle: brng})
     ]);
+    if(followBoat){
+		map.moveTo(new OpenLayers.LonLat(llon,llat).transform(screenProjection, chartProjection));
+	}
     // ref  http://www.movable-type.co.uk/scripts/latlong.html
-    var start_point = new OpenLayers.LonLat(lon,lat);//.transform(screenProjection, chartProjection);
+    var start_point = new OpenLayers.LonLat(llon,llat);//.transform(screenProjection, chartProjection);
     //1852 meters in nautical mile
     
-    var end_point = OpenLayers.Util.destinationVincenty(start_point,brng,speed*1852);
+    var end_point = OpenLayers.Util.destinationVincenty(start_point,brng,spd*1852);
     var end_point2 = OpenLayers.Util.destinationVincenty(start_point,brng,185200);
     hdgLayer.addFeatures([
                new OpenLayers.Feature.Vector(new OpenLayers.Geometry.LineString([
@@ -301,44 +324,37 @@ function setPosition(lat, lon, brng, speed){
 function ChartPlotter () {
 	this.onmessage = function (m) {
 		var mArray=m.data.split(",");
+		var setPos=false;
 		jQuery.each(mArray, function(i, data) {
-			var setPos=false;
+			
 			if (data && data.indexOf('LAT') >= 0) {
-				var c = parseFloat(data.substring(4));
-				lat=c;
-				//alert(lat);
-				setPos=true;//setPosition(lat,lon,(declination+heading), speed);
+				lat = parseFloat(data.substring(4));
+				setPos=true;
 			}
 			if (data && data.indexOf('LON') >= 0) {
-				var c = parseFloat(data.substring(4));
-				lon=c;
-				setPos=true;//setPosition(lat,lon,(declination+heading), speed);
+				lon = parseFloat(data.substring(4));
+				setPos=true;
 			}
 			if (data && data.indexOf('MGH') >= 0) {
-				var c = parseFloat(data.substring(4));
-				heading=c;
-				setPos=true;//setPosition(lat,lon,(declination+heading), speed);
+				heading = parseFloat(data.substring(4));
+				setPos=true;
 			}
 			if (data && data.indexOf('SOG') >= 0) {
-				var c = parseFloat(data.substring(4));
-				speed=c;
-				setPos=true;//setPosition(lat,lon,(declination+heading), speed);
+				speed= parseFloat(data.substring(4));
+				setPos=true;
 			}
 			if (data && data.indexOf('MGD') >= 0) {
-				var c = parseFloat(data.substring(4));
-				//if(declination==0)alert(c)
-				declination=c;
+				declination = parseFloat(data.substring(4));
 			}
-			if(setPos){
-				setPosition(lat,lon, heading+declination, speed);
-			}
+			
 		});
-		
+		if(setPos){
+			setPosition(lat,lon, heading+declination, speed);
+		}
 	}
 	
 }
 function posInit(){
 	wsList.push(new ChartPlotter());
-	setPosition(40, 40, 30, 600);
 }
 
