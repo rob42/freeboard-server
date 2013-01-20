@@ -36,6 +36,7 @@ import net.sf.marineapi.nmea.sentence.Sentence;
 import net.sf.marineapi.nmea.sentence.SentenceId;
 import net.sf.marineapi.nmea.sentence.VHWSentence;
 import net.sf.marineapi.nmea.util.CompassPoint;
+import nz.co.fortytwo.freeboard.server.util.Constants;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;

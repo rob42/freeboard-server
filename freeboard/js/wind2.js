@@ -42,12 +42,12 @@ function Wind2 () {
 		var mArray=m.data.split(",");
 		jQuery.each(mArray, function(i, data) {
 			if (data && data.indexOf('WSA') >= 0) {
-				var c = data.substring(4);
-				lcdWindApp.setValue(parseFloat(c));
+				var c = parseFloat(data.substring(4));
+				lcdWindApp.setValue(c);
 			}
 			if (data && data.indexOf('WST') >= 0) {
-				var c = data.substring(4);
-				lcdWindTrue.setValue(parseFloat(c));
+				var c = parseFloat(data.substring(4));
+				lcdWindTrue.setValue(c);
 			}
 			if (data && data.indexOf('WDA') >= 0) {
 				var c = parseFloat(data.substring(4));

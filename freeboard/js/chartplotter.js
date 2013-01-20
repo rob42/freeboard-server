@@ -19,15 +19,34 @@
 //var map;
 var mapMinZoom = 0;
 var mapMaxZoom = 18;
-var lat=0;
-var lon=0;
+var lat=0.0;
+var lon=0.0;
+var heading=0.0;
+var speed=0.0;
+var declination=0.0;
 var chartProjection = new OpenLayers.Projection("EPSG:900913");
 var screenProjection = new OpenLayers.Projection("EPSG:4326");
 var shipMarker = new OpenLayers.Layer.Vector('Ship', {
     styleMap: new OpenLayers.StyleMap({
-        externalGraphic: './js/img/marker.png',
-        graphicWidth: 20, graphicHeight: 24, graphicYOffset: -24,
-        title: '${tooltip}'
+        externalGraphic: './js/img/ship_red.png',
+        graphicWidth: 10, graphicHeight: 24, graphicYOffset: -10,
+        title: '${tooltip}',
+        rotation: '${angle}',
+    })
+});
+var hdgLayer = new OpenLayers.Layer.Vector('Heading', {
+	styleMap: new OpenLayers.StyleMap({
+		strokeWidth : 2,
+		strokeOpacity : 1,
+		strokeColor : "#FF0066",
+    })
+});
+var bearingLayer = new OpenLayers.Layer.Vector('Bearing', {
+	styleMap: new OpenLayers.StyleMap({
+		strokeWidth : 1,
+		strokeOpacity : 1,
+		strokeColor : "#000000",
+		strokeDashstyle : "dash",
     })
 });
 
@@ -52,7 +71,11 @@ function initCharts() {
 
 	//add layers
 	addLayers(map);
+	
+	map.addLayer(bearingLayer);
+	map.addLayer(hdgLayer);
 	map.addLayer(shipMarker);
+	
 	
 	map.addControls([ 
 			new OpenLayers.Control.TouchNavigation({
@@ -240,35 +263,74 @@ function toggleControl(cmd) {
 
 
 
-function setPosition(lat, lon){
+function setPosition(lat, lon, brng, speed){
+	 shipMarker.removeAllFeatures();
+	 hdgLayer.removeAllFeatures();
+	 bearingLayer.removeAllFeatures();
 	// The location of our marker and popup. We usually think in geographic
     // coordinates ('EPSG:4326'), but the map is projected ('EPSG:3857').
     var shipLocation = new OpenLayers.Geometry.Point(lon, lat) //new OpenLayers.Geometry.Point(lonLat);
-        .transform(screenProjection,
-        		chartProjection);
+        .transform(screenProjection, chartProjection);
     // We add the marker with a tooltip text to the overlay
-    shipMarker.removeAllFeatures();
+   
+    
     shipMarker.addFeatures([
-        new OpenLayers.Feature.Vector(shipLocation, {tooltip: 'Motu'+lat+', '+lon})
+        new OpenLayers.Feature.Vector(shipLocation, {angle: brng})
     ]);
-
+    // ref  http://www.movable-type.co.uk/scripts/latlong.html
+    var start_point = new OpenLayers.LonLat(lon,lat);//.transform(screenProjection, chartProjection);
+    //1852 meters in nautical mile
+    
+    var end_point = OpenLayers.Util.destinationVincenty(start_point,brng,speed*1852);
+    var end_point2 = OpenLayers.Util.destinationVincenty(start_point,brng,185200);
+    hdgLayer.addFeatures([
+               new OpenLayers.Feature.Vector(new OpenLayers.Geometry.LineString([
+                   new OpenLayers.Geometry.Point(start_point.lon, start_point.lat).transform(screenProjection, chartProjection),
+                   new OpenLayers.Geometry.Point(end_point.lon,end_point.lat).transform(screenProjection, chartProjection),
+               ]))
+         ]);
+    bearingLayer.addFeatures([
+                   new OpenLayers.Feature.Vector(new OpenLayers.Geometry.LineString([
+                       new OpenLayers.Geometry.Point(start_point.lon, start_point.lat).transform(screenProjection, chartProjection),
+                       new OpenLayers.Geometry.Point(end_point2.lon,end_point2.lat).transform(screenProjection, chartProjection),
+                   ]))
+         ]);
 }
+
 
 function ChartPlotter () {
 	this.onmessage = function (m) {
 		var mArray=m.data.split(",");
 		jQuery.each(mArray, function(i, data) {
-			
+			var setPos=false;
 			if (data && data.indexOf('LAT') >= 0) {
-				var c = data.substring(4);
+				var c = parseFloat(data.substring(4));
 				lat=c;
 				//alert(lat);
-				setPosition(lat,lon);
+				setPos=true;//setPosition(lat,lon,(declination+heading), speed);
 			}
 			if (data && data.indexOf('LON') >= 0) {
-				var c = data.substring(4);
+				var c = parseFloat(data.substring(4));
 				lon=c;
-				setPosition(lat,lon);
+				setPos=true;//setPosition(lat,lon,(declination+heading), speed);
+			}
+			if (data && data.indexOf('MGH') >= 0) {
+				var c = parseFloat(data.substring(4));
+				heading=c;
+				setPos=true;//setPosition(lat,lon,(declination+heading), speed);
+			}
+			if (data && data.indexOf('SOG') >= 0) {
+				var c = parseFloat(data.substring(4));
+				speed=c;
+				setPos=true;//setPosition(lat,lon,(declination+heading), speed);
+			}
+			if (data && data.indexOf('MGD') >= 0) {
+				var c = parseFloat(data.substring(4));
+				//if(declination==0)alert(c)
+				declination=c;
+			}
+			if(setPos){
+				setPosition(lat,lon, heading+declination, speed);
 			}
 		});
 		
@@ -277,5 +339,6 @@ function ChartPlotter () {
 }
 function posInit(){
 	wsList.push(new ChartPlotter());
+	setPosition(40, 40, 30, 600);
 }
 

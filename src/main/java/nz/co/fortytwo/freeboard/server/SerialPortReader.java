@@ -26,6 +26,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
+import nz.co.fortytwo.freeboard.server.util.Constants;
+
 import org.apache.camel.ConsumerTemplate;
 import org.apache.camel.ProducerTemplate;
 import org.apache.log4j.Logger;
@@ -126,8 +128,11 @@ public class SerialPortReader {
 				// logger.error(portName, e);
 				// }
 			} finally {
-				if (serialPort.isConnected())
-					serialPort.disconnect();
+				try{
+					if(serialPort.isConnected())serialPort.disconnect();
+				}catch(Exception e){
+					logger.error("Problem disconnecting port "+portName,e);
+				}
 				
 			}
 		}
@@ -175,8 +180,11 @@ public class SerialPortReader {
 //					logger.error(portName, e);
 //				}
 			} finally {
-				if (serialPort.isConnected())
-					serialPort.disconnect();
+				try{
+					if(serialPort.isConnected())serialPort.disconnect();
+				}catch(Exception e){
+					logger.error("Problem disconnecting port "+portName,e);
+				}
 				
 			}
 		}
@@ -199,7 +207,11 @@ public class SerialPortReader {
 	 */
 	public boolean isRunning() {
 		if (!portFile.exists()) {
-			serialPort.disconnect();
+			try{
+				if(serialPort.isConnected())serialPort.disconnect();
+			}catch(Exception e){
+				logger.error("Problem disconnecting port "+portName,e);
+			}
 			running = false;
 		}
 		return running;

@@ -16,7 +16,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with FreeBoard.  If not, see <http://www.gnu.org/licenses/>.
  */
-package nz.co.fortytwo.freeboard.server;
+package nz.co.fortytwo.freeboard.server.util;
 
 import java.io.File;
 import java.io.FileReader;
@@ -24,6 +24,8 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
+
+import nz.co.fortytwo.freeboard.server.ServerMain;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;

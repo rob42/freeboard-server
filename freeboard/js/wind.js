@@ -42,17 +42,17 @@ function Wind () {
 		var mArray=m.data.split(",");
 		jQuery.each(mArray, function(i, data) {
 			if (data && data.indexOf('WSA') >= 0) {
-				var c = data.substring(4);
+				var c = parseFloat(data.substring(4));
 				radialWindApp.setValueAnimated(c);
 			}
 			if (data && data.indexOf('WST') >= 0) {
-				var c = data.substring(4);
+				var c = parseFloat(data.substring(4));
 				radialWindTrue.setValueAnimated(c);
 			}
 			if (data && data.indexOf('WDA') >= 0) {
-				var c = data.substring(4);
+				var c = parseFloat(data.substring(4));
 				// -180 <> 180
-				if (parseFloat(c) >= 179) {
+				if (c >= 179) {
 					radialWindDirApp.setValueAnimatedLatest(-(360 - c));
 				} else {
 					radialWindDirApp.setValueAnimatedLatest(c);
@@ -74,7 +74,7 @@ function Wind () {
 				}*/
 			}
 			if (data && data.indexOf('WDT') >= 0) {
-				var c = data.substring(4);
+				var c = parseFloat(data.substring(4));
 				
 				radialWindDirTrue.setValueAnimatedLatest(c);
 				// make average

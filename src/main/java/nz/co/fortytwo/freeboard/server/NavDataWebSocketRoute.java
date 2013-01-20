@@ -40,6 +40,7 @@ public class NavDataWebSocketRoute extends RouteBuilder {
 	private Properties config;
 	private WindProcessor windProcessor = new WindProcessor();
 	private CommandProcessor commandProcessor = new CommandProcessor();
+	private DeclinationProcessor declinationProcessor = new DeclinationProcessor();
 
 	public NavDataWebSocketRoute(Properties config) {
 		this.config=config;
@@ -79,16 +80,20 @@ public class NavDataWebSocketRoute extends RouteBuilder {
 			serialPortManager.setWc(wc);
 			new Thread(serialPortManager).start();
 		}
+		//dump nulls
+		intercept().when(body().isNull()).stop();
+		//intercept().when(((String)body(String.class)).trim().length()==0).stop();
 		//send to listeners
 		from("seda:input?multipleConsumers=true")
-			.process(inputFilterProcessor)
-			.process(nmeaProcessor)
-			.process(imuProcessor)
-			.process(windProcessor )
-			.process(commandProcessor )
-			.to("log:nz.co.fortytwo.freeboard.navdata?level=INFO")
-			// and push to all web socket subscribers 
-			.to("websocket:navData?sendToAll=true")
+						.process(inputFilterProcessor)
+						.process(nmeaProcessor)
+						.process(imuProcessor)
+						.process(windProcessor )
+						.process(commandProcessor )
+						.process(declinationProcessor)
+						.to("log:nz.co.fortytwo.freeboard.navdata?level=INFO")
+						// and push to all web socket subscribers 
+						.to("websocket:navData?sendToAll=true")
 			.onException(Exception.class)
 			.handled(true).maximumRedeliveries(0)
 		    .to("log:nz.co.fortytwo.freeboard.navdata?level=ERROR");

@@ -67,8 +67,8 @@ function Logg () {
 	
 			}
 			if (data && data.indexOf('SOG:') >= 0) {
-				var c = data.substring(4);
-				lcdLog.setValue(parseFloat(c));
+				var c = parseFloat(data.substring(4));
+				lcdLog.setValue(c);
 	
 			}
 			if (data && data.indexOf('MGH:') >= 0) {
@@ -76,13 +76,13 @@ function Logg () {
 				lcdHeading.setValue(parseFloat(c));
 			}
 			if (data && data.indexOf('YAW:') >= 0) {
-				var c = data.substring(4);
+				var c = parseFloat(data.substring(4));
 				// lcdWaypoint.setValue(parseFloat(c));
 				// -180 <> 180
-				if (parseFloat(c) >= 179) {
-					lcdWaypoint.setValue(-(360 - parseFloat(c)));
+				if (c >= 179) {
+					lcdWaypoint.setValue(-(360 - c));
 				} else {
-					lcdWaypoint.setValue(parseFloat(c));
+					lcdWaypoint.setValue(c);
 				}
 			}
 		});

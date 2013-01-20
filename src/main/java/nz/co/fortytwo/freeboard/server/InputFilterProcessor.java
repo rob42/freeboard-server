@@ -49,6 +49,7 @@ public class InputFilterProcessor implements Processor {
 			//uh-oh log it, squash it
 			exchange.getUnitOfWork().done(exchange);
 			logger.info("Dropped invalid message:"+msg);
+			exchange.getOut().setBody(null);
 			//throw new CamelExchangeException("Invalid msg", exchange);
 		}
 		

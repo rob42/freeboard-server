@@ -16,7 +16,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with FreeBoard.  If not, see <http://www.gnu.org/licenses/>.
  */
-package nz.co.fortytwo.freeboard.server;
+package nz.co.fortytwo.freeboard.server.util;
 
 public class Constants {
 	/** version */
@@ -35,8 +35,12 @@ public class Constants {
 	public static final String MGY = "MGY";
 	/** Mag Z - heading */
 	public static final String MGZ = "MGZ";
-	/** Mag Heading */
+	/** Mag Heading - magnetic*/
 	public static final String MGH = "MGH";
+	/** Mag Heading - true */
+	public static final String MGT = "MGT";
+	/** Mag Declination */
+	public static final String MGD = "MGD";
 	/** Latitude*/
 	public static final String LAT = "LAT";
 	/** Longitude*/

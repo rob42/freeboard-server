@@ -18,6 +18,8 @@
  */
 package nz.co.fortytwo.freeboard.server;
 
+import nz.co.fortytwo.freeboard.server.util.Constants;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 
