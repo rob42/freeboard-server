@@ -61,7 +61,7 @@
 					<canvas id="canvasLat" width="245px" height="55px" />
 				</html>
 			</hlayout>
-			<textbox id="textConsole" width="100%" height="400px" multiline="true"></textbox>
+			<!-- textbox id="textConsole" width="100%" height="400px" multiline="true"></textbox-->
 		</vlayout>
 	</hlayout>
 

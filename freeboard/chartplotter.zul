@@ -56,52 +56,9 @@
 			<south>
 				<hbox pack="stretch" width="100%"
 					sclass="hboxRemoveWhiteStrips">
-					<toolbar orient="horizontal" align="start" hflex="1"
-						style="float:left; height: 20px;">
-						<toolbarbutton id="help" label="Help"
-							popup="helpPopup" />
-						<toolbarbutton label="Home" href="/index.zul" />
-						<toolbarbutton label="Floating"
-							href="/floating.zul" />
-						<toolbarbutton label="Quadrants"
-							href="/quadrants.zul" />
-						<toolbarbutton label="Wind + Log"
-							href="/windloggPage.zul" />
-						<toolbarbutton label="Wind"
-							href="/windPage1.zul" />
-						<toolbarbutton label="Log" href="/loggPage.zul" />
-					</toolbar>
-					<toolbar orient="horizontal" align="end" hflex="1"
-						style="float:right;height: 20px;">
-						<!-- ship pos -->
-						<label value="Boat: "
-							style="padding-right:0px; padding-left:10px;" />
-						<label id="posLat" value=""
-							style="padding-right:0px; padding-left:10px;" />
-						<label id="posLon" value=""
-							style="padding-right:0px; padding-left:10px;" />
-						<separator visible="true"  orient="vertical" bar="true" />
-						<!-- menu/centre buttons -->
-						<toolbarbutton label="Menu"
-							 />
-						<toolbarbutton label="Find boat"
-							w:onClick="centerBoat()" />
-						<toolbarbutton label="Follow Boat" w:onClick="followBoatPosition()"/>
-						<separator visible="true"  orient="vertical" bar="true" />
-						<label value="Mode: "
-							style="padding-right:0px; padding-left:10px;" />
-						<radiogroup name="type">
-							<radio value="none" id="noneToggle"
-								w:onClick="toggleControl('none');" checked="true" />
-							<label>Navigate</label>
-							<radio value="line" id="lineToggle"
-								w:onClick="toggleControl('line');" />
-							<label>Measure</label>
-						</radiogroup>
-						<label id="output"
-							style="padding-right:0px; padding-left:10px;" />
-
-					</toolbar>
+					<include src="./mainToolbar.zul"/>
+					<include src="./cpToolbar.zul"/>
+					
 				</hbox>
 
 			</south>

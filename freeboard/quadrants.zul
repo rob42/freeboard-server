@@ -68,37 +68,8 @@
 			<south>
 				<hbox pack="stretch" width="100%"
 					sclass="hboxRemoveWhiteStrips">
-					<toolbar orient="horizontal" align="start" hflex="1"
-						style="float:left; ">
-						<toolbarbutton id="help" label="Help"
-							popup="helpPopup" />
-						<toolbarbutton label="Home" href="/index.zul" />
-						<toolbarbutton label="Floating"
-							href="/floating.zul" />
-						<toolbarbutton label="Plotter"
-							href="/chartplotter.zul" />
-						<toolbarbutton label="Wind + Log"
-							href="/windloggPage.zul" />
-						<toolbarbutton label="Wind"
-							href="/windPage1.zul" />
-						<toolbarbutton label="Log" href="/loggPage.zul" />
-					</toolbar>
-					<toolbar orient="horizontal" align="end" hflex="1"
-						style="float:right; vertical-align: middle; ">
-						<label value="Mode: "
-							style="padding-right:0px; padding-left:10px;" />
-						<radiogroup name="type">
-							<radio value="none" id="noneToggle"
-								w:onClick="toggleControl('none');" checked="true" />
-							<label>Navigate</label>
-							<radio value="line" id="lineToggle"
-								w:onClick="toggleControl('line');" />
-							<label>Measure</label>
-						</radiogroup>
-						<label id="output"
-							style="padding-right:0px; padding-left:10px;padding-bottom: 4px;" />
-
-					</toolbar>
+					<include src="./mainToolbar.zul"/>
+					<include src="./cpToolbar.zul"/>
 
 				</hbox>
 			</south>

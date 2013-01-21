@@ -48,19 +48,7 @@
 			<south>
 				<hbox pack="stretch" width="100%"
 					sclass="hboxRemoveWhiteStrips">
-					<toolbar orient="horizontal" align="start" hflex="1"
-						style="float:left; height: 20px;">
-						<toolbarbutton id="help" label="Help"
-							popup="helpPopup" />
-						<toolbarbutton label="Home" href="/index.zul" />
-						<toolbarbutton label="Quadrants"
-							href="/quadrants.zul" />
-						<toolbarbutton label="Plotter"
-							href="/chartplotter.zul" />
-						<toolbarbutton label="Wind + Log"
-							href="/windloggPage.zul" />
-						<toolbarbutton label="Log" href="/loggPage.zul" />
-					</toolbar>
+					<include src="./mainToolbar.zul"/>
 
 				</hbox>
 
