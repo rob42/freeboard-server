@@ -34,7 +34,7 @@ import org.apache.log4j.Logger;
  * @author robert
  * 
  */
-public class DeclinationProcessor implements Processor {
+public class DeclinationProcessor extends FreeboardProcessor implements Processor {
 
 		private static Logger logger = Logger.getLogger(DeclinationProcessor.class);
 		private double declination=0.0;
@@ -72,7 +72,9 @@ public class DeclinationProcessor implements Processor {
 				calc=false;
 			}
 			if(bodyStr.indexOf(Constants.MGH)>0){
-				exchange.getOut().setBody( bodyStr+Constants.MGD+":"+declination+",");
+				StringBuilder builder = new StringBuilder(bodyStr);
+				appendValue(builder, Constants.MGD, declination);
+				exchange.getOut().setBody(builder.toString());
 			}
 		}catch(Exception e){
 			logger.error(e);

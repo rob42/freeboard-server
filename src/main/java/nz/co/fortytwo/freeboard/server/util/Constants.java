@@ -78,7 +78,9 @@ public class Constants {
 	/** Autopilot state (on/off)*/
 	public static final String APX = "APX"; //0=off, 1=on
 	/** Autopilot offset from source*/
-	public static final String APT = "APT"; //offset from source +/- deg
+	public static final String APT = "APT"; //offset from source +/- deg - used for wind
+	/** Autopilot goal in deg*/
+	public static final String APG = "APG"; //heading goal in deg 0-360 - used for compass
 	/** Autopilot source*/
 	public static final String APS = "APS"; //W wind or C compass	
 	

@@ -48,7 +48,7 @@ import org.apache.commons.lang3.StringUtils;
  * @author robert
  * 
  */
-public class NMEAProcessor implements Processor {
+public class NMEAProcessor extends FreeboardProcessor implements Processor {
 
 	private static final String DISPATCH_ALL = "DISPATCH_ALL";
 
@@ -191,54 +191,61 @@ public class NMEAProcessor implements Processor {
 
 			public void sentenceRead(SentenceEvent evt) {
 				Exchange exchange = (Exchange) evt.getSource();
-				StringBuffer body = new StringBuffer();
+				StringBuilder body = new StringBuilder();
 				if (evt.getSentence() instanceof PositionSentence) {
 					PositionSentence sen = (PositionSentence) evt.getSentence();
 					if (sen.getPosition().getLatHemisphere() == CompassPoint.SOUTH) {
-						body.append(Constants.LAT + ":-" + sen.getPosition().getLatitude() + ",");
+						appendValue(body,Constants.LAT,(0-sen.getPosition().getLatitude()));
 					} else {
-						body.append(Constants.LAT + ":" + sen.getPosition().getLatitude() + ",");
+						appendValue(body,Constants.LAT,sen.getPosition().getLatitude());
 					}
 					if (sen.getPosition().getLonHemisphere() == CompassPoint.WEST) {
-						body.append(Constants.LON + ":-" + sen.getPosition().getLongitude() + ",");
+						appendValue(body,Constants.LON,(0-sen.getPosition().getLongitude()));
 					} else {
-						body.append(Constants.LON + ":" + sen.getPosition().getLongitude() + ",");
+						appendValue(body,Constants.LON,sen.getPosition().getLongitude());
 					}
 				}
 				if (evt.getSentence() instanceof HeadingSentence) {
 					HeadingSentence sen = (HeadingSentence) evt.getSentence();
 					if (sen.isTrue()) {
-						body.append(Constants.COG + ":" + sen.getHeading() + ",");
+						appendValue(body,Constants.COG,sen.getHeading());
 					} else {
-						body.append(Constants.MGH + ":" + sen.getHeading() + ",");
+						appendValue(body,Constants.MGH,sen.getHeading());
 					}
 				}
 				if (evt.getSentence() instanceof RMCSentence) {
 					// ;
 					RMCSentence sen = (RMCSentence) evt.getSentence();
-					body.append(Constants.SOG + ":" + sen.getSpeed() + ",");
+					appendValue(body,Constants.SOG,sen.getSpeed());
 				}
 				if (evt.getSentence() instanceof VHWSentence) {
 					// ;
 					VHWSentence sen = (VHWSentence) evt.getSentence();
-					body.append(Constants.SOG + ":" + sen.getSpeedKnots() + ",");
-					body.append(Constants.MGH + ":" + sen.getMagneticHeading() + ",");
-					body.append(Constants.COG + ":" + sen.getHeading() + ",");
+					appendValue(body,Constants.SOG,sen.getSpeedKnots());
+					
+					appendValue(body, Constants.MGH,sen.getMagneticHeading());
+					appendValue(body, Constants.COG,sen.getHeading());
+
 				}
 
 				// MWV wind
 				if (evt.getSentence() instanceof MWVSentence) {
 					MWVSentence sen = (MWVSentence) evt.getSentence();
 					if (sen.isTrue()) {
-						body.append(Constants.WDT + ":" + sen.getAngle() + "," + Constants.WST + ":" + sen.getSpeed() + "," + Constants.WSU + ":"
-								+ sen.getSpeedUnit() + ",");
+						appendValue(body, Constants.WDT,sen.getAngle());
+						appendValue(body, Constants.WST,sen.getSpeed());
+						appendValue(body, Constants.WSU,sen.getSpeedUnit());
+						
 					} else {
-						body.append(Constants.WDA + ":" + sen.getAngle() + "," + Constants.WSA + ":" + sen.getSpeed() + "," + Constants.WSU + ":"
-								+ sen.getSpeedUnit() + ",");
+						appendValue(body, Constants.WDA,sen.getAngle());
+						appendValue(body, Constants.WSA,sen.getSpeed());
+						appendValue(body, Constants.WSU,sen.getSpeedUnit());
 					}
 				}
-				exchange.getOut().setBody(body);
+				
+				exchange.getOut().setBody(body.toString());
 			}
+
 
 			public void readingStopped() {
 			}

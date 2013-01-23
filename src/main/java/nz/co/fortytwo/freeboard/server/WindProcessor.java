@@ -22,18 +22,22 @@ import nz.co.fortytwo.freeboard.server.util.Constants;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * Calculates the true wind from apparent wind and vessel speed/heading
  * @author robert
  *
  */
-public class WindProcessor implements Processor {
+public class WindProcessor extends FreeboardProcessor implements Processor {
 	double apparentWind=0;
 	int apparentDirection=0;
 	float vesselSpeed=0;
 	
 	public void process(Exchange exchange) throws Exception {
+		if (StringUtils.isEmpty(exchange.getIn().getBody(String.class)))
+			return;
+		
 		String bodyStr = exchange.getIn().getBody(String.class).trim();
 		
 			try {
@@ -63,13 +67,14 @@ public class WindProcessor implements Processor {
 					//now calc and add to body
 					double trueWindSpeed = calcTrueWindSpeed(apparentWind, apparentDirection, vesselSpeed);
 					double trueWindDir = calcTrueWindDirection(apparentWind,apparentDirection, vesselSpeed);
+					StringBuilder builder = new StringBuilder(bodyStr);
 					if(!Double.isNaN(trueWindDir)){
-						bodyStr=bodyStr+"WDT:"+round(trueWindDir,1)+",";
+						appendValue(builder, Constants.WDT, round(trueWindDir,1));
 					}
 					if(!Double.isNaN(trueWindSpeed)){
-						bodyStr=bodyStr+"WST:"+round(trueWindSpeed,2)+",";
+						appendValue(builder, Constants.WST, round(trueWindSpeed,2));
 					}
-					exchange.getOut().setBody(bodyStr);
+					exchange.getOut().setBody(builder.toString());
 				}
 
 			} catch (Exception e) {
@@ -79,22 +84,18 @@ public class WindProcessor implements Processor {
 
 	}
 	
-	double round(double val, int places){
-		double scale = Math.pow(10, places);
-		long iVal = Math.round (val*scale);
-		return iVal/scale;
-	}
+	
 	
 	/**
 	 * Calculates the true wind direction from apparent wind on vessel
 	 * Result is relative to bow
 	 * 
-	 * @param apparentWind
-	 * @param apparentDirection 0 to 360 deg to the bow
-	 * @param vesselSpeed
+	 * @param apparentWnd
+	 * @param apparentDir 0 to 360 deg to the bow
+	 * @param vesselSpd
 	 * @return trueDirection 0 to 360 deg to the bow
 	 */
-	double calcTrueWindDirection(double apparentWind, int apparentDirection, float vesselSpeed){
+	double calcTrueWindDirection(double apparentWnd, int apparentDir, float vesselSpd){
 		/*
 			 Y = 90 - D
 			a = AW * ( cos Y )
@@ -103,14 +104,14 @@ public class WindProcessor implements Processor {
 			True-Wind Speed = (( a * a ) + ( b * b )) 1/2
 			True-Wind Angle = 90-arctangent ( b / a )
 		*/
-                apparentDirection=apparentDirection%360;
-		boolean stbd = apparentDirection<=180;
+                apparentDir=apparentDir%360;
+		boolean stbd = apparentDir<=180;
         if(!stbd){
-           apparentDirection=360-apparentDirection; 
+           apparentDir=360-apparentDir; 
         }
-		double y = 90-apparentDirection;
-		double a = apparentWind * Math.cos(Math.toRadians(y));
-		double b = (apparentWind * Math.sin(Math.toRadians(y)))-vesselSpeed;
+		double y = 90-apparentDir;
+		double a = apparentWnd * Math.cos(Math.toRadians(y));
+		double b = (apparentWnd * Math.sin(Math.toRadians(y)))-vesselSpd;
 		double td = 90-Math.toDegrees(Math.atan((b/a)));
 		if(!stbd)return (360-td);
 		return td;
@@ -120,19 +121,19 @@ public class WindProcessor implements Processor {
 	/**
 	 * Calculates the true wind speed from apparent wind speed on vessel
 	 * 
-	 * @param apparentWind
-	 * @param apparentDirection 0 to 360 deg to the bow
-	 * @param vesselSpeed
+	 * @param apparentWnd
+	 * @param apparentDir 0 to 360 deg to the bow
+	 * @param vesselSpd
 	 * @return
 	 */
-        double calcTrueWindSpeed(double apparentWind, int apparentDirection, float vesselSpeed){
-                apparentDirection=apparentDirection%360;
-                if(apparentDirection>180){
-                   apparentDirection=360-apparentDirection; 
+        double calcTrueWindSpeed(double apparentWnd, int apparentDir, float vesselSpd){
+                apparentDir=apparentDir%360;
+                if(apparentDir>180){
+                   apparentDir=360-apparentDir; 
                 }
-		double y = 90-apparentDirection;
-		double a = apparentWind * Math.cos(Math.toRadians(y));
-		double b = (apparentWind * Math.sin(Math.toRadians(y)))-vesselSpeed;
+		double y = 90-apparentDir;
+		double a = apparentWnd * Math.cos(Math.toRadians(y));
+		double b = (apparentWnd * Math.sin(Math.toRadians(y)))-vesselSpd;
 		return (Math.sqrt((a*a)+(b*b)));
 	}
 

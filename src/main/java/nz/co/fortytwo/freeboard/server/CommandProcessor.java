@@ -30,35 +30,38 @@ import org.apache.camel.ProducerTemplate;
  * @author robert
  *
  */
-public class CommandProcessor implements Processor {
+public class CommandProcessor extends FreeboardProcessor implements Processor {
 
 	private ProducerTemplate producer;
 	
 	public void process(Exchange exchange) throws Exception {
 		String msg = (String) exchange.getIn().getBody(String.class);
 		String[] data = msg.split(",");
-		StringBuffer outMsg = new StringBuffer();
+		StringBuilder outMsg = new StringBuilder();
 		for(String m:data){
 			//send to MEGA for anchor alarms, and autopilot
 			//be careful to avoid misc arduino error/debug messages
-			if(m.startsWith(Constants.WST+":"))outMsg.append(m+",");
-			if(m.startsWith(Constants.WSA+":"))outMsg.append(m+",");
-			if(m.startsWith(Constants.WDT+":"))outMsg.append(m+",");
-			if(m.startsWith(Constants.WDA+":"))outMsg.append(m+",");
-			if(m.startsWith(Constants.WSU+":"))outMsg.append(m+",");
-			if(m.startsWith(Constants.LAT+":"))outMsg.append(m+",");
-			if(m.startsWith(Constants.LON+":"))outMsg.append(m+",");
-			if(m.startsWith(Constants.COG+":"))outMsg.append(m+",");
-			if(m.startsWith(Constants.MGH+":"))outMsg.append(m+",");
-			if(m.startsWith(Constants.SOG+":"))outMsg.append(m+",");
-			if(m.startsWith(Constants.YAW+":"))outMsg.append(m+",");
-			if(m.startsWith(Constants.PCH+":"))outMsg.append(m+",");
-			if(m.startsWith(Constants.RLL+":"))outMsg.append(m+",");
+			if(m.startsWith(Constants.WST+":")){outMsg.append(m); outMsg.append(",");}
+			if(m.startsWith(Constants.WSA+":")){outMsg.append(m); outMsg.append(",");}
+			if(m.startsWith(Constants.WDT+":")){outMsg.append(m); outMsg.append(",");}
+			if(m.startsWith(Constants.WDA+":")){outMsg.append(m); outMsg.append(",");}
+			if(m.startsWith(Constants.WSU+":")){outMsg.append(m); outMsg.append(",");}
+			if(m.startsWith(Constants.LAT+":")){outMsg.append(m); outMsg.append(",");}
+			if(m.startsWith(Constants.LON+":")){outMsg.append(m); outMsg.append(",");}
+			if(m.startsWith(Constants.COG+":")){outMsg.append(m); outMsg.append(",");}
+			if(m.startsWith(Constants.MGH+":")){outMsg.append(m); outMsg.append(",");}
+			if(m.startsWith(Constants.SOG+":")){outMsg.append(m); outMsg.append(",");}
+			if(m.startsWith(Constants.YAW+":")){outMsg.append(m); outMsg.append(",");}
+			if(m.startsWith(Constants.PCH+":")){outMsg.append(m); outMsg.append(",");}
+			if (m.startsWith(Constants.RLL + ":")) {
+				outMsg.append(m);
+				outMsg.append(",");
+			}
 		}
 		//now send to output queue
 		if(outMsg.length()>0){
 			outMsg.insert(0, Constants.UID+":"+Constants.MEGA+",");
-			producer.sendBody("seda:output?multipleConsumers=true", outMsg);
+			producer.sendBody("seda:output?multipleConsumers=true", outMsg.toString());
 		}
 	}
 

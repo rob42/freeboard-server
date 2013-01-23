@@ -22,6 +22,7 @@ import org.apache.log4j.Logger;
 import org.zkoss.zk.ui.Session;
 import org.zkoss.zk.ui.event.MouseEvent;
 import org.zkoss.zk.ui.select.SelectorComposer;
+import org.zkoss.zk.ui.select.annotation.Listen;
 import org.zkoss.zk.ui.select.annotation.Wire;
 import org.zkoss.zk.ui.select.annotation.WireVariable;
 import org.zkoss.zul.Panel;
@@ -69,21 +70,13 @@ public class InstrumentViewModel extends SelectorComposer<Window>{
 		//chartplotter.setFloatable(true);
 	}
 	
-	//@Listen("onClick = button#windShrink")
-	public void windShrink(MouseEvent event) {
-	    size=size-(size*0.1);
-	    logger.debug(" shrinkSize = "+size);
-	    wind.invalidate();
+	@Listen("onClick = button#apPort")
+	public void apPort(MouseEvent event) {
+	    logger.debug(" event = "+event);
+	    
 	}
 	
-	//@Listen("onClick = button#windGrow")
-	public void windGrow(MouseEvent event) {
-	    size=size+(size*0.1);
-	    logger.debug(" growSize = "+size);
-	    wind.setWidth(wind.getMinwidth()+"px");
-	    wind.setHeight(wind.getMinheight()+"px");
-	    wind.invalidate();
-	}
+	
 	
 	public double getSize() {
 		if(sess.hasAttribute("size")){
