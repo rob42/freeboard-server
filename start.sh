@@ -24,7 +24,7 @@ JAVA=$JAVA_HOME/bin/java
 FREEBOARD_HOME=/home/pi/freeboard
 JAR=freeboard-server-0.0.1-SNAPSHOT-jar-with-dependencies.jar
 EXT="-Djava.util.Arrays.useLegacyMergeSort=true -Djava.library.path=/usr/lib/rxtx:/usr/lib/jni"
-MEM=-Xmx128m
+MEM="-Xmx24m -XX:PermSize=32m -XX:MaxPermSize=32m"
 LOG4J=-Dlog4j.configuration=./conf/log4j.properties
 
 cd $FREEBOARD_HOME
