@@ -34,7 +34,7 @@ import org.apache.commons.lang3.StringUtils;
 public class WindProcessor extends FreeboardProcessor implements Processor {
 	double apparentWind=0;
 	int apparentDirection=0;
-	float vesselSpeed=0;
+	double vesselSpeed=0;
 	
 	public void process(Exchange exchange) throws Exception {
 		if (exchange.getIn().getBody()==null)
@@ -50,7 +50,7 @@ public class WindProcessor extends FreeboardProcessor implements Processor {
 				
 					// we need HDG, and LOG
 					if(map.containsKey(Constants.SOG)){
-						vesselSpeed= (Float) map.get(Constants.SOG);
+						vesselSpeed= (Double) map.get(Constants.SOG);
 						valid=true;
 					}
 					if(map.containsKey(Constants.WSA)){
@@ -97,7 +97,7 @@ public class WindProcessor extends FreeboardProcessor implements Processor {
 	 * @param vesselSpd
 	 * @return trueDirection 0 to 360 deg to the bow
 	 */
-	double calcTrueWindDirection(double apparentWnd, int apparentDir, float vesselSpd){
+	double calcTrueWindDirection(double apparentWnd, int apparentDir, double vesselSpd){
 		/*
 			 Y = 90 - D
 			a = AW * ( cos Y )
@@ -128,7 +128,7 @@ public class WindProcessor extends FreeboardProcessor implements Processor {
 	 * @param vesselSpd
 	 * @return
 	 */
-        double calcTrueWindSpeed(double apparentWnd, int apparentDir, float vesselSpd){
+        double calcTrueWindSpeed(double apparentWnd, int apparentDir, double vesselSpd){
                 apparentDir=apparentDir%360;
                 if(apparentDir>180){
                    apparentDir=360-apparentDir; 
