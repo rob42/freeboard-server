@@ -19,6 +19,12 @@
 
 package nz.co.fortytwo.freeboard.server;
 
+import java.util.HashMap;
+
+import nz.co.fortytwo.freeboard.server.util.Constants;
+
+import org.apache.commons.lang3.StringUtils;
+
 
 /**
  * Holder for some useful methods for processors
@@ -50,5 +56,57 @@ public class FreeboardProcessor {
 		double scale = Math.pow(10, places);
 		long iVal = Math.round (val*scale);
 		return iVal/scale;
+	}
+	
+	/**
+	 * Converts a msg string into a hashmap
+	 * @param msg
+	 * @return
+	 */
+	public HashMap<String, Object> stringToHashMap(String msg){
+		HashMap<String, Object> map = new HashMap<String, Object>();
+		if(msg.startsWith("$")){
+			map.put(Constants.NMEA, msg);
+		}else{
+			String[] bodyArray = msg.split(",");
+			//reuse
+			String[] pair;
+			for(String s:bodyArray){
+				if(StringUtils.isNotBlank(s)){
+					pair=s.split(":");
+					if(pair==null || pair.length!=2)continue;
+					
+					if(StringUtils.isNumeric(pair[1])){
+						Object val;
+						if(pair[1].indexOf(".")>0){
+							val=Double.valueOf(pair[1]);
+						}else{
+							val=Integer.valueOf(pair[1]);
+						}
+						map.put(pair[0], val);
+					}else{
+						map.put(pair[0], pair[1]);
+					}
+				}
+			}
+		}
+		return map;
+	}
+	
+	/**
+	 * Convert hashmap of key/value pairs back to String
+	 * @param map
+	 * @return
+	 */
+	public String hashMapToString(HashMap<String, Object> map){
+		StringBuilder builder = new StringBuilder();
+		for(String s:map.keySet()){
+			if(s.equals(Constants.NMEA)){
+				builder.append(map.get(s));
+			}else{
+				appendValue(builder, s, map.get(s).toString());
+			}
+		}
+		return builder.toString();
 	}
 }

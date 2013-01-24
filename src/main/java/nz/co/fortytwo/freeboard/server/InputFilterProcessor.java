@@ -18,6 +18,8 @@
  */
 package nz.co.fortytwo.freeboard.server;
 
+import java.util.HashMap;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.log4j.Logger;
@@ -28,7 +30,7 @@ import org.apache.log4j.Logger;
  * @author robert
  *
  */
-public class InputFilterProcessor implements Processor {
+public class InputFilterProcessor extends FreeboardProcessor implements Processor {
 	private static Logger logger = Logger.getLogger(InputFilterProcessor.class);
 	
 	public void process(Exchange exchange) throws Exception {
@@ -36,14 +38,19 @@ public class InputFilterProcessor implements Processor {
 		if(msg !=null){
 			if(msg.startsWith("!!!VER:")){
 				//from IMU or MEGA - good
+				msg=msg.substring(msg.indexOf(",") + 1);
+				msg=msg.replaceAll("\\*\\*\\*", ",");
+				exchange.getOut().setBody(stringToHashMap(msg));
 				return;
 			}
 			if(msg.matches("^[#A-Z][A-Z]*:")){
 				//CMD or VAL - good
+				exchange.getOut().setBody(stringToHashMap(msg));
 				return;
 			}
 			if(msg.startsWith("$")){
 				//NMEA - good
+				exchange.getOut().setBody(stringToHashMap(msg));
 				return;
 			}
 			//uh-oh log it, squash it

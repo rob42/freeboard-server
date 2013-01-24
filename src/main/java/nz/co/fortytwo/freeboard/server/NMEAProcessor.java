@@ -18,6 +18,7 @@
  */
 package nz.co.fortytwo.freeboard.server;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -60,11 +61,14 @@ public class NMEAProcessor extends FreeboardProcessor implements Processor {
 	}
 
 	public void process(Exchange exchange) throws Exception {
-		if (StringUtils.isEmpty(exchange.getIn().getBody(String.class)))
+		if (exchange.getIn().getBody()==null){
 			return;
+		}
+		@SuppressWarnings("unchecked")
+		HashMap<String, Object> map = exchange.getIn().getBody(HashMap.class);
 		// so we have a string
-		String bodyStr = exchange.getIn().getBody(String.class).trim();
-		if (bodyStr.startsWith("$")) {
+		String bodyStr = (String) map.get(Constants.NMEA);
+		if (StringUtils.isNotBlank(bodyStr)) {
 			try {
 				Sentence sentence = SentenceFactory.getInstance().createParser(bodyStr);
 				fireSentenceEvent(exchange, sentence);
@@ -191,40 +195,41 @@ public class NMEAProcessor extends FreeboardProcessor implements Processor {
 
 			public void sentenceRead(SentenceEvent evt) {
 				Exchange exchange = (Exchange) evt.getSource();
-				StringBuilder body = new StringBuilder();
+				//StringBuilder body = new StringBuilder();
+				HashMap<String, Object> map = new HashMap<String, Object>();
 				if (evt.getSentence() instanceof PositionSentence) {
 					PositionSentence sen = (PositionSentence) evt.getSentence();
 					if (sen.getPosition().getLatHemisphere() == CompassPoint.SOUTH) {
-						appendValue(body,Constants.LAT,(0-sen.getPosition().getLatitude()));
+						map.put(Constants.LAT,(0-sen.getPosition().getLatitude()));
 					} else {
-						appendValue(body,Constants.LAT,sen.getPosition().getLatitude());
+						map.put(Constants.LAT,sen.getPosition().getLatitude());
 					}
 					if (sen.getPosition().getLonHemisphere() == CompassPoint.WEST) {
-						appendValue(body,Constants.LON,(0-sen.getPosition().getLongitude()));
+						map.put(Constants.LON,(0-sen.getPosition().getLongitude()));
 					} else {
-						appendValue(body,Constants.LON,sen.getPosition().getLongitude());
+						map.put(Constants.LON,sen.getPosition().getLongitude());
 					}
 				}
 				if (evt.getSentence() instanceof HeadingSentence) {
 					HeadingSentence sen = (HeadingSentence) evt.getSentence();
 					if (sen.isTrue()) {
-						appendValue(body,Constants.COG,sen.getHeading());
+						map.put(Constants.COG,sen.getHeading());
 					} else {
-						appendValue(body,Constants.MGH,sen.getHeading());
+						map.put(Constants.MGH,sen.getHeading());
 					}
 				}
 				if (evt.getSentence() instanceof RMCSentence) {
 					// ;
 					RMCSentence sen = (RMCSentence) evt.getSentence();
-					appendValue(body,Constants.SOG,sen.getSpeed());
+					map.put(Constants.SOG,sen.getSpeed());
 				}
 				if (evt.getSentence() instanceof VHWSentence) {
 					// ;
 					VHWSentence sen = (VHWSentence) evt.getSentence();
-					appendValue(body,Constants.SOG,sen.getSpeedKnots());
+					map.put(Constants.SOG,sen.getSpeedKnots());
 					
-					appendValue(body, Constants.MGH,sen.getMagneticHeading());
-					appendValue(body, Constants.COG,sen.getHeading());
+					map.put( Constants.MGH,sen.getMagneticHeading());
+					map.put( Constants.COG,sen.getHeading());
 
 				}
 
@@ -232,18 +237,18 @@ public class NMEAProcessor extends FreeboardProcessor implements Processor {
 				if (evt.getSentence() instanceof MWVSentence) {
 					MWVSentence sen = (MWVSentence) evt.getSentence();
 					if (sen.isTrue()) {
-						appendValue(body, Constants.WDT,sen.getAngle());
-						appendValue(body, Constants.WST,sen.getSpeed());
-						appendValue(body, Constants.WSU,sen.getSpeedUnit());
+						map.put( Constants.WDT,sen.getAngle());
+						map.put( Constants.WST,sen.getSpeed());
+						map.put( Constants.WSU,sen.getSpeedUnit());
 						
 					} else {
-						appendValue(body, Constants.WDA,sen.getAngle());
-						appendValue(body, Constants.WSA,sen.getSpeed());
-						appendValue(body, Constants.WSU,sen.getSpeedUnit());
+						map.put( Constants.WDA,sen.getAngle());
+						map.put( Constants.WSA,sen.getSpeed());
+						map.put( Constants.WSU,sen.getSpeedUnit());
 					}
 				}
 				
-				exchange.getOut().setBody(body.toString());
+				exchange.getOut().setBody(map);
 			}
 
 

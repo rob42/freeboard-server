@@ -112,6 +112,7 @@ public class Constants {
 	
 	public static final String WIND_SPEED_ALARM_STATE = "#WSX";
 	public static final String WIND_ALARM_KNOTS = "#WSK";
+	public static final String NMEA = "NMEA";
 	
 	public Constants() {
 		// TODO Auto-generated constructor stub

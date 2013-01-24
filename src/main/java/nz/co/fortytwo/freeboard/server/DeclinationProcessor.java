@@ -18,12 +18,13 @@
  */
 package nz.co.fortytwo.freeboard.server;
 
+import java.util.HashMap;
+
 import nz.co.fortytwo.freeboard.server.util.Constants;
 import nz.co.fortytwo.freeboard.server.util.Magfield;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
 /**
@@ -43,38 +44,34 @@ public class DeclinationProcessor extends FreeboardProcessor implements Processo
 		private boolean calc = false;
 
 	public void process(Exchange exchange) throws Exception {
-		if (StringUtils.isEmpty(exchange.getIn().getBody(String.class)))
+		if (exchange.getIn().getBody()==null)
 			return;
+		
+		
 		// so we have a string
 		try{
-			String bodyStr = exchange.getIn().getBody(String.class).trim();
-			String latStr = StringUtils.substringBetween(bodyStr,Constants.LAT+":",".");
-			if(StringUtils.isNotEmpty(latStr)){
-				double tmp= Double.valueOf(latStr).doubleValue();
-				if(Math.round(lat)!=Math.round(tmp)){
+			@SuppressWarnings("unchecked")
+			HashMap<String, Object> map = exchange.getIn().getBody(HashMap.class);
+			if(map.containsKey(Constants.LAT)){
 					calc=true;
-					lat=tmp;
+					lat=(Double) map.get(Constants.LAT);
 				}
-			}
-			String lonStr = StringUtils.substringBetween(bodyStr,Constants.LON+":",".");
-			if(StringUtils.isNotEmpty(lonStr)){
-				double tmp= Double.valueOf(lonStr).doubleValue();
-				if(Math.round(lon)!=Math.round(tmp)){
+			
+			if(map.containsKey(Constants.LON)){
 					calc=true;
-					lon=tmp;
+					lon=(Double) map.get(Constants.LON);
 				}
-			}
+			
 			if(calc){
 				declination =-1 * Magfield.SGMagVar(Magfield.deg_to_rad(lat), -1* Magfield.deg_to_rad(lon), 0, Magfield.yymmdd_to_julian_days(13, 1, 1),7,new double[6]);
 				declination=Magfield.rad_to_deg(declination)*-1;//declination is positive when true N is west of MagN, eg subtract the declination 
-				declination=(double)(Math.round( declination * 10 ) )/10;
+				declination=round(declination,1);
 				logger.debug("Declination = "+declination);
 				calc=false;
 			}
-			if(bodyStr.indexOf(Constants.MGH)>0){
-				StringBuilder builder = new StringBuilder(bodyStr);
-				appendValue(builder, Constants.MGD, declination);
-				exchange.getOut().setBody(builder.toString());
+			if(map.containsKey(Constants.MGH)){
+				map.put(Constants.MGD, declination);
+				exchange.getOut().setBody(map);
 			}
 		}catch(Exception e){
 			logger.error(e);

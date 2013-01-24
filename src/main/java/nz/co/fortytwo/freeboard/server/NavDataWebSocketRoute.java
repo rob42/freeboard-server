@@ -33,8 +33,9 @@ public class NavDataWebSocketRoute extends RouteBuilder {
 	private int port = 9090;
 	private String serialUrl;
 	private InputFilterProcessor inputFilterProcessor = new InputFilterProcessor();
+	private OutputFilterProcessor outputFilterProcessor = new OutputFilterProcessor();
 	private NMEAProcessor nmeaProcessor= new NMEAProcessor();
-	private IMUProcessor imuProcessor= new IMUProcessor();
+	//private IMUProcessor imuProcessor= new IMUProcessor();
 	private SerialPortManager serialPortManager;
 	
 	private Properties config;
@@ -87,10 +88,11 @@ public class NavDataWebSocketRoute extends RouteBuilder {
 		from("seda:input?multipleConsumers=true")
 						.process(inputFilterProcessor)
 						.process(nmeaProcessor)
-						.process(imuProcessor)
+						//.process(imuProcessor)
 						.process(windProcessor )
 						.process(commandProcessor )
 						.process(declinationProcessor)
+						.process(outputFilterProcessor)
 						.to("log:nz.co.fortytwo.freeboard.navdata?level=INFO")
 						// and push to all web socket subscribers 
 						.to("websocket:navData?sendToAll=true")
@@ -100,6 +102,7 @@ public class NavDataWebSocketRoute extends RouteBuilder {
 		
 		// log commands
 		from("seda:output?multipleConsumers=true")
+			.process(outputFilterProcessor)
 			.to("log:nz.co.fortytwo.freeboard.command?level=INFO")
 			.onException(Exception.class)
 		    .handled(true).maximumRedeliveries(0)

@@ -18,6 +18,8 @@
  */
 package nz.co.fortytwo.freeboard.server;
 
+import java.util.HashMap;
+
 import nz.co.fortytwo.freeboard.server.util.Constants;
 
 import org.apache.camel.Exchange;
@@ -35,46 +37,46 @@ public class WindProcessor extends FreeboardProcessor implements Processor {
 	float vesselSpeed=0;
 	
 	public void process(Exchange exchange) throws Exception {
-		if (StringUtils.isEmpty(exchange.getIn().getBody(String.class)))
+		if (exchange.getIn().getBody()==null)
 			return;
 		
-		String bodyStr = exchange.getIn().getBody(String.class).trim();
+		@SuppressWarnings("unchecked")
+		HashMap<String, Object> map = exchange.getIn().getBody(HashMap.class);
 		
 			try {
 				
 				boolean valid=false;
 				//int heading=0;
-				String [] bodyArray=bodyStr.split(",");
-				for(String s:bodyArray){
+				
 					// we need HDG, and LOG
-					if(s.startsWith(Constants.SOG)){
-						vesselSpeed= Float.valueOf(s.substring(4));
+					if(map.containsKey(Constants.SOG)){
+						vesselSpeed= (Float) map.get(Constants.SOG);
 						valid=true;
 					}
-					if(s.startsWith(Constants.WSA)){
-						apparentWind= Double.valueOf(s.substring(4));
+					if(map.containsKey(Constants.WSA)){
+						apparentWind= (Double) map.get(Constants.WSA);
 						valid=true;
 					}
-					if(s.startsWith(Constants.WDA)){
-						apparentDirection= Integer.valueOf(s.substring(4));
+					if(map.containsKey(Constants.WDA)){
+						apparentDirection= (Integer) map.get(Constants.WDA);
 						valid=true;
 					}
 					//if(s.startsWith(Constants.COG)){
 					//	heading= Integer.valueOf(s.substring(4));
 					//}
-				}
+				
 				if(valid){
 					//now calc and add to body
 					double trueWindSpeed = calcTrueWindSpeed(apparentWind, apparentDirection, vesselSpeed);
 					double trueWindDir = calcTrueWindDirection(apparentWind,apparentDirection, vesselSpeed);
-					StringBuilder builder = new StringBuilder(bodyStr);
+					
 					if(!Double.isNaN(trueWindDir)){
-						appendValue(builder, Constants.WDT, round(trueWindDir,1));
+						map.put(Constants.WDT, round(trueWindDir,1));
 					}
 					if(!Double.isNaN(trueWindSpeed)){
-						appendValue(builder, Constants.WST, round(trueWindSpeed,2));
+						map.put(Constants.WST, round(trueWindSpeed,2));
 					}
-					exchange.getOut().setBody(builder.toString());
+					exchange.getOut().setBody(map);
 				}
 
 			} catch (Exception e) {

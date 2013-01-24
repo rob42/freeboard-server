@@ -18,6 +18,8 @@
  */
 package nz.co.fortytwo.freeboard.server;
 
+import java.util.HashMap;
+
 import nz.co.fortytwo.freeboard.server.util.Constants;
 
 import org.apache.camel.Exchange;
@@ -35,33 +37,33 @@ public class CommandProcessor extends FreeboardProcessor implements Processor {
 	private ProducerTemplate producer;
 	
 	public void process(Exchange exchange) throws Exception {
-		String msg = (String) exchange.getIn().getBody(String.class);
-		String[] data = msg.split(",");
-		StringBuilder outMsg = new StringBuilder();
-		for(String m:data){
+		if (exchange.getIn().getBody()==null)
+			return;
+		
+		@SuppressWarnings("unchecked")
+		HashMap<String, Object> map = exchange.getIn().getBody(HashMap.class);
+		HashMap<String, Object> outMap = new HashMap<String, Object>();
+		
 			//send to MEGA for anchor alarms, and autopilot
 			//be careful to avoid misc arduino error/debug messages
-			if(m.startsWith(Constants.WST+":")){outMsg.append(m); outMsg.append(",");}
-			if(m.startsWith(Constants.WSA+":")){outMsg.append(m); outMsg.append(",");}
-			if(m.startsWith(Constants.WDT+":")){outMsg.append(m); outMsg.append(",");}
-			if(m.startsWith(Constants.WDA+":")){outMsg.append(m); outMsg.append(",");}
-			if(m.startsWith(Constants.WSU+":")){outMsg.append(m); outMsg.append(",");}
-			if(m.startsWith(Constants.LAT+":")){outMsg.append(m); outMsg.append(",");}
-			if(m.startsWith(Constants.LON+":")){outMsg.append(m); outMsg.append(",");}
-			if(m.startsWith(Constants.COG+":")){outMsg.append(m); outMsg.append(",");}
-			if(m.startsWith(Constants.MGH+":")){outMsg.append(m); outMsg.append(",");}
-			if(m.startsWith(Constants.SOG+":")){outMsg.append(m); outMsg.append(",");}
-			if(m.startsWith(Constants.YAW+":")){outMsg.append(m); outMsg.append(",");}
-			if(m.startsWith(Constants.PCH+":")){outMsg.append(m); outMsg.append(",");}
-			if (m.startsWith(Constants.RLL + ":")) {
-				outMsg.append(m);
-				outMsg.append(",");
-			}
-		}
+			if(map.containsKey(Constants.WST)){outMap.put(Constants.WST, map.get(Constants.WST));}
+			if(map.containsKey(Constants.WSA)){outMap.put(Constants.WSA, map.get(Constants.WSA));}
+			if(map.containsKey(Constants.WDT)){outMap.put(Constants.WDT, map.get(Constants.WDT));}
+			if(map.containsKey(Constants.WDA)){outMap.put(Constants.WDA, map.get(Constants.WDA));}
+			if(map.containsKey(Constants.WSU)){outMap.put(Constants.WSU, map.get(Constants.WSU));}
+			if(map.containsKey(Constants.LAT)){outMap.put(Constants.LAT, map.get(Constants.LAT));}
+			if(map.containsKey(Constants.LON)){outMap.put(Constants.LON, map.get(Constants.LON));}
+			if(map.containsKey(Constants.COG)){outMap.put(Constants.COG, map.get(Constants.COG));}
+			if(map.containsKey(Constants.MGH)){outMap.put(Constants.MGH, map.get(Constants.MGH));}
+			if(map.containsKey(Constants.SOG)){outMap.put(Constants.SOG, map.get(Constants.SOG));}
+			if(map.containsKey(Constants.YAW)){outMap.put(Constants.YAW, map.get(Constants.YAW));}
+			if(map.containsKey(Constants.PCH)){outMap.put(Constants.PCH, map.get(Constants.PCH));}
+			if(map.containsKey(Constants.RLL)){outMap.put(Constants.RLL, map.get(Constants.RLL));}
+		
 		//now send to output queue
-		if(outMsg.length()>0){
-			outMsg.insert(0, Constants.UID+":"+Constants.MEGA+",");
-			producer.sendBody("seda:output?multipleConsumers=true", outMsg.toString());
+		if(!outMap.isEmpty()){
+			outMap.put( Constants.UID,Constants.MEGA);
+			producer.sendBody("seda:output?multipleConsumers=true", outMap);
 		}
 	}
 
