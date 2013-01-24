@@ -22,7 +22,7 @@
 <?script src="./js/layers.js" ?>
 <?script src="./js/websocket.js" ?>
 <?script src="./js/chartplotter.js" ?>
-
+<?script src="./js/autopilot.js"?>
 <zk>
 	<style>
 		#map { height: 100%; border: 1px solid #888; }

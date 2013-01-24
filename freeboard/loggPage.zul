@@ -22,6 +22,7 @@
 <?script src="./js/steelseries.js"?>
 <?script src="./js/websocket.js"?>
 <?script src="./js/logg.js"?>
+<?script src="./js/autopilot.js"?>
 <zk>
 	<style>
 		#map { height: 100%; border: 1px solid #888; }
