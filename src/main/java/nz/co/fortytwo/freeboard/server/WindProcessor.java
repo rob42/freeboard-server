@@ -25,6 +25,7 @@ import nz.co.fortytwo.freeboard.server.util.Constants;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.log4j.Logger;
 
 /**
  * Calculates the true wind from apparent wind and vessel speed/heading
@@ -32,17 +33,20 @@ import org.apache.commons.lang3.StringUtils;
  *
  */
 public class WindProcessor extends FreeboardProcessor implements Processor {
+	
+	private static Logger logger = Logger.getLogger(WindProcessor.class);
+	
 	double apparentWindSpeed=0.0;
 	//0-360 from bow clockwise
-	int apparentDirection=0;
+	double apparentDirection=0;
 	double vesselSpeed=0;
+	//0-360 from bow clockwise
 	double trueDirection=0.0;
 	double trueWindSpeed=0.0;
 	
 	public void process(Exchange exchange) throws Exception {
 		if (exchange.getIn().getBody()==null)
 			return;
-		
 		@SuppressWarnings("unchecked")
 		HashMap<String, Object> map = exchange.getIn().getBody(HashMap.class);
 		
@@ -61,7 +65,7 @@ public class WindProcessor extends FreeboardProcessor implements Processor {
 						valid=true;
 					}
 					if(map.containsKey(Constants.WDA)){
-						apparentDirection= (Integer) map.get(Constants.WDA);
+						apparentDirection= (Double) map.get(Constants.WDA);
 						valid=true;
 					}
 					//if(s.startsWith(Constants.COG)){
@@ -73,7 +77,7 @@ public class WindProcessor extends FreeboardProcessor implements Processor {
 					calcTrueWindDirection(apparentWindSpeed,apparentDirection, vesselSpeed);
 					
 					if(!Double.isNaN(trueDirection)){
-						map.put(Constants.WDT, round(trueDirection,1));
+						map.put(Constants.WDT, round(trueDirection,2));
 					}
 					if(!Double.isNaN(trueWindSpeed)){
 						map.put(Constants.WST, round(trueWindSpeed,2));
@@ -82,7 +86,7 @@ public class WindProcessor extends FreeboardProcessor implements Processor {
 				}
 
 			} catch (Exception e) {
-				// e.printStackTrace();
+				logger.error(e);
 			}
 		
 
@@ -99,7 +103,7 @@ public class WindProcessor extends FreeboardProcessor implements Processor {
 	 * @param vesselSpd
 	 * @return trueDirection 0 to 360 deg to the bow
 	 */
-	void calcTrueWindDirection(double apparentWnd, int apparentDir, double vesselSpd){
+	void calcTrueWindDirection(double apparentWnd, double apparentDir, double vesselSpd){
 		/*
 			 Y = 90 - D
 			a = AW * ( cos Y )

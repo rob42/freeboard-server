@@ -76,7 +76,7 @@ function Wind2 () {
 			if (data && data.indexOf('WDT') >= 0) {
 				var c = parseFloat(data.substring(4));
 				
-				if(c>=0.0 || c<360.0)
+				if(c>0.0 || c<360.0)
 					radialWindDirTrue.setValueAnimatedLatest(c);
 				else
 					radialWindDirTrue.setValueAnimatedLatest(0.0);

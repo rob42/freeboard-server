@@ -233,19 +233,21 @@ public class NMEAProcessor extends FreeboardProcessor implements Processor {
 
 				}
 
-				// MWV wind
+				// TODO: MWV wind
 				if (evt.getSentence() instanceof MWVSentence) {
 					MWVSentence sen = (MWVSentence) evt.getSentence();
-					if (sen.isTrue()) {
-						map.put( Constants.WDT,sen.getAngle());
-						map.put( Constants.WST,sen.getSpeed());
-						map.put( Constants.WSU,sen.getSpeedUnit());
-						
-					} else {
+					//relative to true north
+//					if (sen.isTrue()) {
+//						map.put( Constants.WDT,sen.getAngle());
+//						map.put( Constants.WST,sen.getSpeed());
+//						map.put( Constants.WSU,sen.getSpeedUnit());
+//						
+//					} else {
+						//relative to bow
 						map.put( Constants.WDA,sen.getAngle());
 						map.put( Constants.WSA,sen.getSpeed());
 						map.put( Constants.WSU,sen.getSpeedUnit());
-					}
+					//}
 				}
 				
 				exchange.getOut().setBody(map);
