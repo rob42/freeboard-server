@@ -144,7 +144,9 @@ function initWind() {
 		degreeScaleHalf : true,
 		section : areasCloseHaul,
 		area : areasCloseHaul,
-		backgroundColor: steelseries.BackgroundColor.CARBON,
+		pointerTypeLatest : steelseries.PointerType.TYPE2,
+		pointerTypeAverage : steelseries.PointerType.TYPE1,
+		backgroundColor: steelseries.BackgroundColor.BROWN,
 	});
 	
 	// wind true
@@ -170,9 +172,9 @@ function initWind() {
 		pointSymbolsVisible : false,
 		// pointSymbols: ["N", "", "", "", "", "", "", ""]
 		lcdTitleStrings : [ "Latest", "Average" ],
-		pointerTypeLatest : steelseries.PointerType.TYPE8,
+		pointerTypeLatest : steelseries.PointerType.TYPE2,
 		pointerTypeAverage : steelseries.PointerType.TYPE1,
-		backgroundColor: steelseries.BackgroundColor.CARBON,
+		backgroundColor: steelseries.BackgroundColor.BROWN,
 	});
 	
 	wsList.push(new Wind2());
