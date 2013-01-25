@@ -32,9 +32,12 @@ import org.apache.commons.lang3.StringUtils;
  *
  */
 public class WindProcessor extends FreeboardProcessor implements Processor {
-	double apparentWind=0;
+	double apparentWindSpeed=0.0;
+	//0-360 from bow clockwise
 	int apparentDirection=0;
 	double vesselSpeed=0;
+	double trueDirection=0.0;
+	double trueWindSpeed=0.0;
 	
 	public void process(Exchange exchange) throws Exception {
 		if (exchange.getIn().getBody()==null)
@@ -54,7 +57,7 @@ public class WindProcessor extends FreeboardProcessor implements Processor {
 						valid=true;
 					}
 					if(map.containsKey(Constants.WSA)){
-						apparentWind= (Double) map.get(Constants.WSA);
+						apparentWindSpeed= (Double) map.get(Constants.WSA);
 						valid=true;
 					}
 					if(map.containsKey(Constants.WDA)){
@@ -67,11 +70,10 @@ public class WindProcessor extends FreeboardProcessor implements Processor {
 				
 				if(valid){
 					//now calc and add to body
-					double trueWindSpeed = calcTrueWindSpeed(apparentWind, apparentDirection, vesselSpeed);
-					double trueWindDir = calcTrueWindDirection(apparentWind,apparentDirection, vesselSpeed);
+					calcTrueWindDirection(apparentWindSpeed,apparentDirection, vesselSpeed);
 					
-					if(!Double.isNaN(trueWindDir)){
-						map.put(Constants.WDT, round(trueWindDir,1));
+					if(!Double.isNaN(trueDirection)){
+						map.put(Constants.WDT, round(trueDirection,1));
 					}
 					if(!Double.isNaN(trueWindSpeed)){
 						map.put(Constants.WST, round(trueWindSpeed,2));
@@ -97,7 +99,7 @@ public class WindProcessor extends FreeboardProcessor implements Processor {
 	 * @param vesselSpd
 	 * @return trueDirection 0 to 360 deg to the bow
 	 */
-	double calcTrueWindDirection(double apparentWnd, int apparentDir, double vesselSpd){
+	void calcTrueWindDirection(double apparentWnd, int apparentDir, double vesselSpd){
 		/*
 			 Y = 90 - D
 			a = AW * ( cos Y )
@@ -106,39 +108,55 @@ public class WindProcessor extends FreeboardProcessor implements Processor {
 			True-Wind Speed = (( a * a ) + ( b * b )) 1/2
 			True-Wind Angle = 90-arctangent ( b / a )
 		*/
-                apparentDir=apparentDir%360;
-		boolean stbd = apparentDir<=180;
-        if(!stbd){
+        apparentDir=apparentDir%360;
+		boolean port = apparentDir>180;
+        if(port){
            apparentDir=360-apparentDir; 
         }
-		double y = 90-apparentDir;
-		double a = apparentWnd * Math.cos(Math.toRadians(y));
-		double b = (apparentWnd * Math.sin(Math.toRadians(y)))-vesselSpd;
-		double td = 90-Math.toDegrees(Math.atan((b/a)));
-		if(!stbd)return (360-td);
-		return td;
-				
-	}
+       
+        /*// Calculate true heading diff and true wind speed - JAVASCRIPT
+		tan_alpha = (Math.sin(angle) / (aspeed - Math.cos(angle)));
+		alpha = Math.atan(tan_alpha);
 	
-	/**
-	 * Calculates the true wind speed from apparent wind speed on vessel
-	 * 
-	 * @param apparentWnd
-	 * @param apparentDir 0 to 360 deg to the bow
-	 * @param vesselSpd
-	 * @return
-	 */
-        double calcTrueWindSpeed(double apparentWnd, int apparentDir, double vesselSpd){
-                apparentDir=apparentDir%360;
-                if(apparentDir>180){
-                   apparentDir=360-apparentDir; 
-                }
-		double y = 90-apparentDir;
-		double a = apparentWnd * Math.cos(Math.toRadians(y));
-		double b = (apparentWnd * Math.sin(Math.toRadians(y)))-vesselSpd;
-		return (Math.sqrt((a*a)+(b*b)));
+		tdiff = rad2deg(angle + alpha);
+		tspeed = Math.sin(angle)/Math.sin(alpha);
+		*/
+        double aspeed = Math.max(apparentDir, vesselSpd);
+        if(apparentWnd>0 && vesselSpd >0.0){
+        	aspeed=apparentWnd/ vesselSpd;
+        }
+        double angle = Math.toRadians(apparentDir);
+        double tan_alpha = (Math.sin(angle) / (aspeed - Math.cos(angle)));
+		double alpha = angle + Math.atan(tan_alpha);
+		double tAngle = Math.toDegrees(alpha);
+		if( Double.valueOf(tAngle).isNaN() || Double.isInfinite(tAngle))return ;
+		if(port){
+			trueDirection = (360-tAngle);
+		}else{
+			trueDirection = tAngle;
+		}
+		if(apparentWnd<0.1 || vesselSpd <0.1){
+			trueWindSpeed=Math.max(apparentWnd, vesselSpd);
+			return;
+		}
+		double tspeed = Math.sin(angle)/Math.sin(alpha);
+		if(Double.valueOf(tspeed).isNaN()|| Double.isInfinite(tspeed))return;
+		trueWindSpeed=tspeed*vesselSpd;
 	}
 
+
+
+	public double getTrueDirection() {
+		return trueDirection;
+	}
+
+
+
+	public double getTrueWindSpeed() {
+		return trueWindSpeed;
+	}
+	
+	
 
 
 }
