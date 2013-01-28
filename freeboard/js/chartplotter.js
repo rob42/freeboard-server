@@ -322,29 +322,48 @@ function setPosition(llat, llon, brng, spd){
 
 
 function ChartPlotter () {
-	this.onmessage = function (m) {
-		var mArray=m.data.split(",");
+	this.onmessage = function (mArray) {
+		// var mArray=m.data.split(",");
 		var setPos=false;
 		jQuery.each(mArray, function(i, data) {
 			
 			if (data && data.indexOf('LAT') >= 0) {
-				lat = parseFloat(data.substring(4));
-				setPos=true;
+				var c = parseFloat(data.substring(4));
+				if($.isNumeric(c)){
+					lat=c;
+					setPos=true;
+				}
+				
 			}
 			if (data && data.indexOf('LON') >= 0) {
-				lon = parseFloat(data.substring(4));
-				setPos=true;
+				var c = parseFloat(data.substring(4));
+				if($.isNumeric(c)){
+					lon=c;
+					setPos=true;
+				}
+				
 			}
 			if (data && data.indexOf('MGH') >= 0) {
-				heading = parseFloat(data.substring(4));
-				setPos=true;
+				var c = parseFloat(data.substring(4));
+				if($.isNumeric(c)){
+					heading=c;
+					setPos=true;
+				}
+				
 			}
 			if (data && data.indexOf('SOG') >= 0) {
-				speed= parseFloat(data.substring(4));
-				setPos=true;
+				var c = parseFloat(data.substring(4));
+				if($.isNumeric(c)){
+					setPos=c;
+					setPos=true;
+				}
+				
 			}
 			if (data && data.indexOf('MGD') >= 0) {
-				declination = parseFloat(data.substring(4));
+				var c = parseFloat(data.substring(4));
+				if($.isNumeric(c)){
+					declination=c;
+				}
 			}
 			
 		});

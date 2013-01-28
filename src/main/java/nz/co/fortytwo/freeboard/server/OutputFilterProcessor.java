@@ -37,7 +37,13 @@ public class OutputFilterProcessor extends FreeboardProcessor implements Process
 		
 		@SuppressWarnings("unchecked")
 		HashMap<String, Object> map = exchange.getIn().getBody(HashMap.class);
-		exchange.getOut().setBody(hashMapToString(map));
+		String outStr = hashMapToString(map);
+		//TODO: drop NMEA here for efficiency for now. Needs to go to its own TCP port later
+		if(outStr.startsWith("$")){
+			exchange.getOut().setBody(null);
+		}else{
+			exchange.getOut().setBody(outStr);
+		}
 
 	}
 

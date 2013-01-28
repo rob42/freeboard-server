@@ -21,13 +21,15 @@ odoValue = 99998.2;
 
 
 function Autopilot () {
-	this.onmessage = function (m) {
-		var mArray=m.data.split(",");
+	this.onmessage = function (mArray) {
+		//var mArray=m.data.split(",");
 		jQuery.each(mArray, function(i, data) {
 //			
 			if (data && data.indexOf('MGH:') >= 0) {
-				var c = data.substring(4);
-				autopilotTarget.setValue(parseFloat(c));
+				var c = parseFloat(data.substring(4));
+				if($.isNumeric(c)){
+					autopilotTarget.setValue(c);
+				}
 			}
 			
 		});

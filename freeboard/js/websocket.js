@@ -18,7 +18,7 @@
  */
 var _ws;
 var wsList = [];
-
+var mArray = [];
 function initSocket(){
 	//make a web socket
 	if(this._ws == null) {
@@ -29,11 +29,17 @@ function initSocket(){
 		this._ws.onopen = function() {
 		};
 		this._ws.onmessage = function(m) {
+			//for debug
+			//console.log(m.data);
 			//iterate the array and process each, avoid NMEA for now
-			if(m.data.trim().startsWith('$'))return;
-			jQuery.each(wsList, function(i, obj) {
-			      obj.onmessage(m);
-			    });
+			if(!m.data.trim().startsWith('$')){
+				mArray=m.data.trim().split(",");
+				jQuery.each(wsList, function(i, obj) {
+				      obj.onmessage(mArray);
+				    });
+				mArray=null;
+			}
+			m=null;
 		};
 		this._ws.onclose = function() {
 			this._ws = null;

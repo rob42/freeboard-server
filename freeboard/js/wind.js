@@ -38,81 +38,80 @@ function resizeWind(amount){
 }
 
 function Wind () {
-	this.onmessage = function (m) {
-		var mArray=m.data.split(",");
+	this.onmessage = function (mArray) {
+		//var mArray=m.data.split(",");
 		jQuery.each(mArray, function(i, data) {
 			if (data && data.indexOf('WSA') >= 0) {
 				var c = parseFloat(data.substring(4));
-				radialWindApp.setValueAnimated(c);
+				if($.isNumeric(c)){
+					radialWindApp.setValueAnimated(c);
+				}
 			}
 			if (data && data.indexOf('WST') >= 0) {
 				var c = parseFloat(data.substring(4));
-				radialWindTrue.setValueAnimated(c);
+				if($.isNumeric(c)){
+					radialWindTrue.setValueAnimated(c);
+				}
 			}
 			if (data && data.indexOf('WDA') >= 0) {
 				var c = parseFloat(data.substring(4));
-				// -180 <> 180
-				if (c >= 179) {
-					radialWindDirApp.setValueAnimatedLatest(-(360 - c));
-				} else {
-					radialWindDirApp.setValueAnimatedLatest(c);
+				if($.isNumeric(c)){
+					// -180 <> 180
+					if (c >= 179) {
+						radialWindDirApp.setValueAnimatedLatest(-(360 - c));
+					} else {
+						radialWindDirApp.setValueAnimatedLatest(c);
+					}
+					// make average
+					avgArrayA[avgPosA] = c;
+					avgPosA = avgPosA + 1;
+					if (avgPosA >= avgArrayA.length)
+						avgPosA = 0;
+					var v = 0;
+					for ( var i = 0; i < avgArrayA.length; i++) {
+						v = v + avgArrayA[i];
+					}
+					if (c >= 179) {
+						radialWindDirApp.setValueAnimatedAverage(-(360 - (v / avgArrayA.length)));
+					} else {
+						radialWindDirApp.setValueAnimatedAverage(v / avgArrayA.length);
+					}
 				}
-				
-				// make average
-				/*avgArrayA[avgPosA] = parseFloat(c);
-				avgPosA = avgPosA + 1;
-				if (avgPosA >= avgArrayA.length)
-					avgPosA = 0;
-				var v = 0;
-				for ( var i = 0; i < avgArrayA.length; i++) {
-					v = v + avgArrayA[i];
-				}
-				if (parseFloat(c) >= 179) {
-					radialWindDirApp.setValueAnimatedAverage(-(360 - (v / avgArrayA.length)));
-				} else {
-					radialWindDirApp.setValueAnimatedAverage(v / avgArrayA.length);
-				}*/
 			}
 			if (data && data.indexOf('WDT') >= 0) {
 				var c = parseFloat(data.substring(4));
-				
-				radialWindDirTrue.setValueAnimatedLatest(c);
-				// make average
-				/*avgArrayT[avgPosT] = parseFloat(c);
-				avgPosT = avgPosT + 1;
-				if (avgPosT >= avgArrayT.length)
-					avgPosT = 0;
-				var v = 0;
-				for ( var i = 0; i < avgArrayT.length; i++) {
-					v = v + avgArrayT[i];
+				if($.isNumeric(c)){
+					radialWindDirTrue.setValueAnimatedLatest(c);
+					// make average
+					avgArrayT[avgPosT] = c;
+					avgPosT = avgPosT + 1;
+					if (avgPosT >= avgArrayT.length)
+						avgPosT = 0;
+					var v = 0;
+					for ( var i = 0; i < avgArrayT.length; i++) {
+						v = v + avgArrayT[i];
+					}
+					radialWindDirTrue.setValueAnimatedAverage(v / avgArrayT.length);
 				}
-				radialWindDirTrue.setValueAnimatedAverage(v / avgArrayT.length);
-				*/
+				
 			}
 		});
 	}
 }
+
+var tackAngle=45;
 
 function initWind() {
 
 	// Define some sections for wind
 	var sections = [ steelseries.Section(0, 20, 'rgba(0, 0, 220, 0.3)'),
 			steelseries.Section(20, 35, 'rgba(0, 220, 0, 0.3)'),
-			steelseries.Section(35, 75, 'rgba(220,0, 0, 0.3)') ],
+			steelseries.Section(35, 75, 'rgba(220,0, 0, 0.3)') ];
 
-	areasCloseHaul = [ steelseries.Section(-45, 0, 'rgba(0, 0, 220, 0.3)'),
-			steelseries.Section(0, 45, 'rgba(0, 0, 220, 0.3)') ],
-	// Define one area
-	areas = [ steelseries.Section(20, 25, 'rgba(220, 0, 0, 0.3)') ],
-
-	// Define value gradient for bargraph
-	valGrad = new steelseries.gradientWrapper(0, 25,
-			[ 0, 0.33, 0.66, 0.85, 1 ], [
-					new steelseries.rgbaColor(0, 0, 200, 1),
-					new steelseries.rgbaColor(0, 200, 0, 1),
-					new steelseries.rgbaColor(200, 200, 0, 1),
-					new steelseries.rgbaColor(200, 0, 0, 1),
-					new steelseries.rgbaColor(200, 0, 0, 1) ]);
+	var areasCloseHaul = [ steelseries.Section((0-tackAngle), 0, 'rgba(0, 0, 220, 0.3)'),
+			steelseries.Section(0, tackAngle, 'rgba(0, 0, 220, 0.3)') ];
+	var areasCloseHaulTrue = [ steelseries.Section((360-tackAngle), 0, 'rgba(0, 0, 220, 0.3)'),
+	           			steelseries.Section(0, tackAngle, 'rgba(0, 0, 220, 0.3)') ];
 
 	// Initialzing gauges
 
@@ -169,6 +168,8 @@ function initWind() {
 		roseVisible : false,
 		lcdVisible : true,
 		lcdColor: steelseries.LcdColor.BEIGE,
+		section : areasCloseHaulTrue,
+		area : areasCloseHaulTrue,
 		pointSymbolsVisible : false,
 		// pointSymbols: ["N", "", "", "", "", "", "", ""]
 		lcdTitleStrings : [ "Latest", "Average" ],

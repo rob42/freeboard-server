@@ -47,7 +47,7 @@
 			<html style="overflow: visible" >
 				<canvas id="canvasWindTrue" style="overflow: visible" 
 					width="${mainWindow$composer.size*0.9}"
-					height="${mainWindow$composer.size/3}">
+					height="${mainWindow$composer.size/3.5}">
 				</canvas>
 			</html>
 
@@ -62,7 +62,7 @@
 			<html style="overflow: visible" >
 				<canvas id="canvasWindApp" style="overflow: visible" 
 					width="${mainWindow$composer.size*0.9}"
-					height="${mainWindow$composer.size/3}">
+					height="${mainWindow$composer.size/3.5}">
 					No canvas in your browser...sorry...
 				</canvas>
 			</html>

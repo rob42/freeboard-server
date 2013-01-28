@@ -39,50 +39,54 @@ function resizeLog(amount){
 	
 }
 function Logg () {
-	this.onmessage = function (m) {
-		var mArray=m.data.split(",");
+	this.onmessage = function (mArray) {
+		//var mArray=m.data.split(",");
 		jQuery.each(mArray, function(i, data) {
-//			if(data){
-//				var textConsole = zk.Widget.$("$textConsole");
-//				var s = textConsole.getValue();
-//				textConsole.setValue(s+'\n'+data);
-//			}
+
 			if (data && data.indexOf('LAT:') >= 0) {
 				var c = parseFloat(data.substring(4));
-				//lcdLat.setValue(parseFloat(c));
-				if(c>0){
-					lcdLat.setValue(c.toFixed(5)+' N');
-				}else{
-					lcdLat.setValue(Math.abs(c.toFixed(5))+' S');
+				if($.isNumeric(c)){
+					if(c>0){
+						lcdLat.setValue(c.toFixed(5)+' N');
+					}else{
+						lcdLat.setValue(Math.abs(c.toFixed(5))+' S');
+					}
 				}
-	
+				
 			}
 			if (data && data.indexOf('LON:') >= 0) {
 				var c = parseFloat(data.substring(4));
-				if(c>0){
-					lcdLon.setValue(c.toFixed(5)+' E');
-				}else{
-					lcdLon.setValue(c.toFixed(5)+' W');
+				if($.isNumeric(c)){
+					if(c>0){
+						lcdLon.setValue(c.toFixed(5)+' E');
+					}else{
+						lcdLon.setValue(c.toFixed(5)+' W');
+					}
 				}
 	
 			}
 			if (data && data.indexOf('SOG:') >= 0) {
 				var c = parseFloat(data.substring(4));
-				lcdLog.setValue(c);
+				if($.isNumeric(c)){
+					lcdLog.setValue(c);
+				}
 	
 			}
 			if (data && data.indexOf('MGH:') >= 0) {
-				var c = data.substring(4);
-				lcdHeading.setValue(parseFloat(c));
+				var c = parseFloat(data.substring(4));
+				if($.isNumeric(c)){
+					lcdHeading.setValue(c);
+				}
 			}
 			if (data && data.indexOf('YAW:') >= 0) {
 				var c = parseFloat(data.substring(4));
-				// lcdWaypoint.setValue(parseFloat(c));
-				// -180 <> 180
-				if (c >= 179) {
-					lcdWaypoint.setValue(-(360 - c));
-				} else {
-					lcdWaypoint.setValue(c);
+				if($.isNumeric(c)){
+					// -180 <> 180
+					if (c >= 179) {
+						lcdWaypoint.setValue(-(360 - c));
+					} else {
+						lcdWaypoint.setValue(c);
+					}
 				}
 			}
 		});
@@ -141,9 +145,9 @@ function initLogg() {
 		height : document.getElementById('canvasHeading').height,
 		lcdDecimals : 0,
 		lcdColor: steelseries.LcdColor.BEIGE,
-		headerString : "Heading",
+		headerString : "Heading(M)",
 		headerStringVisible : true,
-		detailString : "Avg: ",
+		detailString : "Avg(M): ",
 		detailStringVisible : true,
 	});
 
