@@ -233,7 +233,9 @@ public class NMEAProcessor extends FreeboardProcessor implements Processor {
 
 				}
 
-				// TODO: MWV wind
+				// MWV wind
+				// Mega sends $IIMVW with 0-360d clockwise from bow, (relative to bow)
+				// Mega value is int+'.0'
 				if (evt.getSentence() instanceof MWVSentence) {
 					MWVSentence sen = (MWVSentence) evt.getSentence();
 					//relative to true north
@@ -244,7 +246,8 @@ public class NMEAProcessor extends FreeboardProcessor implements Processor {
 //						
 //					} else {
 						//relative to bow
-						map.put( Constants.WDA,sen.getAngle());
+						double angle = sen.getAngle();
+						map.put( Constants.WDA,angle);
 						map.put( Constants.WSA,sen.getSpeed());
 						map.put( Constants.WSU,sen.getSpeedUnit());
 					//}

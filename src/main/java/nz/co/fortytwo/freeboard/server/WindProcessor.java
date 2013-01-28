@@ -131,8 +131,8 @@ public class WindProcessor extends FreeboardProcessor implements Processor {
         }
         double angle = Math.toRadians(apparentDir);
         double tan_alpha = (Math.sin(angle) / (aspeed - Math.cos(angle)));
-		double alpha = angle + Math.atan(tan_alpha);
-		double tAngle = Math.toDegrees(alpha);
+		double alpha = Math.atan(tan_alpha);
+		double tAngle = Math.toDegrees(alpha+angle);
 		if( Double.valueOf(tAngle).isNaN() || Double.isInfinite(tAngle))return ;
 		if(port){
 			trueDirection = (360-tAngle);

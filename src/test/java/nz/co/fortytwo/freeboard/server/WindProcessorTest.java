@@ -21,6 +21,7 @@ package nz.co.fortytwo.freeboard.server;
 
 import static org.junit.Assert.assertEquals;
 
+import org.apache.camel.util.ExchangeHelper;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -57,7 +58,18 @@ public class WindProcessorTest {
 		wp.calcTrueWindDirection(10, 270, 10);
 		assertEquals(225.0, wp.getTrueDirection(), 1.0);
 		assertEquals(14.14, wp.getTrueWindSpeed(), 0.1);
+		
+		// test .3 wind, 80deg, 0.5spd = 146, 0.9
+		wp.calcTrueWindDirection(.3, 80, .5);
+		assertEquals(146.0, wp.getTrueDirection(), 1.0);
+		assertEquals(0.5, wp.getTrueWindSpeed(), 0.1);
+		
+		// test 10 wind, -90deg, 6.5spd = 146, 0.9
+		wp.calcTrueWindDirection(10, 270, 6.5);
+		assertEquals(360-123.0, wp.getTrueDirection(), 1.0);
+		assertEquals(11.9, wp.getTrueWindSpeed(), 0.1);
 
 	}
+	
 
 }
