@@ -323,9 +323,12 @@ function setPosition(llat, llon, brng, spd){
 
 function ChartPlotter () {
 	this.onmessage = function (mArray) {
-		// var mArray=m.data.split(",");
+		
 		var setPos=false;
 		jQuery.each(mArray, function(i, data) {
+			
+			//avoid commands
+			if(data && data.indexOf('#')>=0)return true;
 			
 			if (data && data.indexOf('LAT') >= 0) {
 				var c = parseFloat(data.substring(4));

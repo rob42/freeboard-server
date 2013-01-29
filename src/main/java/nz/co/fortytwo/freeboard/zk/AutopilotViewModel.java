@@ -23,7 +23,9 @@ import nz.co.fortytwo.freeboard.server.util.Constants;
 
 import org.apache.camel.ProducerTemplate;
 import org.apache.log4j.Logger;
+import org.zkoss.bind.annotation.AfterCompose;
 import org.zkoss.zk.ui.Session;
+import org.zkoss.zk.ui.event.CheckEvent;
 import org.zkoss.zk.ui.event.MouseEvent;
 import org.zkoss.zk.ui.select.SelectorComposer;
 import org.zkoss.zk.ui.select.annotation.Listen;
@@ -60,10 +62,6 @@ public class AutopilotViewModel extends SelectorComposer<Window>{
 	private Toolbarbutton apWindOnOff; 
 	@Wire("button#apOnOff")
 	private Button apOnOff; 
-	@Wire("label#apOnState")
-	private Label apOnState;
-	@Wire("label#apSource")
-	private Label apSource;
 	
 	private ProducerTemplate producer;
 	//private ConsumerTemplate consumer;
@@ -80,66 +78,89 @@ public class AutopilotViewModel extends SelectorComposer<Window>{
 		
 	}
 
-	//@AfterCompose
+	@AfterCompose
 	public void init() {
 		logger.debug("Init..");
+		apCompassOnOff.setChecked(APS.equals(Constants.AUTOPILOT_COMPASS)?true:false);
+		apWindOnOff.setChecked(APS.equals(Constants.AUTOPILOT_COMPASS)?true:false);
+		setAutopilotState(autopilotOn);
 	}
 	
 	@Listen("onClick = button#apPort1")
 	public void apPort1Click(MouseEvent event) {
 	    logger.debug(" apPort1 button event = "+event);
-	    producer.sendBody(Constants.AUTOPILOT_ADJUST+":-1,");
+	    producer.sendBody(Constants.UID+":"+Constants.MEGA+","+Constants.AUTOPILOT_ADJUST+":-1,");
 	}
 	@Listen("onClick = button#apStbd1")
 	public void apStbd1Click(MouseEvent event) {
 	    logger.debug(" apStbd1 button event = "+event);
-	    producer.sendBody(Constants.AUTOPILOT_ADJUST+":1,");
+	    producer.sendBody(Constants.UID+":"+Constants.MEGA+","+Constants.AUTOPILOT_ADJUST+":1,");
 	}
 	@Listen("onClick = button#apPort10")
 	public void apPort10Click(MouseEvent event) {
 	    logger.debug(" apPort10 button event = "+event);
-	    producer.sendBody(Constants.AUTOPILOT_ADJUST+":-10,");
+	    producer.sendBody(Constants.UID+":"+Constants.MEGA+","+Constants.AUTOPILOT_ADJUST+":-10,");
 	}
 	@Listen("onClick = button#apStbd10")
 	public void apStbd10Click(MouseEvent event) {
 	    logger.debug(" apStbd10 button event = "+event);
-	    producer.sendBody(Constants.AUTOPILOT_ADJUST+":10,");
+	    producer.sendBody(Constants.UID+":"+Constants.MEGA+","+Constants.AUTOPILOT_ADJUST+":10,");
 	}
 	@Listen("onClick = button#apOnOff")
 	public void apOnOffClick(MouseEvent event) {
 	    logger.debug(" apOnOff button event = "+event);
 	    autopilotOn=!autopilotOn;
-	    if(autopilotOn){
-	    	apOnOff.setImage("./js/img/stop.png");
-	    	apOnState.setValue("true");
-	    	producer.sendBody(Constants.AUTOPILOT_STATE+":1,");
-	    }else{
-	    	apOnOff.setImage("./js/img/tick.png");
-	    	apOnState.setValue("false");
-	    	producer.sendBody(Constants.AUTOPILOT_STATE+":0,");
-	    }
+	   setAutopilotState(autopilotOn);
 	}
-	@Listen("onClick = toolbarbutton#apCompassOnOff")
-	public void apCompassOnOffClick(MouseEvent event) {
+	private void setAutopilotState(boolean autopilotOn2) {
+		 if(autopilotOn){
+		    	apOnOff.setImage("./js/img/stop.png");
+		    	producer.sendBody(Constants.UID+":"+Constants.MEGA+","+Constants.AUTOPILOT_STATE+":1,");
+		    }else{
+		    	apOnOff.setImage("./js/img/tick.png");
+		    	producer.sendBody(Constants.UID+":"+Constants.MEGA+","+Constants.AUTOPILOT_STATE+":0,");
+		    }
+	}
+
+	@Listen("onCheck = toolbarbutton#apCompassOnOff")
+	public void apCompassOnOffCheck(CheckEvent event) {
 	    logger.debug(" apCompassOnOff button event = "+event);
-	    if(apCompassOnOff.isChecked()){
-		    APS=Constants.AUTOPILOT_COMPASS;
-		    apSource.setValue(APS);
-		    producer.sendBody(Constants.AUTOPILOT_SOURCE+":"+APS+",");
-		    if(apWindOnOff.isChecked())apWindOnOff.setChecked(false);
-	    }
+	    toggleSource(event, true);
 	}
 	
-	@Listen("onClick = toolbarbutton#apWindOnOff")
-	public void apWindOnOffClick(MouseEvent event) {
+	@Listen("onCheck = toolbarbutton#apWindOnOff")
+	public void apWindOnOffCheck(CheckEvent event) {
 	    logger.debug(" apWindOnOff button event = "+event);
-	    if(apWindOnOff.isChecked()){
-		    APS=Constants.AUTOPILOT_WIND;
-		    apSource.setValue(APS);
-		    producer.sendBody(Constants.AUTOPILOT_SOURCE+":"+APS+",");
-		    if(apCompassOnOff.isChecked())apCompassOnOff.setChecked(false);
-	    }
+	    toggleSource(event, false);
 	}
+	
+	private void toggleSource(CheckEvent event, boolean compass) {
+		//four possible states
+		 if(compass && event.isChecked()){
+			    APS=Constants.AUTOPILOT_COMPASS;
+			    //compass checked so wind off
+			    if(apWindOnOff.isChecked())apWindOnOff.setChecked(false);
+		 }
+		 if(compass && !event.isChecked()){
+			    APS=Constants.AUTOPILOT_WIND;
+			  //compass not checked so wind on
+			    if(!apWindOnOff.isChecked())apWindOnOff.setChecked(true);
+		 }
+		 if(!compass && event.isChecked()){
+			    APS=Constants.AUTOPILOT_WIND;
+			  //wind checked so compass off
+			    if(apCompassOnOff.isChecked())apCompassOnOff.setChecked(false);
+		 }
+		 if(!compass && !event.isChecked()){
+			    APS=Constants.AUTOPILOT_COMPASS;
+			  //wind not checked so compass on
+			    if(!apCompassOnOff.isChecked())apCompassOnOff.setChecked(true);
+		 }
+		 //now propagate command
+		 producer.sendBody(Constants.UID+":"+Constants.MEGA+","+Constants.AUTOPILOT_SOURCE+":"+APS+",");
+		 
+	}
+
 		
 
 }

@@ -51,7 +51,6 @@
 					image="./js/img/control_port_blue.png" />
 				<button id="apOnOff" tooltiptext="Start/stop the autopilot"
 					image="./js/img/tick.png" />
-				<label id="apOnState" value="false" visible="false"/>
 				<button id="apStbd1" tooltiptext="Turn to starboard 1 deg"
 					image="./js/img/control_stbd_blue.png" />
 				<button id="apStbd10" tooltiptext="Turn to starboard 10 deg"
@@ -67,12 +66,11 @@
 				
 					<vbox>
 						<toolbarbutton id="apCompassOnOff" mode="toggle"
-							tooltiptext="Follow compass, toggle on or off"
+							tooltiptext="Follow compass, toggle on or off" checked="true"
 							label="Follow compass" />
 						<toolbarbutton id="apWindOnOff"
 							tooltiptext="Follow wind, toggle on or off"
-							mode="toggle" label="Follow Wind" checked="false"/>
-						<label id="apSource" value="C" visible="false"/>
+							mode="toggle" label="Follow Wind" />
 					</vbox>
 				
 			</hbox>

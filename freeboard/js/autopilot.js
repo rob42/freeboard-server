@@ -21,21 +21,26 @@ var followCompass=true;
 function Autopilot() {
 	this.onmessage = function(mArray) {
 			jQuery.each(mArray, function(i, data) {
-				//get autopilot state
+				//get autopilot state, avoid commands
+				if(data && data.indexOf('#')>=0){
+					return true;
+				}
+				
 				if (data && data.indexOf('APX:') >= 0) {
 					var c =parseInt(data.substring(4));
-					if(c>0){
+					if(c==1){
 						autopilotOn=true;
 					}else{
 						autopilotOn=false;
 					}
+					c=null;
 				}
 				if (data && data.indexOf('APS:') >= 0) {
 					var c = data.substring(4);
-					if ('C' == c) {
-						followCompass=true;
-					}else{
+					if ('W' == c) {
 						followCompass=false;
+					}else{
+						followCompass=true;
 					}
 					c = null;
 				}

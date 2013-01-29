@@ -41,6 +41,9 @@ function Wind () {
 	this.onmessage = function (mArray) {
 		//var mArray=m.data.split(",");
 		jQuery.each(mArray, function(i, data) {
+			//avoid commands
+			if(data && data.indexOf('#')>=0)return true;
+			
 			if (data && data.indexOf('WSA') >= 0) {
 				var c = parseFloat(data.substring(4));
 				if($.isNumeric(c)){
