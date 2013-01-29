@@ -32,6 +32,7 @@ function initSocket(){
 			//for debug
 			//console.log(m.data);
 			//iterate the array and process each, avoid NMEA for now
+			//TODO: Note memory leak in native websockets code  - https://code.google.com/p/chromium/issues/detail?id=146304
 			if(!m.data.trim().startsWith('$')){
 				mArray=m.data.trim().split(",");
 				jQuery.each(wsList, function(i, obj) {

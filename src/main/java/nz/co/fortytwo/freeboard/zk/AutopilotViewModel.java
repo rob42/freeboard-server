@@ -18,6 +18,10 @@
  */
 package nz.co.fortytwo.freeboard.zk;
 
+import nz.co.fortytwo.freeboard.server.CamelContextFactory;
+import nz.co.fortytwo.freeboard.server.util.Constants;
+
+import org.apache.camel.ProducerTemplate;
 import org.apache.log4j.Logger;
 import org.zkoss.zk.ui.Session;
 import org.zkoss.zk.ui.event.MouseEvent;
@@ -26,7 +30,8 @@ import org.zkoss.zk.ui.select.annotation.Listen;
 import org.zkoss.zk.ui.select.annotation.Wire;
 import org.zkoss.zk.ui.select.annotation.WireVariable;
 import org.zkoss.zul.Button;
-import org.zkoss.zul.Panel;
+import org.zkoss.zul.Label;
+import org.zkoss.zul.Toolbarbutton;
 import org.zkoss.zul.Window;
 
 public class AutopilotViewModel extends SelectorComposer<Window>{
@@ -41,20 +46,38 @@ public class AutopilotViewModel extends SelectorComposer<Window>{
 	@WireVariable
     private Session sess;
 	
-	@Wire("button#apPort")
-	private Button apPort; 
-	@Wire("button#apStbd")
-	private Button apStbd; 
-	@Wire("button#apCompassOnOff")
-	private Button apCompassOnOff; 
-	@Wire("button#apWindOnOff")
-	private Button apWindOnOff; 
+	@Wire("button#apPort1")
+	private Button apPort1; 
+	@Wire("button#apStbd1")
+	private Button apStbd1; 
+	@Wire("button#apPort10")
+	private Button apPort10; 
+	@Wire("button#apStbd10")
+	private Button apStbd10; 
+	@Wire("toolbarbutton#apCompassOnOff")
+	private Toolbarbutton apCompassOnOff; 
+	@Wire("toolbarbutton#apWindOnOff")
+	private Toolbarbutton apWindOnOff; 
+	@Wire("button#apOnOff")
+	private Button apOnOff; 
+	@Wire("label#apOnState")
+	private Label apOnState;
+	@Wire("label#apSource")
+	private Label apSource;
+	
+	private ProducerTemplate producer;
+	//private ConsumerTemplate consumer;
 	
 	private boolean autopilotOn=false;
+	private String APS = "C"; //C = compass, W = wind, compass by default
 	
 	public AutopilotViewModel() {
 		super();
 		logger.debug("Constructing..");
+
+		producer = CamelContextFactory.getInstance().createProducerTemplate();
+		producer.setDefaultEndpointUri("seda://input?multipleConsumers=true");
+		
 	}
 
 	//@AfterCompose
@@ -62,41 +85,61 @@ public class AutopilotViewModel extends SelectorComposer<Window>{
 		logger.debug("Init..");
 	}
 	
-	@Listen("onClick = button#apPort")
-	public void apPortClick(MouseEvent event) {
-	    logger.debug(" apPort button event = "+event);
-	    
+	@Listen("onClick = button#apPort1")
+	public void apPort1Click(MouseEvent event) {
+	    logger.debug(" apPort1 button event = "+event);
+	    producer.sendBody(Constants.AUTOPILOT_ADJUST+":-1,");
 	}
-	@Listen("onClick = button#apStbd")
-	public void apStbdClick(MouseEvent event) {
-	    logger.debug(" apStbd button event = "+event);
-	    
+	@Listen("onClick = button#apStbd1")
+	public void apStbd1Click(MouseEvent event) {
+	    logger.debug(" apStbd1 button event = "+event);
+	    producer.sendBody(Constants.AUTOPILOT_ADJUST+":1,");
 	}
-	@Listen("onClick = button#apCompassOnOff")
+	@Listen("onClick = button#apPort10")
+	public void apPort10Click(MouseEvent event) {
+	    logger.debug(" apPort10 button event = "+event);
+	    producer.sendBody(Constants.AUTOPILOT_ADJUST+":-10,");
+	}
+	@Listen("onClick = button#apStbd10")
+	public void apStbd10Click(MouseEvent event) {
+	    logger.debug(" apStbd10 button event = "+event);
+	    producer.sendBody(Constants.AUTOPILOT_ADJUST+":10,");
+	}
+	@Listen("onClick = button#apOnOff")
+	public void apOnOffClick(MouseEvent event) {
+	    logger.debug(" apOnOff button event = "+event);
+	    autopilotOn=!autopilotOn;
+	    if(autopilotOn){
+	    	apOnOff.setImage("./js/img/stop.png");
+	    	apOnState.setValue("true");
+	    	producer.sendBody(Constants.AUTOPILOT_STATE+":1,");
+	    }else{
+	    	apOnOff.setImage("./js/img/tick.png");
+	    	apOnState.setValue("false");
+	    	producer.sendBody(Constants.AUTOPILOT_STATE+":0,");
+	    }
+	}
+	@Listen("onClick = toolbarbutton#apCompassOnOff")
 	public void apCompassOnOffClick(MouseEvent event) {
 	    logger.debug(" apCompassOnOff button event = "+event);
-	    autopilotOn=!autopilotOn;
-	    if(autopilotOn){
-	    	apCompassOnOff.setImage("./js/img/west-mini.png");
-	    	apWindOnOff.setImage("./js/img/zoom-world-mini.png");
-	    }else{
-	    	apCompassOnOff.setImage("./js/img/zoom-world-mini.png");
+	    if(apCompassOnOff.isChecked()){
+		    APS=Constants.AUTOPILOT_COMPASS;
+		    apSource.setValue(APS);
+		    producer.sendBody(Constants.AUTOPILOT_SOURCE+":"+APS+",");
+		    if(apWindOnOff.isChecked())apWindOnOff.setChecked(false);
 	    }
 	}
 	
-	@Listen("onClick = button#apWindOnOff")
-	public void apOnOffClick(MouseEvent event) {
+	@Listen("onClick = toolbarbutton#apWindOnOff")
+	public void apWindOnOffClick(MouseEvent event) {
 	    logger.debug(" apWindOnOff button event = "+event);
-	    autopilotOn=!autopilotOn;
-	    if(autopilotOn){
-	    	apWindOnOff.setImage("./js/img/west-mini.png");
-	    	apCompassOnOff.setImage("./js/img/zoom-world-mini.png");
-	    }else{
-	    	apWindOnOff.setImage("./js/img/zoom-world-mini.png");
+	    if(apWindOnOff.isChecked()){
+		    APS=Constants.AUTOPILOT_WIND;
+		    apSource.setValue(APS);
+		    producer.sendBody(Constants.AUTOPILOT_SOURCE+":"+APS+",");
+		    if(apCompassOnOff.isChecked())apCompassOnOff.setChecked(false);
 	    }
 	}
-	
-	
-	
+		
 
 }

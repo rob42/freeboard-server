@@ -75,14 +75,14 @@ public class Constants {
 	/**Wind speed alarm state */
 	public static final String WSX = "WSX";
 	
-	/** Autopilot state (on/off)*/
-	public static final String APX = "APX"; //0=off, 1=on
-	/** Autopilot offset from source*/
-	public static final String APT = "APT"; //offset from source +/- deg - used for wind
-	/** Autopilot goal in deg*/
-	public static final String APG = "APG"; //heading goal in deg 0-360 - used for compass
-	/** Autopilot source*/
-	public static final String APS = "APS"; //W wind or C compass	
+	/** Autopilot state (on/off) 0=off, 1=on*/
+	public static final String APX = "APX"; 
+	/** Autopilot offset from source, +/- deg - used for wind*/
+	public static final String APT = "APT"; 
+	/** Autopilot goal in deg, 0-360 - used for compass*/
+	public static final String APG = "APG"; 
+	/** Autopilot source, W wind or C compass*/
+	public static final String APS = "APS"; 
 	
 	/**Anchor alarm state*/
 	public static final String AAX = "AAX";
@@ -100,10 +100,20 @@ public class Constants {
 	
 	//Commands
 	public static final String VERSION = "#VER";
-	public static final String AUTOPILOT_STATE = "#APX"; //0=off, 1=on
-	public static final String AUTOPILOT_TARGET = "#APT"; //offset from source +/- deg
-	public static final String AUTOPILOT_ADJUST = "#APJ" ;//adjust +/- deg
-	public static final String AUTOPILOT_SOURCE = "#APS"; //wind or compass
+	/** constant for AUTOPILOT_SOURCE = wind */
+	public static final String AUTOPILOT_WIND = "W"; 
+	/** constant for AUTOPILOT_SOURCE = wind */
+	public static final String AUTOPILOT_COMPASS = "C"; 
+	/** Autopilot state (on/off) 0=off, 1=on*/
+	public static final String AUTOPILOT_STATE = "#APX"; 
+	/** Autopilot offset from source, +/- deg - used for wind*/
+	public static final String AUTOPILOT_TARGET = "#APT"; 
+	/** Autopilot goal in deg, 0-360 - used for compass*/
+	public static final String AUTOPILOT_GOAL = "#APG";
+	/** Autopilot adjust +/- deg*/
+	public static final String AUTOPILOT_ADJUST = "#APJ";
+	/** Autopilot source, W wind or C compass*/
+	public static final String AUTOPILOT_SOURCE = "#APS"; 
 
 	public static final String ANCHOR_ALARM_STATE = "#AAX";
 	public static final String ANCHOR_ALARM_RADIUS = "#AAR";

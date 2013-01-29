@@ -24,7 +24,6 @@ import nz.co.fortytwo.freeboard.server.util.Constants;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
 /**

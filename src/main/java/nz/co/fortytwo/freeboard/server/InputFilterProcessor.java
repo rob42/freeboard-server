@@ -18,8 +18,6 @@
  */
 package nz.co.fortytwo.freeboard.server;
 
-import java.util.HashMap;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.log4j.Logger;
@@ -36,6 +34,7 @@ public class InputFilterProcessor extends FreeboardProcessor implements Processo
 	public void process(Exchange exchange) throws Exception {
 		String msg = (String) exchange.getIn().getBody(String.class);
 		if(msg !=null){
+			msg=msg.trim();
 			if(msg.startsWith("!!!VER:")){
 				//from IMU or MEGA - good
 				msg=msg.substring(msg.indexOf(",") + 1);
@@ -43,8 +42,8 @@ public class InputFilterProcessor extends FreeboardProcessor implements Processo
 				exchange.getOut().setBody(stringToHashMap(msg));
 				return;
 			}
-			if(msg.matches("^[#A-Z][A-Z]*:")){
-				//CMD or VAL - good
+			if(msg.matches("^[#]?[A-Z]{3}:.*")){
+				//#CMD: or VAL: - good
 				exchange.getOut().setBody(stringToHashMap(msg));
 				return;
 			}

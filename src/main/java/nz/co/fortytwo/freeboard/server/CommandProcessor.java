@@ -36,6 +36,10 @@ public class CommandProcessor extends FreeboardProcessor implements Processor {
 
 	private ProducerTemplate producer;
 	
+	public CommandProcessor(){
+		
+	}
+	
 	public void process(Exchange exchange) throws Exception {
 		if (exchange.getIn().getBody()==null)
 			return;
@@ -59,16 +63,23 @@ public class CommandProcessor extends FreeboardProcessor implements Processor {
 			if(map.containsKey(Constants.YAW)){outMap.put(Constants.YAW, map.get(Constants.YAW));}
 			if(map.containsKey(Constants.PCH)){outMap.put(Constants.PCH, map.get(Constants.PCH));}
 			if(map.containsKey(Constants.RLL)){outMap.put(Constants.RLL, map.get(Constants.RLL));}
+			if(map.containsKey(Constants.AUTOPILOT_ADJUST)){outMap.put(Constants.AUTOPILOT_ADJUST, map.get(Constants.AUTOPILOT_ADJUST));}
+			//if(map.containsKey(Constants.AUTOPILOT_GOAL)){outMap.put(Constants.AUTOPILOT_GOAL, map.get(Constants.AUTOPILOT_GOAL));}
+			if(map.containsKey(Constants.AUTOPILOT_SOURCE)){outMap.put(Constants.AUTOPILOT_SOURCE, map.get(Constants.AUTOPILOT_SOURCE));}
+			//if(map.containsKey(Constants.AUTOPILOT_TARGET)){outMap.put(Constants.AUTOPILOT_TARGET, map.get(Constants.AUTOPILOT_TARGET));}
+			if(map.containsKey(Constants.AUTOPILOT_STATE)){outMap.put(Constants.AUTOPILOT_STATE, map.get(Constants.AUTOPILOT_STATE));}
 		
 		//now send to output queue
 		if(!outMap.isEmpty()){
 			outMap.put( Constants.UID,Constants.MEGA);
-			producer.sendBody("seda:output?multipleConsumers=true", outMap);
+			producer.sendBody(hashMapToString(outMap));
 		}
 	}
 
-	public void setProducer(ProducerTemplate producer) {
-		this.producer = producer;
+	public void init() {
+		this.producer = CamelContextFactory.getInstance().createProducerTemplate();
+		producer.setDefaultEndpointUri("seda:output?multipleConsumers=true");
 	}
+
 
 }

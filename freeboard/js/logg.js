@@ -17,7 +17,7 @@
  *  along with FreeBoard.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-odoValue = 99998.2;
+
 function resizeLog(amount){
 	var wsize = $("#canvasLog").width();
 	var hsize = $("#canvasLog").height();
@@ -52,7 +52,7 @@ function Logg () {
 						lcdLat.setValue(Math.abs(c.toFixed(5))+' S');
 					}
 				}
-				
+				c=null;
 			}
 			if (data && data.indexOf('LON:') >= 0) {
 				var c = parseFloat(data.substring(4));
@@ -63,20 +63,21 @@ function Logg () {
 						lcdLon.setValue(c.toFixed(5)+' W');
 					}
 				}
-	
+				c=null;
 			}
 			if (data && data.indexOf('SOG:') >= 0) {
 				var c = parseFloat(data.substring(4));
 				if($.isNumeric(c)){
 					lcdLog.setValue(c);
 				}
-	
+				c=null;
 			}
 			if (data && data.indexOf('MGH:') >= 0) {
 				var c = parseFloat(data.substring(4));
 				if($.isNumeric(c)){
 					lcdHeading.setValue(c);
 				}
+				c=null;
 			}
 			if (data && data.indexOf('YAW:') >= 0) {
 				var c = parseFloat(data.substring(4));
@@ -88,7 +89,9 @@ function Logg () {
 						lcdWaypoint.setValue(c);
 					}
 				}
+				c=null;
 			}
+			data=null;
 		});
 	}
 	

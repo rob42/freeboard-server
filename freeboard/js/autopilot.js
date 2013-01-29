@@ -16,31 +16,59 @@
  *  You should have received a copy of the GNU General Public License
  *  along with FreeBoard.  If not, see <http://www.gnu.org/licenses/>.
  */
-
-odoValue = 99998.2;
-
-
-function Autopilot () {
-	this.onmessage = function (mArray) {
-		//var mArray=m.data.split(",");
-		jQuery.each(mArray, function(i, data) {
-//			
-			if (data && data.indexOf('MGH:') >= 0) {
-				var c = parseFloat(data.substring(4));
-				if($.isNumeric(c)){
-					autopilotTarget.setValue(c);
+var autopilotOn=false;
+var followCompass=true;
+function Autopilot() {
+	this.onmessage = function(mArray) {
+			jQuery.each(mArray, function(i, data) {
+				//get autopilot state
+				if (data && data.indexOf('APX:') >= 0) {
+					var c =parseInt(data.substring(4));
+					if(c>0){
+						autopilotOn=true;
+					}else{
+						autopilotOn=false;
+					}
 				}
-			}
-			
-		});
+				if (data && data.indexOf('APS:') >= 0) {
+					var c = data.substring(4);
+					if ('C' == c) {
+						followCompass=true;
+					}else{
+						followCompass=false;
+					}
+					c = null;
+				}
+				// show either compass or apparent wind depending on ap source
+				if (!autopilotOn && followCompass && data && data.indexOf('MGH:') >= 0) {
+					var c = parseFloat(data.substring(4));
+					if ($.isNumeric(c)) {
+						autopilotTarget.setValue(c);
+					}
+					c = null;
+				}
+				if (!autopilotOn && !followCompass &&  data && data.indexOf('WDA:') >= 0) {
+					var c = parseFloat(data.substring(4));
+					if ($.isNumeric(c)) {
+						autopilotTarget.setValue(c);
+					}
+					c = null;
+				}
+				//autopilot on, show target
+				if (autopilotOn && data && data.indexOf('APT:') >= 0) {
+					var c = parseFloat(data.substring(4));
+					if ($.isNumeric(c)) {
+						autopilotTarget.setValue(c);
+					}
+					c = null;
+				}
+				data = null;
+			});
 	}
-	
+
 }
 
-function toggleAutopilot(){
-	autopilotOn=!autopilotOn;
-	
-}
+
 
 function initAutopilot() {
 
@@ -49,12 +77,12 @@ function initAutopilot() {
 		width : document.getElementById('canvasTarget').width,
 		height : document.getElementById('canvasTarget').height,
 		lcdDecimals : 0,
-		lcdColor: steelseries.LcdColor.BEIGE,
+		lcdColor : steelseries.LcdColor.BEIGE,
 		headerString : "Target",
 		headerStringVisible : true,
 		detailString : "XTE",
 		detailStringVisible : true,
 	});
-	//autopilotTarget.setAltValue("OFF");
-wsList.push(new Autopilot());
+	// autopilotTarget.setAltValue("OFF");
+	wsList.push(new Autopilot());
 }

@@ -69,7 +69,8 @@ public class ServerMain {
 		main.enableHangupSupport();
 
 		NavDataWebSocketRoute route = new NavDataWebSocketRoute(config);
-		
+		//must do this early!
+		CamelContextFactory.setContext(route);
 		// web socket on port 9090
 		logger.info("  Websocket port:"+config.getProperty(WEBSOCKET_PORT));
 		route.setPort(Integer.valueOf(config.getProperty(WEBSOCKET_PORT)));

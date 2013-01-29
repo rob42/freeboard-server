@@ -28,7 +28,8 @@ import java.io.InputStreamReader;
 
 import nz.co.fortytwo.freeboard.server.util.Constants;
 
-import org.apache.camel.ConsumerTemplate;
+import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
 import org.apache.log4j.Logger;
 
@@ -39,19 +40,18 @@ import org.apache.log4j.Logger;
  * @author robert
  * 
  */
-public class SerialPortReader {
+public class SerialPortReader implements Processor{
 
 	private static Logger logger = Logger.getLogger(SerialPortReader.class);
 	private String portName;
 	private File portFile;
 	private ProducerTemplate producer;
-	private ConsumerTemplate consumer;
 
 	private boolean running = true;
 	private boolean mapped = false;
 	private String deviceType = null;
-	// private SerialPort serialPort = null;
 	private NRSerialPort serialPort = null;
+	private BufferedOutputStream out;
 
 	public SerialPortReader() {
 		super();
@@ -75,7 +75,7 @@ public class SerialPortReader {
 
 		serialPort.connect();
 		(new Thread(new SerialReader())).start();
-		(new Thread(new SerialWriter())).start();
+		out=new BufferedOutputStream(serialPort.getOutputStream());
 	}
 
 
@@ -140,55 +140,7 @@ public class SerialPortReader {
 	}
 
 	/** */
-	public class SerialWriter implements Runnable {
-
-		BufferedOutputStream out;
-
-		public SerialWriter() throws Exception {
-			out = new BufferedOutputStream(serialPort.getOutputStream());
-		}
-
-		public void run() {
-			try {
-				try {
-					while (running) {
-
-						String message = consumer.receiveBodyNoWait("seda:output?multipleConsumers=true", String.class);
-						//logger.debug(portName + ":Serial output read:" + message);
-						if (message != null) {
-							// check its valid for this device
-							if (deviceType == null || message.contains(Constants.UID + ":" + deviceType)) {
-								logger.debug(portName + ":Serial written:" + message);
-								out.write((message + "\n").getBytes());
-								out.flush();
-							}
-						}
-						// delay for 100 msecs, we dont want to burn up CPU for nothing
-						try {
-							Thread.currentThread().sleep(100);
-						} catch (InterruptedException ie) {
-						}
-					}
-				} catch (IOException e) {
-					running = false;
-					logger.error(portName, e);
-				}
-
-//				try {
-//					consumer.stop();
-//				} catch (Exception e) {
-//					logger.error(portName, e);
-//				}
-			} finally {
-				try{
-					if(serialPort.isConnected())serialPort.disconnect();
-				}catch(Exception e){
-					logger.error("Problem disconnecting port "+portName,e);
-				}
-				
-			}
-		}
-	}
+	
 
 	/**
 	 * Set the camel producer, which fire the messages into camel
@@ -227,9 +179,6 @@ public class SerialPortReader {
 		this.running = running;
 	}
 
-	public void setConsumer(ConsumerTemplate consumer) {
-		this.consumer = consumer;
-	}
 
 	public String getPortName() {
 		return portName;
@@ -237,6 +186,23 @@ public class SerialPortReader {
 
 	public void setPortName(String portName) {
 		this.portName = portName;
+	}
+
+	/* Handles the messages to be delivered to the device attached to this port.
+	 * @see org.apache.camel.Processor#process(org.apache.camel.Exchange)
+	 */
+	public void process(Exchange exchange) throws Exception {
+		//send to device
+		String message = exchange.getIn().getBody(String.class);
+		logger.debug(portName + ":msg received for device:" + message);
+		if (message != null) {
+			// check its valid for this device
+			if (running && deviceType == null || message.contains(Constants.UID + ":" + deviceType)) {
+				logger.debug(portName + ":wrote out to device:" + message);
+				out.write((message + "\n").getBytes());
+				out.flush();
+			}
+		}
 	}
 
 }

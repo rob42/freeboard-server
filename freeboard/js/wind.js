@@ -46,12 +46,14 @@ function Wind () {
 				if($.isNumeric(c)){
 					radialWindApp.setValueAnimated(c);
 				}
+				c=null;
 			}
 			if (data && data.indexOf('WST') >= 0) {
 				var c = parseFloat(data.substring(4));
 				if($.isNumeric(c)){
 					radialWindTrue.setValueAnimated(c);
 				}
+				c=null;
 			}
 			if (data && data.indexOf('WDA') >= 0) {
 				var c = parseFloat(data.substring(4));
@@ -77,6 +79,7 @@ function Wind () {
 						radialWindDirApp.setValueAnimatedAverage(v / avgArrayA.length);
 					}
 				}
+				c=null;
 			}
 			if (data && data.indexOf('WDT') >= 0) {
 				var c = parseFloat(data.substring(4));
@@ -93,8 +96,9 @@ function Wind () {
 					}
 					radialWindDirTrue.setValueAnimatedAverage(v / avgArrayT.length);
 				}
-				
+				c=null;
 			}
+			data=null;
 		});
 	}
 }
@@ -129,14 +133,16 @@ function initWind() {
 		unitString : "knots",
 		lcdVisible : true,
 		lcdColor: steelseries.LcdColor.BEIGE,
+		pointerType : steelseries.PointerType.TYPE2,
 		backgroundColor: steelseries.BackgroundColor.BROWN,
 	});
 
 	// wind dir
 	radialWindDirApp = new steelseries.WindDirection('canvasWindDirApp', {
 		size : document.getElementById('canvasWindDirApp').width,
-		titleString : "WIND     APP.",
-		lcdVisible : false,
+		titleString : "WIND           APP",
+		lcdVisible : true,
+		lcdColor: steelseries.LcdColor.BEIGE,
 		pointSymbolsVisible : false,
 		degreeScaleHalf : true,
 		section : areasCloseHaul,
@@ -153,10 +159,11 @@ function initWind() {
 		maxValue : 60,
 		threshold : 35,
 		section : sections,
-		titleString : "WIND TRUE",
+		titleString : "WIND          TRUE",
 		unitString : "knots",
 		lcdVisible : true,
 		lcdColor: steelseries.LcdColor.BEIGE,
+		pointerType : steelseries.PointerType.TYPE2,
 		backgroundColor: steelseries.BackgroundColor.BROWN,
 	});
 

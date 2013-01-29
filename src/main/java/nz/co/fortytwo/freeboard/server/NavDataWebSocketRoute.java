@@ -55,6 +55,7 @@ public class NavDataWebSocketRoute extends RouteBuilder {
 		this.port = port;
 	}
 
+
 	@Override
 	public void configure() throws Exception {
 		// setup Camel web-socket component on the port we have defined
@@ -66,7 +67,7 @@ public class NavDataWebSocketRoute extends RouteBuilder {
 		wc.setStaticResources("classpath:.");
 		
 		//init commandProcessor
-		commandProcessor.setProducer(wc.getCamelContext().createProducerTemplate());
+		commandProcessor.init();
 		
 		
 		if(Boolean.valueOf(config.getProperty(ServerMain.DEMO))){
@@ -78,7 +79,7 @@ public class NavDataWebSocketRoute extends RouteBuilder {
 			// start a serial port manager
 			
 			serialPortManager=new SerialPortManager();
-			serialPortManager.setWc(wc);
+			//serialPortManager.setWc(wc);
 			new Thread(serialPortManager).start();
 		}
 		//dump nulls
@@ -102,11 +103,12 @@ public class NavDataWebSocketRoute extends RouteBuilder {
 		
 		// log commands
 		from("seda:output?multipleConsumers=true")
-			.process(outputFilterProcessor)
+			//.process(outputFilterProcessor)
+			.process(serialPortManager)
 			.to("log:nz.co.fortytwo.freeboard.command?level=INFO")
 			.onException(Exception.class)
 		    .handled(true).maximumRedeliveries(0)
-		    .to("log:nz.co.fortytwo.freeboard.navdata?level=ERROR");
+		    .to("log:nz.co.fortytwo.freeboard.command?level=ERROR");
 	}
 
 	public String getSerialUrl() {

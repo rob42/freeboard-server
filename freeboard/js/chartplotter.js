@@ -333,7 +333,7 @@ function ChartPlotter () {
 					lat=c;
 					setPos=true;
 				}
-				
+				c=null;
 			}
 			if (data && data.indexOf('LON') >= 0) {
 				var c = parseFloat(data.substring(4));
@@ -341,7 +341,7 @@ function ChartPlotter () {
 					lon=c;
 					setPos=true;
 				}
-				
+				c=null;
 			}
 			if (data && data.indexOf('MGH') >= 0) {
 				var c = parseFloat(data.substring(4));
@@ -349,7 +349,7 @@ function ChartPlotter () {
 					heading=c;
 					setPos=true;
 				}
-				
+				c=null;
 			}
 			if (data && data.indexOf('SOG') >= 0) {
 				var c = parseFloat(data.substring(4));
@@ -357,15 +357,16 @@ function ChartPlotter () {
 					setPos=c;
 					setPos=true;
 				}
-				
+				c=null;
 			}
 			if (data && data.indexOf('MGD') >= 0) {
 				var c = parseFloat(data.substring(4));
 				if($.isNumeric(c)){
 					declination=c;
 				}
+				c=null;
 			}
-			
+			data=null;
 		});
 		if(setPos){
 			setPosition(lat,lon, heading+declination, speed);

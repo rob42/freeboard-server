@@ -25,9 +25,9 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.camel.ConsumerTemplate;
+import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
-import org.apache.camel.component.websocket.WebsocketComponent;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
@@ -38,23 +38,18 @@ import org.apache.log4j.Logger;
  * @author robert
  * 
  */
-public class SerialPortManager implements Runnable {
+public class SerialPortManager implements Runnable, Processor {
 
 	private static Logger logger = Logger.getLogger(SerialPortManager.class);
 
-	private WebsocketComponent wc;
-	private ProducerTemplate producer;
-	private ConsumerTemplate consumer;
 	private List<SerialPortReader> serialPortList = new ArrayList<SerialPortReader>();
 
 	private boolean running = true;
 
 	public void run() {
 		// not running, start now.
-		ProducerTemplate producer = wc.getCamelContext().createProducerTemplate();
+		ProducerTemplate producer = CamelContextFactory.getInstance().createProducerTemplate();
 		producer.setDefaultEndpointUri("seda://input?multipleConsumers=true");
-
-		ConsumerTemplate consumer = wc.getCamelContext().createConsumerTemplate();
 		
 		while (running) {
 			// remove any stopped readers
@@ -96,7 +91,7 @@ public class SerialPortManager implements Runnable {
 					
 					SerialPortReader serial = new SerialPortReader();
 					serial.setProducer(producer);
-					serial.setConsumer(consumer);
+					
 					logger.debug("Comm port " + port + " found and connecting...");
 					serial.connect(port);
 					logger.info("Comm port " + port + " found and connected");
@@ -132,12 +127,15 @@ public class SerialPortManager implements Runnable {
 
 	}
 
-	public WebsocketComponent getWc() {
-		return wc;
+	public void process(Exchange exchange) throws Exception {
+		for (SerialPortReader serial : serialPortList) {
+			if (serial != null) {
+				serial.process(exchange);
+			}
+		}
+		
 	}
 
-	public void setWc(WebsocketComponent wc) {
-		this.wc = wc;
-	}
+
 
 }

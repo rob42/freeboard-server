@@ -46,12 +46,14 @@ function Wind2 () {
 				if($.isNumeric(c)){
 					lcdWindApp.setValue(c);
 				}
+				c=null;
 			}
 			if (data && data.indexOf('WST') >= 0) {
 				var c = parseFloat(data.substring(4));
 				if($.isNumeric(c)){
 					lcdWindTrue.setValue(c);
 				}
+				c=null;
 			}
 			if (data && data.indexOf('WDA') >= 0) {
 				var c = parseFloat(data.substring(4));
@@ -78,6 +80,7 @@ function Wind2 () {
 						radialWindDirApp.setValueAnimatedAverage(v / avgArrayA.length);
 					}
 				}
+				c=null;
 			}
 			if (data && data.indexOf('WDT') >= 0) {
 				var c = parseFloat(data.substring(4));
@@ -101,7 +104,9 @@ function Wind2 () {
 					else
 						radialWindDirTrue.setValueAnimatedAverage(0.0);
 				}
+				c=null;
 			}
+			data=null;
 		});
 	}
 }
@@ -135,8 +140,9 @@ function initWind() {
 	// wind dir
 	radialWindDirApp = new steelseries.WindDirection('canvasWindDirApp', {
 		size : document.getElementById('canvasWindDirApp').width,
-		titleString : "WIND     APP.",
-		lcdVisible : false,
+		titleString : "WIND          APP",
+		lcdVisible : true,
+		lcdColor: steelseries.LcdColor.BEIGE,
 		pointSymbolsVisible : false,
 		degreeScaleHalf : true,
 		section : areasCloseHaul,
@@ -162,7 +168,7 @@ function initWind() {
 
 	radialWindDirTrue = new steelseries.WindDirection('canvasWindDirTrue', {
 		size : document.getElementById('canvasWindDirTrue').width,
-		titleString : "WIND     TRUE",
+		titleString : "WIND           TRUE",
 		roseVisible : false,
 		lcdVisible : true,
 		lcdColor: steelseries.LcdColor.BEIGE,
