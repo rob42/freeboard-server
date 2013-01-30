@@ -22,6 +22,7 @@
 <?script src="./js/steelseries.js"?>
 <?script src="./js/websocket.js"?>
 <?script src="./js/autopilot.js"?>
+<?script src="./js/anchor.js"?>
 <zk xmlns:w="http://www.zkoss.org/2005/zk/client">
 	<style>.z-panel-body { overflow: visible; }"</style>
 
@@ -38,6 +39,8 @@
 		<toolbarbutton label="Log" href="/loggPage.zul" />
 		<toolbarbutton label="Autopilot"
 			onClick='autopilotWindow.setVisible(!autopilotWindow.isVisible());' />
+		<toolbarbutton label="Anchor"
+			onClick='anchorWindow.setVisible(!anchorWindow.isVisible());' />
 	</toolbar>
 	<window id="autopilotWindow" 
 		apply="nz.co.fortytwo.freeboard.zk.AutopilotViewModel"
@@ -77,5 +80,35 @@
 			
 		</vbox>
 	</window>
-	<script type="text/javascript" defer="true">initSocket(); initAutopilot();</script>
+	<window id="anchorWindow" 
+		apply="nz.co.fortytwo.freeboard.zk.AnchorViewModel"
+		title="Anchor Alarm"  position="right,bottom" mode="overlapped" visible="false" minimizable="true">
+		<vbox align="center">
+			
+			<hbox>
+				<button id="anchorRadiusDown10" tooltiptext="Shrink by 10M"
+					image="./js/img/control_port10_blue.png" />
+				<button id="anchorRadiusDown1" tooltiptext="Shrink by 1M"
+					image="./js/img/control_port_blue.png" />
+				<button id="anchorAlarmOnOff" tooltiptext="Start/stop the anchor watch"
+					image="./js/img/tick.png" />
+				
+				<button id="anchorRadiusUp1" tooltiptext="Expand by 1M"
+					image="./js/img/control_stbd_blue.png" />
+				<button id="anchorRadiusUp10" tooltiptext="Expand by 10M"
+					image="./js/img/control_stbd10_blue.png" />
+			</hbox>
+			
+				<html style="overflow: visible" >
+					<canvas id="acanvasRadius" width="100px"
+						height="40px">
+						No canvas in your browser...sorry...
+					</canvas>
+				</html>
+			
+			
+			
+		</vbox>
+	</window>
+	<script type="text/javascript" defer="true">initSocket(); initAutopilot(); initAnchorAlarm();</script>
 </zk>

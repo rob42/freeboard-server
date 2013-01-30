@@ -117,6 +117,7 @@ public class Constants {
 
 	public static final String ANCHOR_ALARM_STATE = "#AAX";
 	public static final String ANCHOR_ALARM_RADIUS = "#AAR";
+	public static final String ANCHOR_ALARM_ADJUST = "#AAJ";
 	public static final String ANCHOR_ALARM_LAT = "#AAN";
 	public static final String ANCHOR_ALARM_LON = "#AAE";
 	

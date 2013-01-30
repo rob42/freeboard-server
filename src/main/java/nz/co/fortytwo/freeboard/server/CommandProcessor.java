@@ -18,7 +18,9 @@
  */
 package nz.co.fortytwo.freeboard.server;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import nz.co.fortytwo.freeboard.server.util.Constants;
 
@@ -35,8 +37,34 @@ import org.apache.camel.ProducerTemplate;
 public class CommandProcessor extends FreeboardProcessor implements Processor {
 
 	private ProducerTemplate producer;
+	private List<String> msgs = new ArrayList<String>();
 	
 	public CommandProcessor(){
+	
+		msgs.add(Constants.WST);
+		msgs.add(Constants.WSA);
+		msgs.add(Constants.WDT);
+		msgs.add(Constants.WDA);
+		msgs.add(Constants.WSU);
+		msgs.add(Constants.LAT);
+		msgs.add(Constants.LON);
+		msgs.add(Constants.COG);
+		msgs.add(Constants.MGH);
+		msgs.add(Constants.SOG);
+		msgs.add(Constants.YAW);
+		msgs.add(Constants.PCH);
+		msgs.add(Constants.RLL);
+		msgs.add(Constants.AUTOPILOT_ADJUST);
+		//msgs.add(Constants.AUTOPILOT_GOAL);
+		msgs.add(Constants.AUTOPILOT_SOURCE);
+		//msgs.add(Constants.AUTOPILOT_TARGET);
+		msgs.add(Constants.AUTOPILOT_STATE);
+		//anchor alarm
+		msgs.add(Constants.ANCHOR_ALARM_STATE);
+		msgs.add(Constants.ANCHOR_ALARM_ADJUST);
+		msgs.add(Constants.ANCHOR_ALARM_LAT);
+		msgs.add(Constants.ANCHOR_ALARM_LON);
+		msgs.add(Constants.ANCHOR_ALARM_RADIUS);
 		
 	}
 	
@@ -50,25 +78,10 @@ public class CommandProcessor extends FreeboardProcessor implements Processor {
 		
 			//send to MEGA for anchor alarms, and autopilot
 			//be careful to avoid misc arduino error/debug messages
-			if(map.containsKey(Constants.WST)){outMap.put(Constants.WST, map.get(Constants.WST));}
-			if(map.containsKey(Constants.WSA)){outMap.put(Constants.WSA, map.get(Constants.WSA));}
-			if(map.containsKey(Constants.WDT)){outMap.put(Constants.WDT, map.get(Constants.WDT));}
-			if(map.containsKey(Constants.WDA)){outMap.put(Constants.WDA, map.get(Constants.WDA));}
-			if(map.containsKey(Constants.WSU)){outMap.put(Constants.WSU, map.get(Constants.WSU));}
-			if(map.containsKey(Constants.LAT)){outMap.put(Constants.LAT, map.get(Constants.LAT));}
-			if(map.containsKey(Constants.LON)){outMap.put(Constants.LON, map.get(Constants.LON));}
-			if(map.containsKey(Constants.COG)){outMap.put(Constants.COG, map.get(Constants.COG));}
-			if(map.containsKey(Constants.MGH)){outMap.put(Constants.MGH, map.get(Constants.MGH));}
-			if(map.containsKey(Constants.SOG)){outMap.put(Constants.SOG, map.get(Constants.SOG));}
-			if(map.containsKey(Constants.YAW)){outMap.put(Constants.YAW, map.get(Constants.YAW));}
-			if(map.containsKey(Constants.PCH)){outMap.put(Constants.PCH, map.get(Constants.PCH));}
-			if(map.containsKey(Constants.RLL)){outMap.put(Constants.RLL, map.get(Constants.RLL));}
-			if(map.containsKey(Constants.AUTOPILOT_ADJUST)){outMap.put(Constants.AUTOPILOT_ADJUST, map.get(Constants.AUTOPILOT_ADJUST));}
-			//if(map.containsKey(Constants.AUTOPILOT_GOAL)){outMap.put(Constants.AUTOPILOT_GOAL, map.get(Constants.AUTOPILOT_GOAL));}
-			if(map.containsKey(Constants.AUTOPILOT_SOURCE)){outMap.put(Constants.AUTOPILOT_SOURCE, map.get(Constants.AUTOPILOT_SOURCE));}
-			//if(map.containsKey(Constants.AUTOPILOT_TARGET)){outMap.put(Constants.AUTOPILOT_TARGET, map.get(Constants.AUTOPILOT_TARGET));}
-			if(map.containsKey(Constants.AUTOPILOT_STATE)){outMap.put(Constants.AUTOPILOT_STATE, map.get(Constants.AUTOPILOT_STATE));}
-		
+		for(String tag:msgs){
+			if(map.containsKey(tag)){outMap.put(tag, map.get(tag));}
+		}
+			
 		//now send to output queue
 		if(!outMap.isEmpty()){
 			outMap.put( Constants.UID,Constants.MEGA);

@@ -83,7 +83,7 @@ public class AutopilotViewModel extends SelectorComposer<Window>{
 		logger.debug("Init..");
 		apCompassOnOff.setChecked(APS.equals(Constants.AUTOPILOT_COMPASS)?true:false);
 		apWindOnOff.setChecked(APS.equals(Constants.AUTOPILOT_COMPASS)?true:false);
-		setAutopilotState(autopilotOn);
+		setAutopilotState();
 	}
 	
 	@Listen("onClick = button#apPort1")
@@ -110,9 +110,9 @@ public class AutopilotViewModel extends SelectorComposer<Window>{
 	public void apOnOffClick(MouseEvent event) {
 	    logger.debug(" apOnOff button event = "+event);
 	    autopilotOn=!autopilotOn;
-	   setAutopilotState(autopilotOn);
+	   setAutopilotState();
 	}
-	private void setAutopilotState(boolean autopilotOn2) {
+	private void setAutopilotState() {
 		 if(autopilotOn){
 		    	apOnOff.setImage("./js/img/stop.png");
 		    	producer.sendBody(Constants.UID+":"+Constants.MEGA+","+Constants.AUTOPILOT_STATE+":1,");

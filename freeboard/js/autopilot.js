@@ -55,7 +55,12 @@ function Autopilot() {
 				if (!autopilotOn && !followCompass &&  data && data.indexOf('WDA:') >= 0) {
 					var c = parseFloat(data.substring(4));
 					if ($.isNumeric(c)) {
-						autopilotTarget.setValue(c);
+						// -180 <> 180
+						if (c >= 179) {
+							autopilotTarget.setValue(-(360 - c));
+						} else {
+							autopilotTarget.setValue(c);
+						}
 					}
 					c = null;
 				}

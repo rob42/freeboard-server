@@ -19,10 +19,12 @@
 <?page title="Freeboard"?>
 <?script src="./js/jquery-1.8.2.min.js"?>
 <?script src="./js/OpenLayers.js" ?>
+<?script src="./js/steelseries.js"?>
 <?script src="./js/layers.js" ?>
 <?script src="./js/websocket.js" ?>
 <?script src="./js/chartplotter.js" ?>
 <?script src="./js/autopilot.js"?>
+<?script src="./js/anchor.js"?>
 <zk>
 	<style>
 		#map { height: 100%; border: 1px solid #888; }
