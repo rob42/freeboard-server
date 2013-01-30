@@ -57,8 +57,8 @@ public class AnchorViewModel extends SelectorComposer<Window>{
 	@Wire("button#anchorRadiusDown10")
 	private Button anchorRadiusDown10; 
 	
-	@Wire("button#anchorAlarmOnOff")
-	private Button anchorAlarmOnOff; 
+	@Wire("toolbarbutton#anchorAlarmOnOff")
+	private Toolbarbutton anchorAlarmOnOff; 
 	
 	private ProducerTemplate producer;
 	
@@ -100,19 +100,26 @@ public class AnchorViewModel extends SelectorComposer<Window>{
 	    logger.debug(" anchorRadiusDown10 button event = "+event);
 	    producer.sendBody(Constants.UID+":"+Constants.MEGA+","+Constants.ANCHOR_ALARM_ADJUST+":-10,");
 	}
-	@Listen("onClick = button#anchorAlarmOnOff")
-	public void anchorAlarmOnOffClick(MouseEvent event) {
+	@Listen("onCheck = toolbarbutton#anchorAlarmOnOff")
+	public void anchorAlarmOnOffCheck(CheckEvent event) {
 	    logger.debug(" anchorAlarmOnOff button event = "+event);
-	    anchorAlarmOn=!anchorAlarmOn;
+	    if(event.isChecked()){
+	    	anchorAlarmOn=true;
+	    }else{
+	    	anchorAlarmOn=false;
+	    }
+	   
 	   setAnchorAlarmState();
 	}
 	
 	private void setAnchorAlarmState() {
 		 if(anchorAlarmOn){
 		    	anchorAlarmOnOff.setImage("./js/img/stop.png");
+		    	anchorAlarmOnOff.setLabel("Stop");
 		    	producer.sendBody(Constants.UID+":"+Constants.MEGA+","+Constants.ANCHOR_ALARM_STATE+":1,");
 		    }else{
 		    	anchorAlarmOnOff.setImage("./js/img/tick.png");
+		    	anchorAlarmOnOff.setLabel("Start");
 		    	producer.sendBody(Constants.UID+":"+Constants.MEGA+","+Constants.ANCHOR_ALARM_STATE+":0,");
 		    }
 	}

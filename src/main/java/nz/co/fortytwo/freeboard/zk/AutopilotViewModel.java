@@ -50,18 +50,24 @@ public class AutopilotViewModel extends SelectorComposer<Window>{
 	
 	@Wire("button#apPort1")
 	private Button apPort1; 
+	
 	@Wire("button#apStbd1")
 	private Button apStbd1; 
+	
 	@Wire("button#apPort10")
 	private Button apPort10; 
+	
 	@Wire("button#apStbd10")
 	private Button apStbd10; 
+	
 	@Wire("toolbarbutton#apCompassOnOff")
 	private Toolbarbutton apCompassOnOff; 
+	
 	@Wire("toolbarbutton#apWindOnOff")
 	private Toolbarbutton apWindOnOff; 
-	@Wire("button#apOnOff")
-	private Button apOnOff; 
+	
+	@Wire("toolbarbutton#apOnOff")
+	private Toolbarbutton apOnOff; 
 	
 	private ProducerTemplate producer;
 	//private ConsumerTemplate consumer;
@@ -91,33 +97,44 @@ public class AutopilotViewModel extends SelectorComposer<Window>{
 	    logger.debug(" apPort1 button event = "+event);
 	    producer.sendBody(Constants.UID+":"+Constants.MEGA+","+Constants.AUTOPILOT_ADJUST+":-1,");
 	}
+	
 	@Listen("onClick = button#apStbd1")
 	public void apStbd1Click(MouseEvent event) {
 	    logger.debug(" apStbd1 button event = "+event);
 	    producer.sendBody(Constants.UID+":"+Constants.MEGA+","+Constants.AUTOPILOT_ADJUST+":1,");
 	}
+	
 	@Listen("onClick = button#apPort10")
 	public void apPort10Click(MouseEvent event) {
 	    logger.debug(" apPort10 button event = "+event);
 	    producer.sendBody(Constants.UID+":"+Constants.MEGA+","+Constants.AUTOPILOT_ADJUST+":-10,");
 	}
+	
 	@Listen("onClick = button#apStbd10")
 	public void apStbd10Click(MouseEvent event) {
 	    logger.debug(" apStbd10 button event = "+event);
 	    producer.sendBody(Constants.UID+":"+Constants.MEGA+","+Constants.AUTOPILOT_ADJUST+":10,");
 	}
-	@Listen("onClick = button#apOnOff")
-	public void apOnOffClick(MouseEvent event) {
+	
+	@Listen("onCheck = toolbarbutton#apOnOff")
+	public void apOnOffCheck(CheckEvent event) {
 	    logger.debug(" apOnOff button event = "+event);
-	    autopilotOn=!autopilotOn;
+	    if(event.isChecked()){
+	    	autopilotOn=true;
+	    }else{
+	    	autopilotOn=false;
+	    }
 	   setAutopilotState();
 	}
+	
 	private void setAutopilotState() {
 		 if(autopilotOn){
 		    	apOnOff.setImage("./js/img/stop.png");
+		    	apOnOff.setLabel("Stop");
 		    	producer.sendBody(Constants.UID+":"+Constants.MEGA+","+Constants.AUTOPILOT_STATE+":1,");
 		    }else{
 		    	apOnOff.setImage("./js/img/tick.png");
+		    	apOnOff.setLabel("Start");
 		    	producer.sendBody(Constants.UID+":"+Constants.MEGA+","+Constants.AUTOPILOT_STATE+":0,");
 		    }
 	}
