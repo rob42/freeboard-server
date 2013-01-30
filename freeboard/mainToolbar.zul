@@ -24,24 +24,39 @@
 <?script src="./js/autopilot.js"?>
 <?script src="./js/anchor.js"?>
 <zk xmlns:w="http://www.zkoss.org/2005/zk/client">
-	<style>.z-panel-body { overflow: visible; }"</style>
-
-	<!-- main toolbar, left side -->
-	<toolbar orient="horizontal" align="start" hflex="1"
+	<style>
+	.z-panel-body { overflow: visible; }
+	.z-menu-body .z-menu-inner-m div {	background-image:url('js/img/btn-arrow.gif')}
+	
+	</style>
+	<!-- main menubar, left side -->
+	<menubar id="menubar" autodrop="true"  hflex="1"
 		style="float:left; height: 20px;">
-		<toolbarbutton id="help" label="Help" popup="helpPopup" />
-		<toolbarbutton label="Home" href="/index.zul" />
-		<toolbarbutton label="Floating" href="/floating.zul" />
-		<toolbarbutton label="Quadrants" href="/quadrants.zul" />
-		<toolbarbutton label="Plotter" href="/chartplotter.zul" />
-		<toolbarbutton label="Wind + Log" href="/windloggPage.zul" />
-		<toolbarbutton label="Wind" href="/windPage1.zul" />
-		<toolbarbutton label="Log" href="/loggPage.zul" />
-		<toolbarbutton label="Autopilot"
-			onClick='autopilotWindow.setVisible(!autopilotWindow.isVisible());' />
-		<toolbarbutton label="Anchor"
-			onClick='anchorWindow.setVisible(!anchorWindow.isVisible());' />
-	</toolbar>
+		<menuitem id="help" label="Help" popup="helpPopup" />
+		<menu label="View">
+			<menupopup>
+				<menuitem label="Home" href="/index.zul" />
+				<menuitem label="Floating" href="/floating.zul" />
+				<menuitem label="Quadrants" href="/quadrants.zul" />
+				<menuitem label="Plotter" href="/chartplotter.zul" />
+				<menuitem label="Wind + Log" href="/windloggPage.zul" />
+				<menuitem label="Wind" href="/windPage1.zul" />
+				<menuitem label="Log" href="/loggPage.zul" />
+			</menupopup>
+		</menu>
+		<menu label="More">
+			<menupopup>
+				<menuitem label="Anchor Alarm"
+					onClick='anchorWindow.setVisible(!anchorWindow.isVisible());' />
+				<menuitem label="Preferences"
+					onClick='anchorWindow.setVisible(!anchorWindow.isVisible());' />
+			</menupopup>
+		</menu>
+		<menuitem label="Autopilot"
+				onClick='autopilotWindow.setVisible(!autopilotWindow.isVisible());' />
+		
+	</menubar>
+	
 	<window id="autopilotWindow" 
 		apply="nz.co.fortytwo.freeboard.zk.AutopilotViewModel"
 		title="Autopilot"  position="center,bottom" mode="overlapped" visible="false" minimizable="true">
