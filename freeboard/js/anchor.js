@@ -49,6 +49,13 @@ function AnchorAlarm() {
 					}
 					c = null;
 				}
+				if (data && data.indexOf('AAD:') >= 0) {
+					var c =parseInt(data.substring(4));
+					if ($.isNumeric(c)) {
+						alcdDistance.setValue(c);
+					}
+					c = null;
+				}
 				
 				data = null;
 			});
@@ -64,6 +71,17 @@ function initAnchorAlarm() {
 		// gaugeType : steelseries.GaugeType.TYPE4,
 		width : document.getElementById('acanvasRadius').width,
 		height : document.getElementById('acanvasRadius').height,
+		lcdDecimals : 0,
+		lcdColor: steelseries.LcdColor.BEIGE,
+		unitString:"Mtrs",
+		unitStringVisible: true,
+		valuesNumeric: true	
+
+	});
+	alcdDistance = new steelseries.DisplaySingle('acanvasDistance', {
+		// gaugeType : steelseries.GaugeType.TYPE4,
+		width : document.getElementById('acanvasDistance').width,
+		height : document.getElementById('acanvasDistance').height,
 		lcdDecimals : 0,
 		lcdColor: steelseries.LcdColor.BEIGE,
 		unitString:"Mtrs",

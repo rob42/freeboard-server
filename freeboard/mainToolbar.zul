@@ -83,7 +83,7 @@
 	<window id="anchorWindow" 
 		apply="nz.co.fortytwo.freeboard.zk.AnchorViewModel"
 		title="Anchor Alarm"  position="right,bottom" mode="overlapped" visible="false" minimizable="true">
-		<vbox align="center">
+		<vbox align="end">
 			
 			<hbox>
 				<button id="anchorRadiusDown10" tooltiptext="Shrink by 10M"
@@ -98,14 +98,24 @@
 				<button id="anchorRadiusUp10" tooltiptext="Expand by 10M"
 					image="./js/img/control_stbd10_blue.png" />
 			</hbox>
-			
+			<hbox align="center">
+				<label value="Alarm Radius"/>
 				<html style="overflow: visible" >
 					<canvas id="acanvasRadius" width="100px"
 						height="40px">
 						No canvas in your browser...sorry...
 					</canvas>
 				</html>
-			
+			</hbox>
+			<hbox align="center">
+				<label value="Current Drift"/>
+				<html style="overflow: visible" >
+					<canvas id="acanvasDistance" width="100px"
+						height="40px">
+						No canvas in your browser...sorry...
+					</canvas>
+				</html>
+			</hbox>
 			
 			
 		</vbox>
