@@ -19,6 +19,16 @@
 var _ws;
 var wsList = [];
 var mArray = [];
+
+function addSocketListener(l){
+	//is it already there, if so remove it
+	$.each(wsList, function(i){
+	    if(wsList[i].constructor === l.constructor) wsList.splice(i,1);
+	});
+	//add new
+	wsList.push(l);
+	
+}
 function initSocket(){
 	//make a web socket
 	if(this._ws == null) {

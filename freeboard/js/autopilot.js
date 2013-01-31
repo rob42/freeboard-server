@@ -94,5 +94,5 @@ function initAutopilot() {
 		detailStringVisible : true,
 	});
 	// autopilotTarget.setAltValue("OFF");
-	wsList.push(new Autopilot());
+	addSocketListener(new Autopilot());
 }

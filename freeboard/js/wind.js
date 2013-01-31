@@ -189,5 +189,5 @@ function initWind() {
 	});
 	// make a web socket
 	
-	wsList.push(new Wind());
+	addSocketListener(new Wind());
 }

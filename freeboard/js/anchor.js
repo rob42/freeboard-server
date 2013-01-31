@@ -89,5 +89,6 @@ function initAnchorAlarm() {
 		valuesNumeric: true	
 
 	});
-	wsList.push(new AnchorAlarm());
+	
+	addSocketListener(new AnchorAlarm());
 }

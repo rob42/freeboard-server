@@ -185,6 +185,6 @@ function initWind() {
 		backgroundColor: steelseries.BackgroundColor.BROWN,
 	});
 	
-	wsList.push(new Wind2());
+	addSocketListener(new Wind2());
 	
 }

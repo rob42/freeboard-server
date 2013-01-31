@@ -170,5 +170,5 @@ function initLogg() {
 	lcdWaypoint.setValue(0);
 
 
-wsList.push(new Logg());
+	addSocketListener(new Logg());
 }

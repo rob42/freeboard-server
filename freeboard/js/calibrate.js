@@ -166,5 +166,5 @@ function Cal () {
 
 function initCal() {
 
-wsList.push(new Cal());
+	addSocketListener(new Cal());
 }

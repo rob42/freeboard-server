@@ -378,6 +378,6 @@ function ChartPlotter () {
 	
 }
 function posInit(){
-	wsList.push(new ChartPlotter());
+	addSocketListener(new ChartPlotter());
 }
 
