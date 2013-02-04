@@ -26,40 +26,78 @@
 <zk xmlns:w="http://www.zkoss.org/2005/zk/client">
 	<style>
 	.z-panel-body { overflow: visible; }
-	.z-menu-body .z-menu-inner-m div {	background-image:url('js/img/btn-arrow.gif')}
+	.z-menu-body .z-menu-inner-m div {	background-image:url('js/img/btn-arrow.gif')} 
 	
 	</style>
 	<!-- main menubar, left side -->
 	<menubar id="menubar" autodrop="true"  hflex="1"
 		style="float:left; height: 20px;">
 		<menuitem id="help" label="Help" popup="helpPopup" />
-		<menu label="View">
+		<menu label="Instruments">
 			<menupopup>
-				<menuitem label="Home" href="/index.zul" />
-				<menuitem label="Floating" href="/floating.zul" />
-				<menuitem label="Quadrants" href="/quadrants.zul" />
-				<menuitem label="Plotter" href="/chartplotter.zul" />
-				<menuitem label="Wind + Log" href="/windloggPage.zul" />
-				<menuitem label="Wind" href="/windPage1.zul" />
-				<menuitem label="Log" href="/loggPage.zul" />
-			</menupopup>
-		</menu>
-		<menu label="More">
-			<menupopup>
+			<!-- 
+				<menuitem label="Wind (Gauges + Lcds)" onClick='wind2.setVisible(!wind2.isVisible());' /> -->
+				<menuitem label="Wind (All Gauges)" onClick='wind.setVisible(!wind.isVisible());' />
+				<menuitem label="Log" onClick='logg.setVisible(!logg.isVisible());' />
 				<menuitem label="Anchor Alarm"
 					onClick='anchorWindow.setVisible(!anchorWindow.isVisible());' />
-				<menuitem label="Preferences"
-					onClick='anchorWindow.setVisible(!anchorWindow.isVisible());' />
 			</menupopup>
 		</menu>
+
 		<menuitem label="Autopilot"
 				onClick='autopilotWindow.setVisible(!autopilotWindow.isVisible());' />
 		
 	</menubar>
+	<window id="logg" height="30px" width="100px" title="Log" 
+		 position="left,center"  mode="overlapped" visible="true" minimizable="true" >
+		 
+		<style>
+			.z-panel-body, .z-window-modal-cnt-noborder, .z-window-highlighted-cnt-noborder, .z-window-embedded-cnt-noborder, .z-window-overlapped-cnt-noborder, .z-window-popup-cnt-noborder
+			.z-window-embedded, .z-window-modal, .z-window-overlapped, .z-window-popup, .z-window-highlighted {
+				    overflow: visible;
+				}
+		</style>
+		<include src="./logg.zul" vflex="min"
+			hflex="min" style="overflow: visible" />
+	</window>
+	<window id="wind" height="30px" width="100px" title="Wind"
+		 top="10px" left="50px"  mode="overlapped" visible="true" minimizable="true" >
+		 
+		<style>
+			.z-panel-body, .z-window-modal-cnt-noborder, .z-window-highlighted-cnt-noborder, .z-window-embedded-cnt-noborder, .z-window-overlapped-cnt-noborder, .z-window-popup-cnt-noborder
+			.z-window-embedded, .z-window-modal, .z-window-overlapped, .z-window-popup, .z-window-highlighted {
+				    overflow: visible;
+				}
+		</style>
+		<include src="./wind1.zul" vflex="min" hflex="min"
+			style="overflow: visible" />
+			
+	</window>
+	<!-- 
+	<window id="wind2" height="30px" width="100px" title="Wind"
+		 top="10px" left="50px"  mode="overlapped" visible="true" minimizable="true" >
+		 
+		<style>
+			.z-panel-body, .z-window-modal-cnt-noborder, .z-window-highlighted-cnt-noborder, .z-window-embedded-cnt-noborder, .z-window-overlapped-cnt-noborder, .z-window-popup-cnt-noborder
+			.z-window-embedded, .z-window-modal, .z-window-overlapped, .z-window-popup, .z-window-highlighted {
+				    overflow: visible;
+				}
+		</style>
+		<include src="./wind2.zul" vflex="min" hflex="min"
+			style="overflow: visible" />
+			
+	</window> -->
 	
 	<window id="autopilotWindow" 
 		apply="nz.co.fortytwo.freeboard.zk.AutopilotViewModel"
 		title="Autopilot"  position="center,bottom" mode="overlapped" visible="false" minimizable="true">
+		<style>
+			.z-panel-body, .z-window-modal-cnt-noborder, .z-window-highlighted-cnt-noborder, .z-window-embedded-cnt-noborder, .z-window-overlapped-cnt-noborder, .z-window-popup-cnt-noborder
+			.z-window-embedded, .z-window-modal, .z-window-overlapped, .z-window-popup, .z-window-highlighted {
+				    overflow: visible;
+				}
+			
+		</style>
 		<vbox>
 			
 			<hbox>
@@ -97,7 +135,15 @@
 	</window>
 	<window id="anchorWindow" 
 		apply="nz.co.fortytwo.freeboard.zk.AnchorViewModel"
-		title="Anchor Alarm"  position="right,bottom" mode="overlapped" visible="false" minimizable="true">
+		title="Anchor Alarm"  position="right,bottom" mode="overlapped" visible="false" minimizable="true" >
+		<style>
+			.z-panel-body { overflow: visible; }
+			.z-window-modal-cnt-noborder, .z-window-highlighted-cnt-noborder, .z-window-embedded-cnt-noborder, .z-window-overlapped-cnt-noborder, .z-window-popup-cnt-noborder
+			.z-window-embedded, .z-window-modal, .z-window-overlapped, .z-window-popup, .z-window-highlighted {
+				    overflow: visible;
+				}
+			
+		</style>
 		<vbox align="end">
 			
 			<hbox>

@@ -54,31 +54,6 @@
 						</script>
 					</div>
 
-					<panel id="logg"
-						tooltiptext="click-drag the tab to move"
-						style="margin-bottom:10px; overflow: visible; position:relative; left:60%; bottom=-100%"
-						movable="true" title="Log" border="none" collapsible="true"
-						floatable="true" visible="true" width="110px" height="40px">
-						<panelchildren
-							style="background-color: transparent; overflow: visible; position:relative; left:-100%;">
-							<include src="./logg.zul" vflex="min"
-								hflex="min" style="overflow: visible" />
-						</panelchildren>
-					</panel>
-					<!-- lower left -->
-					<panel id="wind"
-						tooltiptext="click-drag the tab to move"
-						style="margin-bottom:10px; overflow: visible; position:relative; left:10%; top:0px"
-						movable="true" title="Wind" border="none" collapsible="true"
-						floatable="true" width="120px" height="40px" visible="true">
-
-						<panelchildren
-							style="background-color: transparent; overflow: visible; position:relative; left:-100%;">
-							<include src="./wind1.zul" vflex="min"
-								hflex="min" style="overflow: visible" />
-						</panelchildren>
-					</panel>
-
 				</div>
 			</center>
 			<south>

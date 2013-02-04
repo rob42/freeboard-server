@@ -39,7 +39,8 @@ function resizeWind(amount){
 
 function Wind () {
 	this.onmessage = function (mArray) {
-		//var mArray=m.data.split(",");
+		
+		
 		jQuery.each(mArray, function(i, data) {
 			//avoid commands
 			if(data && data.indexOf('#')>=0)return true;

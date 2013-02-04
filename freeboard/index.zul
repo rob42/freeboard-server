@@ -36,21 +36,7 @@
 				</groupbox>
 			</hlayout>
 			<separator />
-			<hlayout hflex="1">
-				<groupbox mold="3d">
-					<caption label="Instruments Only" />
-
-					<button label="Wind + Log" mold="trendy"
-						href="windloggPage.zul" />
-					<button label="Log" mold="trendy"
-						href="loggPage.zul" />
-					<button label="Wind" mold="trendy"
-						href="windPage1.zul" />
-					<button label="Smartphone" mold="trendy" />
-
-				</groupbox>
-			</hlayout>
-			<separator />
+			
 			<hlayout hflex="1">
 				<groupbox mold="3d">
 					<caption label="Chartplotter Only" />

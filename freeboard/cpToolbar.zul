@@ -27,10 +27,10 @@
 	<label id="posLon" value=""
 		style="padding-right:0px; padding-left:10px;" />
 	<separator visible="true" orient="vertical" bar="true" />
-	<!-- menu/centre buttons -->
-	<toolbarbutton label="Menu" />
+	<!-- menu/centre buttons 
+	<toolbarbutton label="Menu" />-->
 	<toolbarbutton label="Find boat" w:onClick="centerBoat()" />
-	<toolbarbutton label="Follow Boat" w:onClick="followBoatPosition()" />
+	<toolbarbutton id="followBoatButton" label="Follow Boat" w:onClick="followBoatPosition()" mode="toggle"/>
 	<separator visible="true" orient="vertical" bar="true" />
 	<label value="Mode: " style="padding-right:0px; padding-left:10px;" />
 	<radiogroup name="type">

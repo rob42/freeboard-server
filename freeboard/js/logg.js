@@ -40,7 +40,7 @@ function resizeLog(amount){
 }
 function Logg () {
 	this.onmessage = function (mArray) {
-		
+	
 		jQuery.each(mArray, function(i, data) {
 			//avoid commands
 			if(data && data.indexOf('#')>=0)return true;
