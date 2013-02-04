@@ -21,6 +21,7 @@ var followCompass=true;
 function Autopilot() {
 	this.onmessage = function(mArray) {
 			jQuery.each(mArray, function(i, data) {
+				
 				//get autopilot state, avoid commands
 				if(data && data.indexOf('#')>=0){
 					return true;

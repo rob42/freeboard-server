@@ -235,6 +235,7 @@ onresize = function() {
 	resize();
 };
 
+
 // measurement
 function handleMeasurements(event) {
 	var geometry = event.geometry;
@@ -243,14 +244,14 @@ function handleMeasurements(event) {
 	//convert to nautical miles
 	var measure = event.measure * 0.539957;
 	
-	var element = zk.Widget.$("$output");
+	var eOutput = zk.Widget.$("$output");
 	var out = "";
 	if (order == 1) {
 		out += measure.toFixed(3) + " Nm";
 	} else {
 		out += measure.toFixed(3) + " Nm" + "<sup>2</sup>";
 	}
-	element.setValue(out);
+	eOutput.setValue(out);
 }
 
 function toggleControl(cmd) {
@@ -270,17 +271,20 @@ function followBoatPosition(){
 function centerBoat(){
 	centerOnBoat=true;
 	map.moveTo(new OpenLayers.LonLat(lon,lat).transform(screenProjection, chartProjection));
+	map.zoomTo(10);
 }
 
+var eLat = null;
+var eLon = null;
 function setPosition(llat, llon, brng, spd){
 	
-	var eLat = zk.Widget.$("$posLat");
+	
 	if(llat>0){
 		eLat.setValue(llat.toFixed(5)+' N');
 	}else{
 		eLat.setValue(Math.abs(llat.toFixed(5))+' S');
 	}
-	var eLon = zk.Widget.$("$posLon");
+	
 	if(llon>0){
 		eLon.setValue(llon.toFixed(5)+' E');
 	}else{
@@ -379,5 +383,7 @@ function ChartPlotter () {
 }
 function posInit(){
 	wsList.push(new ChartPlotter());
+	eLat = zk.Widget.$("$posLat");
+	eLon = zk.Widget.$("$posLon");
 }
 

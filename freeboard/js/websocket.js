@@ -18,7 +18,7 @@
  */
 var _ws;
 var wsList = [];
-var mArray = [];
+
 function initSocket(){
 	//make a web socket
 	if(this._ws == null) {
@@ -36,11 +36,11 @@ function initSocket(){
 			
 			//TODO: Note memory leak in native websockets code  - https://code.google.com/p/chromium/issues/detail?id=146304
 			
-			mArray=m.data.trim().split(",");
+			var mArray=m.data.trim().split(",");
 			jQuery.each(wsList, function(i, obj) {
 			      obj.onmessage(mArray);
-			    });
-			mArray=null;
+			  });
+			//mArray=null;
 			m=null;
 		};
 		this._ws.onclose = function() {
@@ -48,4 +48,13 @@ function initSocket(){
 		};
 	}
 }
+
+function reloadSocket(){
+	this._ws.close();
+	this._ws = null;
+	initSocket();
+	console.log("Reloaded..");
+}
+
+setInterval(function(){reloadSocket()},10000);
 

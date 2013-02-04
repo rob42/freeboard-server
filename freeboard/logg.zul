@@ -66,5 +66,5 @@
 	</hlayout>
 
 
-	<script type="text/javascript" defer="true">initSocket(); initLogg();</script>
+	<script type="text/javascript" defer="true">initSocket(); initLogg();resizeLog(-0.1)</script>
 </zk>
