@@ -383,5 +383,7 @@ function ChartPlotter () {
 }
 function posInit(){
 	addSocketListener(new ChartPlotter());
+	eLat = zk.Widget.$("$posLat");
+	eLon = zk.Widget.$("$posLon");
 }
 
