@@ -18,6 +18,7 @@
  */
 var _ws;
 var wsList = [];
+var popped = false;
 
 function addSocketListener(l){
 	//is it already there, if so remove it
@@ -32,38 +33,46 @@ function addSocketListener(l){
 function initSocket(){
 	//make a web socket
 	if(this._ws == null) {
-		var location = "ws://"+window.location.hostname+":9090/navData";
-		//alert(location);
-		
-		this._ws = new WebSocket(location);
-		this._ws.onopen = function() {
-		};
-		this._ws.onmessage = function(m) {
-			//for debug
-			//console.log(m.data);
-			//iterate the array and process each, avoid NMEA for now
-			if(m.data.trim().startsWith('$'))return;
+	
+			var location = "ws://"+window.location.hostname+":9090/navData";
+			//alert(location);
 			
-			//TODO: Note memory leak in native websockets code  - https://code.google.com/p/chromium/issues/detail?id=146304
-			
-			var mArray=m.data.trim().split(",");
-			jQuery.each(wsList, function(i, obj) {
-			      obj.onmessage(mArray);
-			  });
-			//mArray=null;
-			m=null;
-		};
-		this._ws.onclose = function() {
-			this._ws = null;
-		};
+			this._ws = new WebSocket(location);
+			this._ws.onopen = function() {
+			};
+			this._ws.onmessage = function(m) {
+				//for debug
+				//console.log(m.data);
+				//iterate the array and process each, avoid NMEA for now
+				if(m.data.trim().startsWith('$'))return;
+				
+				//TODO: Note memory leak in native websockets code  - https://code.google.com/p/chromium/issues/detail?id=146304
+				
+				var mArray=m.data.trim().split(",");
+				jQuery.each(wsList, function(i, obj) {
+				      obj.onmessage(mArray);
+				  });
+				//mArray=null;
+				m=null;
+			};
+			this._ws.onclose = function() {
+				this._ws = null;
+			};
+			this._ws.onerror = function(error) {
+				popped = true;
+				alert('Cannot connect to Freeboard server');
+				popped=false;
+			}
+ 
 	}
 }
 
 function reloadSocket(){
-	this._ws.close();
+	if(this._ws != null)this._ws.close();
 	this._ws = null;
-	initSocket();
-	console.log("Reloaded..");
+	if(!popped){initSocket();
+		console.log("Reloaded..");
+	}
 }
 
 setInterval(function(){reloadSocket()},30000);

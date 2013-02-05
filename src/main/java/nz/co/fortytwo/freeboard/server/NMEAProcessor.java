@@ -37,7 +37,9 @@ import net.sf.marineapi.nmea.sentence.Sentence;
 import net.sf.marineapi.nmea.sentence.SentenceId;
 import net.sf.marineapi.nmea.sentence.VHWSentence;
 import net.sf.marineapi.nmea.util.CompassPoint;
+import net.sf.marineapi.nmea.util.Position;
 import nz.co.fortytwo.freeboard.server.util.Constants;
+import nz.co.fortytwo.freeboard.server.util.Util;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -52,6 +54,7 @@ import org.apache.commons.lang3.StringUtils;
 public class NMEAProcessor extends FreeboardProcessor implements Processor {
 
 	private static final String DISPATCH_ALL = "DISPATCH_ALL";
+	
 
 	// map of sentence listeners
 	private ConcurrentMap<String, List<SentenceListener>> listeners = new ConcurrentHashMap<String, List<SentenceListener>>();
@@ -193,23 +196,42 @@ public class NMEAProcessor extends FreeboardProcessor implements Processor {
 
 		addSentenceListener(new SentenceListener() {
 
+			private boolean startLat = true;
+			private boolean startLon = true;
+			double previousLat=0;
+			double previousLon=0;
+			double previousSpeed=0;
+			static final double ALPHA = 1 - 1.0/6;
+
 			public void sentenceRead(SentenceEvent evt) {
 				Exchange exchange = (Exchange) evt.getSource();
 				//StringBuilder body = new StringBuilder();
 				HashMap<String, Object> map = new HashMap<String, Object>();
 				if (evt.getSentence() instanceof PositionSentence) {
 					PositionSentence sen = (PositionSentence) evt.getSentence();
-					if (sen.getPosition().getLatHemisphere() == CompassPoint.SOUTH) {
-						map.put(Constants.LAT,(0-sen.getPosition().getLatitude()));
-					} else {
-						map.put(Constants.LAT,sen.getPosition().getLatitude());
+					if(startLat ){
+						previousLat= sen.getPosition().getLatitude();
+						startLat=false;
 					}
-					if (sen.getPosition().getLonHemisphere() == CompassPoint.WEST) {
-						map.put(Constants.LON,(0-sen.getPosition().getLongitude()));
+					previousLat=Util.movingAverage(ALPHA,previousLat, sen.getPosition().getLatitude());
+					if (sen.getPosition().getLatHemisphere() == CompassPoint.SOUTH) {
+						map.put(Constants.LAT,0-previousLat);
 					} else {
-						map.put(Constants.LON,sen.getPosition().getLongitude());
+						map.put(Constants.LAT,previousLat);
+					}
+					if(startLon){
+						previousLon= sen.getPosition().getLongitude();
+						startLon=false;
+					}
+					previousLon=Util.movingAverage(ALPHA, previousLon, sen.getPosition().getLongitude());
+					if (sen.getPosition().getLonHemisphere() == CompassPoint.WEST) {
+						map.put(Constants.LON,0-previousLon);
+					} else {
+						map.put(Constants.LON,previousLon);
 					}
 				}
+				
+				
 				if (evt.getSentence() instanceof HeadingSentence) {
 					HeadingSentence sen = (HeadingSentence) evt.getSentence();
 					if (sen.isTrue()) {
@@ -219,14 +241,15 @@ public class NMEAProcessor extends FreeboardProcessor implements Processor {
 					}
 				}
 				if (evt.getSentence() instanceof RMCSentence) {
-					// ;
 					RMCSentence sen = (RMCSentence) evt.getSentence();
-					map.put(Constants.SOG,sen.getSpeed());
+					previousSpeed=Util.movingAverage(ALPHA, previousSpeed, sen.getSpeed());
+					map.put(Constants.SOG,previousSpeed);
 				}
 				if (evt.getSentence() instanceof VHWSentence) {
 					// ;
 					VHWSentence sen = (VHWSentence) evt.getSentence();
-					map.put(Constants.SOG,sen.getSpeedKnots());
+					previousSpeed=Util.movingAverage(ALPHA, previousSpeed, sen.getSpeedKnots());
+					map.put(Constants.SOG,previousSpeed);
 					
 					map.put( Constants.MGH,sen.getMagneticHeading());
 					map.put( Constants.COG,sen.getHeading());
@@ -268,4 +291,8 @@ public class NMEAProcessor extends FreeboardProcessor implements Processor {
 		});
 	}
 
+	
+
+	
+	
 }
