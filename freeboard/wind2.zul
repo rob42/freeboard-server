@@ -71,6 +71,6 @@
 	<script type="text/javascript" defer="true">
 		initSocket();
 		initWind(); 
-		resizeWind(-0.4)
+		resizeWind(-0.5)
 	</script>
 </zk>

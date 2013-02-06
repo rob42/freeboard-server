@@ -48,14 +48,14 @@ function Wind () {
 			if (data && data.indexOf('WSA') >= 0) {
 				var c = parseFloat(data.substring(4));
 				if($.isNumeric(c)){
-					radialWindApp.setValueAnimated(c);
+					radialWindApp.setValue(c);
 				}
 				c=null;
 			}
 			if (data && data.indexOf('WST') >= 0) {
 				var c = parseFloat(data.substring(4));
 				if($.isNumeric(c)){
-					radialWindTrue.setValueAnimated(c);
+					radialWindTrue.setValue(c);
 				}
 				c=null;
 			}
@@ -64,9 +64,9 @@ function Wind () {
 				if($.isNumeric(c)){
 					// -180 <> 180
 					if (c >= 179) {
-						radialWindDirApp.setValueAnimatedLatest(-(360 - c));
+						radialWindDirApp.setValueLatest(-(360 - c));
 					} else {
-						radialWindDirApp.setValueAnimatedLatest(c);
+						radialWindDirApp.setValueLatest(c);
 					}
 					// make average
 					avgArrayA[avgPosA] = c;
@@ -78,9 +78,9 @@ function Wind () {
 						v = v + avgArrayA[i];
 					}
 					if (c >= 179) {
-						radialWindDirApp.setValueAnimatedAverage(-(360 - (v / avgArrayA.length)));
+						radialWindDirApp.setValueAverage(-(360 - (v / avgArrayA.length)));
 					} else {
-						radialWindDirApp.setValueAnimatedAverage(v / avgArrayA.length);
+						radialWindDirApp.setValueAverage(v / avgArrayA.length);
 					}
 				}
 				c=null;
@@ -88,7 +88,7 @@ function Wind () {
 			if (data && data.indexOf('WDT') >= 0) {
 				var c = parseFloat(data.substring(4));
 				if($.isNumeric(c)){
-					radialWindDirTrue.setValueAnimatedLatest(c);
+					radialWindDirTrue.setValueLatest(c);
 					// make average
 					avgArrayT[avgPosT] = c;
 					avgPosT = avgPosT + 1;
@@ -98,7 +98,7 @@ function Wind () {
 					for ( var i = 0; i < avgArrayT.length; i++) {
 						v = v + avgArrayT[i];
 					}
-					radialWindDirTrue.setValueAnimatedAverage(v / avgArrayT.length);
+					radialWindDirTrue.setValueAverage(v / avgArrayT.length);
 				}
 				c=null;
 			}
