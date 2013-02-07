@@ -23,6 +23,17 @@
 <?script src="./js/websocket.js"?>
 <?script src="./js/wind2.js"?>
 <zk xmlns:w="http://www.zkoss.org/2005/zk/client">
+<window id="wind" 
+	apply="nz.co.fortytwo.freeboard.zk.WindViewModel"
+	height="30px" width="100px" title="Wind"
+		 top="10px" left="50px"  mode="overlapped" visible="true" minimizable="true" >
+		 
+		<style>
+			.z-panel-body, .z-window-modal-cnt-noborder, .z-window-highlighted-cnt-noborder, .z-window-embedded-cnt-noborder, .z-window-overlapped-cnt-noborder, .z-window-popup-cnt-noborder
+			.z-window-embedded, .z-window-modal, .z-window-overlapped, .z-window-popup, .z-window-highlighted {
+				    overflow: visible;
+				}
+		</style>
 	<style>.z-panel-body { overflow: visible; }"</style>
 	<vlayout style="overflow: visible" >
 		<hlayout hflex="4" style="overflow: visible" >
@@ -52,7 +63,7 @@
 			</html>
 
 			<vlayout style="overflow: visible" >
-
+				<label id="windScale" value="0.0" visible="false"/>
 				<button id="windShrink"
 					image="./js/img/zoom-minus-mini.png" w:onClick="resizeWind(-0.2)" />
 				<button id="windGrow"
@@ -68,9 +79,10 @@
 			</html>
 		</hlayout>
 	</vlayout>
+	</window>
 	<script type="text/javascript" defer="true">
 		initSocket();
 		initWind(); 
-		resizeWind(-0.5)
+		resizeWind()
 	</script>
 </zk>

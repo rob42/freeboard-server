@@ -23,17 +23,23 @@ var avgArrayT = [ 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.
 var avgPosT = 0;
 
 function resizeWind(amount){
+	if(amount==null){
+		amount = zk.Widget.$('$windScale').getValue();
+	}else{
+		amount=1+(1*amount);
+	}
+	if(amount==0.0)return;
 	var size = $("#canvasWindDirTrue").width();
-	$("#canvasWindDirTrue").width(size+(size*amount));
-	$("#canvasWindDirTrue").height(size+(size*amount));
-	$("#canvasWindDirApp").width(size+(size*amount));
-	$("#canvasWindDirApp").height(size+(size*amount));
+	$("#canvasWindDirTrue").width(size*amount);
+	$("#canvasWindDirTrue").height(size*amount);
+	$("#canvasWindDirApp").width(size*amount);
+	$("#canvasWindDirApp").height(size*amount);
 	var wsmallSize =  $("#canvasWindTrue").width();
 	var hsmallSize =  $("#canvasWindTrue").height();
-	$("#canvasWindTrue").width(wsmallSize+(wsmallSize*amount));
-	$("#canvasWindTrue").height(hsmallSize+(hsmallSize*amount));
-	$("#canvasWindApp").width(wsmallSize+(wsmallSize*amount));
-	$("#canvasWindApp").height(hsmallSize+(hsmallSize*amount));
+	$("#canvasWindTrue").width(wsmallSize*amount);
+	$("#canvasWindTrue").height(hsmallSize*amount);
+	$("#canvasWindApp").width(wsmallSize*amount);
+	$("#canvasWindApp").height(hsmallSize*amount);
 	this.initWind();
 	
 }

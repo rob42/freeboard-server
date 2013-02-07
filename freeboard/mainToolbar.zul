@@ -35,139 +35,27 @@
 		<menuitem id="help" label="Help" popup="helpPopup" />
 		<menu label="Instruments">
 			<menupopup>
-			<!-- 
-				<menuitem label="Wind (Gauges + Lcds)" onClick='wind2.setVisible(!wind2.isVisible());' /> -->
-				<menuitem label="Wind (All Gauges)" onClick='wind.setVisible(!wind.isVisible());' />
-				<menuitem label="Log" onClick='logg.setVisible(!logg.isVisible());' />
+				<menuitem label="Wind" onClick='mainWindow.query("include #wind").setVisible(!mainWindow.query("include #wind").isVisible());' />
+				<menuitem label="Log" onClick='mainWindow.query("include #logg").setVisible(!mainWindow.query("include #logg").isVisible());' />
 				<menuitem label="Anchor Alarm"
-					onClick='anchorWindow.setVisible(!anchorWindow.isVisible());' />
+					onClick='mainWindow.query("include #anchorWindow").setVisible(!mainWindow.query("include #anchorWindow").isVisible());' />
 			</menupopup>
 		</menu>
 
 		<menuitem label="Autopilot"
-				onClick='autopilotWindow.setVisible(!autopilotWindow.isVisible());' />
+				onClick='mainWindow.query("include #autopilotWindow").setVisible(!mainWindow.query("include #autopilotWindow").isVisible());' />
 		
 	</menubar>
+	<!-- wind -->
+	<include  src="./wind2.zul"  />
+	<!-- logg -->	
+	<include src="./logg.zul" />
+	
+	<!-- autopilot -->	
+	<include src="./autopilotWindow.zul" />
+	
+	<!-- anchor -->	
+	<include src="./anchorWindow.zul"  />
 	
 	
-	 
-	<window id="wind" height="30px" width="100px" title="Wind"
-		 top="10px" left="50px"  mode="overlapped" visible="true" minimizable="true" >
-		 
-		<style>
-			.z-panel-body, .z-window-modal-cnt-noborder, .z-window-highlighted-cnt-noborder, .z-window-embedded-cnt-noborder, .z-window-overlapped-cnt-noborder, .z-window-popup-cnt-noborder
-			.z-window-embedded, .z-window-modal, .z-window-overlapped, .z-window-popup, .z-window-highlighted {
-				    overflow: visible;
-				}
-		</style>
-		<include src="./wind2.zul" vflex="min" hflex="min"
-			style="overflow: visible" />
-			
-	</window> 
-	<window id="logg" height="30px" width="100px" title="Log" 
-		 position="left,center"  mode="overlapped" visible="true" minimizable="true" >
-		 
-		<style>
-			.z-panel-body, .z-window-modal-cnt-noborder, .z-window-highlighted-cnt-noborder, .z-window-embedded-cnt-noborder, .z-window-overlapped-cnt-noborder, .z-window-popup-cnt-noborder
-			.z-window-embedded, .z-window-modal, .z-window-overlapped, .z-window-popup, .z-window-highlighted {
-				    overflow: visible;
-				}
-		</style>
-		<include src="./logg.zul" vflex="min"
-			hflex="min" style="overflow: visible" />
-	</window>
-	<window id="autopilotWindow" 
-		apply="nz.co.fortytwo.freeboard.zk.AutopilotViewModel"
-		title="Autopilot"  position="center,bottom" mode="overlapped" visible="false" minimizable="true">
-		<style>
-			.z-panel-body, .z-window-modal-cnt-noborder, .z-window-highlighted-cnt-noborder, .z-window-embedded-cnt-noborder, .z-window-overlapped-cnt-noborder, .z-window-popup-cnt-noborder
-			.z-window-embedded, .z-window-modal, .z-window-overlapped, .z-window-popup, .z-window-highlighted {
-				    overflow: visible;
-				}
-			
-		</style>
-		<vbox>
-			
-			<hbox>
-				<button id="apPort10" tooltiptext="Turn to port 10 deg"
-					image="./js/img/control_port10_blue.png" />
-				<button id="apPort1" tooltiptext="Turn to port 1 deg"
-					image="./js/img/control_port_blue.png" />
-				<toolbarbutton  id="apOnOff" tooltiptext="Start/stop the autopilot"
-					image="./js/img/tick.png" label="Start" mode="toggle"/>
-				<button id="apStbd1" tooltiptext="Turn to starboard 1 deg"
-					image="./js/img/control_stbd_blue.png" />
-				<button id="apStbd10" tooltiptext="Turn to starboard 10 deg"
-					image="./js/img/control_stbd10_blue.png" />
-			</hbox>
-			<hbox>
-				<html style="overflow: visible">
-					<canvas id="canvasTarget" width="150px"
-						height="100px">
-						No canvas in your browser...sorry...
-					</canvas>
-				</html>
-				
-					<vbox>
-						<toolbarbutton id="apCompassOnOff" mode="toggle"
-							tooltiptext="Follow compass, toggle on or off" checked="true"
-							label="Follow compass" />
-						<toolbarbutton id="apWindOnOff"
-							tooltiptext="Follow wind, toggle on or off"
-							mode="toggle" label="Follow Wind" />
-					</vbox>
-				
-			</hbox>
-			
-		</vbox>
-	</window>
-	<window id="anchorWindow" 
-		apply="nz.co.fortytwo.freeboard.zk.AnchorViewModel"
-		title="Anchor Alarm"  position="right,bottom" mode="overlapped" visible="false" minimizable="true" >
-		<style>
-			.z-panel-body { overflow: visible; }
-			.z-window-modal-cnt-noborder, .z-window-highlighted-cnt-noborder, .z-window-embedded-cnt-noborder, .z-window-overlapped-cnt-noborder, .z-window-popup-cnt-noborder
-			.z-window-embedded, .z-window-modal, .z-window-overlapped, .z-window-popup, .z-window-highlighted {
-				    overflow: visible;
-				}
-			
-		</style>
-		<vbox align="end">
-			
-			<hbox>
-				<button id="anchorRadiusDown10" tooltiptext="Shrink by 10M"
-					image="./js/img/control_port10_blue.png" />
-				<button id="anchorRadiusDown1" tooltiptext="Shrink by 1M"
-					image="./js/img/control_port_blue.png" />
-				<toolbarbutton id="anchorAlarmOnOff" tooltiptext="Start/stop the anchor watch"
-					image="./js/img/tick.png" label="Start" mode="toggle"/>
-				
-				<button id="anchorRadiusUp1" tooltiptext="Expand by 1M"
-					image="./js/img/control_stbd_blue.png" />
-				<button id="anchorRadiusUp10" tooltiptext="Expand by 10M"
-					image="./js/img/control_stbd10_blue.png" />
-			</hbox>
-			<hbox align="center">
-				<label value="Alarm Radius"/>
-				<html style="overflow: visible" >
-					<canvas id="acanvasRadius" width="100px"
-						height="40px">
-						No canvas in your browser...sorry...
-					</canvas>
-				</html>
-			</hbox>
-			<hbox align="center">
-				<label value="Current Drift"/>
-				<html style="overflow: visible" >
-					<canvas id="acanvasDistance" width="100px"
-						height="40px">
-						No canvas in your browser...sorry...
-					</canvas>
-				</html>
-			</hbox>
-			
-			
-		</vbox>
-	</window>
-	<script type="text/javascript" defer="true">initSocket(); initAutopilot(); initAnchorAlarm();</script>
 </zk>

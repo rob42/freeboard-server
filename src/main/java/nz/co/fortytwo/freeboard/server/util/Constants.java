@@ -125,6 +125,41 @@ public class Constants {
 	public static final String WIND_ALARM_KNOTS = "#WSK";
 	public static final String NMEA = "NMEA";
 	
+	//config constants
+	public static  final String DEMO = "freeboard.demo";
+	public static  final String FREEBOARD_URL = "freeboard.web.url";
+	public static  final String FREEBOARD_RESOURCE = "freeboard.web.dir";
+	public static  final String MAPCACHE_RESOURCE = "freeboard.mapcache.dir";
+	public static  final String MAPCACHE = "freeboard.mapcache.url";
+	public static  final String HTTP_PORT = "freeboard.http.port";
+	public static  final String WEBSOCKET_PORT = "freeboard.websocket.port";
+	public static  final String CFG_DIR = "freeboard.cfg.dir";
+	public static  final String CFG_FILE = "freeboard.cfg.file";
+	public static final String SERIAL_URL = "freeboard.serial.demo.file";
+	public static final String VIRTUAL_URL = "freeboard.virtual.url";
+	
+	public static final String WIND_OFFSET = "freeboard.wind.offset";
+	
+	//gui constants
+	public static  final String LOGG_X = "freeboard.logg.x";
+	public static  final String LOGG_Y = "freeboard.logg.y";
+	public static  final String LOGG_W = "freeboard.logg.w";
+	public static  final String LOGG_H = "freeboard.logg.h";
+	public static final String LOGG_SCALE = "freeboard.logg.scale";
+	
+	public static final String AUTOPILOT_X = "freeboard.autopilot.x";
+	public static final String AUTOPILOT_Y = "freeboard.autopilot.y";
+	
+	public static final String ANCHOR_X = "freeboard.anchor.x";
+	public static final String ANCHOR_Y = "freeboard.anchor.y";
+	
+	public static final String WIND_SCALE = "freeboard.wind.scale";
+	public static  final String WIND_X = "freeboard.wind.x";
+	public static  final String WIND_Y = "freeboard.wind.y";
+	public static  final String WIND_W = "freeboard.wind.w";
+	public static  final String WIND_H = "freeboard.wind.h";
+	
+	
 	public Constants() {
 		// TODO Auto-generated constructor stub
 	}

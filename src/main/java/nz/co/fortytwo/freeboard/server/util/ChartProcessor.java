@@ -25,7 +25,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 
-import nz.co.fortytwo.freeboard.server.ServerMain;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -48,13 +47,13 @@ public class ChartProcessor {
 	Properties config = null;
 
 	public ChartProcessor() throws Exception {
-		config=ServerMain.getConfig(null);
+		config=Util.getConfig(null);
 		
 	}
 
 	public void processChart(String file) throws Exception {
 		//make a file
-				File chartFile = new File(config.getProperty(ServerMain.MAPCACHE_RESOURCE)+"/"+file);
+				File chartFile = new File(config.getProperty(Constants.MAPCACHE_RESOURCE)+"/"+file);
 				if(!chartFile.exists()){
 					logger.error("No file at "+chartFile.getAbsolutePath());
 				}
@@ -173,7 +172,7 @@ public class ChartProcessor {
 	 * @throws InterruptedException 
 	 */
 	private void executeGdal( File chartFile, String chartName, List<String> argList, List<String> tilesList ) throws IOException, InterruptedException {
-		File dir = new File(config.getProperty(ServerMain.MAPCACHE_RESOURCE));
+		File dir = new File(config.getProperty(Constants.MAPCACHE_RESOURCE));
 		//mkdir $1
 		//gdal_translate -of vrt -expand rgba $1.kap temp.vrt
 		 ProcessBuilder pb = new ProcessBuilder(argList);

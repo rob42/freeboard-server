@@ -23,7 +23,7 @@ var popped = false;
 function addSocketListener(l){
 	//is it already there, if so remove it
 	$.each(wsList, function(i){
-	    if(wsList[i].constructor === l.constructor) wsList.splice(i,1);
+	    if(wsList[i] &&  wsList[i].constructor === l.constructor) wsList.splice(i,1);
 	});
 	//add new
 	wsList.push(l);

@@ -20,19 +20,19 @@ package nz.co.fortytwo.freeboard.zk;
 
 import nz.co.fortytwo.freeboard.server.CamelContextFactory;
 import nz.co.fortytwo.freeboard.server.util.Constants;
+import nz.co.fortytwo.freeboard.server.util.Util;
 
 import org.apache.camel.ProducerTemplate;
 import org.apache.log4j.Logger;
-import org.zkoss.bind.annotation.AfterCompose;
 import org.zkoss.zk.ui.Session;
 import org.zkoss.zk.ui.event.CheckEvent;
+import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.MouseEvent;
 import org.zkoss.zk.ui.select.SelectorComposer;
 import org.zkoss.zk.ui.select.annotation.Listen;
 import org.zkoss.zk.ui.select.annotation.Wire;
 import org.zkoss.zk.ui.select.annotation.WireVariable;
 import org.zkoss.zul.Button;
-import org.zkoss.zul.Label;
 import org.zkoss.zul.Toolbarbutton;
 import org.zkoss.zul.Window;
 
@@ -47,6 +47,9 @@ public class AutopilotViewModel extends SelectorComposer<Window>{
 	
 	@WireVariable
     private Session sess;
+	
+	@Wire ("#autopilotWindow")
+	Window autopilotWindow;
 	
 	@Wire("button#apPort1")
 	private Button apPort1; 
@@ -84,9 +87,18 @@ public class AutopilotViewModel extends SelectorComposer<Window>{
 		
 	}
 
-	@AfterCompose
-	public void init() {
+	@Override
+	public void doAfterCompose(Window comp) throws Exception {
+		super.doAfterCompose(comp);
 		logger.debug("Init..");
+			if(Util.getConfig(null).containsKey(Constants.AUTOPILOT_X)){
+				autopilotWindow.setLeft(Util.getConfig(null).getProperty(Constants.AUTOPILOT_X));
+				autopilotWindow.setTop(Util.getConfig(null).getProperty(Constants.AUTOPILOT_Y));
+				logger.debug("  autopilot location set to "+autopilotWindow.getLeft()+", "+autopilotWindow.getTop());
+			}else{
+				autopilotWindow.setPosition("center,bottom");
+				logger.debug("  autopilot location set to default "+autopilotWindow.getPosition());
+			}
 		apCompassOnOff.setChecked(APS.equals(Constants.AUTOPILOT_COMPASS)?true:false);
 		apWindOnOff.setChecked(APS.equals(Constants.AUTOPILOT_COMPASS)?true:false);
 		setAutopilotState();
@@ -178,6 +190,17 @@ public class AutopilotViewModel extends SelectorComposer<Window>{
 		 
 	}
 
-		
+	@Listen("onMove = #autopilotWindow")
+	public void onMoveWindow(Event event) {
+		    logger.debug(" move event = "+((Window)event.getTarget()).getLeft()+", "+((Window)event.getTarget()).getTop());
+		    try {
+		    	Util.getConfig(null).setProperty(Constants.AUTOPILOT_X, ((Window)event.getTarget()).getLeft());
+		    	Util.getConfig(null).setProperty(Constants.AUTOPILOT_Y, ((Window)event.getTarget()).getTop());
+				Util.saveConfig();
+			} catch (Exception e) {
+				logger.error(e);
+			} 
+	    
+	}
 
 }

@@ -20,12 +20,14 @@ package nz.co.fortytwo.freeboard.zk;
 
 import nz.co.fortytwo.freeboard.server.CamelContextFactory;
 import nz.co.fortytwo.freeboard.server.util.Constants;
+import nz.co.fortytwo.freeboard.server.util.Util;
 
 import org.apache.camel.ProducerTemplate;
 import org.apache.log4j.Logger;
 import org.zkoss.bind.annotation.AfterCompose;
 import org.zkoss.zk.ui.Session;
 import org.zkoss.zk.ui.event.CheckEvent;
+import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.MouseEvent;
 import org.zkoss.zk.ui.select.SelectorComposer;
 import org.zkoss.zk.ui.select.annotation.Listen;
@@ -47,6 +49,9 @@ public class AnchorViewModel extends SelectorComposer<Window>{
 	
 	@WireVariable
     private Session sess;
+	
+	@Wire( "#anchorWindow")
+	private Window anchorWindow;
 	
 	@Wire("button#anchorRadiusUp1")
 	private Button anchorRadiusUp1; 
@@ -73,9 +78,18 @@ public class AnchorViewModel extends SelectorComposer<Window>{
 		
 	}
 
-	@AfterCompose
-	public void init() {
+	@Override
+	public void doAfterCompose(Window comp) throws Exception {
+		super.doAfterCompose(comp);
 		logger.debug("Init..");
+			if(Util.getConfig(null).containsKey(Constants.ANCHOR_X)){
+				anchorWindow.setLeft(Util.getConfig(null).getProperty(Constants.ANCHOR_X));
+				anchorWindow.setTop(Util.getConfig(null).getProperty(Constants.ANCHOR_Y));
+				logger.debug("  anchor location set to "+anchorWindow.getLeft()+", "+anchorWindow.getTop());
+			}else{
+				anchorWindow.setPosition("right,bottom");
+				logger.debug("  anchor location set to default "+anchorWindow.getPosition());
+			}
 		
 		setAnchorAlarmState();
 	}
@@ -122,6 +136,19 @@ public class AnchorViewModel extends SelectorComposer<Window>{
 		    	anchorAlarmOnOff.setLabel("Start");
 		    	producer.sendBody(Constants.UID+":"+Constants.MEGA+","+Constants.ANCHOR_ALARM_STATE+":0,");
 		    }
+	}
+
+	@Listen("onMove = #anchorWindow")
+	public void onMoveWindow(Event event) {
+		    logger.debug(" move event = "+((Window)event.getTarget()).getLeft()+", "+((Window)event.getTarget()).getTop());
+		    try {
+		    	Util.getConfig(null).setProperty(Constants.ANCHOR_X, ((Window)event.getTarget()).getLeft());
+		    	Util.getConfig(null).setProperty(Constants.ANCHOR_Y, ((Window)event.getTarget()).getTop());
+				Util.saveConfig();
+			} catch (Exception e) {
+				logger.error(e);
+			} 
+	    
 	}
 
 	

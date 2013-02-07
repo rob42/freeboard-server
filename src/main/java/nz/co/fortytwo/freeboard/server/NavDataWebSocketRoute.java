@@ -20,6 +20,8 @@ package nz.co.fortytwo.freeboard.server;
 
 import java.util.Properties;
 
+import nz.co.fortytwo.freeboard.server.util.Constants;
+
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.websocket.WebsocketComponent;
 
@@ -70,7 +72,7 @@ public class NavDataWebSocketRoute extends RouteBuilder {
 		commandProcessor.init();
 		
 		
-		if(Boolean.valueOf(config.getProperty(ServerMain.DEMO))){
+		if(Boolean.valueOf(config.getProperty(Constants.DEMO))){
 			
 			from("stream:file?fileName=" + serialUrl).
 			to("seda:input?multipleConsumers=true");

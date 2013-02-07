@@ -1,0 +1,75 @@
+<!-- 
+  Copyright 2012,2013 Robert Huitema robert@42.co.nz
+ 
+  This file is part of FreeBoard. (http://www.42.co.nz/freeboard)
+ 
+  FreeBoard is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+
+  FreeBoard is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with FreeBoard.  If not, see <http://www.gnu.org/licenses/>.
+ -->
+<?page title="Wind" contentType="text/html;charset=UTF-8"?>
+<?script src="./js/jquery-1.8.2.min.js"?>
+<?script src="./js/tween-min.js"?>
+<?script src="./js/steelseries.js"?>
+<?script src="./js/websocket.js"?>
+<?script src="./js/anchor.js"?>
+<zk xmlns:w="http://www.zkoss.org/2005/zk/client">
+<window id="anchorWindow" 
+		apply="nz.co.fortytwo.freeboard.zk.AnchorViewModel"
+		title="Anchor Alarm"   mode="overlapped" visible="false" minimizable="true" >
+		<style>
+			.z-panel-body { overflow: visible; }
+			.z-window-modal-cnt-noborder, .z-window-highlighted-cnt-noborder, .z-window-embedded-cnt-noborder, .z-window-overlapped-cnt-noborder, .z-window-popup-cnt-noborder
+			.z-window-embedded, .z-window-modal, .z-window-overlapped, .z-window-popup, .z-window-highlighted {
+				    overflow: visible;
+				}
+			
+		</style>
+		<vbox align="end">
+			
+			<hbox>
+				<button id="anchorRadiusDown10" tooltiptext="Shrink by 10M"
+					image="./js/img/control_port10_blue.png" />
+				<button id="anchorRadiusDown1" tooltiptext="Shrink by 1M"
+					image="./js/img/control_port_blue.png" />
+				<toolbarbutton id="anchorAlarmOnOff" tooltiptext="Start/stop the anchor watch"
+					image="./js/img/tick.png" label="Start" mode="toggle"/>
+				
+				<button id="anchorRadiusUp1" tooltiptext="Expand by 1M"
+					image="./js/img/control_stbd_blue.png" />
+				<button id="anchorRadiusUp10" tooltiptext="Expand by 10M"
+					image="./js/img/control_stbd10_blue.png" />
+			</hbox>
+			<hbox align="center">
+				<label value="Alarm Radius"/>
+				<html style="overflow: visible" >
+					<canvas id="acanvasRadius" width="100px"
+						height="40px">
+						No canvas in your browser...sorry...
+					</canvas>
+				</html>
+			</hbox>
+			<hbox align="center">
+				<label value="Current Drift"/>
+				<html style="overflow: visible" >
+					<canvas id="acanvasDistance" width="100px"
+						height="40px">
+						No canvas in your browser...sorry...
+					</canvas>
+				</html>
+			</hbox>
+			
+			
+		</vbox>
+	</window>
+	<script type="text/javascript" defer="true">initSocket(); initAnchorAlarm();</script>
+</zk>

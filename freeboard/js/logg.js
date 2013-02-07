@@ -19,24 +19,29 @@
 
 
 function resizeLog(amount){
+	if(amount==null){
+		amount = zk.Widget.$('$logScale').getValue();
+	}else{
+		amount=1+(1*amount);
+	}
+	if(amount==0.0)return;
 	var wsize = $("#canvasLog").width();
 	var hsize = $("#canvasLog").height();
-	$("#canvasLog").width(wsize+(wsize*amount));
-	$("#canvasLog").height(hsize+(hsize*amount));
+	$("#canvasLog").width(wsize*amount);
+	$("#canvasLog").height(hsize*amount);
 	var wsmallSize =  $("#canvasWaypoint").width();
 	var hsmallSize =  $("#canvasWaypoint").height();
-	$("#canvasHeading").width(wsmallSize+(wsmallSize*amount));
-	$("#canvasHeading").height(hsmallSize+(hsmallSize*amount));
-	$("#canvasWaypoint").width(wsmallSize+(wsmallSize*amount));
-	$("#canvasWaypoint").height(hsmallSize+(hsmallSize*amount));
+	$("#canvasHeading").width(wsmallSize*amount);
+	$("#canvasHeading").height(hsmallSize*amount);
+	$("#canvasWaypoint").width(wsmallSize*amount);
+	$("#canvasWaypoint").height(hsmallSize*amount);
 	var wLat =  $("#canvasLat").width();
 	var hLat =  $("#canvasLat").height();
-	$("#canvasLat").width(wLat+(wLat*amount));
-	$("#canvasLat").height(hLat+(hLat*amount));
-	$("#canvasLon").width(wLat+(wLat*amount));
-	$("#canvasLon").height(hLat+(hLat*amount));
+	$("#canvasLat").width(wLat*amount);
+	$("#canvasLat").height(hLat*amount);
+	$("#canvasLon").width(wLat*amount);
+	$("#canvasLon").height(hLat*amount);
 	this.initLogg();
-	
 }
 function Logg () {
 	this.onmessage = function (mArray) {

@@ -23,8 +23,18 @@
 <?script src="./js/websocket.js"?>
 <?script src="./js/logg.js"?>
 <zk xmlns:w="http://www.zkoss.org/2005/zk/client">
-	<style>.z-panel-body { overflow: visible; }"</style>
-
+	
+<window id="logg" 
+		apply="nz.co.fortytwo.freeboard.zk.LoggViewModel"
+		height="30px" width="100px" title="Log" 
+		 mode="overlapped" visible="true" minimizable="true" >
+		 <style>.z-panel-body { overflow: visible; }"</style>
+		<style>
+			.z-panel-body, .z-window-modal-cnt-noborder, .z-window-highlighted-cnt-noborder, .z-window-embedded-cnt-noborder, .z-window-overlapped-cnt-noborder, .z-window-popup-cnt-noborder
+			.z-window-embedded, .z-window-modal, .z-window-overlapped, .z-window-popup, .z-window-highlighted {
+				    overflow: visible;
+				}
+		</style>
 	<hlayout style="overflow: visible">
 		<vlayout>
 			<hlayout>
@@ -38,7 +48,7 @@
 						</canvas>
 					</html>
 					<hlayout valign="middle">
-
+						<label id="logScale" value="0.0" visible="false"/>
 						<button id="logShrink" tooltiptext="Shrink the panel"
 							image="./js/img/zoom-minus-mini.png" w:onClick="resizeLog(-0.2)" />
 						<button id="logGrow" tooltiptext="Grow the panel"
@@ -61,10 +71,11 @@
 					<canvas id="canvasLat" width="245px" height="55px" />
 				</html>
 			</hlayout>
-			<!-- textbox id="textConsole" width="100%" height="400px" multiline="true"></textbox-->
+			
 		</vlayout>
 	</hlayout>
+</window>
 
-
-	<script type="text/javascript" defer="true">initSocket(); initLogg();resizeLog(-0.1)</script>
+	<script type="text/javascript" defer="true">initSocket(); initLogg();resizeLog()</script>
+	
 </zk>

@@ -22,6 +22,7 @@ package nz.co.fortytwo.freeboard.server;
 import java.util.HashMap;
 
 import nz.co.fortytwo.freeboard.server.util.Constants;
+import nz.co.fortytwo.freeboard.server.util.Util;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -53,9 +54,7 @@ public class FreeboardProcessor {
 	 * @return
 	 */
 	public double round(double val, int places){
-		double scale = Math.pow(10, places);
-		long iVal = Math.round (val*scale);
-		return iVal/scale;
+		return Util.round(val, places);
 	}
 	
 	/**
