@@ -123,6 +123,8 @@ public class Constants {
 	
 	public static final String WIND_SPEED_ALARM_STATE = "#WSX";
 	public static final String WIND_ALARM_KNOTS = "#WSK";
+	/** +/- in degrees to adjust zero wind dir reading on Mega*/
+	public static final String WIND_ZERO_ADJUST = "#WZJ";
 	public static final String NMEA = "NMEA";
 	
 	//config constants
@@ -138,7 +140,8 @@ public class Constants {
 	public static final String SERIAL_URL = "freeboard.serial.demo.file";
 	public static final String VIRTUAL_URL = "freeboard.virtual.url";
 	
-	public static final String WIND_OFFSET = "freeboard.wind.offset";
+	public static final String WIND_ZERO_OFFSET = "freeboard.wind.offset";
+	 
 	
 	//gui constants
 	public static  final String LOGG_X = "freeboard.logg.x";

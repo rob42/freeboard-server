@@ -22,9 +22,11 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Properties;
 
+import nz.co.fortytwo.freeboard.server.CamelContextFactory;
 import nz.co.fortytwo.freeboard.server.util.Constants;
 import nz.co.fortytwo.freeboard.server.util.Util;
 
+import org.apache.camel.ProducerTemplate;
 import org.apache.log4j.Logger;
 import org.zkoss.zk.ui.Session;
 import org.zkoss.zk.ui.event.Event;
@@ -63,10 +65,14 @@ public class WindViewModel extends SelectorComposer<Window>{
 	Button windGrow;
 
 	private double scale=0.5;
+
+	private ProducerTemplate producer;
 	
 	public WindViewModel() {
 		super();
 		logger.debug("Constructing..");
+		producer = CamelContextFactory.getInstance().createProducerTemplate();
+		producer.setDefaultEndpointUri("seda://input?multipleConsumers=true");
 		
 	}
 
@@ -88,6 +94,8 @@ public class WindViewModel extends SelectorComposer<Window>{
 				scale = Double.valueOf(Util.getConfig(null).getProperty(Constants.WIND_SCALE));
 			}
 			windScale.setValue(String.valueOf(scale));
+			//adjust wind zero point here
+			producer.sendBody(Constants.UID+":"+Constants.MEGA+","+Constants.WIND_ZERO_ADJUST+":"+Util.getConfig(null).getProperty(Constants.WIND_ZERO_OFFSET)+",");
 	}
 	
 	@Listen("onMove = #wind")
