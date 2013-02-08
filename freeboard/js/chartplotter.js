@@ -37,6 +37,12 @@ var shipMarker = new OpenLayers.Layer.Vector('Ship', {
         rotation: '${angle}',
     })
 });
+var shipTrack = new OpenLayers.Layer.Vector('Track', {
+    styleMap: new OpenLayers.StyleMap({
+        externalGraphic: './js/img/red.png',
+        graphicWidth: 2, graphicHeight: 2, graphicYOffset: -1,
+    })
+});
 var hdgLayer = new OpenLayers.Layer.Vector('Heading', {
 	styleMap: new OpenLayers.StyleMap({
 		strokeWidth : 2,
@@ -74,11 +80,45 @@ function initCharts() {
 
 	//add layers
 	addLayers(map);
+
+	// Add the Layer with the GPX Track
+	var tgpx = new OpenLayers.Layer.Vector("GPX track", {
+		strategies: [new OpenLayers.Strategy.Fixed()],
+		protocol: new OpenLayers.Protocol.HTTP({
+			url: "../../tracks/current.gpx",
+			format: new OpenLayers.Format.GPX({extractTracks: true, extractWaypoints: false,  
+				extractName: true, extractRoutes: false, extractAttributes: true})
+		}),
+		style: {pointRadius: 5, fillColor: "darkred", strokeColor: "red", strokeWidth: 2, strokeOpacity: 0.7},
+		projection: new OpenLayers.Projection("EPSG:4326")
+	});
+	map.addLayer(tgpx);
 	
+	// Add the Layer with the GPX Waypoints
+	var wgpx = new OpenLayers.Layer.Vector("Waypoints", {
+		strategies: [new OpenLayers.Strategy.Fixed()],
+		protocol: new OpenLayers.Protocol.HTTP({
+			url: "../../tracks/waypoints.gpx",
+			format: new OpenLayers.Format.GPX({extractTracks: false, extractWaypoints: true,  
+				extractName: true, extractRoutes: false, extractAttributes: true})
+		}),
+		styleMap: new OpenLayers.StyleMap({
+	        externalGraphic: './js/img/marker-blue.png',
+	        graphicWidth: 15, graphicHeight: 20, graphicYOffset: -20, graphicXOffset: -8,
+	        title: '${name}'
+	    }),
+		//style: {pointRadius: 5, fillColor: "darkred", strokeColor: "red", strokeWidth: 2, strokeOpacity: 0.7},
+		projection: new OpenLayers.Projection("EPSG:4326")
+	});
+	map.addLayer(wgpx);
+	//for waypoints and editing routes
+	//http://openlayers.org/dev/examples/modify-feature.html
+	
+	//add the ship and bearings
 	map.addLayer(bearingLayer);
 	map.addLayer(hdgLayer);
+	map.addLayer(shipTrack);
 	map.addLayer(shipMarker);
-	
 	
 	map.addControls([ 
 			new OpenLayers.Control.TouchNavigation({
@@ -158,7 +198,38 @@ function initCharts() {
 		});
 		map.addControl(control);
 	}
+	
+	//select controls
+	function onPopupClose(evt) {
+        selectControl.unselect(selectedFeature);
+    }
+	
+	function onFeatureSelect(feature) {
+        selectedFeature = feature;
+        popup = new OpenLayers.Popup.FramedCloud("chicken", 
+                                 feature.geometry.getBounds().getCenterLonLat(),
+                                 null,
+                                 "<div style='font-size:.8em'>Waypoint: " + feature.attributes.name
+                                 +"<br>"+feature.attributes.description
+                                 +"</div>",
+                                 null, true, onPopupClose);
+        feature.popup = popup;
+        map.addPopup(popup);
+    }
+    function onFeatureUnselect(feature) {
+        map.removePopup(feature.popup);
+        feature.popup.destroy();
+        feature.popup = null;
+    } 
+	
+	var selectControl = new OpenLayers.Control.SelectFeature(wgpx,
+             {onSelect: onFeatureSelect, onUnselect: onFeatureUnselect});
+	
+	
 
+	map.addControl(selectControl);
+	selectControl.activate();
+	
 	var switcherControl = new OpenLayers.Control.LayerSwitcher();
 	map.addControl(switcherControl);
 	//switcherControl.maximizeControl();
@@ -297,10 +368,15 @@ function setPosition(llat, llon, brng, spd){
     // coordinates ('EPSG:4326'), but the map is projected ('EPSG:3857').
     var shipLocation = new OpenLayers.Geometry.Point(llon, llat) //new OpenLayers.Geometry.Point(lonLat);
         .transform(screenProjection, chartProjection);
+    var trackPoint = new OpenLayers.Geometry.Point(llon, llat) //new OpenLayers.Geometry.Point(lonLat);
+    .transform(screenProjection, chartProjection);
     
     shipMarker.addFeatures([
-        new OpenLayers.Feature.Vector(shipLocation, {angle: brng})
+        new OpenLayers.Feature.Vector(shipLocation, {angle: brng, tooltip: 'Motu'})
     ]);
+    shipTrack.addFeatures([
+                            new OpenLayers.Feature.Vector(trackPoint, {})
+                        ]);
     if(followBoat){
 		map.moveTo(new OpenLayers.LonLat(llon,llat).transform(screenProjection, chartProjection));
 	}
@@ -361,7 +437,7 @@ function ChartPlotter () {
 			if (data && data.indexOf('SOG') >= 0) {
 				var c = parseFloat(data.substring(4));
 				if($.isNumeric(c)){
-					setPos=c;
+					speed=c;
 					setPos=true;
 				}
 				c=null;

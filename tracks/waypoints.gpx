@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<gpx>
+	<wpt lat="-41.19338889" lon="173.14763889">
+		<ele>2372.0</ele>
+		<name>TEST WPT</name>
+		<description>
+		A test waypoint nowhere important
+		</description>
+	</wpt>
+</gpx>

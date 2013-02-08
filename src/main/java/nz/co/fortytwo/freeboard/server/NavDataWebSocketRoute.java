@@ -44,6 +44,7 @@ public class NavDataWebSocketRoute extends RouteBuilder {
 	private WindProcessor windProcessor = new WindProcessor();
 	private CommandProcessor commandProcessor = new CommandProcessor();
 	private DeclinationProcessor declinationProcessor = new DeclinationProcessor();
+	private GPXProcessor gpxProcessor;
 
 	public NavDataWebSocketRoute(Properties config) {
 		this.config=config;
@@ -68,9 +69,9 @@ public class NavDataWebSocketRoute extends RouteBuilder {
 		// we can serve static resources from the classpath: or file: system
 		wc.setStaticResources("classpath:.");
 		
-		//init commandProcessor
+		//init processors who depend on this being started
 		commandProcessor.init();
-		
+		gpxProcessor = new GPXProcessor();
 		
 		if(Boolean.valueOf(config.getProperty(Constants.DEMO))){
 			
@@ -95,6 +96,7 @@ public class NavDataWebSocketRoute extends RouteBuilder {
 						.process(windProcessor )
 						.process(commandProcessor )
 						.process(declinationProcessor)
+						.process(gpxProcessor)
 						.process(outputFilterProcessor)
 						.to("log:nz.co.fortytwo.freeboard.navdata?level=INFO")
 						// and push to all web socket subscribers 

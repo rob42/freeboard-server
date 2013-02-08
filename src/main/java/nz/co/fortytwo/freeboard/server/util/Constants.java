@@ -133,6 +133,9 @@ public class Constants {
 	public static  final String FREEBOARD_RESOURCE = "freeboard.web.dir";
 	public static  final String MAPCACHE_RESOURCE = "freeboard.mapcache.dir";
 	public static  final String MAPCACHE = "freeboard.mapcache.url";
+	public static  final String TRACKS_RESOURCE = "freeboard.tracks.dir";
+	public static  final String TRACKS = "freeboard.tracks.url";
+	public static  final String TRACK_CURRENT = "freeboard.tracks.current";
 	public static  final String HTTP_PORT = "freeboard.http.port";
 	public static  final String WEBSOCKET_PORT = "freeboard.websocket.port";
 	public static  final String CFG_DIR = "freeboard.cfg.dir";

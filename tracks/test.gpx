@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gpx version="1.0">
+	<name>Home</name>
+	<wpt lat="-41.19338889" lon="173.24763889">
+		<ele>2372</ele>
+		<name>LAGORETICO</name>
+	</wpt>
+	<trk><name>Example gpx</name><number>1</number>
+	<trkseg>
+		<trkpt lat="-41.19408333" lon="173.24741667"><ele>2376</ele><time>2007-10-14T10:09:57Z</time></trkpt>
+		<trkpt lat="-41.19319444" lon="173.25752778"><ele>2375</ele><time>2007-10-14T10:10:52Z</time></trkpt>
+		<trkpt lat="-41.19241667" lon="173.26766667"><ele>2372</ele><time>2007-10-14T10:12:39Z</time></trkpt>
+		<trkpt lat="-41.19150000" lon="173.27780556"><ele>2373</ele><time>2007-10-14T10:13:12Z</time></trkpt>
+		<trkpt lat="-41.19038889" lon="173.28802778"><ele>2374</ele><time>2007-10-14T10:13:20Z</time></trkpt>
+		<trkpt lat="-41.19152778" lon="173.29822222"><ele>2375</ele><time>2007-10-14T10:13:48Z</time></trkpt>
+		<trkpt lat="-41.19261111" lon="173.29844444"><ele>2376</ele><time>2007-10-14T10:14:08Z</time></trkpt>
+	</trkseg>
+	</trk>
+</gpx>

@@ -84,11 +84,22 @@ public class ServerMain {
 		logger.info("  Mapcache resource:"+config.getProperty(Constants.MAPCACHE_RESOURCE));
 		mapContext.setResourceBase(config.getProperty(Constants.MAPCACHE_RESOURCE));
 		mapContext.addServlet(DefaultServlet.class, "/*");
+		
+		//serve tracks
+		ServletContextHandler trackContext = new ServletContextHandler();
+		logger.info("  Tracks url:"+config.getProperty(Constants.TRACKS));
+		trackContext.setContextPath(config.getProperty(Constants.TRACKS));
+		logger.info("  Tracks resource:"+config.getProperty(Constants.TRACKS_RESOURCE));
+		trackContext.setResourceBase(config.getProperty(Constants.TRACKS_RESOURCE));
+		trackContext.addServlet(DefaultServlet.class, "/*");
+		
 		if(StringUtils.isNotBlank(virtualHosts)){
 			mapContext.setVirtualHosts(virtualHosts.split(","));
+			trackContext.setVirtualHosts(virtualHosts.split(","));
 		}
 		HandlerList handlers = new HandlerList();
 		handlers.addHandler(mapContext);
+		handlers.addHandler(trackContext);
 
 		// serve freeboard
 		WebAppContext wac = new WebAppContext();
