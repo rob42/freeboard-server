@@ -85,6 +85,7 @@ Setup files:
   driver=nl80211
   ctrl_interface=/var/run/hostapd
   ctrl_interface_group=0
+  #use your boat name here!
   ssid=Motu
   hw_mode=g
   channel=10
@@ -102,4 +103,10 @@ Setup files:
 /etc/default/hostapd
   DAEMON_CONF="/etc/hostapd/hostapd.conf"
 
-  
+# Automount USB drives notes
+ sudo apt-get install usbmount
+ 
+ Edit /etc/usbmount/usbmount.conf, edit the following:
+  MOUNTPOINTS="/media/usb0"
+  FS_MOUNTOPTIONS="-fstype=vfat,gid=floppy,umask=000"
+ Add pi to the floppy group

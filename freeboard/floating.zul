@@ -66,6 +66,37 @@
 			</south>
 		</borderlayout>
 	</window>
+	<window id="wptWindow" title="Waypoint"
+		 apply="nz.co.fortytwo.freeboard.zk.WaypointViewModel" vflex="true"
+		 mode="modal" minimizable="true" visible="false" width="400px">
+		<grid hflex="1">
+			<columns>
+				<column hflex="min"></column>
+				<column hflex="1"></column>
+			</columns>
+			<rows>
+				<row>
+					<label>Latitude</label><decimalbox id="latBox" hflex="1" readonly="true"></decimalbox>
+				</row>
+				<row>
+					<label>Longitude</label><decimalbox id="lonBox" hflex="1" readonly="true"></decimalbox>
+				</row>
+				<row>
+					<label>Name</label><textbox id="nameBox" hflex="1"></textbox>
+				</row>
+				<row>
+					<label>Description</label><textbox id="descBox" rows="4" hflex="1"></textbox>
+				</row>
+				<row>
+				<label id="editMark" value="false" visible="false"/>
+						<hbox>
+							<button id="ok" label="Save"/><button id="cancel" label="Cancel"/><button id="delete" label="Delete"/>
+						</hbox>
+				</row>
+			</rows>
+		</grid>
+	
+	</window>
 	<popup id="helpPopup">
 		<html>
 

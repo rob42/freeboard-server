@@ -1,31 +1,51 @@
 #!/bin/bash
-# Copyright 2012,2013 Robert Huitema robert@42.co.nz
-# 
-# This file is part of FreeBoard. (http://www.42.co.nz/freeboard)
 #
-#  FreeBoard is free software: you can redistribute it and/or modify
-#  it under the terms of the GNU General Public License as published by
-#  the Free Software Foundation, either version 3 of the License, or
-#  (at your option) any later version.
-#
-#  FreeBoard is distributed in the hope that it will be useful,
-#  but WITHOUT ANY WARRANTY; without even the implied warranty of
-#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#  GNU General Public License for more details.
-#
-#  You should have received a copy of the GNU General Public License
-#  along with FreeBoard.  If not, see <http://www.gnu.org/licenses/>.
-#
+# make use we have loaded the usb after a cold boot
+# make sure it unmounted first
+sudo umount /media/usb0
+if [ ! -d "/media/usb0" ]; then 
+        sudo mkdir /media/usb0 >logs/start.log 2>&1
+fi
+sudo mount -tvfat -osync,noexec,nodev,noatime,nodiratime,gid=floppy,umask=000 /dev/sda1 /media/usb0 >>logs/start.log 2>&1
+
 # start script for freeboard
+FREEBOARD_HOME=/home/pi/freeboard
+MEDIA_HOME=/media/usb0
+JAR=freeboard-server.jar
 #
+cd $FREEBOARD_HOME
+# Check if we have an update to install
+if [ -f "$MEDIA_HOME/updates/$JAR" ]; then
+        #copy to working dir after backing up current one
+        echo "**Updating freeboard-server" >>logs/update.log 2>&1
+        echo "Backup old target/$JAR to target/$JAR.last" >>logs/update.log 2>&1
+        mv $FREEBOARD_HOME/target/$JAR $FREEBOARD_HOME/target/$JAR.last >>logs/update.log 2>&1
+        echo "Copy new $JAR to target/" >>logs/update.log 2>&1
+        cp  $MEDIA_HOME/updates/$JAR $FREEBOARD_HOME/target/$JAR >>logs/update.log 2>&1
+        # update any misc files
+        if [ -f "$MEDIA_HOME/updates/freeboard-server.tar.gz" ]; then
+                echo "Extracting new web files..." >>logs/update.log 2>&1
+                tar xvzf $MEDIA_HOME/updates/freeboard-server.tar.gz  >>logs/update.log 2>&1    
+        fi
+        echo "Completed" >>logs/update.log 2>&1
+else
+        echo "**No update found" >>logs/update.log 2>&1
+fi
+
+#start server
 JAVA_HOME=/home/pi/jdk1.7.0_06
 export JAVA_HOME
 JAVA=$JAVA_HOME/bin/java
-FREEBOARD_HOME=/home/pi/freeboard
-JAR=freeboard-server-0.0.1-SNAPSHOT-jar-with-dependencies.jar
-EXT="-Djava.util.Arrays.useLegacyMergeSort=true -Djava.library.path=/usr/lib/rxtx:/usr/lib/jni"
+EXT="-Djava.util.Arrays.useLegacyMergeSort=true"
 MEM="-Xmx24m -XX:PermSize=32m -XX:MaxPermSize=32m"
-LOG4J=-Dlog4j.configuration=./conf/log4j.properties
+
+#if we have a usb drive log to there
+if [ -f "$MEDIA_HOME/conf/log4j.properties" ]; then
+        LOG4J=-Dlog4j.configuration=file://$MEDIA_HOME/conf/log4j.properties
+else
+        LOG4J=-Dlog4j.configuration=file://$FREEBOARD_HOME/conf/log4j.properties
+fi
 
 cd $FREEBOARD_HOME
-$JAVA $EXT $MEM $LOG4J -jar target/$JAR >logs/start.log 2>&1 &
+echo "Starting: $JAVA $EXT $LOG4J $MEM -jar target/$JAR >>logs/start.log 2>&1 &" >>logs/start.log 2>&1 &
+$JAVA $EXT $LOG4J $MEM -jar target/$JAR >>logs/start.log 2>&1 &

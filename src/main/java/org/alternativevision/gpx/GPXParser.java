@@ -21,18 +21,19 @@
 
 package org.alternativevision.gpx;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.Iterator;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
@@ -45,6 +46,7 @@ import org.alternativevision.gpx.beans.Track;
 import org.alternativevision.gpx.beans.Waypoint;
 import org.alternativevision.gpx.extensions.IExtensionParser;
 import org.alternativevision.gpx.types.FixType;
+import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
@@ -93,6 +95,13 @@ public class GPXParser {
 	}
 	
 	private Logger logger = Logger.getLogger(this.getClass().getName()); 
+	
+	public GPX parseGPX(File gpxFile) throws IOException, ParserConfigurationException, SAXException, IOException {
+		InputStream in = FileUtils.openInputStream(gpxFile);
+		GPX gpx = parseGPX(in);
+		in.close();
+		return gpx;
+	}
 	
 	/**
 	 * Parses a stream containing GPX data
@@ -471,6 +480,13 @@ public class GPXParser {
 		return val;
 	}
 	
+	public void writeGPX(GPX gpx, File gpxFile) throws IOException, ParserConfigurationException, TransformerException {
+		OutputStream out = FileUtils.openOutputStream(gpxFile);
+		writeGPX(gpx,out);
+		out.flush();
+		out.close();
+	}
+	
 	public void writeGPX(GPX gpx, OutputStream out) throws ParserConfigurationException, TransformerException {
 		DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 		Document doc = builder.newDocument();
@@ -496,7 +512,8 @@ public class GPXParser {
 		// Use a Transformer for output
 		TransformerFactory tFactory = TransformerFactory.newInstance();
 		Transformer transformer = tFactory.newTransformer();
-		
+		transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+		transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
 		DOMSource source = new DOMSource(doc);
 		StreamResult result = new StreamResult(out);
 		transformer.transform(source, result); 

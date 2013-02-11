@@ -67,7 +67,7 @@ public class SerialPortManager implements Runnable, Processor {
 			//Enumeration<CommPortIdentifier> ports = CommPortIdentifier.getPortIdentifiers();
 			
 
-			String[] ports = {"/dev/ttyUSB0","/dev/ttyUSB1","/dev/ttyUSB2","/dev/ttyUSB3","/dev/ttyUSB4","/dev/ttyUSB5","/dev/ttyUSB6"};
+			String[] ports = {"/dev/ttyUSB0","/dev/ttyUSB1","/dev/ttyUSB2"};
 			for (String port:ports) {
 				boolean portOk = false;
 				File portFile = new File(port);

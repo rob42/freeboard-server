@@ -43,12 +43,19 @@ public class ServerMain {
 	
 	private Properties config=null;
 	
+	
+		
+	
+	
 	public ServerMain(String configDir) throws Exception {
 		
 		config=Util.getConfig(configDir);
 		
 		logger.info("Freeboard starting....");
 
+		//do we have a USB drive connected?
+		logger.info("USB drive "+Util.getUSBFile());
+		
 		// create a new Camel Main so we can easily start Camel
 		Main main = new Main();
 
@@ -62,6 +69,7 @@ public class ServerMain {
 		logger.info("  Websocket port:"+config.getProperty(Constants.WEBSOCKET_PORT));
 		route.setPort(Integer.valueOf(config.getProperty(Constants.WEBSOCKET_PORT)));
 		
+		//are we running demo?
 		logger.info("  Serial url:"+config.getProperty(Constants.SERIAL_URL));
 		route.setSerialUrl(config.getProperty(Constants.SERIAL_URL));
 		

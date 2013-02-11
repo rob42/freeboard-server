@@ -205,16 +205,25 @@ function initCharts() {
     }
 	
 	function onFeatureSelect(feature) {
-        selectedFeature = feature;
-        popup = new OpenLayers.Popup.FramedCloud("chicken", 
-                                 feature.geometry.getBounds().getCenterLonLat(),
-                                 null,
-                                 "<div style='font-size:.8em'>Waypoint: " + feature.attributes.name
-                                 +"<br>"+feature.attributes.description
-                                 +"</div>",
-                                 null, true, onPopupClose);
-        feature.popup = popup;
-        map.addPopup(popup);
+		selectedFeature = feature;
+		if(zk.Widget.$("$wptToggle").isChecked()){
+				var position = feature.geometry.getBounds().getCenterLonLat();
+		       // var icon = new OpenLayers.Icon('http://maps.google.com/mapfiles/ms/icons/red-pushpin.png');   
+		        var lonlat = map.getLonLatFromPixel(position);
+		        var wptLocation = lonlat.transform(chartProjection, screenProjection );
+	        zAu.send(new zk.Event(zk.Widget.$("$this"), 'onWaypoint', new Array(wptLocation.lat,wptLocation.lon,feature.attributes.name)));
+		}else{
+	        selectedFeature = feature;
+	        popup = new OpenLayers.Popup.FramedCloud("chicken", 
+	                                 feature.geometry.getBounds().getCenterLonLat(),
+	                                 null,
+	                                 "<div style='font-size:.8em'>Waypoint: " + feature.attributes.name
+	                                 +"<br>"+feature.attributes.desc
+	                                 +"</div>",
+	                                 null, true, onPopupClose);
+	        feature.popup = popup;
+	        map.addPopup(popup);
+		}
     }
     function onFeatureUnselect(feature) {
         map.removePopup(feature.popup);
@@ -225,10 +234,20 @@ function initCharts() {
 	var selectControl = new OpenLayers.Control.SelectFeature(wgpx,
              {onSelect: onFeatureSelect, onUnselect: onFeatureUnselect});
 	
-	
-
 	map.addControl(selectControl);
 	selectControl.activate();
+	
+	//add waypoints
+	map.events.register("click", map, function(e) {
+		if(zk.Widget.$("$wptToggle").isChecked()){
+	        var position = this.events.getMousePosition(e);
+	       // var icon = new OpenLayers.Icon('http://maps.google.com/mapfiles/ms/icons/red-pushpin.png');   
+	        var lonlat = map.getLonLatFromPixel(position);
+	        var wptLocation = lonlat.transform(chartProjection, screenProjection );
+	        //var wptWindow = zk.Widget.$("$wptWindow");
+	        zAu.send(new zk.Event(zk.Widget.$("$this"), 'onWaypoint', new Array(wptLocation.lat,wptLocation.lon)));
+		}
+    });
 	
 	var switcherControl = new OpenLayers.Control.LayerSwitcher();
 	map.addControl(switcherControl);

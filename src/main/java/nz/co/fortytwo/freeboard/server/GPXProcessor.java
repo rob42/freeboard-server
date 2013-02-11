@@ -19,21 +19,18 @@
 package nz.co.fortytwo.freeboard.server;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
+
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerException;
 
 import nz.co.fortytwo.freeboard.server.util.Constants;
 import nz.co.fortytwo.freeboard.server.util.Util;
-import nz.co.fortytwo.freeboard.zk.WindViewModel;
 
 import org.alternativevision.gpx.GPXParser;
 import org.alternativevision.gpx.beans.GPX;
@@ -42,13 +39,15 @@ import org.alternativevision.gpx.beans.TrackPoint;
 import org.alternativevision.gpx.beans.Waypoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.ProducerTemplate;
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 
 /**
  * Churns through incoming nav data and creates a GPX file
  * Uses code from http://gpxparser.alternativevision.ro to do GPX parsing
+ * 
+ * Writes to USB drive /tracks if one is found
+ * Writes to freeboard/tracks if no drive is found
  * 
  * @author robert
  * 
@@ -62,19 +61,31 @@ public class GPXProcessor extends FreeboardProcessor implements Processor {
 	private GPX gpx;
 	private Track currentTrack;
 	private int count = 0;
+	private int triggerCount=300;
 
 	public GPXProcessor() {
 
 		try {
 			String gpxDirStr = Util.getConfig(null).getProperty(Constants.TRACKS_RESOURCE);
-			gpxDir = new File(gpxDirStr);
+			File usb = Util.getUSBFile();
+			if(usb!=null){
+				gpxDir = new File(usb, gpxDirStr);
+				//write out every minute
+				triggerCount=60;
+			}else{
+				gpxDir = new File(gpxDirStr);
+			}
 			FileUtils.forceMkdir(gpxDir);
 			gpxFile = new File(gpxDir, Util.getConfig(null).getProperty(Constants.TRACK_CURRENT));
 			if (gpxFile.exists()) {
-				InputStream in = FileUtils.openInputStream(gpxFile);
-				gpx = new GPXParser().parseGPX(in);
-				in.close();
-			} else {
+				try{
+					gpx = new GPXParser().parseGPX(gpxFile);
+				} catch (Exception e) {
+					//may be unreadable
+					logger.error(e.getMessage(),e);
+				}
+			}
+			if(gpx==null){
 				gpx = new GPX();
 			}
 			for (Track t : gpx.getTracks()) {
@@ -89,13 +100,12 @@ public class GPXProcessor extends FreeboardProcessor implements Processor {
 				gpx.addTrack(currentTrack);
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
-			logger.error(e);
+			logger.error(e.getMessage(),e);
 		}
 
 	}
 
-	public void process(Exchange exchange) throws Exception {
+	public void process(Exchange exchange)  {
 		if (exchange.getIn().getBody() == null)
 			return;
 
@@ -113,35 +123,44 @@ public class GPXProcessor extends FreeboardProcessor implements Processor {
 			currentTrack.getTrackPoints().add(tp);
 		}
 		count++;
-		//write out every 120 points, eg 2 min at 1 sec GPS data
-		if(count >120){
+		//write out every 300 points, eg 5 min at 1 sec GPS data, or 60sec to usb
+		if(count >triggerCount){
 			count=0;
-			//if its too long, truncate and save
-			if(currentTrack.getTrackPoints().size()>1100){
-				//write out the first 1000
+			//if its too long, truncate and archive
+			if(currentTrack.getTrackPoints().size()>11000){
+				//write out the first 10000
 				ArrayList<Waypoint> points = currentTrack.getTrackPoints();
-				ArrayList<Waypoint> oldPoints = (ArrayList<Waypoint>) points.subList(0, 1000);
+				
+				Waypoint [] oldPoints = Arrays.copyOfRange(points.toArray(new Waypoint[0]), 0, 10000);
 				GPX oldGpx = new GPX();
 				Track oldTrack = new Track();
-				oldTrack.setTrackPoints(oldPoints);
+				ArrayList<Waypoint> newPoints = new ArrayList<Waypoint>();
+				newPoints.addAll(Arrays.asList(oldPoints));
+				
+				oldTrack.setTrackPoints(newPoints);
 				oldGpx.addTrack(oldTrack);
 				
-				String fileName = DateFormat.getInstance().format(new Date());
+				String fileName = Util.sdf.format(new Date());
 				oldTrack.setName(CURRENT+" "+fileName);
-				fileName=fileName.replaceAll(" ", "");
-				OutputStream oldOut = FileUtils.openOutputStream(new File(gpxDir, fileName+".gpx"));
-				new GPXParser().writeGPX(oldGpx,oldOut);
-				oldOut.flush();
-				oldOut.close();
-				points.removeAll(oldPoints);
+				writeGPX(oldGpx,new File(gpxDir, fileName+".gpx"));
+				
+				points.removeAll(newPoints);
 				currentTrack.setTrackPoints(points);
 			}
-			OutputStream out = FileUtils.openOutputStream(gpxFile);
-			new GPXParser().writeGPX(gpx,out);
-			out.flush();
-			out.close();
+			
+			writeGPX(gpx,gpxFile);
+			
 		}
 
+	}
+
+	private void writeGPX(GPX gpx, File file) {
+		try {
+			new GPXParser().writeGPX(gpx,file);
+		}  catch (Exception e) {
+			logger.error(e.getMessage(),e);
+		}
+		
 	}
 
 }

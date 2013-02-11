@@ -34,6 +34,9 @@
 	<separator visible="true" orient="vertical" bar="true" />
 	<label value="Mode: " style="padding-right:0px; padding-left:10px;" />
 	<radiogroup name="type">
+		<radio value="line" id="wptToggle"
+			w:onClick="toggleControl('wpt');" />
+		<label>Waypoint</label>
 		<radio value="none" id="noneToggle"
 			w:onClick="toggleControl('none');" checked="true" />
 		<label>Navigate</label>

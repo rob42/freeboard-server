@@ -24,6 +24,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.Properties;
 
 
@@ -37,7 +38,8 @@ import org.apache.commons.lang3.StringUtils;
 public class Util {
 	
 	private static Properties props;
-	
+	public static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd_hh:mm:ss");
+	private static File cfg = null;
 	/**
 	 * Smooth the data a bit
 	 * @param prev
@@ -50,7 +52,7 @@ public class Util {
 	}
 
 	/**
-	 * Load the config from the named dir, or if the named dir is false, from the default location
+	 * Load the config from the named dir, or if the named dir is null, from the default location
 	 * The config is cached, subsequent calls get the same object 
 	 * @param dir
 	 * @return
@@ -62,9 +64,16 @@ public class Util {
 			props = new Properties();
 			Util.setDefaults(props);
 			if(StringUtils.isNotBlank(dir)){
+				//we provided a config dir, so we use it
 				props.setProperty(Constants.CFG_DIR, dir);
+				cfg = new File(props.getProperty(Constants.CFG_DIR)+props.getProperty(Constants.CFG_FILE));
+			}else if(Util.getUSBFile()!=null){
+				//nothing provided, but we have a usb config dir, so use it
+				cfg = new File(Util.getUSBFile(),props.getProperty(Constants.CFG_DIR)+props.getProperty(Constants.CFG_FILE));
+			}else{
+				//use the default config
+				cfg = new File(props.getProperty(Constants.CFG_DIR)+props.getProperty(Constants.CFG_FILE));
 			}
-			File cfg = new File(props.getProperty(Constants.CFG_DIR)+props.getProperty(Constants.CFG_FILE));
 			
 			if(cfg.exists()){
 				props.load(new FileReader(cfg));
@@ -79,7 +88,6 @@ public class Util {
 	 */
 	public static void saveConfig() throws IOException{
 		if(props==null)return;
-		File cfg = new File(props.getProperty(Constants.CFG_DIR)+props.getProperty(Constants.CFG_FILE));
 		props.store(new FileWriter(cfg), null);
 		
 	}
@@ -102,6 +110,14 @@ public class Util {
 		props.setProperty(Constants.DEMO,"false");
 		props.setProperty(Constants.SERIAL_URL,"./src/test/resources/motu.log&scanStream=true&scanStreamDelay=500");
 		props.setProperty(Constants.VIRTUAL_URL,"");
+		props.setProperty(Constants.USBDRIVE,"/media/usb0");
+		props.setProperty(Constants.TRACKS,"/tracks");
+		props.setProperty(Constants.TRACKS_RESOURCE,"./tracks");
+		props.setProperty(Constants.TRACK_CURRENT,"current.gpx");
+		props.setProperty(Constants.WAYPOINTS,"/tracks");
+		props.setProperty(Constants.WAYPOINTS_RESOURCE,"./tracks");
+		props.setProperty(Constants.WAYPOINT_CURRENT,"waypoints.gpx");
+
 	}
 	
 
@@ -137,4 +153,24 @@ public class Util {
 			
 		return scaleValue;
 	}
+
+	/**
+	 * Checks if a usb drive is inserted, and returns the root dir.
+	 * Returns null if its not there
+	 * 
+	 * @param file
+	 * @return
+	 * @throws IOException 
+	 * @throws FileNotFoundException 
+	 */
+	public static File getUSBFile() throws FileNotFoundException, IOException {
+		File usbDrive = new File(Util.getConfig(null).getProperty(Constants.USBDRIVE));
+		if(usbDrive.exists() && usbDrive.list().length>0){
+			//we return it
+			return usbDrive;
+		}
+		return null;
+	}
+	
+	
 }
