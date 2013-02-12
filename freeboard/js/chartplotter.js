@@ -87,7 +87,7 @@ function initCharts() {
 		protocol: new OpenLayers.Protocol.HTTP({
 			url: "../../tracks/current.gpx",
 			format: new OpenLayers.Format.GPX({extractTracks: true, extractWaypoints: false,  
-				extractName: true, extractRoutes: false, extractAttributes: true})
+				extractName: true, extractRoutes: false, extractAttributes: false})
 		}),
 		style: {pointRadius: 5, fillColor: "darkred", strokeColor: "red", strokeWidth: 2, strokeOpacity: 0.7},
 		projection: new OpenLayers.Projection("EPSG:4326")

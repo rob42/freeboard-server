@@ -70,7 +70,8 @@ function initSocket(){
 function reloadSocket(){
 	if(this._ws != null)this._ws.close();
 	this._ws = null;
-	if(!popped){initSocket();
+	if(!popped){
+		initSocket();
 		console.log("Reloaded..");
 	}
 }

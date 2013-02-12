@@ -21,6 +21,8 @@ package nz.co.fortytwo.freeboard.server;
 
 import java.util.Properties;
 
+import javax.servlet.ServletContext;
+
 import nz.co.fortytwo.freeboard.server.util.Constants;
 import nz.co.fortytwo.freeboard.server.util.Util;
 
@@ -33,6 +35,7 @@ import org.eclipse.jetty.server.handler.HandlerList;
 import org.eclipse.jetty.server.nio.SelectChannelConnector;
 import org.eclipse.jetty.servlet.DefaultServlet;
 import org.eclipse.jetty.servlet.ServletContextHandler;
+import org.eclipse.jetty.servlet.ServletHolder;
 import org.eclipse.jetty.webapp.WebAppContext;
 
 public class ServerMain {
@@ -91,7 +94,8 @@ public class ServerMain {
 		mapContext.setContextPath(config.getProperty(Constants.MAPCACHE));
 		logger.info("  Mapcache resource:"+config.getProperty(Constants.MAPCACHE_RESOURCE));
 		mapContext.setResourceBase(config.getProperty(Constants.MAPCACHE_RESOURCE));
-		mapContext.addServlet(DefaultServlet.class, "/*");
+		ServletHolder mapHolder= mapContext.addServlet(DefaultServlet.class, "/*");
+		mapHolder.setInitParameter("cacheControl","max-age=3600,public" );
 		
 		//serve tracks
 		ServletContextHandler trackContext = new ServletContextHandler();
