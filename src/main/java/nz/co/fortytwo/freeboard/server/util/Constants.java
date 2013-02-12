@@ -172,6 +172,11 @@ public class Constants {
 	public static  final String WIND_H = "freeboard.wind.h";
 	
 	public static  final String USBDRIVE = "freeboard.usb.usbdrive";
+	public static final String CHART_LAT = "freeboard.chart.lat";
+	public static final String CHART_LON = "freeboard.chart.lon";
+	public static final String CHART_ZOOM = "freeboard.chart.zoom";
+	public static final String CHART_LAYER = "freeboard.chart.layer.";
+	
 	
 	public Constants() {
 		// TODO Auto-generated constructor stub

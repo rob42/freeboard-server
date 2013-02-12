@@ -40,15 +40,15 @@
 
 			<html style="overflow: visible" >
 				<canvas id="canvasWindDirTrue" style="overflow: visible" 
-					width="${mainWindow$composer.size}"
-					height="${mainWindow$composer.size}" >
+					width="${wind$composer.size}"
+					height="${wind$composer.size}" >
 				</canvas>
 			</html>
 
 			<html style="overflow: visible" >
 				<canvas id="canvasWindDirApp" style="overflow: visible" 
-					width="${mainWindow$composer.size}"
-					height="${mainWindow$composer.size}">
+					width="${wind$composer.size}"
+					height="${wind$composer.size}">
 				</canvas>
 			</html>
 
@@ -57,8 +57,8 @@
 		<hlayout hflex="5" style="overflow: visible" >
 			<html style="overflow: visible" >
 				<canvas id="canvasWindTrue" style="overflow: visible" 
-					width="${mainWindow$composer.size*0.9}"
-					height="${mainWindow$composer.size/3.5}">
+					width="${wind$composer.size*0.9}"
+					height="${wind$composer.size/3.5}">
 				</canvas>
 			</html>
 
@@ -72,8 +72,8 @@
 
 			<html style="overflow: visible" >
 				<canvas id="canvasWindApp" style="overflow: visible" 
-					width="${mainWindow$composer.size*0.9}"
-					height="${mainWindow$composer.size/3.5}">
+					width="${wind$composer.size*0.9}"
+					height="${wind$composer.size/3.5}">
 					No canvas in your browser...sorry...
 				</canvas>
 			</html>

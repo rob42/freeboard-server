@@ -38,12 +38,18 @@
 	</style>
 	<window id="mainWindow"
 		xmlns:w="http://www.zkoss.org/2005/zk/client"
-		apply="nz.co.fortytwo.freeboard.zk.InstrumentViewModel" vflex="true"
+		apply="nz.co.fortytwo.freeboard.zk.ChartplotterViewModel" vflex="true"
 		style="margin-left:auto;">
 		<borderlayout>
 			<center>
+			
 				<div vflex="1" hflex="1"
 					style="background-color: white;">
+					<label id="firstLat" value="0.0" visible="false"/>
+					<label id="firstLon" value="0.0" visible="false"/>
+					<label id="firstZoom" value="0.0" visible="false"/>
+					<label id="layerVisibility" value="" visible="false"/>
+					
 					<div vflex="1" hflex="1">
 						<html>
 							<div id="map"></div>

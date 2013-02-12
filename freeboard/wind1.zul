@@ -40,14 +40,14 @@
 	<hlayout style="overflow: visible">
 
 		<html style="overflow: visible">
-			<canvas id="canvasWindDirTrue" width="${mainWindow$composer.size}"
-				height="${mainWindow$composer.size}" style="overflow: visible">
+			<canvas id="canvasWindDirTrue" width="${wind$composer.size}"
+				height="${wind$composer.size}" style="overflow: visible">
 			</canvas>
 		</html>
 		<vlayout style="margin-left:auto; margin-right:auto; text-align:center;">
 			<html>
-				<canvas id="canvasWindTrue" width="${mainWindow$composer.size/2}"
-					height="${mainWindow$composer.size/2}">
+				<canvas id="canvasWindTrue" width="${wind$composer.size/2}"
+					height="${wind$composer.size/2}">
 				</canvas>
 			</html>
 			
@@ -60,15 +60,15 @@
 				</hlayout>
 			
 			<html>
-				<canvas id="canvasWindApp" width="${mainWindow$composer.size/2}"
-					height="${mainWindow$composer.size/2}">
+				<canvas id="canvasWindApp" width="${wind$composer.size/2}"
+					height="${wind$composer.size/2}">
 					No canvas in your browser...sorry...
 				</canvas>
 			</html>
 		</vlayout>
 		<html>
-			<canvas id="canvasWindDirApp" width="${mainWindow$composer.size}"
-				height="${mainWindow$composer.size}">
+			<canvas id="canvasWindDirApp" width="${wind$composer.size}"
+				height="${wind$composer.size}">
 			</canvas>
 		</html>
 

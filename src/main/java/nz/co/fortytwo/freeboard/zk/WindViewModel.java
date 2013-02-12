@@ -47,6 +47,10 @@ public class WindViewModel extends SelectorComposer<Window>{
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+	/**
+	 * Dial master size
+	 */
+	private double size = 400;
 	
 	@WireVariable
     private Session sess;
@@ -133,6 +137,14 @@ public class WindViewModel extends SelectorComposer<Window>{
 			logger.error(e);
 		} 
 		windScale.setValue(String.valueOf(scale));
+	}
+
+	public double getSize() {
+		return size;
+	}
+
+	public void setSize(double size) {
+		this.size = size;
 	}
 
 	

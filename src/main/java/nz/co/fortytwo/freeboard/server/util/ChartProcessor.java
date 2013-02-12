@@ -109,6 +109,8 @@ public class ChartProcessor {
 		String desc = header.substring(pos,header.indexOf("\n",pos)).trim();
 		//if(desc.endsWith("\n"))desc=desc.substring(0,desc.length()-1);
 		logger.debug("Name:"+desc);
+		//we cant have + in name, as its used in storing ChartplotterViewModel
+		desc=desc.replaceAll("+", " ");
 		//process the layer data
 		
 		//read data from dirName/tilelayers.xml

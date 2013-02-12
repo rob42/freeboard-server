@@ -248,15 +248,58 @@ function initCharts() {
 	        zAu.send(new zk.Event(zk.Widget.$("$this"), 'onWaypoint', new Array(wptLocation.lat,wptLocation.lon)));
 		}
     });
+	//track map moving and zooming
+	var followBoatCount =0;
+	map.events.register("moveend", map, function() {
+		 if(followBoat){
+			 //increment count, we only save move event every 100 moves
+			 if(followBoatCount>100){
+				 followBoatCount=0;
+			 }else{
+				 followBoatCount++;
+				 //outa here
+				 return;
+			 }
+		 }
+		var chartLocation = map.getCenter().transform(chartProjection, screenProjection );
+        //console.log("zoomEnd:"+chartLocation.getCenter().lat+","+chartLocation.lon+","+map.getZoom());
+        zAu.send(new zk.Event(zk.Widget.$("$this"), 'onChartChange', new Array(chartLocation.lat,chartLocation.lon,map.getZoom())));
+    });
+	
+	//track layers
+	map.events.register('changelayer', null, function(evt){
+       if(evt.property === "visibility") {
+    	   //console.log(evt.layer.name + " layer visibility changed to " +	evt.layer.visibility );
+    	   zAu.send(new zk.Event(zk.Widget.$("$this"), 'onLayerChange', new Array(evt.layer.name,evt.layer.visibility)));
+       }
+   });
 	
 	var switcherControl = new OpenLayers.Control.LayerSwitcher();
 	map.addControl(switcherControl);
 	//switcherControl.maximizeControl();
 
+	//set layer visibility
+	var vis = zk.Widget.$("$layerVisibility").getValue().split(';');
+	jQuery.each(vis, function(i, data) {
+		var lyr = data.split("=");
+		if(lyr[0].length>0){
+			var curLayer=map.getLayersByName(lyr[0]);
+			//console.log("Check layer:"+lyr);
+			//console.log("Found layer:"+curLayer[0].name);
+			if(lyr[1]==='false'){
+				curLayer[0].setVisibility(false);
+			}else{
+				curLayer[0].setVisibility(true);
+			}
+		}
+	});
+	//zoom to last pos and zoom
+	var mainWindow = zk.Widget.$("$mainWindow");
 	map.zoomToExtent(mapBounds.transform(map.displayProjection,	map.projection));
-	//map.zoomTo(2);
+	map.moveTo(new OpenLayers.LonLat(zk.Widget.$("$firstLon").getValue(),zk.Widget.$("$firstLat").getValue()).transform(screenProjection, chartProjection));
+	map.zoomTo(zk.Widget.$("$firstZoom").getValue());
 	$("#noneToggle").checked = true;
-
+	
 	
 }
 
