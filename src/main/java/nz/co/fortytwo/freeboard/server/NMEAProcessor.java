@@ -18,6 +18,7 @@
  */
 package nz.co.fortytwo.freeboard.server;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -37,7 +38,6 @@ import net.sf.marineapi.nmea.sentence.Sentence;
 import net.sf.marineapi.nmea.sentence.SentenceId;
 import net.sf.marineapi.nmea.sentence.VHWSentence;
 import net.sf.marineapi.nmea.util.CompassPoint;
-import net.sf.marineapi.nmea.util.Position;
 import nz.co.fortytwo.freeboard.server.util.Constants;
 import nz.co.fortytwo.freeboard.server.util.Util;
 
@@ -209,6 +209,7 @@ public class NMEAProcessor extends FreeboardProcessor implements Processor {
 				HashMap<String, Object> map = new HashMap<String, Object>();
 				if (evt.getSentence() instanceof PositionSentence) {
 					PositionSentence sen = (PositionSentence) evt.getSentence();
+					
 					if(startLat ){
 						previousLat= sen.getPosition().getLatitude();
 						startLat=false;
@@ -242,6 +243,8 @@ public class NMEAProcessor extends FreeboardProcessor implements Processor {
 				}
 				if (evt.getSentence() instanceof RMCSentence) {
 					RMCSentence sen = (RMCSentence) evt.getSentence();
+					Util.checkTime(sen);
+					
 					previousSpeed=Util.movingAverage(ALPHA, previousSpeed, sen.getSpeed());
 					map.put(Constants.SOG,previousSpeed);
 				}

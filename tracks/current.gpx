@@ -11243,6 +11243,14 @@
         <ele>0.0</ele>
         <time>2013-02-12T18:06:35Z</time>
       </trkpt>
+      <trkpt lat="-41.293684999999996" lon="173.24704">
+        <ele>0.0</ele>
+        <time>2013-02-12T19:03:17Z</time>
+      </trkpt>
+      <trkpt lat="-41.293593333333334" lon="173.24724666666665">
+        <ele>0.0</ele>
+        <time>2013-02-12T19:53:26Z</time>
+      </trkpt>
     </trkseg>
   </trk>
 </gpx>

@@ -25,10 +25,18 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Properties;
 
 
+import net.sf.marineapi.nmea.sentence.RMCSentence;
+import nz.co.fortytwo.freeboard.server.ServerMain;
+
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.SystemUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.log4j.Logger;
 
 /**
  * Place for all the left over bits that are used across freeboard
@@ -37,9 +45,11 @@ import org.apache.commons.lang3.StringUtils;
  */
 public class Util {
 	
+	private static Logger logger = Logger.getLogger(Util.class);
 	private static Properties props;
 	public static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd_hh:mm:ss");
 	private static File cfg = null;
+	private static boolean timeSet=false;
 	/**
 	 * Smooth the data a bit
 	 * @param prev
@@ -171,6 +181,54 @@ public class Util {
 		}
 		return null;
 	}
+
+	/**
+	 * Attempt to set the system time using the GPS time
+	 * @param sen
+	 */
+	public static void checkTime(RMCSentence sen) {
+			if(timeSet)return;
+			try {
+				net.sf.marineapi.nmea.util.Date dayNow = sen.getDate();
+				//if we need to set the time, we will be WAAYYY out
+				//we only try once, so we dont get lots of native processes spawning if we fail
+				timeSet=true;
+				Date date = new Date();
+				if((date.getYear()+1900)==dayNow.getYear()){
+					logger.debug("Current date is " + date);
+					return;
+				}
+				//so we need to set the date and time
+				net.sf.marineapi.nmea.util.Time timeNow = sen.getTime();
+				String yy = String.valueOf(dayNow.getYear());
+				String MM = pad(2,String.valueOf(dayNow.getMonth()));
+				String dd = pad(2,String.valueOf(dayNow.getDay()));
+				String hh = pad(2,String.valueOf(timeNow.getHour()));
+				String mm = pad(2,String.valueOf(timeNow.getMinutes()));
+				String ss = pad(2,String.valueOf(timeNow.getSeconds()));
+				logger.debug("Setting current date to " + dayNow + " "+timeNow);
+				String cmd = "sudo date --utc " + MM+dd+hh+mm+yy+"."+ss;
+				Runtime.getRuntime().exec(cmd.split(" "));// MMddhhmm[[yy]yy]
+				logger.debug("Executed date setting command:"+cmd);
+			} catch (Exception e) {
+				logger.error(e.getMessage(),e);
+			} 
+			
+		}
+
+	/**
+	 * pad the value to i places, eg 2 >> 02
+	 * @param i
+	 * @param valueOf
+	 * @return
+	 */
+	private static String pad(int i, String value) {
+		while(value.length()<i){
+			value="0"+value;
+		}
+		return value;
+	}
+	
 	
 	
 }
