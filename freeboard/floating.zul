@@ -36,6 +36,11 @@
 		the pink image */ display: none !important; }
 		.hboxRemoveWhiteStrips td.z-hbox-sep { width: 0; padding: 0;}
 	</style>
+	<script type="text/javascript">
+	    function refreshWaypoints(){
+			wgpx.refresh();
+			}
+	</script>
 	<window id="mainWindow"
 		xmlns:w="http://www.zkoss.org/2005/zk/client"
 		apply="nz.co.fortytwo.freeboard.zk.ChartplotterViewModel" vflex="true"

@@ -24,6 +24,8 @@ var lon=0.0;
 var heading=0.0;
 var speed=0.0;
 var declination=0.0;
+var trackCount=0;
+var moveCount=0;
 
 var followBoat=false;
 
@@ -39,10 +41,14 @@ var shipMarker = new OpenLayers.Layer.Vector('Ship', {
 });
 var shipTrack = new OpenLayers.Layer.Vector('Track', {
     styleMap: new OpenLayers.StyleMap({
-        externalGraphic: './js/img/red.png',
-        graphicWidth: 2, graphicHeight: 2, graphicYOffset: -1,
+        strokeWidth : 2,
+		strokeOpacity : 1,
+		strokeColor : "#FF0066",
     })
 });
+var trackLine = null;
+
+
 var hdgLayer = new OpenLayers.Layer.Vector('Heading', {
 	styleMap: new OpenLayers.StyleMap({
 		strokeWidth : 2,
@@ -57,6 +63,34 @@ var bearingLayer = new OpenLayers.Layer.Vector('Bearing', {
 		strokeColor : "#000000",
 		strokeDashstyle : "dash",
     })
+});
+
+//Add the Layer with the GPX Track
+var tgpx = new OpenLayers.Layer.Vector("GPX track", {
+	strategies: [new OpenLayers.Strategy.Fixed()],
+	protocol: new OpenLayers.Protocol.HTTP({
+		url: "../../tracks/current.gpx",
+		format: new OpenLayers.Format.GPX({extractTracks: true, extractWaypoints: false,  
+			extractName: true, extractRoutes: false, extractAttributes: false})
+	}),
+	style: {pointRadius: 5, fillColor: "darkred", strokeColor: "red", strokeWidth: 2, strokeOpacity: 0.7},
+	projection: new OpenLayers.Projection("EPSG:4326")
+});
+
+// Add the Layer with the GPX Waypoints
+var wgpx = new OpenLayers.Layer.Vector("Waypoints", {
+	strategies: [new OpenLayers.Strategy.Fixed()],
+	protocol: new OpenLayers.Protocol.HTTP({
+		url: "../../tracks/waypoints.gpx",
+		format: new OpenLayers.Format.GPX({extractTracks: false, extractWaypoints: true,  
+			extractName: true, extractRoutes: false, extractAttributes: true})
+	}),
+	styleMap: new OpenLayers.StyleMap({
+        externalGraphic: './js/img/marker-blue.png',
+        graphicWidth: 15, graphicHeight: 20, graphicYOffset: -20, graphicXOffset: -8,
+        title: '${name}'
+    }),
+	projection: new OpenLayers.Projection("EPSG:4326")
 });
 
 // avoid pink tiles
@@ -80,36 +114,11 @@ function initCharts() {
 
 	//add layers
 	addLayers(map);
-
-	// Add the Layer with the GPX Track
-	var tgpx = new OpenLayers.Layer.Vector("GPX track", {
-		strategies: [new OpenLayers.Strategy.Fixed()],
-		protocol: new OpenLayers.Protocol.HTTP({
-			url: "../../tracks/current.gpx",
-			format: new OpenLayers.Format.GPX({extractTracks: true, extractWaypoints: false,  
-				extractName: true, extractRoutes: false, extractAttributes: false})
-		}),
-		style: {pointRadius: 5, fillColor: "darkred", strokeColor: "red", strokeWidth: 2, strokeOpacity: 0.7},
-		projection: new OpenLayers.Projection("EPSG:4326")
-	});
+	
+	//add GPX track
 	map.addLayer(tgpx);
 	
-	// Add the Layer with the GPX Waypoints
-	var wgpx = new OpenLayers.Layer.Vector("Waypoints", {
-		strategies: [new OpenLayers.Strategy.Fixed()],
-		protocol: new OpenLayers.Protocol.HTTP({
-			url: "../../tracks/waypoints.gpx",
-			format: new OpenLayers.Format.GPX({extractTracks: false, extractWaypoints: true,  
-				extractName: true, extractRoutes: false, extractAttributes: true})
-		}),
-		styleMap: new OpenLayers.StyleMap({
-	        externalGraphic: './js/img/marker-blue.png',
-	        graphicWidth: 15, graphicHeight: 20, graphicYOffset: -20, graphicXOffset: -8,
-	        title: '${name}'
-	    }),
-		//style: {pointRadius: 5, fillColor: "darkred", strokeColor: "red", strokeWidth: 2, strokeOpacity: 0.7},
-		projection: new OpenLayers.Projection("EPSG:4326")
-	});
+	//add waypoint layer
 	map.addLayer(wgpx);
 	//for waypoints and editing routes
 	//http://openlayers.org/dev/examples/modify-feature.html
@@ -248,11 +257,12 @@ function initCharts() {
 	        zAu.send(new zk.Event(zk.Widget.$("$this"), 'onWaypoint', new Array(wptLocation.lat,wptLocation.lon)));
 		}
     });
+	
 	//track map moving and zooming
 	var followBoatCount =0;
 	map.events.register("moveend", map, function() {
 		 if(followBoat){
-			 //increment count, we only save move event every 100 moves
+			 //increment count, we only save move event every 100 moves if we are following the boat
 			 if(followBoatCount>100){
 				 followBoatCount=0;
 			 }else{
@@ -294,7 +304,6 @@ function initCharts() {
 		}
 	});
 	//zoom to last pos and zoom
-	var mainWindow = zk.Widget.$("$mainWindow");
 	map.zoomToExtent(mapBounds.transform(map.displayProjection,	map.projection));
 	map.moveTo(new OpenLayers.LonLat(zk.Widget.$("$firstLon").getValue(),zk.Widget.$("$firstLat").getValue()).transform(screenProjection, chartProjection));
 	map.zoomTo(zk.Widget.$("$firstZoom").getValue());
@@ -371,8 +380,6 @@ onresize = function() {
 
 // measurement
 function handleMeasurements(event) {
-	var geometry = event.geometry;
-	var units = event.units;
 	var order = event.order;
 	//convert to nautical miles
 	var measure = event.measure * 0.539957;
@@ -387,6 +394,9 @@ function handleMeasurements(event) {
 	eOutput.setValue(out);
 }
 
+/*
+ * toggles  nav and measure mode
+ */
 function toggleControl(cmd) {
 	for (key in measureControls) {
 		var control = measureControls[key];
@@ -398,14 +408,7 @@ function toggleControl(cmd) {
 	}
 }
 
-function followBoatPosition(){
-	followBoat=!followBoat;
-}
-function centerBoat(){
-	centerOnBoat=true;
-	map.moveTo(new OpenLayers.LonLat(lon,lat).transform(screenProjection, chartProjection));
-	map.zoomTo(10);
-}
+
 
 var eLat = null;
 var eLon = null;
@@ -430,18 +433,12 @@ function setPosition(llat, llon, brng, spd){
     // coordinates ('EPSG:4326'), but the map is projected ('EPSG:3857').
     var shipLocation = new OpenLayers.Geometry.Point(llon, llat) //new OpenLayers.Geometry.Point(lonLat);
         .transform(screenProjection, chartProjection);
-    var trackPoint = new OpenLayers.Geometry.Point(llon, llat) //new OpenLayers.Geometry.Point(lonLat);
-    .transform(screenProjection, chartProjection);
-    
+   
     shipMarker.addFeatures([
         new OpenLayers.Feature.Vector(shipLocation, {angle: brng, tooltip: 'Motu'})
     ]);
-    shipTrack.addFeatures([
-                            new OpenLayers.Feature.Vector(trackPoint, {})
-                        ]);
-    if(followBoat){
-		map.moveTo(new OpenLayers.LonLat(llon,llat).transform(screenProjection, chartProjection));
-	}
+    
+   
     // ref  http://www.movable-type.co.uk/scripts/latlong.html
     var start_point = new OpenLayers.LonLat(llon,llat);//.transform(screenProjection, chartProjection);
     //1852 meters in nautical mile
@@ -462,6 +459,90 @@ function setPosition(llat, llon, brng, spd){
          ]);
 }
 
+/*
+ * Center the boat in the screen at zoom=10
+ */
+function centerBoat(){
+	centerOnBoat=true;
+	map.moveTo(new OpenLayers.LonLat(lon,lat).transform(screenProjection, chartProjection));
+	map.zoomTo(10);
+}
+
+/*
+ * toggle on/off follow boat mode
+ */
+function followBoatPosition(){
+	followBoat=!followBoat;
+}
+
+/*
+ * Move the chart so the boat is centered. Called when follow boat = true
+ */
+function moveToBoatPosition(llat, llon){
+	 //every 10 moves
+    if(followBoat && moveCount>10){
+    	moveCount=0;
+		map.moveTo(new OpenLayers.LonLat(llon,llat).transform(screenProjection, chartProjection));
+	}else{
+		moveCount++;
+	}
+}
+
+/*
+ * Add a point to the boat track, and draw to screen
+ */
+function setTrack(llat, llon){
+	//add to tracks
+    var trackPoint = new OpenLayers.Geometry.Point(llon, llat) //new OpenLayers.Geometry.Point(lonLat);
+	.transform(screenProjection, chartProjection);
+
+    if(trackLine==null){
+    	trackLine = new OpenLayers.Geometry.LineString(new Array(trackPoint, trackPoint));
+    	shipTrack.addFeatures([
+    	                       new OpenLayers.Feature.Vector(trackLine, {})
+    	                       ]);
+    }else{
+    	trackLine.addPoint(trackPoint);
+    	shipTrack.redraw();
+    	trackCount++;
+    }
+    //simplify every 100 points
+    if(trackCount>100){
+    	trackCount=0;
+    	console.log("TrackLine="+trackLine.getVertices().length);
+    	//10 meters is 0.005 Nm, so we will use 20M for now
+    	trackLine=trackLine.simplify(0.2);
+    	shipTrack.removeAllFeatures();
+    	shipTrack.addFeatures([
+    	                       new OpenLayers.Feature.Vector(trackLine, {})
+    	                       ]);
+    	console.log("TrackLine="+trackLine.getVertices().length);
+    }
+}
+
+/*
+ * Reload the GPXTrack layer, then clear the Track layer to start again
+ * Called every 5 minutes or so.
+ */
+function refreshTrack(){
+	tgpx.refresh();
+	var trackPoints = tgpx.features[0].geometry.getVertices();
+	if(trackPoints.length>60){
+		var tpPoint=trackPoints.slice[-60];
+		shipTrack.removeAllFeatures();
+		trackLine = new OpenLayers.Geometry.LineString(tpPoint);
+		shipTrack.addFeatures([
+		                       new OpenLayers.Feature.Vector(trackLine, {})
+		                       ]);
+	}
+}
+
+/*
+ * Refresh waypoints, called by server after adding/editing a waypoint
+ */
+//function refreshWaypoints(){
+//	wgpx.refresh();
+//}
 
 function ChartPlotter () {
 	this.onmessage = function (mArray) {
@@ -515,13 +596,17 @@ function ChartPlotter () {
 		});
 		if(setPos){
 			setPosition(lat,lon, heading+declination, speed);
+			setTrack(lat,lon);
+			moveToBoatPosition(lat,lon);
 		}
-	}
+	};
 	
 }
 function posInit(){
 	addSocketListener(new ChartPlotter());
 	eLat = zk.Widget.$("$posLat");
 	eLon = zk.Widget.$("$posLon");
+	//reload track every 5 min so the local track doesnt get too long
+	setInterval("refreshTrack()",30000);
 }
 

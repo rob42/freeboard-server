@@ -37,6 +37,7 @@ import org.zkoss.zk.ui.select.SelectorComposer;
 import org.zkoss.zk.ui.select.annotation.Listen;
 import org.zkoss.zk.ui.select.annotation.Wire;
 import org.zkoss.zk.ui.select.annotation.WireVariable;
+import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Decimalbox;
 import org.zkoss.zul.Label;
@@ -142,6 +143,7 @@ public class WaypointViewModel extends SelectorComposer<Window>{
 			logger.error(e.getMessage(),e);
 		}
 	    wptWindow.setVisible(false);
+	    Clients.evalJavaScript("refreshWaypoints()");
 	}
 	@Listen("onClick = button#cancel")
 	public void wptCancelClick(MouseEvent event) {

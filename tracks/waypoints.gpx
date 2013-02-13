@@ -1,14 +1,16 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <gpx>
+  <wpt lat="-41.19338889" lon="173.14763889">
+    <ele>0.0</ele>
+    <time>2013-02-13T19:31:52Z</time>
+    <name>TEST WPT</name>
+    <desc>test, I have edited</desc>
+  </wpt>
   <wpt lat="-41.25638751763988" lon="173.25148245364625">
     <ele>0.0</ele>
     <time>2013-02-09T12:08:16Z</time>
     <name>Nelson Harbour (outside)</name>
     <desc>Outside the cut</desc>
-  </wpt>
-  <wpt lat="-41.19338889" lon="173.14763889">
-    <ele>2372.0</ele>
-    <name>TEST WPT</name>
   </wpt>
   <wpt lat="-42.286922669298626" lon="148.70947567496108">
     <ele>0.0</ele>
@@ -17,9 +19,19 @@
     <desc>test</desc>
   </wpt>
   <wpt lat="-41.19338889" lon="173.14763889">
+    <ele>2372.0</ele>
+    <name>TEST WPT</name>
+  </wpt>
+  <wpt lat="-41.19338889" lon="173.14763889">
     <ele>0.0</ele>
     <time>2013-02-09T18:04:13Z</time>
     <name>TEST WPT</name>
     <desc>test</desc>
+  </wpt>
+  <wpt lat="-41.19338889" lon="173.14763889">
+    <ele>0.0</ele>
+    <time>2013-02-13T19:36:41Z</time>
+    <name>TEST WPT</name>
+    <desc>Add a description</desc>
   </wpt>
 </gpx>

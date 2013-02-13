@@ -2,15 +2,16 @@
 #
 # make use we have loaded the usb after a cold boot
 # make sure it unmounted first
-sudo umount /media/usb0
-if [ ! -d "/media/usb0" ]; then 
-        sudo mkdir /media/usb0 >logs/start.log 2>&1
+MEDIA_HOME=/media/usb0
+sudo umount -l $MEDIA_HOME >logs/start.log 2>&1
+if [ ! -d "$MEDIA_HOME" ]; then  
+        sudo mkdir $MEDIA_HOME >>logs/start.log 2>&1
 fi
-sudo mount -tvfat -osync,noexec,nodev,noatime,nodiratime,gid=floppy,umask=000 /dev/sda1 /media/usb0 >>logs/start.log 2>&1
+sudo mount -tvfat -osync,noexec,nodev,noatime,nodiratime,gid=floppy,umask=000 /dev/sda1 $MEDIA_HOME >>logs/start.log 2>&1
 
 # start script for freeboard
 FREEBOARD_HOME=/home/pi/freeboard
-MEDIA_HOME=/media/usb0
+
 JAR=freeboard-server.jar
 #
 cd $FREEBOARD_HOME

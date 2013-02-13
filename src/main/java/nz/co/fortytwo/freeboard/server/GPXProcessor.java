@@ -30,6 +30,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 
 import nz.co.fortytwo.freeboard.server.util.Constants;
+import nz.co.fortytwo.freeboard.server.util.SGImplify;
 import nz.co.fortytwo.freeboard.server.util.Util;
 
 import org.alternativevision.gpx.GPXParser;
@@ -56,6 +57,7 @@ import org.apache.log4j.Logger;
 public class GPXProcessor extends FreeboardProcessor implements Processor {
 
 	private static final String CURRENT = "current";
+	private static final double TOLERANCE = 0.000025; //About 3M out of line?
 	private static Logger logger = Logger.getLogger(GPXProcessor.class);
 	private File gpxFile;
 	private File gpxDir;
@@ -63,10 +65,6 @@ public class GPXProcessor extends FreeboardProcessor implements Processor {
 	private Track currentTrack;
 	private int count = 0;
 	private int triggerCount=60;
-	private boolean triggerNeeded=false;
-	private double lat=0.0;
-	private double lon=0.0;
-			
 
 	public GPXProcessor() {
 
@@ -122,29 +120,28 @@ public class GPXProcessor extends FreeboardProcessor implements Processor {
 			//check if they are worth saving
 			double newLat=(Double) map.get(Constants.LAT);
 			double newLon=(Double) map.get(Constants.LON);
-			if(checkValue(newLat,newLon)){
-				// write out to gpx track
-				TrackPoint tp = new TrackPoint();
-				tp.setElevation(0.0);
-				tp.setTime(new Date());
-				tp.setLatitude(newLat);
-				tp.setLongitude(newLon);
-				currentTrack.getTrackPoints().add(tp);
-				triggerNeeded=true;
-			}
+			// write out to gpx track
+			TrackPoint tp = new TrackPoint();
+			tp.setElevation(0.0);
+			tp.setTime(new Date());
+			tp.setLatitude(newLat);
+			tp.setLongitude(newLon);
+			currentTrack.getTrackPoints().add(tp);
+			
 			//we count every occurrence, an easy way to count time!
 			count++;
 		}
 		//write out every 60 points, eg 1 min at 1 sec GPS data, or 60sec to usb
-		if(triggerNeeded && count >triggerCount){
+		if(count >triggerCount){
 			count=0;
-			triggerNeeded=false;
-			//if its too long, truncate and archive
-			if(currentTrack.getTrackPoints().size()>3100){
-				//write out the first 10000
+			//simplify here
+			currentTrack.setTrackPoints(SGImplify.simplifyLine2D(TOLERANCE, currentTrack.getTrackPoints()));
+			//if its still too long, truncate and archive
+			if(currentTrack.getTrackPoints().size()>1100){
+				//write out the first 1000
 				ArrayList<Waypoint> points = currentTrack.getTrackPoints();
 				
-				Waypoint [] oldPoints = Arrays.copyOfRange(points.toArray(new Waypoint[0]), 0, 3000);
+				Waypoint [] oldPoints = Arrays.copyOfRange(points.toArray(new Waypoint[0]), 0, 1000);
 				GPX oldGpx = new GPX();
 				Track oldTrack = new Track();
 				ArrayList<Waypoint> newPoints = new ArrayList<Waypoint>();
@@ -166,26 +163,6 @@ public class GPXProcessor extends FreeboardProcessor implements Processor {
 		}
 		
 
-	}
-
-	/**
-	 * Checks to see if a value is different enough to be worth saving to the GPX track
-	 * Just uses a simple distance comparison
-	 * 
-	 * @param newLat
-	 * @param newLon
-	 * @return
-	 */
-	private boolean checkValue(double newLat, double newLon) {
-		//about every 30M
-		if(Math.abs(newLat-lat)>0.00025 || Math.abs(newLon-lon)>0.00025 ){
-			lat=newLat;
-			lon=newLon;
-			//logger.debug("GPX value saved:"+newLat+","+newLon);
-			return true;
-		}
-		//logger.debug("GPX value not saved");
-		return false;
 	}
 
 	private void writeGPX(GPX gpx, File file) {
