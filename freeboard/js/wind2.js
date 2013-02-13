@@ -136,8 +136,8 @@ function initWind() {
 	// wind app
 	// wind
 	lcdWindApp = new steelseries.DisplayMulti('canvasWindApp', {
-		width : document.getElementById('canvasWindApp').width,
-		height : document.getElementById('canvasWindApp').height,
+		//width : document.getElementById('canvasWindApp').width,
+		// : document.getElementById('canvasWindApp').height,
 		lcdDecimals : 1,
 		lcdColor: steelseries.LcdColor.BEIGE,
 		unitString : "Knots(A)",
@@ -148,7 +148,7 @@ function initWind() {
 
 	// wind dir
 	radialWindDirApp = new steelseries.WindDirection('canvasWindDirApp', {
-		size : document.getElementById('canvasWindDirApp').width,
+		//size : document.getElementById('canvasWindDirApp').width,
 		titleString : "WIND          APP",
 		lcdVisible : true,
 		lcdColor: steelseries.LcdColor.BEIGE,
@@ -163,8 +163,8 @@ function initWind() {
 	
 	// wind true
 	lcdWindTrue = new steelseries.DisplayMulti('canvasWindTrue', {
-		width : document.getElementById('canvasWindTrue').width,
-		height : document.getElementById('canvasWindTrue').height,
+		//width : document.getElementById('canvasWindTrue').width,
+		//height : document.getElementById('canvasWindTrue').height,
 		lcdDecimals : 1,
 		lcdColor: steelseries.LcdColor.BEIGE,
 		unitString : "Knots(T)",
@@ -176,7 +176,7 @@ function initWind() {
 	// wind dir
 
 	radialWindDirTrue = new steelseries.WindDirection('canvasWindDirTrue', {
-		size : document.getElementById('canvasWindDirTrue').width,
+		//size : document.getElementById('canvasWindDirTrue').width,
 		titleString : "WIND           TRUE",
 		roseVisible : false,
 		lcdVisible : true,

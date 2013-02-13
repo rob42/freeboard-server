@@ -112,8 +112,8 @@ function initLogg() {
 	// log
 	lcdLat = new steelseries.DisplaySingle('canvasLat', {
 		// gaugeType : steelseries.GaugeType.TYPE4,
-		width : document.getElementById('canvasLat').width,
-		height : document.getElementById('canvasLat').height,
+		//width : document.getElementById('canvasLat').width,
+		//height : document.getElementById('canvasLat').height,
 		lcdDecimals : 5,
 		lcdColor: steelseries.LcdColor.BEIGE,
 		//unitString:"",
@@ -123,8 +123,8 @@ function initLogg() {
 	});
 	lcdLon = new steelseries.DisplaySingle('canvasLon', {
 		// gaugeType : steelseries.GaugeType.TYPE4,
-		width : document.getElementById('canvasLon').width,
-		height : document.getElementById('canvasLon').height,
+		//width : document.getElementById('canvasLon').width,
+		//height : document.getElementById('canvasLon').height,
 		lcdDecimals : 5,
 		lcdColor: steelseries.LcdColor.BEIGE,
 		//unitString:"",
@@ -136,8 +136,8 @@ function initLogg() {
 	// log
 	lcdLog = new steelseries.DisplayMulti('canvasLog', {
 		// gaugeType : steelseries.GaugeType.TYPE4,
-		width : document.getElementById('canvasLog').width,
-		height : document.getElementById('canvasLog').height,
+		//width : document.getElementById('canvasLog').width,
+		//height : document.getElementById('canvasLog').height,
 		lcdDecimals : 1,
 		lcdColor: steelseries.LcdColor.BEIGE,
 		headerString : "Knots",
@@ -151,8 +151,8 @@ function initLogg() {
 	
 	// heading
 	lcdHeading = new steelseries.DisplayMulti('canvasHeading', {
-		width : document.getElementById('canvasHeading').width,
-		height : document.getElementById('canvasHeading').height,
+		//width : document.getElementById('canvasHeading').width,
+		//height : document.getElementById('canvasHeading').height,
 		lcdDecimals : 0,
 		lcdColor: steelseries.LcdColor.BEIGE,
 		headerString : "Heading(M)",
@@ -163,8 +163,8 @@ function initLogg() {
 
 	// waypoint
 	lcdWaypoint = new steelseries.DisplayMulti('canvasWaypoint', {
-		width : document.getElementById('canvasWaypoint').width,
-		height : document.getElementById('canvasWaypoint').height,
+		//width : document.getElementById('canvasWaypoint').width,
+		//height : document.getElementById('canvasWaypoint').height,
 		lcdDecimals : 0,
 		lcdColor: steelseries.LcdColor.BEIGE,
 		headerString : "To Waypoint",

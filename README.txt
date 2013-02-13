@@ -37,7 +37,7 @@ Hardware:
 
 Hostapd notes:
   Use a supported wifi dongle - try RT5370 USB - works but seems to suffer arbitrary freezes (possibly due to a known driver problem)
-  I am trying an atheros ath9k based dongle - will report outcome. If you are really stuck, use ethernet for dev, and a real Wifi access point on the boat for now.
+  I am trying an atheros ath9k based dongle - its good now. If you are really stuck, use ethernet for dev, and a real Wifi access point on the boat for now.
 
   'sudo apt-get install wpasupplicant usbutils wireless-tools iw hostapd dnsmasq'
   'iw list' must return 

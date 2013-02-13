@@ -70,8 +70,8 @@ function initAnchorAlarm() {
 
 	alcdRadius = new steelseries.DisplaySingle('acanvasRadius', {
 		// gaugeType : steelseries.GaugeType.TYPE4,
-		width : document.getElementById('acanvasRadius').width,
-		height : document.getElementById('acanvasRadius').height,
+		//width : document.getElementById('acanvasRadius').width,
+		//height : document.getElementById('acanvasRadius').height,
 		lcdDecimals : 0,
 		lcdColor: steelseries.LcdColor.BEIGE,
 		unitString:"Mtrs",
@@ -81,8 +81,8 @@ function initAnchorAlarm() {
 	});
 	alcdDistance = new steelseries.DisplaySingle('acanvasDistance', {
 		// gaugeType : steelseries.GaugeType.TYPE4,
-		width : document.getElementById('acanvasDistance').width,
-		height : document.getElementById('acanvasDistance').height,
+		//width : document.getElementById('acanvasDistance').width,
+		//height : document.getElementById('acanvasDistance').height,
 		lcdDecimals : 0,
 		lcdColor: steelseries.LcdColor.BEIGE,
 		unitString:"Mtrs",

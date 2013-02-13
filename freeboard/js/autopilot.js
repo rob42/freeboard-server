@@ -85,8 +85,8 @@ function initAutopilot() {
 
 	// heading
 	autopilotTarget = new steelseries.DisplaySingle('canvasTarget', {
-		width : document.getElementById('canvasTarget').width,
-		height : document.getElementById('canvasTarget').height,
+		//width : document.getElementById('canvasTarget').width,
+		//height : document.getElementById('canvasTarget').height,
 		lcdDecimals : 0,
 		lcdColor : steelseries.LcdColor.BEIGE,
 		headerString : "Target",

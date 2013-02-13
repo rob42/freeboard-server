@@ -526,9 +526,9 @@ function setTrack(llat, llon){
  */
 function refreshTrack(){
 	tgpx.refresh();
-	var trackPoints = tgpx.features[0].geometry.getVertices();
+	var trackPoints = shipTrack.features[0].geometry.getVertices();
 	if(trackPoints.length>60){
-		var tpPoint=trackPoints.slice[-60];
+		var tpPoint=trackPoints.slice[trackPoints.length-60,59];
 		shipTrack.removeAllFeatures();
 		trackLine = new OpenLayers.Geometry.LineString(tpPoint);
 		shipTrack.addFeatures([

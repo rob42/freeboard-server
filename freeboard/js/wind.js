@@ -127,7 +127,7 @@ function initWind() {
 	// wind
 	radialWindApp = new steelseries.Radial('canvasWindApp', {
 		gaugeType : steelseries.GaugeType.TYPE4,
-		size : document.getElementById('canvasWindApp').width,
+		//size : document.getElementById('canvasWindApp').width,
 		minValue : 0,
 		maxValue : 60,
 		threshold : 35,
@@ -143,7 +143,7 @@ function initWind() {
 
 	// wind dir
 	radialWindDirApp = new steelseries.WindDirection('canvasWindDirApp', {
-		size : document.getElementById('canvasWindDirApp').width,
+		//size : document.getElementById('canvasWindDirApp').width,
 		titleString : "WIND           APP",
 		lcdVisible : true,
 		lcdColor: steelseries.LcdColor.BEIGE,
@@ -159,7 +159,7 @@ function initWind() {
 	// wind true
 	radialWindTrue = new steelseries.Radial('canvasWindTrue', {
 		gaugeType : steelseries.GaugeType.TYPE4,
-		size : document.getElementById('canvasWindTrue').width,
+		//size : document.getElementById('canvasWindTrue').width,
 		maxValue : 60,
 		threshold : 35,
 		section : sections,
@@ -174,7 +174,7 @@ function initWind() {
 	// wind dir
 
 	radialWindDirTrue = new steelseries.WindDirection('canvasWindDirTrue', {
-		size : document.getElementById('canvasWindDirTrue').width,
+		//size : document.getElementById('canvasWindDirTrue').width,
 		titleString : "WIND     TRUE",
 		roseVisible : false,
 		lcdVisible : true,
