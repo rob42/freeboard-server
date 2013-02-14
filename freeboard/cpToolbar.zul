@@ -34,15 +34,12 @@
 	<separator visible="true" orient="vertical" bar="true" />
 	<label value="Mode: " style="padding-right:0px; padding-left:10px;" />
 	<radiogroup name="type">
-		<radio value="line" id="wptToggle"
-			w:onClick="toggleControl('wpt');" />
-		<label>Waypoint</label>
-		<radio value="none" id="noneToggle"
-			w:onClick="toggleControl('none');" checked="true" />
-		<label>Navigate</label>
-		<radio value="line" id="lineToggle"
-			w:onClick="toggleControl('line');" />
-		<label>Measure</label>
+		<toolbarbutton label="Waypoint" id="wptToggle" mode="toggle"
+			w:onClick="toggleControl('wpt');" onClick="noneToggle.setChecked(false);lineToggle.setChecked(false)"/>
+		<toolbarbutton label="Navigate" id="noneToggle" mode="toggle"
+			w:onClick="toggleControl('none');" checked="true" onClick="wptToggle.setChecked(false);lineToggle.setChecked(false)"/>
+		<toolbarbutton label="Measure" id="lineToggle" mode="toggle"
+			w:onClick="toggleControl('line');" onClick="noneToggle.setChecked(false);wptToggle.setChecked(false)"/>
 	</radiogroup>
 	<label id="output" style="padding-right:0px; padding-left:10px;" />
 

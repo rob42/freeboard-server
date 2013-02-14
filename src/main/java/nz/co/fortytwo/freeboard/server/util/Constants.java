@@ -28,7 +28,7 @@ public class Constants {
 	/** Yaw degrees*/
 	public static final String YAW = "YAW";
 	/** IMU Health?*/
-	public static final String IMUH = "IMUH";
+	public static final String IMH = "IMH";
 	/** Mag X - roll*/
 	public static final String MGX = "MGX";
 	/** Mag Y - pitch*/
@@ -176,6 +176,10 @@ public class Constants {
 	public static final String CHART_LON = "freeboard.chart.lon";
 	public static final String CHART_ZOOM = "freeboard.chart.zoom";
 	public static final String CHART_LAYER = "freeboard.chart.layer.";
+	public static final String GOTO_LAT = "freeboard.goto.lat";
+	public static final String GOTO_LON = "freeboard.goto.lon";
+	public static final String FROM_LAT = "freeboard.from.lat";
+	public static final String FROM_LON = "freeboard.from.lon";
 	
 	
 	public Constants() {

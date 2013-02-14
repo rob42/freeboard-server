@@ -85,6 +85,7 @@ public class GPXParser {
 		extensionParsers.add(parser);
 	}
 	
+	
 	/**
 	 * Removes an extension parser previously added
 	 * 

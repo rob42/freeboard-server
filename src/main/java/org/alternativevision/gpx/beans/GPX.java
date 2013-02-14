@@ -46,6 +46,20 @@ public class GPX extends Extension{
 	private HashSet<Route> routes = new HashSet<Route>();;
 	
 	/**
+	 * Get a waypoint by name
+	 * @param name
+	 * @return
+	 */
+	public Waypoint getWaypointByName(String name){
+		for(Waypoint wp: getWaypoints()){
+    		if(wp.getName().equals(name)){
+    			return wp;
+    		}
+		}
+		return null;
+	}
+	
+	/**
 	 * Returns the version of a gpx object
 	 * @return A String representing the version of this gpx object
 	 */
@@ -157,5 +171,21 @@ public class GPX extends Extension{
 			routes = new HashSet<Route>();
 		}
 		routes.add(route);
+	}
+
+	/**
+	 * Returns any waypoint within 30M of the position
+	 * @param latValue
+	 * @param lonValue
+	 * @return
+	 */
+	public Waypoint getWaypointByLocation(double latValue, double lonValue) {
+		for(Waypoint wp: getWaypoints()){
+			//within 30m?
+    		if(Math.abs(wp.getLatitude()-latValue)<0.00025 && Math.abs(wp.getLongitude()-lonValue)<0.00025){
+    			return wp;
+    		}
+		}
+		return null;
 	}
 }
