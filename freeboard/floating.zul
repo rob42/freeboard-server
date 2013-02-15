@@ -37,9 +37,6 @@
 		.hboxRemoveWhiteStrips td.z-hbox-sep { width: 0; padding: 0;}
 	</style>
 	<script type="text/javascript">
-	    function refreshWaypoints(){
-			wgpx.refresh();
-			}
 		function setGotoWpt(toLat, toLon, fromLat,fromLon){
 			setGotoDestination(toLat,toLon,fromLat,fromLon);
 		}
@@ -117,6 +114,7 @@
 		</grid>
 	
 	</window>
+	
 	<popup id="helpPopup">
 		<html>
 

@@ -98,6 +98,11 @@ public class Constants {
 	public static final String IMU = "IMU";
 	public static final String MEGA = "MEGA";
 	
+	//waypoints
+	/**Waypoint change event*/
+	public static final String WPC = "WPC";
+	/**Waypoint goto event, followed by toLat|toLon|fromLat|fromLon*/
+	public static final String WPG = "WPG";
 	//Commands
 	public static final String VERSION = "#VER";
 	/** constant for AUTOPILOT_SOURCE = wind */

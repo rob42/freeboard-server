@@ -230,7 +230,6 @@ function initCharts() {
 				var position = feature.geometry.getBounds().getCenterLonLat();
 		        var lonlat = map.getLonLatFromPixel(position);
 		        var wptLocation = lonlat.transform(chartProjection, screenProjection );
-		        console.log("wpt:"+lat+","+lon);
 	        zAu.send(new zk.Event(zk.Widget.$("$this"), 'onWaypoint', new Array(wptLocation.lat,wptLocation.lon,lat,lon,feature.attributes.name)));
 	        selectControl.unselect(selectedFeature);
 		}else {
@@ -284,14 +283,12 @@ function initCharts() {
 			 }
 		 }
 		var chartLocation = map.getCenter().transform(chartProjection, screenProjection );
-        //console.log("zoomEnd:"+chartLocation.getCenter().lat+","+chartLocation.lon+","+map.getZoom());
         zAu.send(new zk.Event(zk.Widget.$("$this"), 'onChartChange', new Array(chartLocation.lat,chartLocation.lon,map.getZoom())));
     });
 	
 	//track layers
 	map.events.register('changelayer', null, function(evt){
        if(evt.property === "visibility") {
-    	   //console.log(evt.layer.name + " layer visibility changed to " +	evt.layer.visibility );
     	   zAu.send(new zk.Event(zk.Widget.$("$this"), 'onLayerChange', new Array(evt.layer.name,evt.layer.visibility)));
        }
    });
@@ -306,8 +303,6 @@ function initCharts() {
 		var lyr = data.split("=");
 		if(lyr[0].length>0){
 			var curLayer=map.getLayersByName(lyr[0]);
-			//console.log("Check layer:"+lyr);
-			//console.log("Found layer:"+curLayer[0].name);
 			if(lyr[1]==='false'){
 				curLayer[0].setVisibility(false);
 			}else{
@@ -474,9 +469,11 @@ function setPosition(llat, llon, brng, spd){
 /*
  * Set the goto destination and draw the line
  */
-function setGotoDestination(toLat, toLon,fromLat,fromLon){
+function setGotoDestination(toLat, toLon, fromLat, fromLon){
 	gotoLayer.removeAllFeatures();
+	//console.log("set goto"+toLat+","+toLon);
 	if(toLat!=null && toLon!=null){
+		//console.log("set goto");
 		var gotoStartPoint = new OpenLayers.LonLat(fromLon,fromLat);//.transform(screenProjection, chartProjection);
 	    var gotoEndPoint = new OpenLayers.LonLat(toLon,toLat);
 	    
@@ -538,14 +535,14 @@ function setTrack(llat, llon){
     //simplify every 100 points
     if(trackCount>100){
     	trackCount=0;
-    	//console.log("TrackLine="+trackLine.getVertices().length);
+
     	//10 meters is 0.005 Nm, so we will use 20M for now
     	trackLine=trackLine.simplify(0.2);
     	shipTrack.removeAllFeatures();
     	shipTrack.addFeatures([
     	                       new OpenLayers.Feature.Vector(trackLine, {})
     	                       ]);
-    	//console.log("TrackLine="+trackLine.getVertices().length);
+ 
     }
 }
 
@@ -620,6 +617,23 @@ function ChartPlotter () {
 					declination=c;
 				}
 				c=null;
+			}
+			if (data && data.indexOf('WPC') >= 0) {
+				// we refresh the waypoint layer
+				wgpx.refresh();
+			}
+			if (data && data.indexOf('WPG') >= 0) {
+				var coords = data.substring(4);
+				//console.log(coords);
+				var coordsArray = coords.split('|');
+				//console.log(coordsArray);
+				// we refresh the goto layer
+				if(coordsArray.length==4){
+					//console.log("Setting goto = "+coordsArray[0]+","+coordsArray[1]);
+					setGotoDestination(parseFloat(coordsArray[0]),parseFloat(coordsArray[1]),parseFloat(coordsArray[2]),parseFloat(coordsArray[3]));
+				}else{
+					setGotoDestination(null,null,null,null);
+				}
 			}
 			data=null;
 		});

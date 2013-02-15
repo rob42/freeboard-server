@@ -125,6 +125,7 @@ public class WaypointViewModel extends SelectorComposer<Window> {
 		super.doAfterCompose(comp);
 		logger.debug("Init..");
 		if (gotoLat != null && gotoLon != null && fromLat != null && fromLon != null) {
+			//need to do this directly, sending a message can get lost as the client may not yet be attached to websockets
 			Clients.evalJavaScript("setGotoWpt(" + gotoLat + "," + gotoLon + "," + fromLat + "," + fromLon + ");");
 		}
 
@@ -181,7 +182,8 @@ public class WaypointViewModel extends SelectorComposer<Window> {
 			logger.error(e.getMessage(), e);
 		}
 		wptWindow.setVisible(false);
-		Clients.evalJavaScript("refreshWaypoints()");
+		producer.sendBody(Constants.WPC+":0,");
+		
 	}
 
 	@Listen("onClick = button#gotoWpt")
@@ -203,8 +205,8 @@ public class WaypointViewModel extends SelectorComposer<Window> {
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
 		}
-		// producer.sendBody(Constants.WPG+":"+latBox.getValue().doubleValue()+",");
-		Clients.evalJavaScript("setGotoWpt(" + gotoLat + "," + gotoLon + "," + fromLat + "," + fromLon + ");");
+		 producer.sendBody(Constants.WPG+":"+ gotoLat + "|" + gotoLon + "|" + fromLat + "|" + fromLon+",");
+		
 	}
 
 	@Listen("onClick = button#gotoCancel")
@@ -224,7 +226,8 @@ public class WaypointViewModel extends SelectorComposer<Window> {
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
 		}
-		Clients.evalJavaScript("setGotoWpt(null,null,null,null);");
+		producer.sendBody(Constants.WPG+":0,");
+		
 	}
 
 	//
@@ -246,7 +249,7 @@ public class WaypointViewModel extends SelectorComposer<Window> {
 			logger.error(e.getMessage(), e);
 		}
 		wptWindow.setVisible(false);
-		Clients.evalJavaScript("refreshWaypoints()");
+		producer.sendBody(Constants.WPC+":0,");
 	}
 
 	private void deleteWaypoint(GPX gpx, String name) {
