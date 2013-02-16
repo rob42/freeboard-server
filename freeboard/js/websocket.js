@@ -17,6 +17,7 @@
  *  along with FreeBoard.  If not, see <http://www.gnu.org/licenses/>.
  */
 var _ws;
+var _comet;
 var wsList = [];
 var popped = false;
 
@@ -27,10 +28,25 @@ function addSocketListener(l){
 	});
 	//add new
 	wsList.push(l);
-	
 }
 
 function initSocket(){
+	if ("WebSocket" in window){
+		console.log("Starting websockets");
+		initWebSocket();
+	}else{
+		console.log("Starting comet");
+		initComet();
+	}
+}
+
+function initComet(){
+	if(_comet== null){
+		_comet = new FreeboardComet();
+	}
+}
+
+function initWebSocket(){
 	//make a web socket
 	if(this._ws == null) {
 	
@@ -62,14 +78,16 @@ function initSocket(){
 				popped = true;
 				alert('Cannot connect to Freeboard server');
 				popped=false;
-			}
+			};
  
 	}
 }
 
 function reloadSocket(){
 	if(this._ws != null)this._ws.close();
+	//if(this._comet != null)this._comet.leave();
 	this._ws = null;
+	//this._comet = null;
 	if(!popped){
 		initSocket();
 		console.log("Reloaded..");

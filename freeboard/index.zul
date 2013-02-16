@@ -18,7 +18,17 @@
  -->
 <?page title="Freeboard" contentType="text/html;charset=UTF-8"?>
 <?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c" ?>
+<?script src="./js/jquery-1.8.2.min.js"?>
+<?script src="./js/org/cometd.js"?>
+<?script src="./js/org/cometd/ReloadExtension.js"?>
+<?script src="./js/org/cometd/Cometd.js"?>
+<?script src="./js/org/cometd/AckExtension.js"?>
+ <?script src="./js/jquery.cookie.js"?>
+ <?script src="./js/jquery.cometd.js"?>
+ <?script src="./js/jquery.cometd-reload.js"?>
+<?script src="./js/freeboard-comet.js"?>
 <zk>
+	
 	<window border="none" vflex="true">
 
 		<vlayout vflex="1" hflex="min"
@@ -29,24 +39,15 @@
 				<groupbox mold="3d">
 					<caption label="Chartplotter + Instruments" />
 
-					<button label="Floating" mold="trendy"
+					<button label="Laptop" mold="trendy"
 						href="floating.zul" />
-					<button label="Quadrants" mold="trendy"
-						href="quadrants.zul" />
+					<button label="Tablet" mold="trendy"
+						 />
+					<button label="Cellphone" mold="trendy"
+						 />
 				</groupbox>
 			</hlayout>
-			<separator />
 			
-			<hlayout hflex="1">
-				<groupbox mold="3d">
-					<caption label="Chartplotter Only" />
-
-					<button label="Chartplotter" mold="trendy"
-						href="chartplotter.zul" />
-
-
-				</groupbox>
-			</hlayout>
 			<separator/>
 			<groupbox mold="3d" hflex="1">
 				<html

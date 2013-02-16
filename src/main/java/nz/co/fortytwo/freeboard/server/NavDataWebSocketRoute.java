@@ -45,6 +45,7 @@ public class NavDataWebSocketRoute extends RouteBuilder {
 	private CommandProcessor commandProcessor = new CommandProcessor();
 	private DeclinationProcessor declinationProcessor = new DeclinationProcessor();
 	private GPXProcessor gpxProcessor;
+	private AddSourceProcessor addSrcProcessor = new AddSourceProcessor("freeboard");
 
 	public NavDataWebSocketRoute(Properties config) {
 		this.config=config;
@@ -100,10 +101,13 @@ public class NavDataWebSocketRoute extends RouteBuilder {
 						.process(outputFilterProcessor)
 						.to("log:nz.co.fortytwo.freeboard.navdata?level=INFO")
 						// and push to all web socket subscribers 
+						.multicast()
 						.to("websocket:navData?sendToAll=true")
+						.process(addSrcProcessor)
+						.to("cometd://0.0.0.0:8082/freeboard/test?jsonCommented=false")
 			.onException(Exception.class)
 			.handled(true).maximumRedeliveries(0)
-		    .to("log:nz.co.fortytwo.freeboard.navdata?level=ERROR");
+		    .to("log:nz.co.fortytwo.freeboard.navdata?level=ERROR&showException=true");
 		
 		// log commands
 		from("seda:output?multipleConsumers=true")
@@ -112,7 +116,7 @@ public class NavDataWebSocketRoute extends RouteBuilder {
 			.to("log:nz.co.fortytwo.freeboard.command?level=INFO")
 			.onException(Exception.class)
 		    .handled(true).maximumRedeliveries(0)
-		    .to("log:nz.co.fortytwo.freeboard.command?level=ERROR");
+		    .to("log:nz.co.fortytwo.freeboard.command?level=ERROR&showException=true");
 	}
 
 	public String getSerialUrl() {
