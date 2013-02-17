@@ -107,7 +107,8 @@ function Logg () {
 
 
 function initLogg() {
-
+	//if we cant do canvas, skip out here!
+	if(!window.CanvasRenderingContext2D)return;
 	// Initialzing lcds
 	// log
 	lcdLat = new steelseries.DisplaySingle('canvasLat', {

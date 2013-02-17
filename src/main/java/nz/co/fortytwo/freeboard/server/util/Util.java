@@ -25,8 +25,12 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.Collections;
 import java.util.Date;
+import java.util.Enumeration;
 import java.util.Properties;
+import java.util.Set;
+import java.util.TreeSet;
 
 
 import net.sf.marineapi.nmea.sentence.RMCSentence;
@@ -71,7 +75,18 @@ public class Util {
 	 */
 	public static Properties getConfig(String dir) throws FileNotFoundException, IOException{
 		if(props==null){
-			props = new Properties();
+			//we do a quick override so we get nice sorted output :-)
+			props = new Properties() {
+			    @Override
+			    public Set<Object> keySet(){
+			        return Collections.unmodifiableSet(new TreeSet<Object>(super.keySet()));
+			    }
+
+			    @Override
+			    public synchronized Enumeration<Object> keys() {
+			        return Collections.enumeration(new TreeSet<Object>(super.keySet()));
+			    }
+			};
 			Util.setDefaults(props);
 			if(StringUtils.isNotBlank(dir)){
 				//we provided a config dir, so we use it

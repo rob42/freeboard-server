@@ -82,7 +82,8 @@ function Autopilot() {
 
 
 function initAutopilot() {
-
+	//if we cant do canvas, skip out here!
+	if(!window.CanvasRenderingContext2D)return;
 	// heading
 	autopilotTarget = new steelseries.DisplaySingle('canvasTarget', {
 		//width : document.getElementById('canvasTarget').width,

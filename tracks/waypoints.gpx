@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <gpx>
-  <wpt lat="-41.191328881951634" lon="173.161053135899">
+  <wpt lat="-41.21234917508477" lon="173.2557868414911">
     <ele>0.0</ele>
-    <time>2013-02-14T16:35:55Z</time>
-    <name>Test2</name>
-    <desc>test waypoint</desc>
+    <time>2013-02-15T12:23:51Z</time>
+    <name>New one</name>
+    <desc>Somewhere off Nelson</desc>
   </wpt>
   <wpt lat="-40.991958509680735" lon="173.05953649186802">
     <ele>0.0</ele>
@@ -12,17 +12,23 @@
     <name>Adele South</name>
     <desc>Outside the pass between Adele and Fishermans Is</desc>
   </wpt>
+  <wpt lat="-41.25638751763988" lon="173.25148245364625">
+    <ele>0.0</ele>
+    <time>2013-02-09T12:08:16Z</time>
+    <name>Nelson Harbour (outside)</name>
+    <desc>Outside the cut</desc>
+  </wpt>
   <wpt lat="-42.286922669298626" lon="148.70947567496108">
     <ele>0.0</ele>
     <time>2013-02-09T11:48:37Z</time>
     <name>Hobart</name>
     <desc>test</desc>
   </wpt>
-  <wpt lat="-41.25638751763988" lon="173.25148245364625">
+  <wpt lat="-41.191328881951634" lon="173.161053135899">
     <ele>0.0</ele>
-    <time>2013-02-09T12:08:16Z</time>
-    <name>Nelson Harbour (outside)</name>
-    <desc>Outside the cut</desc>
+    <time>2013-02-14T16:35:55Z</time>
+    <name>Test2</name>
+    <desc>test waypoint</desc>
   </wpt>
   <wpt lat="-41.19338889" lon="173.14763889">
     <ele>0.0</ele>

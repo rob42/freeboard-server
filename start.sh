@@ -7,7 +7,10 @@ sudo umount -l $MEDIA_HOME >logs/start.log 2>&1
 if [ ! -d "$MEDIA_HOME" ]; then  
         sudo mkdir $MEDIA_HOME >>logs/start.log 2>&1
 fi
-sudo mount -tvfat -osync,noexec,nodev,noatime,nodiratime,gid=floppy,umask=000 /dev/sda1 $MEDIA_HOME >>logs/start.log 2>&1
+
+# if a USB drive exists, check it for consistency
+sudo dosfsck -at /dev/sdb1 >>logs/start.log 2>&1
+sudo mount -tvfat -oasync,nodev,noatime,nodiratime,gid=floppy,umask=000 /dev/sda1 $MEDIA_HOME >>logs/start.log 2>&1
 
 # start script for freeboard
 FREEBOARD_HOME=/home/pi/freeboard
@@ -15,8 +18,8 @@ FREEBOARD_HOME=/home/pi/freeboard
 JAR=freeboard-server.jar
 #
 cd $FREEBOARD_HOME
-# Check if we have an update to install
-if [ -f "$MEDIA_HOME/updates/$JAR" ]; then
+# Check if we have an update to install. If a file called 'done' exists weve done this already
+if [ -f "$MEDIA_HOME/updates/$JAR" && ! -f "$MEDIA_HOME/updates/done" ]; then
         #copy to working dir after backing up current one
         echo "**Updating freeboard-server" >>logs/update.log 2>&1
         echo "Backup old target/$JAR to target/$JAR.last" >>logs/update.log 2>&1
@@ -28,6 +31,7 @@ if [ -f "$MEDIA_HOME/updates/$JAR" ]; then
                 echo "Extracting new web files..." >>logs/update.log 2>&1
                 tar xvzf $MEDIA_HOME/updates/freeboard-server.tar.gz  >>logs/update.log 2>&1    
         fi
+        touch $MEDIA_HOME/updates/done;
         echo "Completed" >>logs/update.log 2>&1
 else
         echo "**No update found" >>logs/update.log 2>&1

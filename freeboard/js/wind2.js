@@ -123,7 +123,9 @@ function Wind2 () {
 var tackAngle = 45;
 
 function initWind() {
-
+	//if we cant do canvas, skip out here!
+	if(!window.CanvasRenderingContext2D)return;
+	
 	// Define some sections for wind
 
 	var areasCloseHaul = [ steelseries.Section((0-tackAngle), 0, 'rgba(0, 0, 220, 0.3)'),

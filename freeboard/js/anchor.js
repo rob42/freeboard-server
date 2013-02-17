@@ -67,7 +67,8 @@ function AnchorAlarm() {
 
 
 function initAnchorAlarm() {
-
+	//if we cant do canvas, skip out here!
+	if(!window.CanvasRenderingContext2D)return;
 	alcdRadius = new steelseries.DisplaySingle('acanvasRadius', {
 		// gaugeType : steelseries.GaugeType.TYPE4,
 		//width : document.getElementById('acanvasRadius').width,
