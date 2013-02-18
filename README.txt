@@ -4,27 +4,38 @@ This is the main freeboard server, which runs in java on the Raspberry Pi. The a
 
 This has been developed in Eclipse Juno, with maven3 and zk plugins (among others)
 
-This is only just uploaded, so expect some pain getting it all setup/building/etc. Email me for help.
+This project is still fairly new, so if you are developing, expect some pain getting it all setup/building/etc. Email me for help.
 
-**NOTE** NOTE: This project uses nrjavaserial-3.8.4.jar from http://code.google.com/p/nrjavaserial/downloads/ not rxtx.jar. Since the last maven version is 3.7.5, you will need to manually add it to the local maven respoitory!!
+**NOTE**: This project uses nrjavaserial-3.8.4.jar from http://code.google.com/p/nrjavaserial/downloads/ not rxtx.jar. Since the last maven version is 3.7.5, you will need to manually add it to the local maven respoitory!!
 
 Hardware:
 	Raspberry Pi (Model B, 256 Mb RAM) - currently using soft-fp image (for sun java)
-		make sure to 'sudo apt-get install  gdal-bin python-gdal imagemagik librxtx-java'
-		add sun (Oracle) jdk7 manually, into /home/pi/jdk1.7.0_06
-		create dir /home/pi/freeboard
-		copy the following from your dev system to /home/pi/freeboard
-		 conf/  
-                 freeboard/  
-		 install.sh  
-		 logs/  
-		 mapcache/  - you create this when you import charts, I currently only have NZ charts, I will import a world map shortly, so you can at least see something basic.
-		 start.sh  
-		 stop.sh  
-		 target/freeboard-server-0.0.1-SNAPSHOT-jar-with-dependencies.jar  
+	
+			sudo apt-get install git-core
+		
+		#install the firmware updates from hexxeh according to https://github.com/Hexxeh/rpi-update
+		
+			sudo rpi-update
+		
+		#Turn on overclocking and set various options; desktop on boot off, ssh on, overclock on high, memory on minimum GPU options.
+			sudo raspi-config
+		
+		#make sure to 'sudo apt-get install gdal-bin python-gdal imagemagik'
+		#add sun (Oracle) jdk7 manually, into /home/pi/jdk1.7.0_06
+		#create dir /home/pi/freeboard
+			mkdirs /home/pi/freeboard
+		#copy the following from your dev system to /home/pi/freeboard
+		 	 	conf/  
+             	freeboard/  
+		 		install.sh  
+		 		logs/  
+		 		mapcache/  - you create this when you import charts, I currently only have NZ charts, I will import a world map shortly, so you can at least see something basic.
+		 		start.sh  
+		 		stop.sh  
+		 		target/freeboard-server.jar  
 		
 		cd /home/pi/freeboard
-		execute ./start.sh
+		./start.sh
 
 	Arduino - Mega 1260 - load as per  freeboardPLC project
 		connect via USB
@@ -79,34 +90,30 @@ Setup files:
 /etc/dnsmasq.conf
   # Configuration file for dnsmasq.
   interface=wlan0
-  dhcp-range=192.168.0.10,192.168.0.128,12hinterface=wlan0
+  dhcp-range=192.168.0.10,192.168.0.128,12h
 
 /etc/hostapd/hostapd.conf
-  driver=nl80211
-  ctrl_interface=/var/run/hostapd
-  ctrl_interface_group=0
-  #use your boat name here!
-  ssid=Motu
-  hw_mode=g
-  channel=10
-  beacon_int=100
-  auth_algs=3
-  wmm_enabled=1
-  #enable for WPA
-  #wpa=2
-  #wpa_psk=928519398acf811e96f5dcac68a11d6aa876140599be3dd49612e760a2aaac0e
-  #wpa_passphrase=raspiwlan
-  #wpa_key_mgmt=WPA-PSK
-  #wpa_pairwise=CCMP
-  #rsn_pairwise=CCMP
+	interface=wlan0
+	driver=nl80211
+	ctrl_interface=/var/run/hostapd
+	ctrl_interface_group=0
+	#use YOUR boatname here!
+	ssid=Motu
+	hw_mode=g
+	channel=10
+	wpa=1
+	#use your passphrase here!
+	wpa_passphrase=freeboard
+	wpa_key_mgmt=WPA-PSK
+	wpa_pairwise=TKIP
+	rsn_pairwise=CCMP
+	beacon_int=100
+	auth_algs=3
+	wmm_enabled=1
+
   
 /etc/default/hostapd
   DAEMON_CONF="/etc/hostapd/hostapd.conf"
-
-# Automount USB drives notes
- sudo apt-get install usbmount
- 
- Edit /etc/usbmount/usbmount.conf, edit the following:
-  MOUNTPOINTS="/media/usb0"
-  FS_MOUNTOPTIONS="-fstype=vfat,gid=floppy,umask=000"
- Add pi to the floppy group
+  
+# for USB drive support add pi to the floppy group in /etc/group
+ 	sudo nano /etc/group

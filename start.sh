@@ -9,7 +9,7 @@ if [ ! -d "$MEDIA_HOME" ]; then
 fi
 
 # if a USB drive exists, check it for consistency
-sudo dosfsck -at /dev/sdb1 >>logs/start.log 2>&1
+sudo dosfsck -at /dev/sda1 >>logs/start.log 2>&1
 sudo mount -tvfat -oasync,nodev,noatime,nodiratime,gid=floppy,umask=000 /dev/sda1 $MEDIA_HOME >>logs/start.log 2>&1
 
 # start script for freeboard

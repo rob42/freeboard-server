@@ -304,10 +304,12 @@ function initCharts() {
 		console.log(lyr);
 		if(lyr[0].length>0){
 			var curLayer=map.getLayersByName(lyr[0]);
-			if(lyr[1]==='false'){
-				curLayer[0].setVisibility(false);
-			}else{
-				curLayer[0].setVisibility(true);
+				if(curLayer!=null){
+				if(lyr[1]==='false'){
+					curLayer[0].setVisibility(false);
+				}else{
+					curLayer[0].setVisibility(true);
+				}
 			}
 		}
 	});
@@ -519,10 +521,12 @@ function moveToBoatPosition(llat, llon){
  * Add a point to the boat track, and draw to screen
  */
 function setTrack(llat, llon){
+	
 	//add to tracks
-    var trackPoint = new OpenLayers.Geometry.Point(llon, llat) //new OpenLayers.Geometry.Point(lonLat);
-	.transform(screenProjection, chartProjection);
-
+    var trackPoint = new OpenLayers.Geometry.Point(llon, llat) 
+		.transform(screenProjection, chartProjection);
+    
+    
     if(trackLine==null){
     	trackLine = new OpenLayers.Geometry.LineString(new Array(trackPoint, trackPoint));
     	shipTrack.addFeatures([
@@ -639,6 +643,9 @@ function ChartPlotter () {
 			data=null;
 		});
 		if(setPos){
+			//avoid the 0,0 point
+			if(llat < 0.001 && llat > -0.001 && llon < 0.001 && llon > -0.001 )return;
+
 			setPosition(lat,lon, heading+declination, speed);
 			setTrack(lat,lon);
 			moveToBoatPosition(lat,lon);
