@@ -97,7 +97,10 @@ public class ChartProcessor {
 		//start by running the gdal script
 		
 		executeGdal(chartFile, chartName, 
-				Arrays.asList("gdal_translate", "-if","GTiff", "-of", "vrt", "-expand", "rgba",chartFile.getName(),"temp.vrt"),
+				//this was for NZ KAP charts
+				//Arrays.asList("gdal_translate", "-if","GTiff", "-of", "vrt", "-expand", "rgba",chartFile.getName(),"temp.vrt"),
+				//this for US NOAA charts
+				Arrays.asList("gdal_translate", "-of", "vrt", "-expand", "rgba",chartFile.getName(),"temp.vrt"),
 				Arrays.asList("gdal2tiles.py", "temp.vrt", chartName));
 		//now get the Chart Name from the kap file
 		FileReader fileReader = new FileReader(chartFile);
@@ -109,8 +112,13 @@ public class ChartProcessor {
 		String desc = header.substring(pos,header.indexOf("\n",pos)).trim();
 		//if(desc.endsWith("\n"))desc=desc.substring(0,desc.length()-1);
 		logger.debug("Name:"+desc);
-		//we cant have + in name, as its used in storing ChartplotterViewModel
-		desc=desc.replaceAll("+", " ");
+		//we cant have + or , or = in name, as its used in storing ChartplotterViewModel
+		//US50_2 BERING SEA CONTINUATION,NU=2401,RA=2746,3798,DU=254
+		desc=desc.replaceAll("\\+", " ");
+		desc=desc.replaceAll(",", " ");
+		desc=desc.replaceAll("=", "/");
+		//limit length too
+		desc=desc.substring(0,40);
 		//process the layer data
 		
 		//read data from dirName/tilelayers.xml
@@ -152,7 +160,7 @@ public class ChartProcessor {
         		"\tmap.addLayer("+chartName+");\n";
         logger.debug(snippet);
 		//add it to layers.js
-        File layers = new File("../freeboard/js/layers.js");
+        File layers = new File(chartFile.getParentFile(),"../freeboard/js/layers.js");
         String layersStr = FileUtils.readFileToString(layers);
         //remove the closing }
         if(layersStr.trim().endsWith("}")){

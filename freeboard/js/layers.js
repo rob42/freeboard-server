@@ -1,3 +1,5 @@
+
+
 /*
  * Copyright 2012,2013 Robert Huitema robert@42.co.nz
  * 
@@ -181,5 +183,37 @@ function addLayers(map) {
 			});
 	map.addLayer(NZ6151_1);
 	// if (OpenLayers.Util.alphaHack() == false) { tmsoverlay.setOpacity(0.7); }
+
+
+//	var US50_1Bounds = new OpenLayers.Bounds( -178.45740129819688, 10.66551845443782, -110.76418267254759, 73.11622437795731);
+//	mapBounds.extend(US50_1Bounds );
+//
+//
+//	var US50_1 = new OpenLayers.Layer.TMS( "US50_1 NORTH PACIFIC OCEAN   EASTERN PART", "../../mapcache/US50_1/",
+//		{ layername: '../../mapcache/US50_1/',
+//		type: 'png', getURL: overlay_getTileURL, alpha: true,
+//		isBaseLayer: false,
+//		visibility: false,
+//		numZoomLevels: 18,
+//		minZoomLevel: 1,
+//		maxZoomLevel: 7,
+//		});
+//	map.addLayer(US50_1);
+//
+//
+//	var US50_2Bounds = new OpenLayers.Bounds( -179.99999511903985, 47.70425393059418, 179.95870998654820, 65.93808455849856);
+//	mapBounds.extend(US50_2Bounds );
+//
+//
+//	var US50_2 = new OpenLayers.Layer.TMS( "US50_2 BERING SEA CONTINUATION NU/2401 RA/2746 3798 DU/254", "../../mapcache/US50_2/",
+//		{ layername: '../../mapcache/US50_2/',
+//		type: 'png', getURL: overlay_getTileURL, alpha: true,
+//		isBaseLayer: false,
+//		visibility: false,
+//		numZoomLevels: 18,
+//		minZoomLevel: 0,
+//		maxZoomLevel: 4,
+//		});
+//	map.addLayer(US50_2);
 
 }

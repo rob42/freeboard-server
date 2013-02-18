@@ -301,6 +301,7 @@ function initCharts() {
 	var vis = zk.Widget.$("$layerVisibility").getValue().split(';');
 	jQuery.each(vis, function(i, data) {
 		var lyr = data.split("=");
+		console.log(lyr);
 		if(lyr[0].length>0){
 			var curLayer=map.getLayersByName(lyr[0]);
 			if(lyr[1]==='false'){
