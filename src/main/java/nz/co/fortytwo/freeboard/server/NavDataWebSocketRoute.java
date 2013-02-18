@@ -89,8 +89,14 @@ public class NavDataWebSocketRoute extends RouteBuilder {
 		//dump nulls
 		intercept().when(body().isNull()).stop();
 		//intercept().when(((String)body(String.class)).trim().length()==0).stop();
+		//deal with errors
+		
 		//send to listeners
 		from("seda:input?multipleConsumers=true")
+						.onException(Exception.class)
+							.handled(true).maximumRedeliveries(0)
+							.to("log:nz.co.fortytwo.freeboard.navdata?level=ERROR&showException=true")
+							.end()
 						.process(inputFilterProcessor)
 						.process(nmeaProcessor)
 						//.process(imuProcessor)
@@ -102,13 +108,9 @@ public class NavDataWebSocketRoute extends RouteBuilder {
 						.to("log:nz.co.fortytwo.freeboard.navdata?level=INFO")
 						// and push to all web socket subscribers 
 						.multicast()
-						.to("websocket:navData?sendToAll=true")
+						.to("websocket:navData?sendToAll=true").end()
 						.process(addSrcProcessor)
-						.to("cometd://0.0.0.0:8082/freeboard/test?jsonCommented=false")
-			.onException(Exception.class)
-			.handled(true).maximumRedeliveries(0)
-		    .to("log:nz.co.fortytwo.freeboard.navdata?level=ERROR&showException=true");
-		
+						.to("cometd://0.0.0.0:8082/freeboard/json?jsonCommented=false");
 		// log commands
 		from("seda:output?multipleConsumers=true")
 			//.process(outputFilterProcessor)

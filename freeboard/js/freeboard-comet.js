@@ -76,7 +76,7 @@
 
         function _subscribe()
         {
-            _subscription = $.cometd.subscribe('/freeboard/test', _self.receive);
+            _subscription = $.cometd.subscribe('/freeboard/json', _self.receive);
             //console.log('Subscribed to /freeboard/test');
            
         }

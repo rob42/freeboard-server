@@ -31,7 +31,7 @@ var followBoat=false;
 
 var chartProjection = new OpenLayers.Projection("EPSG:900913");
 var screenProjection = new OpenLayers.Projection("EPSG:4326");
-var shipMarker = new OpenLayers.Layer.Vector('Ship', {renderers: ['Canvas', 'SVG', 'VML'],
+var shipMarker = new OpenLayers.Layer.Vector('Ship', {
     styleMap: new OpenLayers.StyleMap({
         externalGraphic: './js/img/ship_red.png',
         graphicWidth: 10, graphicHeight: 24, graphicYOffset: -10,
