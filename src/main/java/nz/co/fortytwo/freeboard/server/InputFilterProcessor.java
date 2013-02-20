@@ -18,6 +18,8 @@
  */
 package nz.co.fortytwo.freeboard.server;
 
+import java.util.regex.Pattern;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.log4j.Logger;
@@ -30,19 +32,23 @@ import org.apache.log4j.Logger;
  */
 public class InputFilterProcessor extends FreeboardProcessor implements Processor {
 	private static Logger logger = Logger.getLogger(InputFilterProcessor.class);
+	private Pattern p;
 	
+	public InputFilterProcessor(){
+		p=Pattern.compile("^[#]?[A-Z]{3}:.*");
+	}
 	public void process(Exchange exchange) throws Exception {
 		String msg = (String) exchange.getIn().getBody(String.class);
 		if(msg !=null){
 			msg=msg.trim();
-			if(msg.startsWith("!!!VER:")){
+			
+			if(msg.indexOf("!!!VER:")==0){
 				//from IMU or MEGA - good
 				msg=msg.substring(msg.indexOf(",") + 1);
-				msg=msg.replaceAll("\\*\\*\\*", ",");
 				exchange.getOut().setBody(stringToHashMap(msg));
 				return;
 			}
-			if(msg.matches("^[#]?[A-Z]{3}:.*")){
+			if(p.matcher(msg).matches()){
 				//#CMD: or VAL: - good
 				exchange.getOut().setBody(stringToHashMap(msg));
 				return;

@@ -25,6 +25,9 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.concurrent.LinkedBlockingDeque;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.TimeUnit;
 
 import nz.co.fortytwo.freeboard.server.util.Constants;
 
@@ -51,10 +54,12 @@ public class SerialPortReader implements Processor{
 	private boolean mapped = false;
 	private String deviceType = null;
 	private NRSerialPort serialPort = null;
-	private BufferedOutputStream out;
+	//private BufferedOutputStream out;
+	private LinkedBlockingQueue<String> queue;
 
 	public SerialPortReader() {
 		super();
+		queue=new LinkedBlockingQueue<String>(10);
 	}
 
 	/**
@@ -75,9 +80,38 @@ public class SerialPortReader implements Processor{
 
 		serialPort.connect();
 		(new Thread(new SerialReader())).start();
-		out=new BufferedOutputStream(serialPort.getOutputStream());
+		(new Thread(new SerialWriter())).start();
+		//out=new BufferedOutputStream(serialPort.getOutputStream());
 	}
 
+	public class SerialWriter implements Runnable {
+
+		BufferedOutputStream out;
+
+		public SerialWriter() throws Exception {
+
+			this.out = new BufferedOutputStream(serialPort.getOutputStream());
+
+		}
+		public void run() {
+			
+			try {
+				while (running) {
+					String msg = queue.poll(5, TimeUnit.SECONDS);
+					if(msg!=null){
+						out.write((msg + "\n").getBytes());
+						out.flush();
+					}
+				}
+			}catch(IOException e) {
+				running = false;
+				logger.error(portName, e);
+			} catch (InterruptedException e) {
+				//do nothing
+			}
+		}
+	
+	}
 
 	/** */
 	public class SerialReader implements Runnable {
@@ -87,7 +121,7 @@ public class SerialPortReader implements Processor{
 		public SerialReader() throws Exception {
 
 			this.in = new BufferedReader(new InputStreamReader(serialPort.getInputStream()));
-
+			
 		}
 
 		public void run() {
@@ -199,8 +233,8 @@ public class SerialPortReader implements Processor{
 			// check its valid for this device
 			if (running && deviceType == null || message.contains(Constants.UID + ":" + deviceType)) {
 				logger.debug(portName + ":wrote out to device:" + message);
-				out.write((message + "\n").getBytes());
-				out.flush();
+				//queue them and write in background
+				queue.put(message);
 			}
 		}
 	}

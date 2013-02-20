@@ -75,7 +75,11 @@ import org.xml.sax.SAXException;
 public class GPXParser {
 	
 	private ArrayList<IExtensionParser> extensionParsers = new ArrayList<IExtensionParser>();
-	
+	private Logger logger = Logger.getLogger(this.getClass().getName());
+	private DocumentBuilderFactory docFactory= DocumentBuilderFactory.newInstance();
+	private TransformerFactory tFactory = TransformerFactory.newInstance();
+	private SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'kk:mm:ss");
+	private SimpleDateFormat sdfZ = new SimpleDateFormat("yyyy-MM-dd'T'kk:mm:ss'Z'");
 	/**
 	 * Adds a new extension parser to be used when parsing a gpx steam
 	 * 
@@ -95,7 +99,7 @@ public class GPXParser {
 		extensionParsers.remove(parser);
 	}
 	
-	private Logger logger = Logger.getLogger(this.getClass().getName()); 
+	
 	
 	public GPX parseGPX(File gpxFile) throws IOException, ParserConfigurationException, SAXException, IOException {
 		InputStream in = FileUtils.openInputStream(gpxFile);
@@ -114,7 +118,7 @@ public class GPXParser {
 	 * @throws IOException
 	 */
 	public GPX parseGPX(InputStream in) throws ParserConfigurationException, SAXException, IOException {
-		DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+		DocumentBuilder builder = docFactory.newDocumentBuilder();
 		Document doc = builder.parse(in);
 		Node firstChild = doc.getFirstChild();
 		if( firstChild != null && GPXConstants.GPX_NODE.equals(firstChild.getNodeName())) {
@@ -443,7 +447,7 @@ public class GPXParser {
 		//2012-02-25T09:28:45Z
 		Date val = null;
 		try {
-			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'kk:mm:ss");
+			
 			val = sdf.parse(node.getFirstChild().getNodeValue());
 		} catch (Exception ex) {
 			logger.error("error parsing Date value form node. val=" + node.getNodeName(), ex);
@@ -489,7 +493,7 @@ public class GPXParser {
 	}
 	
 	public void writeGPX(GPX gpx, OutputStream out) throws ParserConfigurationException, TransformerException {
-		DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+		DocumentBuilder builder = docFactory.newDocumentBuilder();
 		Document doc = builder.newDocument();
 		Node gpxNode = doc.createElement(GPXConstants.GPX_NODE);
 		addBasicGPXInfoToNode(gpx, gpxNode, doc);
@@ -511,7 +515,7 @@ public class GPXParser {
 		doc.appendChild(gpxNode);
 		
 		// Use a Transformer for output
-		TransformerFactory tFactory = TransformerFactory.newInstance();
+		
 		Transformer transformer = tFactory.newTransformer();
 		transformer.setOutputProperty(OutputKeys.INDENT, "yes");
 		transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
@@ -544,8 +548,7 @@ public class GPXParser {
 		}
 		if(wpt.getTime() != null) {
 			Node node = doc.createElement(GPXConstants.TIME_NODE);
-			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'kk:mm:ss'Z'");
-			node.appendChild(doc.createTextNode(sdf.format(wpt.getTime())));
+			node.appendChild(doc.createTextNode(sdfZ.format(wpt.getTime())));
 			wptNode.appendChild(node);
 		}
 		if(wpt.getMagneticDeclination() != null) {
