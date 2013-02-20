@@ -18,7 +18,6 @@
  */
 package nz.co.fortytwo.freeboard.server;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -54,7 +53,6 @@ import org.apache.commons.lang3.StringUtils;
 public class NMEAProcessor extends FreeboardProcessor implements Processor {
 
 	private static final String DISPATCH_ALL = "DISPATCH_ALL";
-	
 
 	// map of sentence listeners
 	private ConcurrentMap<String, List<SentenceListener>> listeners = new ConcurrentHashMap<String, List<SentenceListener>>();
@@ -168,6 +166,8 @@ public class NMEAProcessor extends FreeboardProcessor implements Processor {
 		}
 
 	}
+	
+	
 
 	/**
 	 * Registers a SentenceListener to hash map with given key.
