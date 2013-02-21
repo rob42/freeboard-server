@@ -25,7 +25,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 
-
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
@@ -159,15 +158,10 @@ public class ChartProcessor {
         		"\t\t});\n" +
         		"\tmap.addLayer("+chartName+");\n";
         logger.debug(snippet);
-		//add it to layers.js
-        File layers = new File(chartFile.getParentFile(),"../freeboard/js/layers.js");
-        String layersStr = FileUtils.readFileToString(layers);
-        //remove the closing }
-        if(layersStr.trim().endsWith("}")){
-        	layersStr = layersStr.substring(0,layersStr.lastIndexOf("}"));
-        }
-        layersStr = "\n"+layersStr+"\n"+bounds+"\n"+snippet+"\n}\n";
-        FileUtils.writeStringToFile(layers, layersStr);
+		//add it to local freeboard.txt 
+        File layers = new File(chartFile.getParentFile(),"freeboard.txt");
+        
+        FileUtils.writeStringToFile(layers, bounds+"\n"+snippet);
 	}
 
 	/**

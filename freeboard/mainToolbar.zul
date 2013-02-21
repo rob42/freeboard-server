@@ -44,7 +44,8 @@
 
 		<menuitem label="Autopilot"
 				onClick='mainWindow.query("include #autopilotWindow").setVisible(!mainWindow.query("include #autopilotWindow").isVisible());' />
-		
+		<menuitem label="Config"
+				onClick='mainWindow.query("include #configWindow").setVisible(!mainWindow.query("include #configWindow").isVisible());' />
 	</menubar>
 	<!-- wind -->
 	<include  src="./wind2.zul"  />
@@ -56,6 +57,7 @@
 	
 	<!-- anchor -->	
 	<include src="./anchorWindow.zul"  />
-	
+	<!-- anchor -->	
+	<include src="./configWindow.zul"  />
 	
 </zk>

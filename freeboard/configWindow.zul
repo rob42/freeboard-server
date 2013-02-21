@@ -1,0 +1,123 @@
+<!-- 
+	Copyright 2012,2013 Robert Huitema robert@42.co.nz
+	
+	This file is part of FreeBoard. (http://www.42.co.nz/freeboard)
+	
+	FreeBoard is free software: you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation, either version 3 of the License, or
+	(at your option) any later version.
+	
+	FreeBoard is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
+	
+	You should have received a copy of the GNU General Public License
+	along with FreeBoard.  If not, see <http://www.gnu.org/licenses/>.
+-->
+<?page title="Configuration" contentType="text/html;charset=UTF-8"?>
+
+<zk>
+	<!--  -->
+	<window id="configWindow"
+		xmlns:w="http://www.zkoss.org/2005/zk/client" title="Configuration"
+		apply="nz.co.fortytwo.freeboard.zk.ConfigViewModel"
+		style="margin-left:auto;" mode="overlapped" visible="false"
+		minimizable="true">
+
+
+		<tabbox>
+			<tabs>
+				<tab label="Config" />
+				<tab label="Charts" />
+			</tabs>
+			<tabpanels>
+				<tabpanel>
+					<grid hflex="min">
+						<columns>
+							<column label="" hflex="min" />
+							<column label="" hflex="min" />
+						</columns>
+						<rows>
+							<row hflex="min">
+								<label value="Wind Correction" />
+								<textbox id="cfgWindOffset"
+									tooltip="+/- degrees offset" />
+							</row>
+							<row hflex="min">
+								<label value="Compass Correction" />
+								<textbox id="cfgCompassOffset"
+									tooltip="+/- degrees offset" />
+							</row>
+							<row>
+								<hbox>
+									<button id="cfgSave" label="Save" />
+									<button id="cfgCancel"
+										label="Cancel" />
+								</hbox>
+
+							</row>
+						</rows>
+					</grid>
+				</tabpanel>
+				<tabpanel>
+				<hbox align="center">
+					<listbox id="allCharts" hflex="min" vflex="true"
+						multiple="true" rows="10">
+						<listhead>
+							<listheader label="All Charts"/>
+						</listhead>
+						<template name="model">
+							<listitem>
+								<listcell label="${each}" />
+							</listitem>
+						</template>
+					</listbox>
+					
+					<vbox  spacing="10px" width="24px">
+						<image style="cursor:pointer" id="chooseAllBtn"
+							src="./js/img/control_stbd10_blue.png" />
+						<image style="cursor:pointer" id="chooseBtn"
+							src="./js/img/control_stbd_blue.png" />
+						<image style="cursor:pointer" id="removeBtn"
+							src="./js/img/control_port_blue.png" />
+						<image style="cursor:pointer" id="removeAllBtn"
+							src="./js/img/control_port10_blue.png" />
+					</vbox>
+					<listbox id="selectedCharts" hflex="min" vflex="true"
+						multiple="true" rows="10">
+						<listhead>
+							<listheader label="Displayed Charts">
+							</listheader>
+						</listhead>
+						<template name="model">
+							<listitem>
+								<listcell label="${each }" />
+							</listitem>
+						</template>
+					</listbox>
+
+					<vbox  spacing="10px" width="24px">
+						<image style="cursor:pointer" id="topBtn"
+							src="./js/img/control_up10_blue.png" />
+						<image style="cursor:pointer" id="upBtn"
+							src="./js/img/control_up_blue.png" />
+						<image style="cursor:pointer" id="downBtn"
+							src="./js/img/control_down_blue.png" />
+						<image style="cursor:pointer" id="bottomBtn"
+							src="./js/img/control_down10_blue.png" />
+					</vbox>
+					</hbox>
+					<hbox>
+					<button id="chartSave" label="Save" />
+									<button id="chartCancel"
+										label="Cancel" />
+					</hbox>
+				</tabpanel>
+			</tabpanels>
+			
+		</tabbox>
+
+	</window>
+</zk>

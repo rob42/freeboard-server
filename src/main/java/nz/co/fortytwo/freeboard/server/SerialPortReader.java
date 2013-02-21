@@ -128,7 +128,7 @@ public class SerialPortReader implements Processor{
 			try {
 				try {
 					while (running) {
-						if (in.ready()) {
+						while (in.ready()) {
 							String line = in.readLine();
 							if (!mapped && line.indexOf(Constants.UID) >= 0) {
 								// add to map
@@ -144,11 +144,11 @@ public class SerialPortReader implements Processor{
 								mapped = true;
 							}
 
-							producer.sendBody(line);
+							if(line!=null)producer.sendBody(line);
 						}
-						// delay for 100 msecs, we dont want to burn up CPU for nothing
+						// delay for a bit (msecs), we dont want to burn up CPU for nothing
 						try {
-							Thread.currentThread().sleep(100);
+							Thread.currentThread().sleep(250);
 						} catch (InterruptedException ie) {
 						}
 					}

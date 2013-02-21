@@ -304,7 +304,7 @@ function initCharts() {
 		console.log(lyr);
 		if(lyr[0].length>0){
 			var curLayer=map.getLayersByName(lyr[0]);
-				if(curLayer!=null){
+				if(curLayer[0]!=null){
 				if(lyr[1]==='false'){
 					curLayer[0].setVisibility(false);
 				}else{
