@@ -25,6 +25,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 
+import javax.swing.JTextArea;
+
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
@@ -44,41 +46,79 @@ public class ChartProcessor {
 
 	Logger logger = Logger.getLogger(ChartProcessor.class);
 	Properties config = null;
+	private boolean manager=false;
+	private JTextArea textArea;
 
 	public ChartProcessor() throws Exception {
 		config=Util.getConfig(null);
 		
 	}
+	public ChartProcessor(boolean manager,JTextArea textArea) throws Exception {
+		config=Util.getConfig(null);
+		this.manager=manager;
+		this.textArea=textArea;
+	}
 
-	public void processChart(String file) throws Exception {
+	public void processChart(String file, boolean reTile) throws Exception {
+		File chartFile = new File(config.getProperty(Constants.MAPCACHE_RESOURCE)+"/"+file);
+		processChart(chartFile, reTile);
+	}
+	public void processChart(File chartFile, boolean reTile) throws Exception {
 		//make a file
-				File chartFile = new File(config.getProperty(Constants.MAPCACHE_RESOURCE)+"/"+file);
+				
 				if(!chartFile.exists()){
+					if(manager){
+						System.out.print("No file at "+chartFile.getAbsolutePath()+"\n");
+					}
 					logger.error("No file at "+chartFile.getAbsolutePath());
 				}
 				//for WORLD.tif (Blue Marble) we need 
 				//'gdal_translate -a_ullr -180.0 90.0 180.0 -90.0 -a_srs "EPSG:4326" -of vrt  WORLD.tif temp.vrt'
 				//to add Georef info
 				if(chartFile.getName().toUpperCase().equals("WORLD.tif")){
-					processWorldChart(chartFile);
+					processWorldChart(chartFile,reTile);
 				}
 				//we have a KAP file
 				if(chartFile.getName().toUpperCase().endsWith("KAP")){
-					processKapChart(chartFile);
+					processKapChart(chartFile,reTile);
 				}
-		
+				
 	}
-	private void processWorldChart(File chartFile) throws Exception {
+	private void processWorldChart(File chartFile, boolean reTile) throws Exception {
 		String chartName = chartFile.getName();
 		chartName = chartName.substring(0,chartName.lastIndexOf("."));
 		File dir = new File(chartFile.getParentFile(),chartName);
+		if(manager){
+			System.out.print("Chart tag:"+chartName+"\n");
+			System.out.print("Chart dir:"+dir.getPath()+"\n");
+		}
 		logger.debug("Chart tag:"+chartName);
 		logger.debug("Chart dir:"+dir.getPath());
 		//start by running the gdal script
-		executeGdal(chartFile, chartName,
-				Arrays.asList("gdal_translate", "-co","COMPRESS=PACKBITS", "-a_ullr","-180.0","90.0","180.0","-90.0","-a_srs","\"EPSG:4326\"", "-if","GTiff", "-of", "vrt", chartFile.getName(),"temp.vrt"),
-				Arrays.asList("gdal2tiles.py", "-z", "0-6", "temp.vrt", chartName));
-		
+		if(reTile){
+			executeGdal(chartFile, chartName,
+					Arrays.asList("gdal_translate", "-co","COMPRESS=PACKBITS", "-a_ullr","-180.0","90.0","180.0","-90.0","-a_srs","\"EPSG:4326\"", "-if","GTiff", "-of", "vrt", chartFile.getName(),"temp.vrt"),
+					Arrays.asList("gdal2tiles.py", "-z", "0-6", "temp.vrt", chartName));
+		}
+		//write out freeboard.txt
+		String text = "var WORLDBounds = new OpenLayers.Bounds( -180.0, -80.9971907157, 179.997075819, 81.0);\n"+
+		"mapBounds.extend(WORLDBounds );\n"+
+		"var WORLD = new OpenLayers.Layer.TMS( \"Blue Marble\", \"../../mapcache/WORLD/\",\n"+
+				"\t{ layername: '../../mapcache/WORLD/',\n"+
+				"\ttype: 'png', \n"+
+				"\tgetURL: overlay_getTileURL, \n"+
+				"\talpha: true,\n"+
+				"\tisBaseLayer: true,\n"+
+				"\tvisibility: true,\n"+
+				"\t//maxResolution : \"auto\",\n"+
+				"\tnumZoomLevels: 18,\n"+
+				"\tminZoomLevel: 0,\n"+
+				"\tmaxZoomLevel: 7,\n"+
+				"\tbuffer : 0,\n"+
+		"});\n"+
+		"map.addLayer(WORLD);\n";
+		File layers = new File(chartFile.getParentFile(),"freeboard.txt");
+        FileUtils.writeStringToFile(layers, text);
 	}
 
 	/**
@@ -87,20 +127,25 @@ public class ChartProcessor {
 	 * @param chartFile
 	 * @throws Exception
 	 */
-	public void processKapChart(File chartFile) throws Exception {
+	public void processKapChart(File chartFile, boolean reTile) throws Exception {
 		String chartName = chartFile.getName();
 		chartName = chartName.substring(0,chartName.lastIndexOf("."));
 		File dir = new File(chartFile.getParentFile(),chartName);
+		if(manager){
+			System.out.print("Chart tag:"+chartName+"\n");
+			System.out.print("Chart dir:"+dir.getPath()+"\n");
+		}
 		logger.debug("Chart tag:"+chartName);
 		logger.debug("Chart dir:"+dir.getPath());
-		//start by running the gdal script
-		
-		executeGdal(chartFile, chartName, 
-				//this was for NZ KAP charts
-				//Arrays.asList("gdal_translate", "-if","GTiff", "-of", "vrt", "-expand", "rgba",chartFile.getName(),"temp.vrt"),
-				//this for US NOAA charts
-				Arrays.asList("gdal_translate", "-of", "vrt", "-expand", "rgba",chartFile.getName(),"temp.vrt"),
-				Arrays.asList("gdal2tiles.py", "temp.vrt", chartName));
+		//start by running the gdal scripts
+		if(reTile){
+			executeGdal(chartFile, chartName, 
+					//this was for NZ KAP charts
+					//Arrays.asList("gdal_translate", "-if","GTiff", "-of", "vrt", "-expand", "rgba",chartFile.getName(),"temp.vrt"),
+					//this for US NOAA charts
+					Arrays.asList("gdal_translate", "-of", "vrt", "-expand", "rgba",chartFile.getName(),"temp.vrt"),
+					Arrays.asList("gdal2tiles.py", "temp.vrt", chartName));
+		}
 		//now get the Chart Name from the kap file
 		FileReader fileReader = new FileReader(chartFile);
 		char[] chars = new char[4096];
@@ -117,7 +162,9 @@ public class ChartProcessor {
 		desc=desc.replaceAll(",", " ");
 		desc=desc.replaceAll("=", "/");
 		//limit length too
-		desc=desc.substring(0,40);
+		if(desc.length()>40){
+			desc=desc.substring(0,40);
+		}
 		//process the layer data
 		
 		//read data from dirName/tilelayers.xml
@@ -129,6 +176,9 @@ public class ChartProcessor {
         String miny = box.attribute("miny").getValue();
         String maxx = box.attribute("maxx").getValue();
         String maxy = box.attribute("maxy").getValue();
+        if(manager){
+			System.out.print("Box:"+minx+","+miny+","+maxx+","+maxy+"\n");
+		}
         logger.debug("Box:"+minx+","+miny+","+maxx+","+maxy);
 
         //we need TileSets, each tileset has an href, we need first and last for zooms
@@ -140,11 +190,17 @@ public class ChartProcessor {
             if(zoom<minZoom)minZoom=zoom;
             if(zoom>maxZoom)maxZoom=zoom;
         }
+        if(manager){
+			System.out.print("Zoom:"+minZoom+"-"+maxZoom+"\n");
+		}
         logger.debug("Zoom:"+minZoom+"-"+maxZoom);
         
         //make the javascript snippets
         String bounds = "\tvar "+chartName+"Bounds = new OpenLayers.Bounds( "+miny+", "+minx+", "+maxy+", "+maxx+");\n"+
         				"\tmapBounds.extend("+chartName+"Bounds );\n";
+        if(manager){
+			System.out.print(bounds+"\n");
+		}
         logger.debug(bounds);
         String relPath ="../../mapcache/";
         String snippet = "\n\tvar "+chartName+" = new OpenLayers.Layer.TMS( \""+chartName+" "+desc+"\", \""+relPath+chartName+"/\",\n"+
@@ -157,11 +213,18 @@ public class ChartProcessor {
         		"\t\tmaxZoomLevel: "+maxZoom+",\n"+
         		"\t\t});\n" +
         		"\tmap.addLayer("+chartName+");\n";
+        if(manager){
+			System.out.print(snippet+"\n");
+		}
         logger.debug(snippet);
 		//add it to local freeboard.txt 
         File layers = new File(chartFile.getParentFile(),"freeboard.txt");
-        
         FileUtils.writeStringToFile(layers, bounds+"\n"+snippet);
+        //now zip the result
+      //now zip the result
+        System.out.print("Zipping directory...\n");
+		ZipUtils.zip(dir, new File(chartFile.getParentFile(),chartName+".zip"));
+		System.out.print("Zipping directory complete\n");
 	}
 
 	/**
@@ -181,25 +244,55 @@ public class ChartProcessor {
 		//gdal_translate -of vrt -expand rgba $1.kap temp.vrt
 		 ProcessBuilder pb = new ProcessBuilder(argList);
 		 pb.directory(dir);
-		 pb.inheritIO();
-		 Process p = pb.start();
-		 p.waitFor();
-		 if(p.exitValue()>0){
-			 logger.error("gdal_translate did not complete normally");
-			 return;
+		 //pb.inheritIO();
+		 if(manager){
+			 ForkWorker fork = new ForkWorker(textArea, pb);
+			 fork.execute();
+			 while(!fork.isDone()){
+				 Thread.currentThread().sleep(500);
+				 //System.out.print(".");
+			 }
+		 }else{
+			 Process p = pb.start();
+			 p.waitFor();
+			 if(p.exitValue()>0){
+				 if(manager){
+						System.out.print("ERROR:gdal_translate did not complete normally\n");
+					}
+				 logger.error("gdal_translate did not complete normally");
+				 return;
+			 }else{
+				 System.out.print("Completed gdal_translate\n");
+			 }
 		 }
 		//gdal2tiles.py temp.vrt $1
 		 File tileDir = new File(dir,chartName);
 		 tileDir.mkdir();
 		 pb = new ProcessBuilder("gdal2tiles.py", "temp.vrt", chartName);
 		 pb.directory(dir);
-		 pb.inheritIO();
-		 p = pb.start();
-		 p.waitFor();
-		 if(p.exitValue()>0){
-			 logger.error("gdal2tiles did not complete normally");
-			 return;
+		 //pb.inheritIO();
+		 if(manager){
+			 ForkWorker fork = new ForkWorker(textArea, pb);
+			 fork.execute();
+			 while(!fork.isDone()){
+				 Thread.currentThread().sleep(500);
+				 //System.out.print(".");
+			 }
+			 System.out.print("Completed gdal2tiles\n");
+		 }else{
+			 Process p = pb.start();
+			 p.waitFor();
+			 if(p.exitValue()>0){
+				 if(manager){
+						System.out.print("ERROR:gdal2tiles did not complete normally\n");
+					}
+				 logger.error("gdal2tiles did not complete normally");
+				 return;
+			 }else{
+				 System.out.print("Completed gdal2tiles\n");
+			 }
 		 }
+		
 		 //now make images transparent
 		 //recurse dirs
 		 recurseDirs(tileDir);
@@ -213,6 +306,9 @@ public class ChartProcessor {
 	 * @throws IOException 
 	 */
 	private void recurseDirs(File tileDir) throws IOException, InterruptedException {
+		if(manager){
+			System.out.print("Process "+tileDir.getAbsolutePath());
+		}
 		logger.debug("Process "+tileDir.getAbsolutePath());
 		for(File dir: tileDir.listFiles()){
 			if(dir.isDirectory()){
@@ -235,13 +331,19 @@ public class ChartProcessor {
 	 */
 	private void processPng(File dir) throws IOException, InterruptedException {
 		File tmpPng = new File(dir.getAbsoluteFile()+".new");
-		logger.debug("Convert "+dir.getName());
+		if(manager){
+			System.out.print("      Convert "+dir.getName()+"\n");
+		}
+		logger.debug("      Convert "+dir.getName());
 		ProcessBuilder pb = new ProcessBuilder("convert", dir.getName(), "-transparent", "white", "-fuzz", "10%", tmpPng.getName());
 		 pb.directory(dir.getParentFile());
 		 Process p = pb.start();
 		 p.waitFor();
 		 tmpPng.renameTo(dir);
 		 if(p.exitValue()>0){
+			 if(manager){
+					System.out.print("ERROR:Imagemagick convert did not complete normally\n");
+				}
 			 logger.error("Imagemagick convert did not complete normally");
 			 return;
 		 }
@@ -249,6 +351,9 @@ public class ChartProcessor {
 	}
 
 	/**
+	 * First arg is chart filename, second is boolean reTile. 
+	 * reTile = true causes the tiles to be recreated,
+	 * false just recreates the layers conf text.
 	 * @param args
 	 * @throws Exception 
 	 */
@@ -262,9 +367,13 @@ public class ChartProcessor {
 			System.out.print("No file provided");
 			System.exit(1);
 		}
+		boolean reTile = true;
+		if(args!=null && args.length>1 && StringUtils.isNotBlank(args[1])){
+			reTile=Boolean.valueOf(args[1]);
+		}
 		//we have a file
 		ChartProcessor chartProcessor = new ChartProcessor();
-		chartProcessor.processChart(chartFile);
+		chartProcessor.processChart(chartFile,reTile);
 	}
 
 	

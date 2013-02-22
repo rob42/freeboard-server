@@ -6,7 +6,7 @@
 	<artifactId>freeboard-server</artifactId>
 	<version>-SNAPSHOT</version>
 	<name>Freeboard Server</name>
-	
+
 	<description>Webserver and data server for FreeBoard</description>
 	<properties>
 		<!-- <bundle.name>nsb-${project.version}</bundle.name> -->
@@ -30,11 +30,8 @@
 	</repositories>
 	<dependencies>
 		<!-- serial comms -->
-		<!-- dependency>
-			<groupId>org.rxtx</groupId>
-			<artifactId>rxtx</artifactId>
-			<version>2.1.7</version>
-		</dependency-->
+		<!-- dependency> <groupId>org.rxtx</groupId> <artifactId>rxtx</artifactId> 
+			<version>2.1.7</version> </dependency -->
 		<dependency>
 			<groupId>com.neuronrobotics</groupId>
 			<artifactId>nrjavaserial</artifactId>
@@ -123,6 +120,7 @@
 			<artifactId>zul</artifactId>
 			<version>${zk.version}</version>
 		</dependency>
+
 		<dependency>
 			<groupId>commons-codec</groupId>
 			<artifactId>commons-codec</artifactId>
@@ -228,13 +226,13 @@
 						<goals>
 							<goal>single</goal>
 						</goals>
-<!-- 						<configuration> -->
-<!-- 							<finalName>freeboard${version}</finalName> -->
-<!-- 							<appendAssemblyId>false</appendAssemblyId> -->
-<!-- 							<descriptors> -->
-<!-- 								<descriptor>assembly/webapp.xml</descriptor> -->
-<!-- 							</descriptors> -->
-<!-- 						</configuration> -->
+						<!-- <configuration> -->
+						<!-- <finalName>freeboard${version}</finalName> -->
+						<!-- <appendAssemblyId>false</appendAssemblyId> -->
+						<!-- <descriptors> -->
+						<!-- <descriptor>assembly/webapp.xml</descriptor> -->
+						<!-- </descriptors> -->
+						<!-- </configuration> -->
 					</execution>
 				</executions>
 			</plugin>
