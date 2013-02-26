@@ -17,17 +17,27 @@
   along with FreeBoard.  If not, see <http://www.gnu.org/licenses/>.
  -->
 <?page title="Freeboard"?>
+<!-- leaflet -->
+<?link rel="stylesheet" type="text/css" href="./js/leaflet.css"?>
+<?link rel="stylesheet" type="text/css" href="./js/leaflet.measure.css" ?>
+<?link rel="stylesheet" type="text/css" href="./js/leaflet.draw.css" ?>
 <?script src="./js/jquery-1.8.2.min.js"?>
 <?script src="./js/org/cometd.js"?>
 <?script src="./js/org/cometd/ReloadExtension.js"?>
 <?script src="./js/org/cometd/Cometd.js"?>
 <?script src="./js/org/cometd/AckExtension.js"?>
- <?script src="./js/jquery.cookie.js"?>
- <?script src="./js/jquery.cometd.js"?>
- <?script src="./js/jquery.cometd-reload.js"?>
+<?script src="./js/jquery.cookie.js"?>
+<?script src="./js/jquery.cometd.js"?>
+<?script src="./js/jquery.cometd-reload.js"?>
 <?script src="./js/freeboard-comet.js"?>
-<?script src="./js/OpenLayers.js" ?>
 <?script src="./js/websocket.js"?>
+
+<?script src="./js/leaflet.js" ?>
+<?script src="./js/leaflet.draw-src.js" ?>
+<?script src="./js/leaflet.measure.js" ?>
+<?script src="./js/Marker.Rotate.js" ?>
+<?script src="./js/GPX.js" ?>
+
 <?script src="./js/layers.js" ?>
 <?script src="./js/chartplotter.js" ?>
 <?script src="./js/tween-min.js"?>
@@ -38,10 +48,7 @@
 <?script src="./js/anchor.js"?>
 <zk>
 	<style>
-		#map { height: 100%; border: 1px solid #888; }
-
-		.olImageLoadError { /* when OL encounters a 404, don't display
-		the pink image */ display: none !important; }
+		#map { height: 100%; border: 1px solid #888;  }
 		.hboxRemoveWhiteStrips td.z-hbox-sep { width: 0; padding: 0;}
 	</style>
 	<script type="text/javascript">
@@ -63,13 +70,13 @@
 					<label id="firstZoom" value="0.0" visible="false"/>
 					<label id="layerVisibility" value="" visible="false"/>
 					
-					<div vflex="1" hflex="1">
-						<html>
-							<div id="map"></div>
+					<div vflex="1" hflex="1" >
+						<html >
+							<div id="map" ></div>
 						</html>
 
 						<script type="text/javascript" defer="true">
-							initCharts(); posInit(); resize();
+							initCharts(); posInit(); 
 						</script>
 					</div>
 

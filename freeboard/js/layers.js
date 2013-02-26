@@ -1,143 +1,92 @@
-var mapBounds = new OpenLayers.Bounds( -180.0, -80.9971907157, 179.997075819, 81.0);
-function addLayers(map) {
-var WORLDBounds = new OpenLayers.Bounds( -180.0, -80.9971907157, 179.997075819, 81.0);
-	mapBounds.extend(WORLDBounds );
-	var WORLD = new OpenLayers.Layer.TMS( "Blue Marble", "../../mapcache/WORLD/",
-			{ layername: '../../mapcache/WORLD/',
-			type: 'png', 
-			getURL: overlay_getTileURL, 
-			alpha: true,
-			isBaseLayer: true,
-			visibility: true,
-			//maxResolution : "auto",
-			numZoomLevels: 18,
-			minZoomLevel: 0,
-			maxZoomLevel: 7,
-			buffer : 0,
-			});
-	map.addLayer(WORLD); 
+//var mapBounds = new OpenLayers.Bounds( -180.0, -80.9971907157, 179.997075819, 81.0);
 
-var NZ46Bounds = new OpenLayers.Bounds( 173.86895223488963, -42.08918277388398, 175.46413452268570, -40.23603745695969);
-	mapBounds.extend(NZ46Bounds );
-	var NZ46 = new OpenLayers.Layer.TMS( "NZ46 Cook Strait", "../../mapcache/NZ46/",
-		{ layername: '../../mapcache/NZ46/',
-		type: 'png', 
-		getURL: overlay_getTileURL, 
-		alpha: true,
-		isBaseLayer: true,
-		visibility: false,
-		//maxResolution : "auto",
-		numZoomLevels: 18,
-		minZoomLevel: 7,
-		maxZoomLevel: 12,
-		buffer : 0,
-		});
-	map.addLayer(NZ46);
-	var NZ615Bounds = new OpenLayers.Bounds( 173.70239532864488, -41.50082916444747, 174.54758837986532, -40.54536912665989);
-	mapBounds.extend(NZ615Bounds );
-	var NZ615 = new OpenLayers.Layer.TMS("NZ615 Marlborough Sounds", "../../mapcache/NZ615/", {
-		layername : '../../mapcache/NZ615/',
-		type : 'png',
-		getURL : overlay_getTileURL,
-		alpha : true,
-		isBaseLayer : false,
-		//maxResolution : "auto",
-		numZoomLevels : 18,
-		minZoomLevel : 8,
-		maxZoomLevel : 13,
-		buffer : 0,
-		
-	});
-	map.addLayer(NZ615);
-	var NZ61Bounds = new OpenLayers.Bounds( 171.67265853743078, -41.37858426341804, 174.19399117138440, -40.10362112608023);
-	mapBounds.extend(NZ61Bounds );
-	var NZ61 = new OpenLayers.Layer.TMS("NZ61 Karamea River to Stephens Island", "../../mapcache/NZ61/", {
-		layername : '../../mapcache/NZ61/',
-		type : 'png',
-		getURL : overlay_getTileURL,
-		alpha : true,
-		isBaseLayer : false,
-		//maxResolution : "auto",
-		numZoomLevels : 18,
-		minZoomLevel : 7,
-		maxZoomLevel : 12,
-		buffer : 0,
+function addLayers(map) {
 	
-	});
-	map.addLayer(NZ61);
-	var NZ614 = new OpenLayers.Layer.TMS("NZ614 Tasman Bay",
-			"../../mapcache/NZ614/", { // url: '', serviceVersion: '.',
-				layername : '../../mapcache/NZ614/',
-				type : 'png',
-				getURL : overlay_getTileURL,
-				alpha : true,
-				isBaseLayer : false,
-				visibility: false,
-				numZoomLevels : 18,
-				//maxResolution: "auto",
-				minZoomLevel : 8,
-				maxZoomLevel : 13,
-				buffer : 0,
-			});
-	map.addLayer(NZ614);
-	var NZ6142_1 = new OpenLayers.Layer.TMS("NZ6142_1 Nelson Harbour",
-			"../../mapcache/NZ6142_1/", { // url: '', serviceVersion: '.',
-				layername : '../../mapcache/NZ6142_1/',
-				type : 'png',
-				getURL : overlay_getTileURL,
-				alpha : true,
-				isBaseLayer : false,
-				visibility: false,
-				numZoomLevels: 18 ,
-				//maxResolution : "auto",
-				minZoomLevel : 10,
-				maxZoomLevel : 15,
-				buffer : 0,
-			});
-	map.addLayer(NZ6142_1);
-	var NZ6142_2 = new OpenLayers.Layer.TMS("NZ6142_2 Port Nelson",
-			"../../mapcache/NZ6142_2/", { // url: '', serviceVersion: '.',
-				layername : '../../mapcache/NZ6142_2/',
-				type : 'png',
-				getURL : overlay_getTileURL,
-				alpha : true,
-				isBaseLayer : false,
-				visibility: false,
-				numZoomLevels: 18 ,
-				//maxResolution : "auto",
-				minZoomLevel : 12,
-				maxZoomLevel : 17,
-				buffer : 0,
-			});
-	map.addLayer(NZ6142_2);
-	var NZ6144 = new OpenLayers.Layer.TMS("NZ6144 Abel Tasman",
-			"../../mapcache/NZ6144/", { // url: '', serviceVersion: '.',
-				layername : '../../mapcache/NZ6144/',
-				type : 'png',
-				getURL : overlay_getTileURL,
-				alpha : true,
-				isBaseLayer : false,
-				visibility: false,
-				numZoomLevels: 18 ,
-				//maxResolution : "auto",
-				minZoomLevel : 9,
-				maxZoomLevel : 15,
-				buffer : 0,
-			});
-	map.addLayer(NZ6144);
-	var NZ614_1 = new OpenLayers.Layer.TMS("NZ614_1 Port Motueka",
-			"../../mapcache/NZ614_1/", { // url: '', serviceVersion: '.',
-				layername : '../../mapcache/NZ614_1/',
-				type : 'png',
-				getURL : overlay_getTileURL,
-				alpha : true,
-				isBaseLayer : false,
-				visibility: false,
-				numZoomLevels: 18 ,
-				//maxResolution : "auto",
-				minZoomLevel : 12,
-				maxZoomLevel : 18,
-				buffer : 0,
-			});
-	map.addLayer(NZ614_1);
-}
+	var WORLD = L.tileLayer('http://{s}.'+window.location.host+':8080/mapcache/WORLD/{z}/{x}/{y}.png', {
+		subdomains: 'abcd',
+	    attribution: 'Blue Marble',
+	    minZoom: 0,
+	    maxZoom: 7,
+	    tms: true,
+	    
+	}).addTo(map);
+	
+	var NZ14600 = L.tileLayer('http://{s}.'+window.location.host+':8080/mapcache/NZ14600/{z}/{x}/{y}.png', {
+		subdomains: 'abcd',
+	    attribution: 'NZ14600 New Zeland including Norfolk & Campbell',
+	    minZoom: 0,
+	    maxZoom: 5,
+	    tms: true
+	}).addTo(map);
+	
+	
+	var NZ46 = L.tileLayer("http://{s}.'+window.location.host+':8080/mapcache/NZ46/{z}/{x}/{y}.png", { 
+		subdomains: 'abcd',
+		minZoom: 7,
+		maxZoom: 12,
+		 tms: true
+		});//.addTo(map);
+
+	var NZ615 = L.tileLayer("http://{s}.'+window.location.host+':8080/mapcache/NZ615/{z}/{x}/{y}.png", {
+		subdomains: 'abcd',
+		minZoom : 7,
+		maxZoom : 13,
+		 tms: true
+	});//.addTo(map);
+
+	var NZ61 = L.tileLayer("http://{s}.'+window.location.host+':8080/mapcache/NZ61/{z}/{x}/{y}.png", {
+		subdomains: 'abcd',
+		minZoom : 7,
+		maxZoom : 12,
+		tms: true
+	}).addTo(map);
+	var NZ614 = L.tileLayer("http://{s}.'+window.location.host+':8080/mapcache/NZ614/{z}/{x}/{y}.png", { 
+		subdomains: 'abcd',
+		minZoom : 8,
+				maxZoom : 13,
+				tms: true
+			});//.addTo(map);
+	
+	var NZ6142_1 = L.tileLayer("http://{s}.'+window.location.host+':8080/mapcache/NZ6142_1/{z}/{x}/{y}.png", { 
+		subdomains: 'abcd',
+		minZoom : 10,
+				maxZoom : 15,
+				tms: true
+			});//.addTo(map);
+	var NZ6142_2 = L.tileLayer("http://{s}.'+window.location.host+':8080/mapcache/NZ6142_2/{z}/{x}/{y}.png", { 
+		subdomains: 'abcd',
+		minZoom : 12,
+				maxZoom : 17,
+				tms: true
+			});//.addTo(map);
+	
+	var NZ6144 = L.tileLayer("http://{s}.'+window.location.host+':8080/mapcache/NZ6144/{z}/{x}/{y}.png", { 
+		subdomains: 'abcd',
+		minZoom : 9,
+				maxZoom : 15,
+				tms: true
+			});//.addTo(map);
+	var NZ614_1 = L.tileLayer("http://{s}.'+window.location.host+':8080/mapcache/NZ614_1/{z}/{x}/{y}.png", { 
+		subdomains: 'abcd',
+		minZoom : 12,
+				maxZoom : 18,
+				tms: true
+			});//.addTo(map);
+	
+	baseLayers = {
+		    "World": WORLD,
+	};
+	overlays = {
+		    //"World": WORLD,
+		    "NZ14600 New Zealand including Norfolk & Campbell": NZ14600,
+		    "NZ46":NZ46,
+		    "NZ615": NZ615,
+		    "NZ61": NZ61,
+		    "NZ614": NZ614,
+		    "NZ6142_1":NZ6142_1,
+		    "NZ6142_2":NZ6142_2,
+		    "NZ6144":NZ6144,
+		    "NZ614_1":NZ614_1,
+		};
+	layers = L.control.layers(baseLayers, overlays).addTo(map);
+};

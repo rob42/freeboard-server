@@ -35,7 +35,7 @@
             _disconnecting = false;
             $.cometd.websocketEnabled = false;
             $.cometd.configure({
-                url: 'http://localhost:8082/cometd',
+                url: 'http://'+window.location.host+':8082/cometd',
                 logLevel: 'info'
             });
             $.cometd.handshake();

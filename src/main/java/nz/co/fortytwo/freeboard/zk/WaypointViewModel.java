@@ -264,6 +264,45 @@ public class WaypointViewModel extends SelectorComposer<Window> {
 		}
 	}
 
+	/**
+	 * Triggered when waypoints are moved in a client
+	 * @param event
+	 */
+	@Listen("onMoveWaypoint = #wptWindow")
+	public void onMoveWaypoint(Event event) {
+		try {
+			Object[] latlon = (Object[]) event.getData();
+			logger.debug("Moving waypoints:"+(latlon.length/4));
+			GPX gpx = new GPXParser().parseGPX(gpxFile);
+			//we have data in multiples of four
+			for(int x=0;x<latlon.length;x=x+4){
+				
+					// its a move, find by lat/lon
+					double oldLat = (Double) latlon[x+2];
+					double oldLon = (Double) latlon[x+3];
+					logger.debug("Moving "+latlon[x+2]+","+latlon[x+3]+" to "+latlon[x+0]+","+latlon[x+1]);
+					Waypoint wp = gpx.getWaypointByLocation(oldLat,oldLon);
+					if (wp != null) {
+						//update
+						gpx.getWaypoints().remove(wp);
+						wp.setLatitude((Double) latlon[x]);
+						wp.setLongitude((Double) latlon[x+1]);
+						gpx.addWaypoint(wp);
+						logger.debug("Moved "+wp.getName());
+					}
+				
+			}
+			new GPXParser().writeGPX(gpx, gpxFile);
+			//refresh waypoints
+			producer.sendBody(Constants.WPC+":0,");
+		} catch (Exception e) {
+			logger.error(e.getMessage(), e);
+		}
+	}
+	/**
+	 * Triggered when a waypoint is created or its data edited
+	 * @param event
+	 */
 	@Listen("onWaypoint = #wptWindow")
 	public void onWaypoint(Event event) {
 		try {

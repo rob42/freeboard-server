@@ -91,6 +91,8 @@ public class ChartManager extends JFrame {
 		}
 
 		public boolean process(File f) {
+			//one at a time
+			chartFileChooser.setEnabled(false);
 			System.out.println("Processing " + f.getAbsolutePath());
 			try {
 				ChartProcessor processor = new ChartProcessor(true,textArea);
@@ -102,6 +104,8 @@ public class ChartManager extends JFrame {
 				System.out.print(e.getMessage() + "\n");
 				e.printStackTrace();
 				return false;
+			}finally{
+				chartFileChooser.setEnabled(true);
 			}
 			return true;
 		}

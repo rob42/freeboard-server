@@ -174,16 +174,21 @@ public class ConfigViewModel extends SelectorComposer<Window> {
 		int c=0;
 		for(File layerDir: layersDir.listFiles()){
 			if(layerDir.isFile())continue;
-			File layerFile = new File(layerDir,"freeboard.txt");
-			String layer = FileUtils.readFileToString(layerFile);
-			//logger.debug(layer);
-			//get name
-			//var US50_2 = new OpenLayers.Layer.TMS( "US50_2 BERING SEA CONTINUATION NU/2401 RA/2746 3798 DU/254", "
-			int pos = layer.indexOf("OpenLayers.Layer.TMS(");
-			pos=layer.indexOf("\"",pos)+1;
-			String name = layer.substring(pos,layer.indexOf("\"",pos));
-			allListMap.put(name, layer);
-			logger.debug("Found:"+name);
+			try{
+				File layerFile = new File(layerDir,"freeboard.txt");
+			
+				String layer = FileUtils.readFileToString(layerFile);
+				//logger.debug(layer);
+				//get name
+				//var US50_2 = new OpenLayers.Layer.TMS( "US50_2 BERING SEA CONTINUATION NU/2401 RA/2746 3798 DU/254", "
+				int pos = layer.indexOf("OpenLayers.Layer.TMS(");
+				pos=layer.indexOf("\"",pos)+1;
+				String name = layer.substring(pos,layer.indexOf("\"",pos));
+				allListMap.put(name, layer);
+				logger.debug("Found:"+name);
+			}catch(Exception e){
+				logger.error(e.getMessage(),e);
+			}
 			c++;
 		}
 		

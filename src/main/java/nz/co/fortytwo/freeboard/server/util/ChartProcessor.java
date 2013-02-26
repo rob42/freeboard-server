@@ -18,6 +18,14 @@
  */
 package nz.co.fortytwo.freeboard.server.util;
 
+import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.Image;
+import java.awt.Toolkit;
+import java.awt.image.BufferedImage;
+import java.awt.image.FilteredImageSource;
+import java.awt.image.ImageFilter;
+import java.awt.image.ImageProducer;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
@@ -25,6 +33,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 
+import javax.imageio.ImageIO;
 import javax.swing.JTextArea;
 
 import org.apache.commons.io.FileUtils;
@@ -48,7 +57,8 @@ public class ChartProcessor {
 	Properties config = null;
 	private boolean manager=false;
 	private JTextArea textArea;
-
+	private ImageFilter filter = new TransparentImageFilter();
+	
 	public ChartProcessor() throws Exception {
 		config=Util.getConfig(null);
 		
@@ -117,8 +127,11 @@ public class ChartProcessor {
 				"\tbuffer : 0,\n"+
 		"});\n"+
 		"map.addLayer(WORLD);\n";
-		File layers = new File(chartFile.getParentFile(),"freeboard.txt");
+		File layers = new File(dir,"freeboard.txt");
         FileUtils.writeStringToFile(layers, text);
+        System.out.print("Zipping directory...\n");
+		ZipUtils.zip(dir, new File(chartFile.getParentFile(),chartName+".zip"));
+		System.out.print("Zipping directory complete\n");
 	}
 
 	/**
@@ -223,7 +236,7 @@ public class ChartProcessor {
         //now zip the result
       //now zip the result
         System.out.print("Zipping directory...\n");
-		ZipUtils.zip(dir, new File(chartFile.getParentFile(),chartName+".zip"));
+		ZipUtils.zip(dir, new File(dir,chartName+".zip"));
 		System.out.print("Zipping directory complete\n");
 	}
 
@@ -330,26 +343,29 @@ public class ChartProcessor {
 	 * @throws InterruptedException
 	 */
 	private void processPng(File dir) throws IOException, InterruptedException {
-		File tmpPng = new File(dir.getAbsoluteFile()+".new");
+	//	File tmpPng = new File(dir.getAbsoluteFile()+".new");
 		if(manager){
 			System.out.print("      Convert "+dir.getName()+"\n");
 		}
 		logger.debug("      Convert "+dir.getName());
-		ProcessBuilder pb = new ProcessBuilder("convert", dir.getName(), "-transparent", "white", "-fuzz", "10%", tmpPng.getName());
-		 pb.directory(dir.getParentFile());
-		 Process p = pb.start();
-		 p.waitFor();
-		 tmpPng.renameTo(dir);
-		 if(p.exitValue()>0){
-			 if(manager){
-					System.out.print("ERROR:Imagemagick convert did not complete normally\n");
-				}
-			 logger.error("Imagemagick convert did not complete normally");
-			 return;
-		 }
+		
+		BufferedImage img = ImageIO.read(dir);
+		ImageProducer ip = new FilteredImageSource(img.getSource(), filter);
+		Image transparentImage = Toolkit.getDefaultToolkit().createImage(ip);
+		BufferedImage dest = new BufferedImage( img.getWidth(), img.getHeight(), BufferedImage.TYPE_INT_ARGB);
+		Graphics2D g2 = dest.createGraphics();
+		g2.drawImage(transparentImage, 0, 0, null);
+		g2.dispose();
+		ImageIO.write(dest, "PNG", dir);
 		
 	}
 
+	
+	      
+	public Image makeColorTransparent(Image im, final Color color) {
+		ImageProducer ip = new FilteredImageSource(im.getSource(), filter);
+		return Toolkit.getDefaultToolkit().createImage(ip);
+    }
 	/**
 	 * First arg is chart filename, second is boolean reTile. 
 	 * reTile = true causes the tiles to be recreated,

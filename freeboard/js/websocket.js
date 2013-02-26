@@ -16,6 +16,9 @@
  *  You should have received a copy of the GNU General Public License
  *  along with FreeBoard.  If not, see <http://www.gnu.org/licenses/>.
  */
+//this needed before leaflet code is loaded so we do it here for now
+L_PREFER_CANVAS = true;
+
 var _ws;
 var _comet;
 var wsList = [];
