@@ -85,12 +85,14 @@ public class ChartProcessor {
 				//for WORLD.tif (Blue Marble) we need 
 				//'gdal_translate -a_ullr -180.0 90.0 180.0 -90.0 -a_srs "EPSG:4326" -of vrt  WORLD.tif temp.vrt'
 				//to add Georef info
-				if(chartFile.getName().toUpperCase().equals("WORLD.tif")){
+				if(chartFile.getName().toUpperCase().equals("WORLD.TIF")){
 					processWorldChart(chartFile,reTile);
-				}
+				}else
 				//we have a KAP file
 				if(chartFile.getName().toUpperCase().endsWith("KAP")){
 					processKapChart(chartFile,reTile);
+				}else{
+					System.out.print("File "+chartFile.getAbsolutePath()+" not recognised so not processed\n");
 				}
 				
 	}
@@ -111,26 +113,22 @@ public class ChartProcessor {
 					Arrays.asList("gdal2tiles.py", "-z", "0-6", "temp.vrt", chartName));
 		}
 		//write out freeboard.txt
-		String text = "var WORLDBounds = new OpenLayers.Bounds( -180.0, -80.9971907157, 179.997075819, 81.0);\n"+
-		"mapBounds.extend(WORLDBounds );\n"+
-		"var WORLD = new OpenLayers.Layer.TMS( \"Blue Marble\", \"../../mapcache/WORLD/\",\n"+
-				"\t{ layername: '../../mapcache/WORLD/',\n"+
-				"\ttype: 'png', \n"+
-				"\tgetURL: overlay_getTileURL, \n"+
-				"\talpha: true,\n"+
-				"\tisBaseLayer: true,\n"+
-				"\tvisibility: true,\n"+
-				"\t//maxResolution : \"auto\",\n"+
-				"\tnumZoomLevels: 18,\n"+
-				"\tminZoomLevel: 0,\n"+
-				"\tmaxZoomLevel: 7,\n"+
-				"\tbuffer : 0,\n"+
-		"});\n"+
-		"map.addLayer(WORLD);\n";
+
+		String text = "\n\tvar WORLD = L.tileLayer(\"http://{s}.{server}:8080/mapcache/WORLD/{z}/{x}/{y}.png\", {\n"+
+    			"\t\tserver: host,\n"+
+    			"\t\tsubdomains: 'abcd',\n"+
+    			"\t\tattribution: 'Blue Marble',\n"+
+    			"\t\tminZoom: 0,\n"+
+    			"\t\tmaxZoom: 7,\n"+
+    			"\t\ttms: true\n"+
+    			"\t\t}).addTo(map);\n";
+		if(manager){
+			System.out.print(text+"\n");
+		}
 		File layers = new File(dir,"freeboard.txt");
         FileUtils.writeStringToFile(layers, text);
         System.out.print("Zipping directory...\n");
-		ZipUtils.zip(dir, new File(chartFile.getParentFile(),chartName+".zip"));
+		//ZipUtils.zip(dir, new File(dir.getParentFile(),chartName+".zip"));
 		System.out.print("Zipping directory complete\n");
 	}
 
@@ -208,35 +206,27 @@ public class ChartProcessor {
 		}
         logger.debug("Zoom:"+minZoom+"-"+maxZoom);
         
-        //make the javascript snippets
-        String bounds = "\tvar "+chartName+"Bounds = new OpenLayers.Bounds( "+miny+", "+minx+", "+maxy+", "+maxx+");\n"+
-        				"\tmapBounds.extend("+chartName+"Bounds );\n";
-        if(manager){
-			System.out.print(bounds+"\n");
-		}
-        logger.debug(bounds);
-        String relPath ="../../mapcache/";
-        String snippet = "\n\tvar "+chartName+" = new OpenLayers.Layer.TMS( \""+chartName+" "+desc+"\", \""+relPath+chartName+"/\",\n"+
-        		"\t\t{ layername: '"+relPath+chartName+"/',\n"+
-        		"\t\ttype: 'png', getURL: overlay_getTileURL, alpha: true,\n"+ 
-        		"\t\tisBaseLayer: false,\n"+
-        		"\t\tvisibility: false,\n"+
-        		"\t\tnumZoomLevels: 18,\n"+
-        		"\t\tminZoomLevel: "+minZoom+",\n"+
-        		"\t\tmaxZoomLevel: "+maxZoom+",\n"+
-        		"\t\t});\n" +
-        		"\tmap.addLayer("+chartName+");\n";
+        String snippet = "\n\tvar "+chartName+" = L.tileLayer(\"http://{s}.{server}:8080/mapcache/"+chartName+"/{z}/{x}/{y}.png\", {\n"+
+        			"\t\tserver: host,\n"+
+        			"\t\tsubdomains: 'abcd',\n"+
+        			"\t\tattribution: '"+chartName+" "+desc+"',\n"+
+        			"\t\tminZoom: "+minZoom+ ",\n"+
+        			"\t\tmaxZoom: "+maxZoom+",\n"+
+        			"\t\ttms: true\n"+
+        			"\t\t}).addTo(map);\n";
+        		
+        
         if(manager){
 			System.out.print(snippet+"\n");
 		}
         logger.debug(snippet);
 		//add it to local freeboard.txt 
-        File layers = new File(chartFile.getParentFile(),"freeboard.txt");
-        FileUtils.writeStringToFile(layers, bounds+"\n"+snippet);
+        File layers = new File(dir,"freeboard.txt");
+        FileUtils.writeStringToFile(layers, snippet);
         //now zip the result
       //now zip the result
         System.out.print("Zipping directory...\n");
-		ZipUtils.zip(dir, new File(dir,chartName+".zip"));
+		//ZipUtils.zip(dir, new File(dir.getParentFile(),chartName+".zip"));
 		System.out.print("Zipping directory complete\n");
 	}
 

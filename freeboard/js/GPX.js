@@ -108,7 +108,11 @@ L.GPX = L.FeatureGroup.extend({
 				descr = descr + el[i].childNodes[j].nodeValue;
 		}
 		if (!name) return;
-		var txt = "<h2>" + name + "</h2>" + descr;
+		var txt = "<h2>" + name + "</h2>" + descr+ 
+			"<br/><div>"+
+			"<image src=\"js/theme/default/img/draw_point_off.png\" onclick=\"javascript:requestMarkerEdit("+layer.getLatLng().lat+","+layer.getLatLng().lng+");\" tooltip=\"Edit\" >" +
+				"<image src=\"js/theme/default/img/draw_point_off.png\" onclick=\"javascript:requestGotoDestination("+layer.getLatLng().lat+","+layer.getLatLng().lng+");\" tooltip=\"Goto\" >" +
+			"</div>";
 		if (layer && layer._popup === undefined) layer.bindPopup(txt);
 		return txt;
 	},

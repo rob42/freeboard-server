@@ -141,15 +141,16 @@ public class ConfigViewModel extends SelectorComposer<Window> {
 		File layersFile = new File(Util.getConfig(null).getProperty(Constants.FREEBOARD_RESOURCE)+"/js/layers.js");
 		String layer = FileUtils.readFileToString(layersFile);
 		//get all the layers in the file
-		int pos =layer.indexOf("OpenLayers.Layer.TMS(");
+		int pos =layer.indexOf("L.tileLayer(");
 		int pos1=0;
 		while(pos>-1){
-			pos=layer.indexOf("\"",pos)+1;
-			pos1=layer.indexOf("\"",pos);
+			pos=layer.indexOf("attribution",pos);
+			pos=layer.indexOf("'",pos)+1;
+			pos1=layer.indexOf("'",pos);
 			String name = layer.substring(pos,pos1);
 			selectedListArray.add(name);
 			logger.debug("Found:"+name);
-			pos = layer.indexOf("OpenLayers.Layer.TMS(",pos1+1);
+			pos = layer.indexOf("L.tileLayer(",pos1+1);
 		}
 		
 	}
@@ -158,15 +159,49 @@ public class ConfigViewModel extends SelectorComposer<Window> {
 		
 		File layersFile = new File(Util.getConfig(null).getProperty(Constants.FREEBOARD_RESOURCE)+"/js/layers.js");
 		StringBuffer layers = new StringBuffer();
-		layers.append("var mapBounds = new OpenLayers.Bounds( -180.0, -80.9971907157, 179.997075819, 81.0);\n");
-		layers.append("function addLayers(map) {\n");
+		layers.append("function addLayers(map) {\n\tvar host = window.location.hostname;\n");
 		for(String chart: selectedChartsModel){
 			layers.append(allListMap.get(chart));
 			layers.append("\n");
 		}
-		layers.append("}\n");
+		//layers.append("}\n");
+		//now add the layers data
+		layers.append("\tbaseLayers = {\n"+
+		    "\t\t\"World\": WORLD,\n"+
+			"\t};\n"+
+		"\toverlays = {\n");
+		//add the overlays
+		for(String chart: selectedChartsModel){
+			String snippet = allListMap.get(chart);
+			logger.debug("Processing :"+chart);
+			logger.debug(snippet);
+			
+			String chartVar = snippet.substring(0,snippet.indexOf("="));
+			chartVar = chartVar.substring(chartVar.indexOf("var")+3).trim();
+			snippet=getChartName(snippet,chart);
+			layers.append("\t\t\""+snippet+"\": "+chartVar+",\n");
+		}
+		layers.append("\t};\n");
+		layers.append("\tlayers = L.control.layers(baseLayers, overlays).addTo(map);\n");
+		layers.append("\t};\n");
 		logger.debug(layers);
 		FileUtils.writeStringToFile(layersFile, layers.toString());
+	}
+
+	private String getChartName(String snippet, String chart) {
+		int startPos=snippet.indexOf("attribution:");
+		if(startPos<0){
+			snippet=chart;
+		}else{
+			startPos=snippet.indexOf("'",startPos)+1;
+			int endPos = snippet.indexOf("'",startPos);
+			if(endPos<0){
+				snippet=chart;
+			}else{
+				snippet=snippet.substring(startPos,endPos);
+			}
+		}
+		return snippet;
 	}
 
 	private void setAllChartLayers() throws Exception {
@@ -178,12 +213,9 @@ public class ConfigViewModel extends SelectorComposer<Window> {
 				File layerFile = new File(layerDir,"freeboard.txt");
 			
 				String layer = FileUtils.readFileToString(layerFile);
-				//logger.debug(layer);
-				//get name
-				//var US50_2 = new OpenLayers.Layer.TMS( "US50_2 BERING SEA CONTINUATION NU/2401 RA/2746 3798 DU/254", "
-				int pos = layer.indexOf("OpenLayers.Layer.TMS(");
-				pos=layer.indexOf("\"",pos)+1;
-				String name = layer.substring(pos,layer.indexOf("\"",pos));
+				String chart = layerFile.getName();
+				chart=chart.substring(0,chart.indexOf("."));
+				String name = getChartName(layer, chart);
 				allListMap.put(name, layer);
 				logger.debug("Found:"+name);
 			}catch(Exception e){

@@ -96,10 +96,6 @@ public class WaypointViewModel extends SelectorComposer<Window> {
 	private File gpxFile;
 
 	private ProducerTemplate producer;
-	private String gotoLat = null;
-	private String gotoLon = null;
-	private String fromLat = null;
-	private String fromLon = null;
 
 	public WaypointViewModel() {
 		super();
@@ -110,10 +106,7 @@ public class WaypointViewModel extends SelectorComposer<Window> {
 			gpxFile = new File(gpxDir, Util.getConfig(null).getProperty(Constants.WAYPOINT_CURRENT));
 			producer = CamelContextFactory.getInstance().createProducerTemplate();
 			producer.setDefaultEndpointUri("seda://input?multipleConsumers=true");
-			gotoLat = Util.getConfig(null).getProperty(Constants.GOTO_LAT);
-			gotoLon = Util.getConfig(null).getProperty(Constants.GOTO_LON);
-			fromLat = Util.getConfig(null).getProperty(Constants.FROM_LAT);
-			fromLon = Util.getConfig(null).getProperty(Constants.FROM_LON);
+
 			logger.debug("Constructing..");
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
@@ -124,8 +117,12 @@ public class WaypointViewModel extends SelectorComposer<Window> {
 	public void doAfterCompose(Window comp) throws Exception {
 		super.doAfterCompose(comp);
 		logger.debug("Init..");
+		String gotoLat = Util.getConfig(null).getProperty(Constants.GOTO_LAT);
+		String gotoLon = Util.getConfig(null).getProperty(Constants.GOTO_LON);
+		String fromLat = Util.getConfig(null).getProperty(Constants.FROM_LAT);
+		String fromLon = Util.getConfig(null).getProperty(Constants.FROM_LON);
 		if (gotoLat != null && gotoLon != null && fromLat != null && fromLon != null) {
-			//need to do this directly, sending a message can get lost as the client may not yet be attached to websockets
+			// need to do this directly, sending a message can get lost as the client may not yet be attached to websockets
 			Clients.evalJavaScript("setGotoWpt(" + gotoLat + "," + gotoLon + "," + fromLat + "," + fromLon + ");");
 		}
 
@@ -156,7 +153,7 @@ public class WaypointViewModel extends SelectorComposer<Window> {
 					return;
 			}
 			wp = gpx.getWaypointByLocation(latBox.getValue().doubleValue(), lonBox.getValue().doubleValue());
-			if (wp != null) {
+			if (wp != null && wp.getLatitude()!=latBox.getValue().doubleValue() && wp.getLongitude()!=lonBox.getValue().doubleValue()) {
 				int reply = Messagebox.show("A waypoint within 30 meters already exists. Overwrite?", "Question", Messagebox.OK | Messagebox.CANCEL,
 						Messagebox.QUESTION);
 				if (reply == Messagebox.CANCEL)
@@ -170,7 +167,7 @@ public class WaypointViewModel extends SelectorComposer<Window> {
 			wp.setLatitude(latBox.getValue().doubleValue());
 			wp.setLongitude(lonBox.getValue().doubleValue());
 			wp.setName(nameBox.getText());
-			wp.setDescription(StringUtils.isNotBlank(descBox.getText())?descBox.getText():"?");
+			wp.setDescription(StringUtils.isNotBlank(descBox.getText()) ? descBox.getText() : "?");
 			// clear the boxes
 			nameBox.setText("");
 			descBox.setText("");
@@ -182,20 +179,33 @@ public class WaypointViewModel extends SelectorComposer<Window> {
 			logger.error(e.getMessage(), e);
 		}
 		wptWindow.setVisible(false);
-		producer.sendBody(Constants.WPC+":0,");
-		
+		producer.sendBody(Constants.WPC + ":0,");
+
 	}
 
 	@Listen("onClick = button#gotoWpt")
 	public void wptGotoWptClick(MouseEvent event) {
 		logger.debug(" gotoWpt button event = " + event);
 		wptWindow.setVisible(false);
-		fromLat = curLat.getValue();
-		fromLon = curLon.getValue();
-		gotoLat = latBox.getValue().toPlainString();
-		gotoLon = lonBox.getValue().toPlainString();
+		String fromLat = curLat.getValue();
+		String fromLon = curLon.getValue();
+		String gotoLat = latBox.getValue().toPlainString();
+		String gotoLon = lonBox.getValue().toPlainString();
 		nameBox.setText("");
 		descBox.setText("");
+		gotoDestination(gotoLat, gotoLon, fromLat, fromLon);
+
+	}
+
+	/**
+	 * Sets/deletes a goto and informs all clients
+	 * 
+	 * @param gotoLat
+	 * @param gotoLon
+	 * @param fromLat
+	 * @param fromLon
+	 */
+	private void gotoDestination(String gotoLat, String gotoLon, String fromLat, String fromLon) {
 		try {
 			Util.getConfig(null).setProperty(Constants.GOTO_LAT, gotoLat);
 			Util.getConfig(null).setProperty(Constants.GOTO_LON, gotoLon);
@@ -205,29 +215,20 @@ public class WaypointViewModel extends SelectorComposer<Window> {
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
 		}
-		 producer.sendBody(Constants.WPG+":"+ gotoLat + "|" + gotoLon + "|" + fromLat + "|" + fromLon+",");
-		
+		if (gotoLat == null && gotoLon == null) {
+			producer.sendBody(Constants.WPG + ":0,");
+		} else {
+			producer.sendBody(Constants.WPG + ":" + gotoLat + "|" + gotoLon + "|" + fromLat + "|" + fromLon + ",");
+		}
+
 	}
 
 	@Listen("onClick = button#gotoCancel")
 	public void wptGotoCancelClick(MouseEvent event) {
 		logger.debug(" gotoCancel button event = " + event);
 		wptWindow.setVisible(false);
-		fromLat = null;
-		fromLon = null;
-		gotoLat = null;
-		gotoLon = null;
-		try {
-			Util.getConfig(null).remove(Constants.GOTO_LAT);
-			Util.getConfig(null).remove(Constants.GOTO_LON);
-			Util.getConfig(null).remove(Constants.FROM_LAT);
-			Util.getConfig(null).remove(Constants.FROM_LON);
-			Util.saveConfig();
-		} catch (Exception e) {
-			logger.error(e.getMessage(), e);
-		}
-		producer.sendBody(Constants.WPG+":0,");
-		
+		gotoDestination(null, null, null, null);
+
 	}
 
 	//
@@ -249,7 +250,7 @@ public class WaypointViewModel extends SelectorComposer<Window> {
 			logger.error(e.getMessage(), e);
 		}
 		wptWindow.setVisible(false);
-		producer.sendBody(Constants.WPC+":0,");
+		producer.sendBody(Constants.WPC + ":0,");
 	}
 
 	private void deleteWaypoint(GPX gpx, String name) {
@@ -266,69 +267,91 @@ public class WaypointViewModel extends SelectorComposer<Window> {
 
 	/**
 	 * Triggered when waypoints are moved in a client
+	 * 
 	 * @param event
 	 */
-	@Listen("onMoveWaypoint = #wptWindow")
-	public void onMoveWaypoint(Event event) {
+	@Listen("onWaypointMove = #wptWindow")
+	public void onWaypointMove(Event event) {
 		try {
 			Object[] latlon = (Object[]) event.getData();
-			logger.debug("Moving waypoints:"+(latlon.length/4));
+			logger.debug("Moving waypoints:" + (latlon.length / 4));
 			GPX gpx = new GPXParser().parseGPX(gpxFile);
-			//we have data in multiples of four
-			for(int x=0;x<latlon.length;x=x+4){
-				
-					// its a move, find by lat/lon
-					double oldLat = (Double) latlon[x+2];
-					double oldLon = (Double) latlon[x+3];
-					logger.debug("Moving "+latlon[x+2]+","+latlon[x+3]+" to "+latlon[x+0]+","+latlon[x+1]);
-					Waypoint wp = gpx.getWaypointByLocation(oldLat,oldLon);
-					if (wp != null) {
-						//update
-						gpx.getWaypoints().remove(wp);
-						wp.setLatitude((Double) latlon[x]);
-						wp.setLongitude((Double) latlon[x+1]);
-						gpx.addWaypoint(wp);
-						logger.debug("Moved "+wp.getName());
-					}
-				
+			// we have data in multiples of four
+			for (int x = 0; x < latlon.length; x = x + 4) {
+
+				// its a move, find by lat/lon
+				double oldLat = (Double) latlon[x + 2];
+				double oldLon = (Double) latlon[x + 3];
+				logger.debug("Moving " + latlon[x + 2] + "," + latlon[x + 3] + " to " + latlon[x + 0] + "," + latlon[x + 1]);
+				Waypoint wp = gpx.getWaypointByLocation(oldLat, oldLon);
+				if (wp != null) {
+					// update
+					gpx.getWaypoints().remove(wp);
+					wp.setLatitude((Double) latlon[x]);
+					wp.setLongitude((Double) latlon[x + 1]);
+					gpx.addWaypoint(wp);
+					logger.debug("Moved " + wp.getName());
+				}
+
 			}
 			new GPXParser().writeGPX(gpx, gpxFile);
-			//refresh waypoints
-			producer.sendBody(Constants.WPC+":0,");
+			// refresh waypoints
+			producer.sendBody(Constants.WPC + ":0,");
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
 		}
 	}
-	/**
-	 * Triggered when a waypoint is created or its data edited
-	 * @param event
-	 */
-	@Listen("onWaypoint = #wptWindow")
-	public void onWaypoint(Event event) {
+
+	@Listen("onRequestGoto = #wptWindow")
+	public void onRequestGoto(Event event) {
 		try {
 			Object[] latlon = (Object[]) event.getData();
-			if (latlon.length == 5) {
-				// its an edit find by name
-				String name = String.valueOf(latlon[4]);
-				GPX gpx = new GPXParser().parseGPX(gpxFile);
-				Waypoint wp = gpx.getWaypointByName(name);
-				if (wp != null) {
-					nameBox.setValue(name);
-					descBox.setValue(wp.getDescription());
-					latBox.setValue(BigDecimal.valueOf(wp.getLatitude()));
-					lonBox.setValue(BigDecimal.valueOf(wp.getLongitude()));
-					editMark.setValue("true");
-				}
-				// TODO: what if its not found?
-			} else {
-				editMark.setValue("false");
-				// new waypoint
-				BigDecimal latitude = BigDecimal.valueOf((Double) latlon[0]);
-				latBox.setValue(latitude);
-				BigDecimal longitude = BigDecimal.valueOf((Double) latlon[1]);
-				lonBox.setValue(longitude);
-				logger.debug("Waypoint Lat:" + latitude + ", Lon:" + longitude);
+
+			// request goto waypoints
+			gotoDestination(String.valueOf(latlon[0]), String.valueOf(latlon[1]), String.valueOf(latlon[2]), String.valueOf(latlon[3]));
+		} catch (Exception e) {
+			logger.error(e.getMessage(), e);
+		}
+	}
+
+	@Listen("onWaypointEdit = #wptWindow")
+	public void onWaypointEdit(Event event) {
+		try {
+			Object[] latlon = (Object[]) event.getData();
+			GPX gpx = new GPXParser().parseGPX(gpxFile);
+			Waypoint wp = gpx.getWaypointByLocation((Double) latlon[0], (Double) latlon[1]);
+			if (wp != null) {
+				nameBox.setValue(wp.getName());
+				descBox.setValue(wp.getDescription());
+				latBox.setValue(BigDecimal.valueOf(wp.getLatitude()));
+				lonBox.setValue(BigDecimal.valueOf(wp.getLongitude()));
+				editMark.setValue("true");
 			}
+			curLat.setValue(String.valueOf(latlon[2]));
+			curLon.setValue(String.valueOf(latlon[3]));
+			wptWindow.setVisible(true);
+		} catch (Exception e) {
+			logger.error(e.getMessage(), e);
+		}
+	}
+
+	/**
+	 * Triggered when a waypoint is created or its data edited
+	 * 
+	 * @param event
+	 */
+	@Listen("onWaypointCreate = #wptWindow")
+	public void onWaypointCreate(Event event) {
+		try {
+			Object[] latlon = (Object[]) event.getData();
+			editMark.setValue("false");
+			// new waypoint
+			BigDecimal latitude = BigDecimal.valueOf((Double) latlon[0]);
+			latBox.setValue(latitude);
+			BigDecimal longitude = BigDecimal.valueOf((Double) latlon[1]);
+			lonBox.setValue(longitude);
+			logger.debug("Waypoint Lat:" + latitude + ", Lon:" + longitude);
+
 			curLat.setValue(String.valueOf(latlon[2]));
 			curLon.setValue(String.valueOf(latlon[3]));
 			wptWindow.setVisible(true);

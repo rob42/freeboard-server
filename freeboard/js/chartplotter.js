@@ -17,17 +17,7 @@
  *  along with FreeBoard.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
 //var trackLine = null;
-//
-//var gotoLayer = new OpenLayers.Layer.Vector('Go To Waypoint', {renderers: ['Canvas', 'SVG', 'VML'],
-//	styleMap: new OpenLayers.StyleMap({
-//		strokeWidth : 5,
-//		strokeOpacity : 0.4,
-//		strokeColor : "#FFFF00",
-//		//strokeDashstyle : "dash",
-//    })
-//});
 //
 
 var map;
@@ -36,23 +26,30 @@ var hdgLayer;
 var bearingLayer;
 var trackLayer;
 var wgpxLayer;
-var followBoat=false;
+var gotoLayer;
+var followBoat = false;
 
-var lat=0.0;
-var lon=0.0;
-var heading=0.0;
-var speed=0.0;
-var declination=0.0;
-var trackCount=0;
-var moveCount=0;
+var lat = 0.0;
+var lon = 0.0;
+var heading = 0.0;
+var speed = 0.0;
+var declination = 0.0;
+var trackCount = 0;
+var moveCount = 0;
 var baseLayers;
 var overlays;
 var layers;
 
+
 function initCharts() {
 	//
+	var firstLat = zk.Widget.$("$firstLat").getValue();
+	var firstLon = zk.Widget.$("$firstLon").getValue();
+	var firstZoom = zk.Widget.$("$firstZoom").getValue();
+	console.log(firstLat+","+firstLon+","+firstZoom);
 	map = L.map('map', {
-	}).setView([ 0.0, 0.0 ], 2);
+		//attributionControl: false,
+	}).setView(new L.LatLng(firstLat,firstLon),firstZoom,true);
 
 	addLayers(map);
 
@@ -70,14 +67,13 @@ function initCharts() {
 	var drawnItems = new L.FeatureGroup();
 	map.addLayer(drawnItems);
 
-	//Waypoints
+	// Waypoints
 	refreshWaypoints();
-	
-	//add all the waypoints to the drawnItems
-//	wgpxLayer.eachLayer(function (layer) {
-//		drawnItems.addLayer(layer);
-//	});
-	
+
+	// Track
+	refreshTrack();
+
+
 	// Initialize the draw control and pass it the FeatureGroup of editable
 	// layers
 	var drawControl = new L.Control.Draw({
@@ -112,94 +108,65 @@ function initCharts() {
 
 	hdgLayer = L.polyline([ new L.LatLng(0.0, 0.0), new L.LatLng(0.0, 0.0) ], {
 		color : 'black',
-		weight: 1,
-		dashArray: '5,5',
+		weight : 1,
+		dashArray : '5,5',
 	}).addTo(map);
-	
-	bearingLayer = L.polyline([ new L.LatLng(0.0, 0.0), new L.LatLng(0.0, 0.0) ], {
-		color : 'green',
-		weight: 3,
-		opacity: 1,
-		fillOpacity: 1,
-	}).addTo(map);
-	
-	//GPX track
-	var trkUrl = "http://'+window.location.host+':8080/freeboard/tracks/current.gpx"; // URL to your GPX file
-	trackLayer = new L.GPX(trkUrl, {async: true}).on('loaded', function(e) {
-	  map.fitBounds(e.target.getBounds());
-	}).addTo(map);
-	layers.addOverlay(trackLayer, "Track");
-	
-	//add waypoints
-	map.on('draw:created', function (e) {
-	    var type = e.layerType,
-	        layer = e.layer;
 
-	    if (type === 'marker') {
-	    	zAu.send(new zk.Event(zk.Widget.$("$this"), 'onWaypoint', new Array(layer.getLatLng().lat,layer.getLatLng().lng,lat,lon)));
-	    }
-	    drawnItems.addLayer(layer);
+	bearingLayer = L.polyline(
+			[ new L.LatLng(0.0, 0.0), new L.LatLng(0.0, 0.0) ], {
+				color : 'green',
+				weight : 3,
+				opacity : 1,
+				fillOpacity : 1,
+			}).addTo(map);
+
+	// add waypoints
+	map.on('draw:created', function(e) {
+		var type = e.layerType, layer = e.layer;
+
+		if (type === 'marker') {
+			zAu.send(new zk.Event(zk.Widget.$("$this"), 'onWaypointCreate',
+					new Array(layer.getLatLng().lat, layer.getLatLng().lng,
+							lat, lon)));
+		}
+		drawnItems.addLayer(layer);
+	});
+
+	//move waypoints
+	map.on('draw:edited', function(e) {
+		var type = e.layerType, layers = e.layers;
+		console.log(layers);
+		// loop through and send to backend
+		var edits = new Array();
+		jQuery.each(layers, function(i, val) {
+			edits.push(val[0]);
+			edits.push(val[1]);
+			edits.push(val[2]);
+			edits.push(val[3]);
+		});
+		//console.log(edits);
+		zAu.send(new zk.Event(zk.Widget.$("$this"), 'onWaypointMove', edits));
 	});
 	
-	map.on('draw:edited', function (e) {
-	    var type = e.layerType,
-	        layers = e.layers;
-	    console.log(layers);
-	    //loop through and send to backend
-	    var edits = new Array();
-	    jQuery.each( layers, function(i, val){
-	    	 edits.push(val[0]);
-	    	 edits.push(val[1]);
-	    	 edits.push(val[2]);
-	    	 edits.push(val[3]);
-	    } ) ;
-	    console.log(edits);
-	    zAu.send(new zk.Event(zk.Widget.$("$this"), 'onMoveWaypoint', edits));
+	
+	
+	map.on('zoomend', function(e) {
+		//console.log(e.target._animateToZoom);
+		//console.log( map.getZoom());
+		zAu.send(new zk.Event(zk.Widget.$("$this"), 'onChartChange', new Array(map.getCenter().lat,map.getCenter().lng, map.getZoom())));
 	});
+	map.on('dragend', function(e) {
+		zAu.send(new zk.Event(zk.Widget.$("$this"), 'onChartChange', new Array(map.getCenter().lat,map.getCenter().lng, map.getZoom())));
+	});
+	
+	var firstLat = zk.Widget.$("$firstLat").getValue();
+	var firstLon = zk.Widget.$("$firstLon").getValue();
+	var firstZoom = zk.Widget.$("$firstZoom").getValue();
+	console.log(firstLat+","+firstLon+","+firstZoom);
+	map.setView(new L.LatLng(firstLat,firstLon),firstZoom,true);
 }
 
 
-// function onFeatureSelect(feature) {
-// selectedFeature = feature;
-// if(zk.Widget.$("$wptToggle").isChecked()){
-// var position = feature.geometry.getBounds().getCenterLonLat();
-// var lonlat = map.getLonLatFromPixel(position);
-// var wptLocation = lonlat.transform(chartProjection, screenProjection );
-// zAu.send(new zk.Event(zk.Widget.$("$this"), 'onWaypoint', new
-// Array(wptLocation.lat,wptLocation.lon,lat,lon,feature.attributes.name)));
-// selectControl.unselect(selectedFeature);
-// }
-// }
-
-
-
-//	
-// //add waypoints
-// map.events.register("click", map, function(e) {
-// if(zk.Widget.$("$wptToggle").isChecked()){
-// var position = this.events.getMousePosition(e);
-//	          
-// var lonlat = map.getLonLatFromPixel(position);
-// var wptLocation = lonlat.transform(chartProjection, screenProjection );
-//	    
-// zAu.send(new zk.Event(zk.Widget.$("$map"), 'onWaypoint', new
-// Array(wptLocation.lat,wptLocation.lon,lat,lon)));
-// }
-// });
-//	
-// //track map moving and zooming
-// var followBoatCount =0;
-// map.events.register("moveend", map, function() {
-// if(followBoat){
-// //increment count, we only save move event every 100 moves if we are
-// following the boat
-// if(followBoatCount>100){
-// followBoatCount=0;
-// }else{
-// followBoatCount++;
-// //outa here
-// return;
-// }
 // }
 // var chartLocation = map.getCenter().transform(chartProjection,
 // screenProjection );
@@ -215,10 +182,6 @@ function initCharts() {
 // }
 // });
 //	
-// var switcherControl = new OpenLayers.Control.LayerSwitcher();
-// map.addControl(switcherControl);
-// //switcherControl.maximizeControl();
-//
 // //set layer visibility
 // var vis = zk.Widget.$("$layerVisibility").getValue().split(';');
 // jQuery.each(vis, function(i, data) {
@@ -235,49 +198,7 @@ function initCharts() {
 // }
 // }
 // });
-// //zoom to last pos and zoom
-// map.zoomToExtent(mapBounds.transform(map.displayProjection, map.projection));
-// map.moveTo(new
-// OpenLayers.LonLat(zk.Widget.$("$firstLon").getValue(),zk.Widget.$("$firstLat").getValue()).transform(screenProjection,
-// chartProjection));
-// map.zoomTo(zk.Widget.$("$firstZoom").getValue());
-// $("#noneToggle").checked = true;
-//	
-//	
-// }
-//
 
-//
-// // measurement
-// function handleMeasurements(event) {
-// var order = event.order;
-// //convert to nautical miles
-// var measure = event.measure * 0.539957;
-//	
-// var eOutput = zk.Widget.$("$output");
-// var out = "";
-// if (order == 1) {
-// out += measure.toFixed(3) + " Nm";
-// } else {
-// out += measure.toFixed(3) + " Nm" + "<sup>2</sup>";
-// }
-// eOutput.setValue(out);
-// }
-//
-// /*
-// * toggles nav and measure mode
-// */
-// function toggleControl(cmd) {
-// for (key in measureControls) {
-// var control = measureControls[key];
-// if (cmd == key ) {
-// control.activate();
-// } else {
-// control.deactivate();
-// }
-// }
-// }
-//
 //
 //
 // var eLat = null;
@@ -297,66 +218,69 @@ function setPosition(llat, llon, brng, spd) {
 	}
 	shipMarker.setLatLng(new L.LatLng(llat, llon));
 	shipMarker.setIconAngle(brng);
-	
+
 	// ref http://www.movable-type.co.uk/scripts/latlong.html
 	var start_point = new L.LatLng(llat, llon);
 	// //1852 meters in nautical mile
 	//    
-	var end_point = destVincenty(llat, llon, brng,	spd * 1852);
-	var end_point2 = destVincenty(llat, llon, brng,	185200);
-	hdgLayer.setLatLngs([start_point,end_point2]);
-	bearingLayer.setLatLngs([start_point,end_point]);
-	
+	var end_point = destVincenty(llat, llon, brng, spd * 1852);
+	var end_point2 = destVincenty(llat, llon, brng, 185200);
+	hdgLayer.setLatLngs([ start_point, end_point2 ]);
+	bearingLayer.setLatLngs([ start_point, end_point ]);
+
+}
+
+function requestGotoDestination(toLat, toLon){
+	zAu.send(new zk.Event(zk.Widget.$("$this"), 'onRequestGoto', [toLat,toLon,lat,lon]));
+}
+function requestMarkerEdit(toLat, toLon){
+	zAu.send(new zk.Event(zk.Widget.$("$this"), 'onWaypointEdit', [toLat,toLon,lat,lon]));
 }
 //
 // /*
 // * Set the goto destination and draw the line
 // */
 function setGotoDestination(toLat, toLon, fromLat, fromLon) {
-	// gotoLayer.removeAllFeatures();
-	// //console.log("set goto"+toLat+","+toLon);
-	// if(toLat!=null && toLon!=null){
-	// //console.log("set goto");
-	// var gotoStartPoint = new
-	// OpenLayers.LonLat(fromLon,fromLat);//.transform(screenProjection,
-	// chartProjection);
-	// var gotoEndPoint = new OpenLayers.LonLat(toLon,toLat);
-	//	    
-	// gotoLayer.addFeatures([
-	// new OpenLayers.Feature.Vector(new OpenLayers.Geometry.LineString([
-	// new OpenLayers.Geometry.Point(gotoStartPoint.lon,
-	// gotoStartPoint.lat).transform(screenProjection, chartProjection),
-	// new
-	// OpenLayers.Geometry.Point(gotoEndPoint.lon,gotoEndPoint.lat).transform(screenProjection,
-	// chartProjection),
-	// ]))
-	// ]);
-	// }
+	if(gotoLayer){
+		map.removeLayer(gotoLayer);
+		gotoLayer=null;
+	}
+	if(toLat && toLon){
+		var start_point = new L.LatLng(fromLat, fromLon);
+		var end_point = new L.LatLng(toLat, toLon);
+		gotoLayer = L.polyline(
+				[ start_point, end_point ], {
+					color : 'yellow',
+					weight : 3,
+					opacity : .5,
+					fillOpacity : .5,
+				}).addTo(map);
+	}
 }
- /*
+/*
  * Center the boat in the screen at zoom=10
  */
-function centerBoat(){
-	 centerOnBoat=true;
-	 map.panTo(new L.LatLng(lat, lon));
-	 map.setZoom(10);
- }
+function centerBoat() {
+	centerOnBoat = true;
+	map.panTo(new L.LatLng(lat, lon));
+	//map.setZoom(10);
+}
 
- /*
+/*
  * toggle on/off follow boat mode
  */
- function followBoatPosition(){
-	 followBoat=!followBoat;
- }
+function followBoatPosition() {
+	followBoat = !followBoat;
+}
 
- /*
-	 * Move the chart so the boat is centered. Called when follow boat = true
-	 */
+/*
+ * Move the chart so the boat is centered. Called when follow boat = true
+ */
 function moveToBoatPosition(llat, llon) {
 	// every 10 moves
 	if (followBoat && moveCount > 10) {
 		moveCount = 0;
-		map.panTo(new L.LatLng(lat, lon));
+		map.panTo(new L.LatLng(llat, llon));
 	} else {
 		moveCount++;
 	}
@@ -397,34 +321,47 @@ function moveToBoatPosition(llat, llon) {
 // }
 // }
 //
-// /*
-// * Reload the GPXTrack layer, then clear the Track layer to start again
-// * Called every 5 minutes or so.
-// */
-// function refreshTrack(){
-// tgpx.refresh();
-// var trackPoints = shipTrack.features[0].geometry.getVertices();
-// if(trackPoints.length>60){
-// var tpPoint=trackPoints.slice[trackPoints.length-60,59];
-// shipTrack.removeAllFeatures();
-// trackLine = new OpenLayers.Geometry.LineString(tpPoint);
-// shipTrack.addFeatures([
-// new OpenLayers.Feature.Vector(trackLine, {})
-// ]);
-// }
-// }
+/*
+ * Reload the GPXTrack layer, then clear the Track layer to start again Called
+ * every 5 minutes or so.
+ */
+function refreshTrack() {
+	if (trackLayer) {
+		map.removeLayer(trackLayer);
+		layers.removeLayer(trackLayer);
+	}
+	// GPX track
+	// URL to your GPX file
+	var trkUrl = "../tracks/current.gpx";
+	trackLayer = new L.GPX(trkUrl, {
+		async : true
+	}).addTo(map);
+	//.on('loaded', function(e) {
+	//	map.fitBounds(e.target.getBounds());
+	//	})
+	layers.addOverlay(trackLayer, "Track");
+
+}
 //
- /*
+/*
  * Refresh waypoints, called by server after adding/editing a waypoint
  */
- function refreshWaypoints(){
-	 //remove if we have one
-	 if(wgpxLayer)map.removeLayer(wgpxLayer);
-	 var wpUrl = "http://'+window.location.host+':8080/freeboard/../tracks/waypoints.gpx"; // URL to your GPX file
-		wgpxLayer = new L.GPX(wpUrl, {async: true}).on('loaded', function(e) {
-		  map.fitBounds(e.target.getBounds());
-		}).addTo(map);
- }
+function refreshWaypoints() {
+	// remove if we have one
+	if (wgpxLayer) {
+		map.removeLayer(wgpxLayer);
+		layers.removeLayer(wgpxLayer);
+
+	}
+	// URL to your GPX file
+	wgpxLayer = new L.GPX("../tracks/waypoints.gpx", {
+		async : true
+	}).addTo(map);
+	//.on('loaded', function(e) {
+		//map.fitBounds(e.target.getBounds());
+	//})
+	layers.addOverlay(wgpxLayer, "Waypoints");
+}
 //
 function ChartPlotter() {
 	this.onmessage = function(mArray) {
@@ -505,7 +442,7 @@ function ChartPlotter() {
 
 			setPosition(lat, lon, heading + declination, speed);
 			// setTrack(lat,lon);
-			moveToBoatPosition(lat,lon);
+			moveToBoatPosition(lat, lon);
 		}
 	};
 
@@ -515,7 +452,7 @@ function posInit() {
 	eLat = zk.Widget.$("$posLat");
 	eLon = zk.Widget.$("$posLon");
 	// //reload track every 5 min so the local track doesnt get too long
-	// setInterval("refreshTrack()",300000);
+	setInterval("refreshTrack()",300000);
 }
 
 /*
@@ -538,7 +475,7 @@ function toDeg(n) {
 };
 function destVincenty(lat1, lon1, brng, dist) {
 	var a = 6378137, b = 6356752.3142, f = 1 / 298.257223563, // WGS-84
-																// ellipsiod
+	// ellipsiod
 	s = dist, alpha1 = toRad(brng), sinAlpha1 = Math.sin(alpha1), cosAlpha1 = Math
 			.cos(alpha1), tanU1 = (1 - f) * Math.tan(toRad(lat1)), cosU1 = 1 / Math
 			.sqrt((1 + tanU1 * tanU1)), sinU1 = tanU1 * cosU1, sigma1 = Math
@@ -559,8 +496,9 @@ function destVincenty(lat1, lon1, brng, dist) {
 								* (-3 + 4 * cos2SigmaM * cos2SigmaM)));
 		sigmaP = sigma;
 		sigma = s / (b * A) + deltaSigma;
-	};
-	
+	}
+	;
+
 	var tmp = sinU1 * sinSigma - cosU1 * cosSigma * cosAlpha1, lat2 = Math
 			.atan2(sinU1 * cosSigma + cosU1 * sinSigma * cosAlpha1, (1 - f)
 					* Math.sqrt(sinAlpha * sinAlpha + tmp * tmp)), lambda = Math
