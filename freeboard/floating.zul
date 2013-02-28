@@ -32,7 +32,7 @@
 <?script src="./js/freeboard-comet.js"?>
 <?script src="./js/websocket.js"?>
 
-<?script src="./js/leaflet.js" ?>
+<?script src="./js/leaflet-src.js" ?>
 <?script src="./js/leaflet.draw-src.js" ?>
 <?script src="./js/leaflet.measure.js" ?>
 <?script src="./js/Marker.Rotate.js" ?>

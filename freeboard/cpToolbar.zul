@@ -27,20 +27,9 @@
 	<label id="posLon" value=""
 		style="padding-right:0px; padding-left:10px;" />
 	<separator visible="true" orient="vertical" bar="true" />
-	<!-- menu/centre buttons 
-	<toolbarbutton label="Menu" />-->
+	<!-- menu/centre buttons -->
 	<toolbarbutton label="Find boat" w:onClick="centerBoat()" />
 	<toolbarbutton id="followBoatButton" label="Follow Boat" w:onClick="followBoatPosition()" mode="toggle"/>
-	<separator visible="true" orient="vertical" bar="true" />
-	<label value="Mode: " style="padding-right:0px; padding-left:10px;" />
-	<radiogroup name="type">
-		<toolbarbutton label="Waypoint" id="wptToggle" mode="toggle"
-			w:onClick="toggleControl('wpt');" onClick="noneToggle.setChecked(false);lineToggle.setChecked(false)"/>
-		<toolbarbutton label="Navigate" id="noneToggle" mode="toggle"
-			w:onClick="toggleControl('none');" checked="true" onClick="wptToggle.setChecked(false);lineToggle.setChecked(false)"/>
-		<toolbarbutton label="Measure" id="lineToggle" mode="toggle"
-			w:onClick="toggleControl('line');" onClick="noneToggle.setChecked(false);wptToggle.setChecked(false)"/>
-	</radiogroup>
-	<label id="output" style="padding-right:0px; padding-left:10px;" />
+
 
 </toolbar>

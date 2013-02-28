@@ -191,12 +191,11 @@ function setLayerVisibility(){
 	var vis = zk.Widget.$("$layerVisibility").getValue().split(';');
 	jQuery.each(vis, function(i, data) {
 		var lyr = data.split("=");
-		console.log(lyr);
+		//console.log(lyr);
 		if (lyr[0].length > 0) {
 			jQuery.each(layers._layers, function(i, n){
 					if(n.name == lyr[0]){
-						console.log(n.name+":"+lyr[1]);
-						
+						//console.log(n.name+":"+lyr[1]);
 						if (lyr[1] === 'false') {
 							if(map.hasLayer(n.layer))map.removeLayer(n.layer);
 						} else {
