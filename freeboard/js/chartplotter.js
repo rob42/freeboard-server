@@ -17,9 +17,7 @@
  *  along with FreeBoard.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-//var trackLine = null;
-//
-
+//objects of global interest
 var map;
 var shipMarker;
 var hdgLayer;
@@ -27,8 +25,14 @@ var bearingLayer;
 var trackLayer;
 var wgpxLayer;
 var gotoLayer;
-var followBoat = false;
+var baseLayers;
+var overlays;
+var layers;
+var drawnItems;
+var trackLine;
 
+//vars of global interest
+var followBoat = false;
 var lat = 0.0;
 var lon = 0.0;
 var heading = 0.0;
@@ -36,10 +40,6 @@ var speed = 0.0;
 var declination = 0.0;
 var trackCount = 0;
 var moveCount = 0;
-var baseLayers;
-var overlays;
-var layers;
-
 
 function initCharts() {
 	//
@@ -64,15 +64,18 @@ function initCharts() {
 	map.addControl(measureControl);
 
 	// Initialize the FeatureGroup to store editable layers
-	var drawnItems = new L.FeatureGroup();
+	drawnItems = new L.FeatureGroup();
 	map.addLayer(drawnItems);
 
 	// Waypoints
 	refreshWaypoints();
 
+	//add local trackline
+	trackLine = L.polyline([], {color: 'red',smoothFactor: 0.001}).addTo(map);
+	
 	// Track
 	refreshTrack();
-
+	
 
 	// Initialize the draw control and pass it the FeatureGroup of editable
 	// layers
@@ -91,7 +94,9 @@ function initCharts() {
 		},
 
 		edit : {
-			featureGroup : drawnItems
+			featureGroup : drawnItems,
+			edit: { title: 'Move waypoints' },
+			remove: false
 		}
 	});
 	map.addControl(drawControl);
@@ -105,13 +110,15 @@ function initCharts() {
 	shipMarker = L.marker([ 0.0, 0.0 ], {
 		icon : myIcon
 	}).addTo(map);
+	layers.addOverlay(shipMarker, "Boat");
 
 	hdgLayer = L.polyline([ new L.LatLng(0.0, 0.0), new L.LatLng(0.0, 0.0) ], {
 		color : 'black',
 		weight : 1,
 		dashArray : '5,5',
 	}).addTo(map);
-
+	layers.addOverlay(hdgLayer, "Heading");
+	
 	bearingLayer = L.polyline(
 			[ new L.LatLng(0.0, 0.0), new L.LatLng(0.0, 0.0) ], {
 				color : 'green',
@@ -119,7 +126,8 @@ function initCharts() {
 				opacity : 1,
 				fillOpacity : 1,
 			}).addTo(map);
-
+	layers.addOverlay(bearingLayer, "Bearing");
+	
 	// add waypoints
 	map.on('draw:created', function(e) {
 		var type = e.layerType, layer = e.layer;
@@ -134,7 +142,7 @@ function initCharts() {
 
 	//move waypoints
 	map.on('draw:edited', function(e) {
-		var type = e.layerType, layers = e.layers;
+		//var type = e.layerType, layers = e.layers;
 		console.log(layers);
 		// loop through and send to backend
 		var edits = new Array();
@@ -144,65 +152,71 @@ function initCharts() {
 			edits.push(val[2]);
 			edits.push(val[3]);
 		});
-		//console.log(edits);
 		zAu.send(new zk.Event(zk.Widget.$("$this"), 'onWaypointMove', edits));
 	});
 	
-	
-	
 	map.on('zoomend', function(e) {
-		//console.log(e.target._animateToZoom);
-		//console.log( map.getZoom());
 		zAu.send(new zk.Event(zk.Widget.$("$this"), 'onChartChange', new Array(map.getCenter().lat,map.getCenter().lng, map.getZoom())));
 	});
+	
 	map.on('dragend', function(e) {
 		zAu.send(new zk.Event(zk.Widget.$("$this"), 'onChartChange', new Array(map.getCenter().lat,map.getCenter().lng, map.getZoom())));
 	});
+	// track layers visibility
+	map.on('layeradd', function(e){
+		jQuery.each(layers._layers, function(i, n){
+			if(e.layer==n.layer){
+				zAu.send(new zk.Event(zk.Widget.$("$this"), 'onLayerChange', new Array(
+						n.name, "true")));
+			}
+		});
+	});
+	map.on('layerremove', function(e){
+		jQuery.each(layers._layers, function(i, n){
+			if(e.layer==n.layer){
+				zAu.send(new zk.Event(zk.Widget.$("$this"), 'onLayerChange', new Array(
+						n.name, "false")));
+			}
+		});
+	});
 	
-	var firstLat = zk.Widget.$("$firstLat").getValue();
-	var firstLon = zk.Widget.$("$firstLon").getValue();
-	var firstZoom = zk.Widget.$("$firstZoom").getValue();
-	console.log(firstLat+","+firstLon+","+firstZoom);
-	map.setView(new L.LatLng(firstLat,firstLon),firstZoom,true);
+	setLayerVisibility();
 }
 
 
-// }
-// var chartLocation = map.getCenter().transform(chartProjection,
-// screenProjection );
-// zAu.send(new zk.Event(zk.Widget.$("$this"), 'onChartChange', new
-// Array(chartLocation.lat,chartLocation.lon,map.getZoom())));
-// });
-//	
-// //track layers
-// map.events.register('changelayer', null, function(evt){
-// if(evt.property === "visibility") {
-// zAu.send(new zk.Event(zk.Widget.$("$this"), 'onLayerChange', new
-// Array(evt.layer.name,evt.layer.visibility)));
-// }
-// });
-//	
-// //set layer visibility
-// var vis = zk.Widget.$("$layerVisibility").getValue().split(';');
-// jQuery.each(vis, function(i, data) {
-// var lyr = data.split("=");
-// console.log(lyr);
-// if(lyr[0].length>0){
-// var curLayer=map.getLayersByName(lyr[0]);
-// if(curLayer[0]!=null){
-// if(lyr[1]==='false'){
-// curLayer[0].setVisibility(false);
-// }else{
-// curLayer[0].setVisibility(true);
-// }
-// }
-// }
-// });
 
-//
-//
-// var eLat = null;
-// var eLon = null;
+
+// set layer visibility
+function setLayerVisibility(){
+	var vis = zk.Widget.$("$layerVisibility").getValue().split(';');
+	jQuery.each(vis, function(i, data) {
+		var lyr = data.split("=");
+		console.log(lyr);
+		if (lyr[0].length > 0) {
+			jQuery.each(layers._layers, function(i, n){
+					if(n.name == lyr[0]){
+						console.log(n.name+":"+lyr[1]);
+						
+						if (lyr[1] === 'false') {
+							if(map.hasLayer(n.layer))map.removeLayer(n.layer);
+						} else {
+							if(!map.hasLayer(n.layer))map.addLayer(n.layer);
+						}
+					}
+			});
+				
+		}
+	});
+}
+
+
+/**
+ * Set the current position, moving vessel, bearing and track, and associated stuff
+ * @param llat
+ * @param llon
+ * @param brng
+ * @param spd
+ */
 function setPosition(llat, llon, brng, spd) {
 
 	if (llat > 0) {
@@ -216,30 +230,54 @@ function setPosition(llat, llon, brng, spd) {
 	} else {
 		eLon.setValue(llon.toFixed(5) + ' W');
 	}
-	shipMarker.setLatLng(new L.LatLng(llat, llon));
-	shipMarker.setIconAngle(brng);
-
+	if(map.hasLayer(shipMarker)){
+		shipMarker.setLatLng(new L.LatLng(llat, llon));
+		shipMarker.setIconAngle(brng);
+	}
 	// ref http://www.movable-type.co.uk/scripts/latlong.html
 	var start_point = new L.LatLng(llat, llon);
 	// //1852 meters in nautical mile
 	//    
 	var end_point = destVincenty(llat, llon, brng, spd * 1852);
 	var end_point2 = destVincenty(llat, llon, brng, 185200);
-	hdgLayer.setLatLngs([ start_point, end_point2 ]);
-	bearingLayer.setLatLngs([ start_point, end_point ]);
-
+	if(map.hasLayer(hdgLayer)){
+		hdgLayer.setLatLngs([ start_point, end_point2 ]);
+	}
+	if(map.hasLayer(bearingLayer)){
+		bearingLayer.setLatLngs([ start_point, end_point ]);
+	}
+	// add to tracks
+	trackLine.addLatLng(new L.LatLng(llat, llon));
 }
 
+/**
+ * Ask the server to perform a goto command
+ * @param toLat
+ * @param toLon
+ */
 function requestGotoDestination(toLat, toLon){
 	zAu.send(new zk.Event(zk.Widget.$("$this"), 'onRequestGoto', [toLat,toLon,lat,lon]));
 }
+/**
+ * Request editing a marker
+ * @param toLat
+ * @param toLon
+ */
 function requestMarkerEdit(toLat, toLon){
 	zAu.send(new zk.Event(zk.Widget.$("$this"), 'onWaypointEdit', [toLat,toLon,lat,lon]));
 }
-//
-// /*
-// * Set the goto destination and draw the line
-// */
+/**
+ * Request marker delete
+ * @param toLat
+ * @param toLon
+ */
+function requestMarkerDelete(toLat, toLon){
+	zAu.send(new zk.Event(zk.Widget.$("$this"), 'onWaypointDelete', [toLat,toLon,lat,lon]));
+}
+
+ /*
+ * Set the goto destination and draw the line
+ */
 function setGotoDestination(toLat, toLon, fromLat, fromLon) {
 	if(gotoLayer){
 		map.removeLayer(gotoLayer);
@@ -258,12 +296,11 @@ function setGotoDestination(toLat, toLon, fromLat, fromLon) {
 	}
 }
 /*
- * Center the boat in the screen at zoom=10
+ * Center the boat in the screen 
  */
 function centerBoat() {
 	centerOnBoat = true;
 	map.panTo(new L.LatLng(lat, lon));
-	//map.setZoom(10);
 }
 
 /*
@@ -285,42 +322,9 @@ function moveToBoatPosition(llat, llon) {
 		moveCount++;
 	}
 }
-//
-// /*
-// * Add a point to the boat track, and draw to screen
-// */
-// function setTrack(llat, llon){
-//	
-// //add to tracks
-// var trackPoint = new OpenLayers.Geometry.Point(llon, llat)
-// .transform(screenProjection, chartProjection);
-//    
-//    
-// if(trackLine==null){
-// trackLine = new OpenLayers.Geometry.LineString(new Array(trackPoint,
-// trackPoint));
-// shipTrack.addFeatures([
-// new OpenLayers.Feature.Vector(trackLine, {})
-// ]);
-// }else{
-// trackLine.addPoint(trackPoint);
-// shipTrack.redraw();
-// trackCount++;
-// }
-// //simplify every 100 points
-// if(trackCount>100){
-// trackCount=0;
-//
-// //10 meters is 0.005 Nm, so we will use 20M for now
-// trackLine=trackLine.simplify(0.2);
-// shipTrack.removeAllFeatures();
-// shipTrack.addFeatures([
-// new OpenLayers.Feature.Vector(trackLine, {})
-// ]);
-// 
-// }
-// }
-//
+
+ 
+
 /*
  * Reload the GPXTrack layer, then clear the Track layer to start again Called
  * every 5 minutes or so.
@@ -329,6 +333,10 @@ function refreshTrack() {
 	if (trackLayer) {
 		map.removeLayer(trackLayer);
 		layers.removeLayer(trackLayer);
+		//clear most of the points from trackLine
+		if(trackLine.getLatLngs().length > 500){
+			trackLine.spliceLatLngs(0,trackLine.getLatLngs().length-500);
+		}
 	}
 	// GPX track
 	// URL to your GPX file
@@ -336,11 +344,8 @@ function refreshTrack() {
 	trackLayer = new L.GPX(trkUrl, {
 		async : true
 	}).addTo(map);
-	//.on('loaded', function(e) {
-	//	map.fitBounds(e.target.getBounds());
-	//	})
+	
 	layers.addOverlay(trackLayer, "Track");
-
 }
 //
 /*
@@ -351,15 +356,20 @@ function refreshWaypoints() {
 	if (wgpxLayer) {
 		map.removeLayer(wgpxLayer);
 		layers.removeLayer(wgpxLayer);
+		//also remove from drawnItems where they were added by createEvent
+		drawnItems.eachLayer(function (layer) {
+			//only waypoints
+			if(layer instanceof L.Marker){
+		    	drawnItems.removeLayer(layer);
+			}
+		});
 
 	}
 	// URL to your GPX file
 	wgpxLayer = new L.GPX("../tracks/waypoints.gpx", {
 		async : true
 	}).addTo(map);
-	//.on('loaded', function(e) {
-		//map.fitBounds(e.target.getBounds());
-	//})
+	
 	layers.addOverlay(wgpxLayer, "Waypoints");
 }
 //
@@ -455,6 +465,9 @@ function posInit() {
 	setInterval("refreshTrack()",300000);
 }
 
+
+//++++++++++++++++++++++++++++++++++++++++++++++
+//Code below added for bearing and heading calculation, copyright as stated
 /*
  * ! JavaScript function to calculate the destination point given start point
  * latitude / longitude (numeric degrees), bearing (numeric degrees) and

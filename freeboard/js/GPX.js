@@ -109,9 +109,10 @@ L.GPX = L.FeatureGroup.extend({
 		}
 		if (!name) return;
 		var txt = "<h2>" + name + "</h2>" + descr+ 
-			"<br/><div>"+
-			"<image src=\"js/theme/default/img/draw_point_off.png\" onclick=\"javascript:requestMarkerEdit("+layer.getLatLng().lat+","+layer.getLatLng().lng+");\" tooltip=\"Edit\" >" +
-				"<image src=\"js/theme/default/img/draw_point_off.png\" onclick=\"javascript:requestGotoDestination("+layer.getLatLng().lat+","+layer.getLatLng().lng+");\" tooltip=\"Goto\" >" +
+			"<br/><div width=\"100%\" align=\"center\">"+
+			"<button onclick=\"javascript:requestGotoDestination("+layer.getLatLng().lat+","+layer.getLatLng().lng+");\" title=\"Goto this location\" >Go To </button>" +
+			"<button onclick=\"javascript:requestMarkerEdit("+layer.getLatLng().lat+","+layer.getLatLng().lng+");\" title=\"Edit details\" >Edit</button>" +
+			"<button onclick=\"javascript:requestMarkerDelete("+layer.getLatLng().lat+","+layer.getLatLng().lng+");\" title=\"Delete the waypoint\" >Delete</button>" +
 			"</div>";
 		if (layer && layer._popup === undefined) layer.bindPopup(txt);
 		return txt;

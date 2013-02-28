@@ -254,8 +254,12 @@ public class WaypointViewModel extends SelectorComposer<Window> {
 	}
 
 	private void deleteWaypoint(GPX gpx, String name) {
+		Waypoint wptDelete = gpx.getWaypointByName(name);
+		deleteWaypoint(gpx, wptDelete);
+	}
+	private void deleteWaypoint(GPX gpx, Waypoint wptDelete) {
 		try {
-			Waypoint wptDelete = gpx.getWaypointByName(name);
+			
 			if (wptDelete != null) {
 				gpx.getWaypoints().remove(wptDelete);
 				new GPXParser().writeGPX(gpx, gpxFile);
@@ -330,6 +334,19 @@ public class WaypointViewModel extends SelectorComposer<Window> {
 			curLat.setValue(String.valueOf(latlon[2]));
 			curLon.setValue(String.valueOf(latlon[3]));
 			wptWindow.setVisible(true);
+		} catch (Exception e) {
+			logger.error(e.getMessage(), e);
+		}
+	}
+	
+	@Listen("onWaypointDelete = #wptWindow")
+	public void onWaypointDelete(Event event) {
+		try {
+			Object[] latlon = (Object[]) event.getData();
+			GPX gpx = new GPXParser().parseGPX(gpxFile);
+			Waypoint wp = gpx.getWaypointByLocation((Double) latlon[0], (Double) latlon[1]);
+			deleteWaypoint(gpx, wp);
+			producer.sendBody(Constants.WPC + ":0,");
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
 		}
