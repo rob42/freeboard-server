@@ -68,7 +68,7 @@ Setup files:
 /etc/hosts
   127.0.0.1  	  localhost www.zkoss.org
   #use YOUR boats name here!
-  192.168.0.1     motu 
+  192.168.0.1     motu a.motu b.motu c.motu d.motu
   224.0.0.1       all-systems.mcast.net
 
   ::1             localhost ip6-localhost ip6-loopback

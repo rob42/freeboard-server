@@ -4,7 +4,7 @@
 # make sure it unmounted first
 MEDIA_HOME=/media/usb0
 sudo umount -l $MEDIA_HOME >logs/start.log 2>&1
-if [ ! -d "$MEDIA_HOME" ]; then  
+if [[ ! -d "$MEDIA_HOME" ]]; then  
         sudo mkdir $MEDIA_HOME >>logs/start.log 2>&1
 fi
 
@@ -19,7 +19,7 @@ JAR=freeboard-server.jar
 #
 cd $FREEBOARD_HOME
 # Check if we have an update to install. If a file called 'done' exists weve done this already
-if [ -f "$MEDIA_HOME/updates/$JAR" && ! -f "$MEDIA_HOME/updates/done" ]; then
+if [[ -f "$MEDIA_HOME/updates/$JAR" && ! -f "$MEDIA_HOME/updates/done" ]]; then
         #copy to working dir after backing up current one
         echo "**Updating freeboard-server" >>logs/update.log 2>&1
         echo "Backup old target/$JAR to target/$JAR.last" >>logs/update.log 2>&1
@@ -45,7 +45,7 @@ EXT="-Djava.util.Arrays.useLegacyMergeSort=true"
 MEM="-Xmx24m -XX:PermSize=32m -XX:MaxPermSize=32m"
 
 #if we have a usb drive log to there
-if [ -f "$MEDIA_HOME/conf/log4j.properties" ]; then
+if [[ -f "$MEDIA_HOME/conf/log4j.properties" ]]; then
         LOG4J=-Dlog4j.configuration=file://$MEDIA_HOME/conf/log4j.properties
 else
         LOG4J=-Dlog4j.configuration=file://$FREEBOARD_HOME/conf/log4j.properties

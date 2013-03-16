@@ -143,7 +143,7 @@ function initCharts() {
 	//move waypoints
 	map.on('draw:edited', function(e) {
 		//var type = e.layerType, layers = e.layers;
-		console.log(layers);
+		//console.log(layers);
 		// loop through and send to backend
 		var edits = new Array();
 		jQuery.each(layers, function(i, val) {
