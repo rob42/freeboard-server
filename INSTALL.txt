@@ -20,10 +20,10 @@ Hardware:
 		#Turn on overclocking and set various options; desktop on boot off, ssh on, overclock on high, memory on minimum GPU options.
 			sudo raspi-config
 		
-		#make sure to 'sudo apt-get install gdal-bin python-gdal imagemagik'
+		#make sure to 'sudo apt-get install gdal-bin python-gdal imagemagick'
 		#add sun (Oracle) jdk7 manually, into /home/pi/jdk1.7.0_06
 		#create dir /home/pi/freeboard
-			mkdirs /home/pi/freeboard
+			mkdir /home/pi/freeboard
 		#copy the following from your dev system to /home/pi/freeboard
 		 	 	conf/  
              	freeboard/  
@@ -68,7 +68,7 @@ Setup files:
 /etc/hosts
   127.0.0.1  	  localhost www.zkoss.org
   #use YOUR boats name here!
-  192.168.0.1     motu a.motu b.motu c.motu d.motu
+  192.168.0.1     motu 
   224.0.0.1       all-systems.mcast.net
 
   ::1             localhost ip6-localhost ip6-loopback
