@@ -20,7 +20,7 @@ Hardware:
 		#Turn on overclocking and set various options; desktop on boot off, ssh on, overclock on high, memory on minimum GPU options.
 			sudo raspi-config
 		
-		#make sure to 'sudo apt-get install gdal-bin python-gdal imagemagik'
+		#make sure to 'sudo apt-get install gdal-bin python-gdal imagemagick'
 		#add sun (Oracle) jdk7 manually, into /home/pi/jdk1.7.0_06
 		#create dir /home/pi/freeboard
 			mkdirs /home/pi/freeboard
@@ -67,7 +67,9 @@ Setup files:
   motu 
 /etc/hosts
   127.0.0.1  	  localhost www.zkoss.org
+  
   #use YOUR boats name here!
+  # Note: the a.motu, b.motu, etc entries are used by the Leaflet mapping lib to speed up map loading, you only need them if you are using the chartplotter.
   192.168.0.1     motu a.motu b.motu c.motu d.motu
   224.0.0.1       all-systems.mcast.net
 
