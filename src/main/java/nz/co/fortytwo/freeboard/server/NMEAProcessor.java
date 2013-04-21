@@ -50,7 +50,7 @@ import org.apache.commons.lang3.StringUtils;
  * @author robert
  * 
  */
-public class NMEAProcessor extends FreeboardProcessor implements Processor {
+public class NMEAProcessor extends FreeboardProcessor implements Processor, FreeboardHandler {
 
 	private static final String DISPATCH_ALL = "DISPATCH_ALL";
 
@@ -62,21 +62,28 @@ public class NMEAProcessor extends FreeboardProcessor implements Processor {
 	}
 
 	public void process(Exchange exchange) throws Exception {
-		if (exchange.getIn().getBody()==null){
+		if (exchange.getIn().getBody() == null) {
 			return;
 		}
 		@SuppressWarnings("unchecked")
 		HashMap<String, Object> map = exchange.getIn().getBody(HashMap.class);
+		map = handle(map);
+		exchange.getOut().setBody(map);
+	}
+
+	@Override
+	public HashMap<String, Object> handle(HashMap<String, Object> map) {
 		// so we have a string
 		String bodyStr = (String) map.get(Constants.NMEA);
 		if (StringUtils.isNotBlank(bodyStr)) {
 			try {
 				Sentence sentence = SentenceFactory.getInstance().createParser(bodyStr);
-				fireSentenceEvent(exchange, sentence);
+				fireSentenceEvent(map, sentence);
 			} catch (Exception e) {
 				// e.printStackTrace();
 			}
 		}
+		return map;
 	}
 
 	/**
@@ -137,12 +144,12 @@ public class NMEAProcessor extends FreeboardProcessor implements Processor {
 	/**
 	 * Dispatch data to all listeners.
 	 * 
-	 * @param exchange
+	 * @param map
 	 * 
 	 * @param sentence
 	 *            sentence string.
 	 */
-	private void fireSentenceEvent(Exchange exchange, Sentence sentence) {
+	private void fireSentenceEvent(HashMap<String, Object> map, Sentence sentence) {
 		if (!sentence.isValid())
 			return;
 
@@ -158,7 +165,7 @@ public class NMEAProcessor extends FreeboardProcessor implements Processor {
 
 		for (SentenceListener sl : list) {
 			try {
-				SentenceEvent se = new SentenceEvent(exchange, sentence);
+				SentenceEvent se = new SentenceEvent(map, sentence);
 				sl.sentenceRead(se);
 			} catch (Exception e) {
 				// ignore listener failures
@@ -166,8 +173,6 @@ public class NMEAProcessor extends FreeboardProcessor implements Processor {
 		}
 
 	}
-	
-	
 
 	/**
 	 * Registers a SentenceListener to hash map with given key.
@@ -198,64 +203,63 @@ public class NMEAProcessor extends FreeboardProcessor implements Processor {
 
 			private boolean startLat = true;
 			private boolean startLon = true;
-			double previousLat=0;
-			double previousLon=0;
-			double previousSpeed=0;
-			static final double ALPHA = 1 - 1.0/6;
+			double previousLat = 0;
+			double previousLon = 0;
+			double previousSpeed = 0;
+			static final double ALPHA = 1 - 1.0 / 6;
 
 			public void sentenceRead(SentenceEvent evt) {
-				Exchange exchange = (Exchange) evt.getSource();
-				//StringBuilder body = new StringBuilder();
-				HashMap<String, Object> map = new HashMap<String, Object>();
+				// Exchange exchange = (Exchange) evt.getSource();
+				// StringBuilder body = new StringBuilder();
+				HashMap<String, Object> map = (HashMap<String, Object>) evt.getSource();
 				if (evt.getSentence() instanceof PositionSentence) {
 					PositionSentence sen = (PositionSentence) evt.getSentence();
-					
-					if(startLat ){
-						previousLat= sen.getPosition().getLatitude();
-						startLat=false;
+
+					if (startLat) {
+						previousLat = sen.getPosition().getLatitude();
+						startLat = false;
 					}
-					previousLat=Util.movingAverage(ALPHA,previousLat, sen.getPosition().getLatitude());
+					previousLat = Util.movingAverage(ALPHA, previousLat, sen.getPosition().getLatitude());
 					if (sen.getPosition().getLatHemisphere() == CompassPoint.SOUTH) {
-						map.put(Constants.LAT,0-previousLat);
+						map.put(Constants.LAT, 0 - previousLat);
 					} else {
-						map.put(Constants.LAT,previousLat);
+						map.put(Constants.LAT, previousLat);
 					}
-					if(startLon){
-						previousLon= sen.getPosition().getLongitude();
-						startLon=false;
+					if (startLon) {
+						previousLon = sen.getPosition().getLongitude();
+						startLon = false;
 					}
-					previousLon=Util.movingAverage(ALPHA, previousLon, sen.getPosition().getLongitude());
+					previousLon = Util.movingAverage(ALPHA, previousLon, sen.getPosition().getLongitude());
 					if (sen.getPosition().getLonHemisphere() == CompassPoint.WEST) {
-						map.put(Constants.LON,0-previousLon);
+						map.put(Constants.LON, 0 - previousLon);
 					} else {
-						map.put(Constants.LON,previousLon);
+						map.put(Constants.LON, previousLon);
 					}
 				}
-				
-				
+
 				if (evt.getSentence() instanceof HeadingSentence) {
 					HeadingSentence sen = (HeadingSentence) evt.getSentence();
 					if (sen.isTrue()) {
-						map.put(Constants.COG,sen.getHeading());
+						map.put(Constants.COG, sen.getHeading());
 					} else {
-						map.put(Constants.MGH,sen.getHeading());
+						map.put(Constants.MGH, sen.getHeading());
 					}
 				}
 				if (evt.getSentence() instanceof RMCSentence) {
 					RMCSentence sen = (RMCSentence) evt.getSentence();
 					Util.checkTime(sen);
-					
-					previousSpeed=Util.movingAverage(ALPHA, previousSpeed, sen.getSpeed());
-					map.put(Constants.SOG,previousSpeed);
+
+					previousSpeed = Util.movingAverage(ALPHA, previousSpeed, sen.getSpeed());
+					map.put(Constants.SOG, previousSpeed);
 				}
 				if (evt.getSentence() instanceof VHWSentence) {
 					// ;
 					VHWSentence sen = (VHWSentence) evt.getSentence();
-					previousSpeed=Util.movingAverage(ALPHA, previousSpeed, sen.getSpeedKnots());
-					map.put(Constants.SOG,previousSpeed);
-					
-					map.put( Constants.MGH,sen.getMagneticHeading());
-					map.put( Constants.COG,sen.getHeading());
+					previousSpeed = Util.movingAverage(ALPHA, previousSpeed, sen.getSpeedKnots());
+					map.put(Constants.SOG, previousSpeed);
+
+					map.put(Constants.MGH, sen.getMagneticHeading());
+					map.put(Constants.COG, sen.getHeading());
 
 				}
 
@@ -264,24 +268,22 @@ public class NMEAProcessor extends FreeboardProcessor implements Processor {
 				// Mega value is int+'.0'
 				if (evt.getSentence() instanceof MWVSentence) {
 					MWVSentence sen = (MWVSentence) evt.getSentence();
-					//relative to true north
-//					if (sen.isTrue()) {
-//						map.put( Constants.WDT,sen.getAngle());
-//						map.put( Constants.WST,sen.getSpeed());
-//						map.put( Constants.WSU,sen.getSpeedUnit());
-//						
-//					} else {
-						//relative to bow
-						double angle = sen.getAngle();
-						map.put( Constants.WDA,angle);
-						map.put( Constants.WSA,sen.getSpeed());
-						map.put( Constants.WSU,sen.getSpeedUnit());
-					//}
+					// relative to true north
+					// if (sen.isTrue()) {
+					// map.put( Constants.WDT,sen.getAngle());
+					// map.put( Constants.WST,sen.getSpeed());
+					// map.put( Constants.WSU,sen.getSpeedUnit());
+					//
+					// } else {
+					// relative to bow
+					double angle = sen.getAngle();
+					map.put(Constants.WDA, angle);
+					map.put(Constants.WSA, sen.getSpeed());
+					map.put(Constants.WSU, sen.getSpeedUnit());
+					// }
 				}
-				
-				exchange.getOut().setBody(map);
-			}
 
+			}
 
 			public void readingStopped() {
 			}
@@ -294,8 +296,4 @@ public class NMEAProcessor extends FreeboardProcessor implements Processor {
 		});
 	}
 
-	
-
-	
-	
 }

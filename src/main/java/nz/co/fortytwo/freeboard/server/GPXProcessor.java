@@ -54,41 +54,41 @@ import org.apache.log4j.Logger;
  * @author robert
  * 
  */
-public class GPXProcessor extends FreeboardProcessor implements Processor {
+public class GPXProcessor extends FreeboardProcessor implements Processor, FreeboardHandler {
 
 	private static final String CURRENT = "current";
-	private static final double TOLERANCE = 0.000025; //About 3M out of line?
+	private static final double TOLERANCE = 0.000025; // About 3M out of line?
 	private static Logger logger = Logger.getLogger(GPXProcessor.class);
 	private File gpxFile;
 	private File gpxDir;
 	private GPX gpx;
 	private Track currentTrack;
 	private int count = 0;
-	private int triggerCount=60;
+	private int triggerCount = 60;
 
 	public GPXProcessor() {
 
 		try {
 			String gpxDirStr = Util.getConfig(null).getProperty(Constants.TRACKS_RESOURCE);
 			File usb = Util.getUSBFile();
-			if(usb!=null){
+			if (usb != null) {
 				gpxDir = new File(usb, gpxDirStr);
-				//write out every minute
-				triggerCount=60;
-			}else{
+				// write out every minute
+				triggerCount = 60;
+			} else {
 				gpxDir = new File(gpxDirStr);
 			}
 			FileUtils.forceMkdir(gpxDir);
 			gpxFile = new File(gpxDir, Util.getConfig(null).getProperty(Constants.TRACK_CURRENT));
 			if (gpxFile.exists()) {
-				try{
+				try {
 					gpx = new GPXParser().parseGPX(gpxFile);
 				} catch (Exception e) {
-					//may be unreadable
-					logger.error(e.getMessage(),e);
+					// may be unreadable
+					logger.error(e.getMessage(), e);
 				}
 			}
-			if(gpx==null){
+			if (gpx == null) {
 				gpx = new GPX();
 			}
 			for (Track t : gpx.getTracks()) {
@@ -103,23 +103,38 @@ public class GPXProcessor extends FreeboardProcessor implements Processor {
 				gpx.addTrack(currentTrack);
 			}
 		} catch (Exception e) {
-			logger.error(e.getMessage(),e);
+			logger.error(e.getMessage(), e);
 		}
 
 	}
 
-	public void process(Exchange exchange)  {
+	public void process(Exchange exchange) {
 		if (exchange.getIn().getBody() == null)
 			return;
 
 		@SuppressWarnings("unchecked")
 		HashMap<String, Object> map = exchange.getIn().getBody(HashMap.class);
 
+		handle(map);
+
+	}
+
+	private void writeGPX(GPX gpx, File file) {
+		try {
+			new GPXParser().writeGPX(gpx, file);
+		} catch (Exception e) {
+			logger.error(e.getMessage(), e);
+		}
+
+	}
+
+	@Override
+	public HashMap<String, Object> handle(HashMap<String, Object> map) {
 		// <trkpt lat="-41.19408333" lon="173.24741667"><ele>2376</ele><time>2007-10-14T10:09:57Z</time></trkpt>
 		if (map.containsKey(Constants.LAT) && map.containsKey(Constants.LON)) {
-			//check if they are worth saving
-			double newLat=(Double) map.get(Constants.LAT);
-			double newLon=(Double) map.get(Constants.LON);
+			// check if they are worth saving
+			double newLat = (Double) map.get(Constants.LAT);
+			double newLon = (Double) map.get(Constants.LON);
 			// write out to gpx track
 			TrackPoint tp = new TrackPoint();
 			tp.setElevation(0.0);
@@ -127,51 +142,41 @@ public class GPXProcessor extends FreeboardProcessor implements Processor {
 			tp.setLatitude(newLat);
 			tp.setLongitude(newLon);
 			currentTrack.getTrackPoints().add(tp);
-			
-			//we count every occurrence, an easy way to count time!
+
+			// we count every occurrence, an easy way to count time!
 			count++;
 		}
-		//write out every 60 points, eg 1 min at 1 sec GPS data, or 60sec to usb
-		if(count >triggerCount){
-			count=0;
-			//simplify here
+		// write out every 60 points, eg 1 min at 1 sec GPS data, or 60sec to usb
+		if (count > triggerCount) {
+			count = 0;
+			// simplify here
 			currentTrack.setTrackPoints(SGImplify.simplifyLine2D(TOLERANCE, currentTrack.getTrackPoints()));
-			//if its still too long, truncate and archive
-			if(currentTrack.getTrackPoints().size()>1100){
-				//write out the first 1000
+			// if its still too long, truncate and archive
+			if (currentTrack.getTrackPoints().size() > 1100) {
+				// write out the first 1000
 				ArrayList<Waypoint> points = currentTrack.getTrackPoints();
-				
-				Waypoint [] oldPoints = Arrays.copyOfRange(points.toArray(new Waypoint[0]), 0, 1000);
+
+				Waypoint[] oldPoints = Arrays.copyOfRange(points.toArray(new Waypoint[0]), 0, 1000);
 				GPX oldGpx = new GPX();
 				Track oldTrack = new Track();
 				ArrayList<Waypoint> newPoints = new ArrayList<Waypoint>();
 				newPoints.addAll(Arrays.asList(oldPoints));
-				
+
 				oldTrack.setTrackPoints(newPoints);
 				oldGpx.addTrack(oldTrack);
-				
+
 				String fileName = Util.sdf.format(new Date());
-				oldTrack.setName(CURRENT+" "+fileName);
-				writeGPX(oldGpx,new File(gpxDir, fileName+".gpx"));
-				
+				oldTrack.setName(CURRENT + " " + fileName);
+				writeGPX(oldGpx, new File(gpxDir, fileName + ".gpx"));
+
 				points.removeAll(newPoints);
 				currentTrack.setTrackPoints(points);
 			}
-			
-			writeGPX(gpx,gpxFile);
-			
-		}
-		
 
-	}
+			writeGPX(gpx, gpxFile);
 
-	private void writeGPX(GPX gpx, File file) {
-		try {
-			new GPXParser().writeGPX(gpx,file);
-		}  catch (Exception e) {
-			logger.error(e.getMessage(),e);
 		}
-		
+		return map;
 	}
 
 }
