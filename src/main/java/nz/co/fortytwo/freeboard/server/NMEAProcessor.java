@@ -77,6 +77,8 @@ public class NMEAProcessor extends FreeboardProcessor implements Processor, Free
 		String bodyStr = (String) map.get(Constants.NMEA);
 		if (StringUtils.isNotBlank(bodyStr)) {
 			try {
+				//dont need the NMEA now
+				map.remove(Constants.NMEA);
 				Sentence sentence = SentenceFactory.getInstance().createParser(bodyStr);
 				fireSentenceEvent(map, sentence);
 			} catch (Exception e) {

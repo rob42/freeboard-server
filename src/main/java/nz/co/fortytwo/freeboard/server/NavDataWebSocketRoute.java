@@ -22,6 +22,7 @@ import java.util.Properties;
 
 import nz.co.fortytwo.freeboard.server.util.Constants;
 
+import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.websocket.WebsocketComponent;
@@ -48,6 +49,8 @@ public class NavDataWebSocketRoute extends RouteBuilder {
 	private GPXProcessor gpxProcessor;
 	private AddSourceProcessor addSrcProcessor = new AddSourceProcessor("freeboard");
 	private CombinedProcessor combinedProcessor = new CombinedProcessor();
+	private Predicate isNmea=null;
+	private NmeaTcpServer nmeaTcpServer;
 
 	public NavDataWebSocketRoute(Properties config) {
 		this.config = config;
@@ -65,7 +68,10 @@ public class NavDataWebSocketRoute extends RouteBuilder {
 	@Override
 	public void configure() throws Exception {
 		// setup Camel web-socket component on the port we have defined
-
+		//define nmea predicate
+		isNmea= body(String.class).startsWith("$");
+		 nmeaTcpServer = new NmeaTcpServer();
+		 nmeaTcpServer.start();
 		WebsocketComponent wc = getContext().getComponent("websocket", WebsocketComponent.class);
 
 		wc.setPort(port);
@@ -96,19 +102,31 @@ public class NavDataWebSocketRoute extends RouteBuilder {
 		from("seda:input?multipleConsumers=true").onException(Exception.class)
 				.handled(true)
 				.maximumRedeliveries(0)
-				.to("log:nz.co.fortytwo.freeboard.navdata?level=ERROR&showException=true")
-				.end()
+					.to("log:nz.co.fortytwo.freeboard.navdata?level=ERROR&showException=true")
+					.end()
+				//output any nmea here
+				.filter(isNmea)
+					.to("seda:nmeaOutput?multipleConsumers=true")
+					.end()
+				//process all here
 				.process(inputFilterProcessor)
 				.process(combinedProcessor)
 				.process(outputFilterProcessor).to("log:nz.co.fortytwo.freeboard.navdata?level=INFO")
 				// and push to all web socket subscribers
-				.multicast().to("websocket:navData?sendToAll=true").end().process(addSrcProcessor)
-				.to("cometd://0.0.0.0:8082/freeboard/json?jsonCommented=false");
-		// log commands
+				.multicast()
+					.to("websocket:navData?sendToAll=true").end().process(addSrcProcessor)
+					.to("cometd://0.0.0.0:8082/freeboard/json?jsonCommented=false")
+				.end();
+		
+		// distribute and log commands
 		from("seda:output?multipleConsumers=true")
 				// .process(outputFilterProcessor)
 				.process(serialPortManager).to("log:nz.co.fortytwo.freeboard.command?level=INFO").onException(Exception.class).handled(true)
 				.maximumRedeliveries(0).to("log:nz.co.fortytwo.freeboard.command?level=ERROR&showException=true");
+		
+		//push NMEA out via TCP
+		from("seda:nmeaOutput?multipleConsumers=true")
+			.process(nmeaTcpServer);
 	}
 
 	private void initProcessors() {
@@ -137,7 +155,7 @@ public class NavDataWebSocketRoute extends RouteBuilder {
 	 */
 	public void stopSerial() {
 		serialPortManager.stopSerial();
-
+		nmeaTcpServer.stop();
 	}
 
 }

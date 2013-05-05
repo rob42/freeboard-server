@@ -24,6 +24,8 @@ import java.util.HashMap;
 import nz.co.fortytwo.freeboard.server.util.Constants;
 import nz.co.fortytwo.freeboard.server.util.Util;
 
+import org.apache.camel.Produce;
+import org.apache.camel.ProducerTemplate;
 import org.apache.commons.lang3.StringUtils;
 
 
@@ -34,6 +36,16 @@ import org.apache.commons.lang3.StringUtils;
  */
 public class FreeboardProcessor {
 	
+	@Produce(uri = "seda:nmeaOutput?multipleConsumers=true")
+    ProducerTemplate producer;
+	/**
+	 * If a processor generates an NMEA string, then this method is a convient way to send it to the NMEA stream
+	 * 
+	 * @param nmea
+	 */
+	public void sendNmea(String nmea){
+		producer.sendBody(nmea);
+	}
 	/**
 	 * Appends key/value pair as KEY:value, 
 	 * @param builder

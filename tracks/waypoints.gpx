@@ -1,16 +1,40 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <gpx>
-  <wpt lat="-41.14039880964585" lon="173.04908752441406">
+  <wpt lat="-40.85563020812578" lon="173.03295135498047">
     <ele>0.0</ele>
-    <time>2013-02-14T16:35:33Z</time>
-    <name>TEST WPT</name>
-    <desc>Just a simple test waypoint</desc>
+    <time>2013-04-22T08:17:37Z</time>
+    <name>Awaroa</name>
+    <desc>Somewhere off the beach</desc>
+  </wpt>
+  <wpt lat="-40.991958509680735" lon="173.05953649186802">
+    <ele>0.0</ele>
+    <time>2013-02-14T14:46:22Z</time>
+    <name>Adele South</name>
+    <desc>Outside the pass between Adele and Fishermans Is</desc>
+  </wpt>
+  <wpt lat="-41.14298432129295" lon="173.39927673339844">
+    <ele>0.0</ele>
+    <time>2013-02-26T14:31:17Z</time>
+    <name>Pepin Island</name>
+    <desc>Just off Cable Bay</desc>
   </wpt>
   <wpt lat="-41.17245194931261" lon="173.11294555664062">
     <ele>0.0</ele>
     <time>2013-02-28T09:53:03Z</time>
     <name>Mussel farm (SW)</name>
     <desc>Mussel farm south west corner</desc>
+  </wpt>
+  <wpt lat="-40.85563020812578" lon="173.03295135498047">
+    <ele>0.0</ele>
+    <time>2013-02-25T21:56:23Z</time>
+    <name>West Coast</name>
+    <desc>Somewhere off the west coast</desc>
+  </wpt>
+  <wpt lat="-41.03741270082242" lon="173.61694335937497">
+    <ele>0.0</ele>
+    <time>2013-02-26T15:41:56Z</time>
+    <name>Crosielles</name>
+    <desc>Just off the entrance</desc>
   </wpt>
   <wpt lat="-42.286922669298626" lon="148.70947567496108">
     <ele>0.0</ele>
@@ -24,24 +48,6 @@
     <name>Nelson Harbour (outside)</name>
     <desc>Outside the cut</desc>
   </wpt>
-  <wpt lat="-40.991958509680735" lon="173.05953649186802">
-    <ele>0.0</ele>
-    <time>2013-02-14T14:46:22Z</time>
-    <name>Adele South</name>
-    <desc>Outside the pass between Adele and Fishermans Is</desc>
-  </wpt>
-  <wpt lat="-41.23754390108255" lon="173.13011169433594">
-    <ele>0.0</ele>
-    <time>2013-02-14T16:35:55Z</time>
-    <name>Test2</name>
-    <desc>test waypoint</desc>
-  </wpt>
-  <wpt lat="-41.03741270082242" lon="173.61694335937497">
-    <ele>0.0</ele>
-    <time>2013-02-26T15:41:56Z</time>
-    <name>Crosielles</name>
-    <desc>Just off the entrance</desc>
-  </wpt>
   <wpt lat="-41.18252993852271" lon="173.1565475463867">
     <ele>0.0</ele>
     <time>2013-02-28T09:52:22Z</time>
@@ -53,17 +59,5 @@
     <time>2013-02-26T16:10:18Z</time>
     <name>Awaroa</name>
     <desc>Somewhere off the beach</desc>
-  </wpt>
-  <wpt lat="-41.14298432129295" lon="173.39927673339844">
-    <ele>0.0</ele>
-    <time>2013-02-26T14:31:17Z</time>
-    <name>Pepin Island</name>
-    <desc>Just off Cable Bay</desc>
-  </wpt>
-  <wpt lat="-40.85563020812578" lon="173.03295135498047">
-    <ele>0.0</ele>
-    <time>2013-02-25T21:56:23Z</time>
-    <name>West Coast</name>
-    <desc>Somewhere off the west coast</desc>
   </wpt>
 </gpx>

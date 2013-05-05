@@ -50,15 +50,37 @@ function addLayers(map) {
 		tms: true
 		}).addTo(map);
 
-	baseLayers = {
 
+	var NZ6142_1 = L.tileLayer("http://{s}.{server}:8080/mapcache/NZ6142_1/{z}/{x}/{y}.png", {
+		server: host,
+		subdomains: 'abcd',
+		attribution: 'NZ6142_1 Nelson Harbour & Entrance',
+		minZoom: 10,
+		maxZoom: 15,
+		tms: true
+		}).addTo(map);
+
+
+	var NZ6142_2 = L.tileLayer("http://{s}.{server}:8080/mapcache/NZ6142_2/{z}/{x}/{y}.png", {
+		server: host,
+		subdomains: 'abcd',
+		attribution: 'NZ6142_2 Nelson Harbour & Entrance - Port Nelson',
+		minZoom: 12,
+		maxZoom: 17,
+		tms: true
+		}).addTo(map);
+
+	baseLayers = {
+		"World": WORLD,
 	};
 	overlays = {
-		"Blue Marble":  WORLD,
-		"NZ14600 New Zeland including Norfolk & Campbell ":  NZ14600,
-		"NZ61 Karamea River to Stephens Island":  NZ61,
-		"NZ614 Tasman Bay":  NZ614,
-		"NZ6144 Abel Tasman":  NZ6144,
+		"Blue Marble": WORLD,
+		"NZ14600 New Zeland including Norfolk & Campbell ": NZ14600,
+		"NZ61 Karamea River to Stephens Island": NZ61,
+		"NZ614 Tasman Bay": NZ614,
+		"NZ6144 Abel Tasman": NZ6144,
+		"NZ6142_1 Nelson Harbour & Entrance": NZ6142_1,
+		"NZ6142_2 Nelson Harbour & Entrance - Port Nelson": NZ6142_2,
 	};
 	layers = L.control.layers(baseLayers, overlays).addTo(map);
-}
+	};
