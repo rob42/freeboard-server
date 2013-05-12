@@ -20,21 +20,29 @@ package nz.co.fortytwo.freeboard.server;
 
 import gnu.io.NRSerialPort;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Pattern;
 
 import nz.co.fortytwo.freeboard.server.util.Constants;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
+
+import com.sun.xml.bind.v2.runtime.reflect.opt.Const;
 
 /**
  * Wrapper to read serial port via rxtx, then fire messages into the camel route
@@ -54,12 +62,12 @@ public class SerialPortReader implements Processor{
 	private boolean mapped = false;
 	private String deviceType = null;
 	private NRSerialPort serialPort = null;
-	//private BufferedOutputStream out;
+	
 	private LinkedBlockingQueue<String> queue;
 
 	public SerialPortReader() {
 		super();
-		queue=new LinkedBlockingQueue<String>(10);
+		queue=new LinkedBlockingQueue<String>(100);
 	}
 
 	/**
@@ -81,7 +89,7 @@ public class SerialPortReader implements Processor{
 		serialPort.connect();
 		(new Thread(new SerialReader())).start();
 		(new Thread(new SerialWriter())).start();
-		//out=new BufferedOutputStream(serialPort.getOutputStream());
+		
 	}
 
 	public class SerialWriter implements Runnable {
@@ -117,50 +125,51 @@ public class SerialPortReader implements Processor{
 	public class SerialReader implements Runnable {
 
 		BufferedReader in;
+		private Pattern uid;
+		List<String> lines = new ArrayList<String>();
 
 		public SerialReader() throws Exception {
 
 			this.in = new BufferedReader(new InputStreamReader(serialPort.getInputStream()));
-			
+			uid=Pattern.compile(Constants.UID+":");
 		}
 
 		public void run() {
 			try {
 				try {
 					while (running) {
-						while (in.ready()) {
-							String line = in.readLine();
-							if (!mapped && line.indexOf(Constants.UID) >= 0) {
-								// add to map
-								logger.debug(portName + ":Serial Recieved:" + line);
-								int pos = line.indexOf(Constants.UID) + 4;
-								int pos1 = line.indexOf(",", pos);
-								if (pos1 < 0)
-									pos1 = line.length();
-								
-								String type = line.substring(pos, pos1);
-								logger.debug(portName + ":  device name:" + type);
-								deviceType = type.trim();
-								mapped = true;
-							}
 
-							if(line!=null)producer.sendBody(line);
-						}
+						if (in.ready()) {
+							
+							String line=in.readLine();
+								if(line!=null){
+									if (!mapped && uid.matcher(line).matches()) {
+										// add to map
+										logger.debug(portName + ":Serial Recieved:" + line);
+										String type = StringUtils.substringBetween(line, Constants.UID+":",",");
+										if(type!=null){
+											logger.debug(portName + ":  device name:" + type);
+											deviceType = type.trim();
+											mapped = true;
+										}
+									}
+									producer.sendBody(line);
+								}
+							}
+							
+						
 						// delay for a bit (msecs), we dont want to burn up CPU for nothing
 						try {
-							Thread.currentThread().sleep(250);
+							Thread.currentThread().sleep(50);
 						} catch (InterruptedException ie) {
 						}
 					}
+					
 				} catch (IOException e) {
 					running = false;
 					logger.error(portName, e);
 				}
-				// try {
-				// producer.stop();
-				// } catch (Exception e) {
-				// logger.error(portName, e);
-				// }
+				
 			} finally {
 				try{
 					if(serialPort.isConnected())serialPort.disconnect();

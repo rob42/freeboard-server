@@ -76,7 +76,7 @@ public class WindViewModel extends SelectorComposer<Window>{
 		super();
 		logger.debug("Constructing..");
 		producer = CamelContextFactory.getInstance().createProducerTemplate();
-		producer.setDefaultEndpointUri("seda://input?multipleConsumers=true");
+		producer.setDefaultEndpointUri("seda:input");
 		
 	}
 

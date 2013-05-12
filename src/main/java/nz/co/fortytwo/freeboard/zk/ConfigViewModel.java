@@ -119,7 +119,7 @@ public class ConfigViewModel extends SelectorComposer<Window> {
 	public ConfigViewModel() {
 		super();
 		producer = CamelContextFactory.getInstance().createProducerTemplate();
-		producer.setDefaultEndpointUri("seda://input?multipleConsumers=true");
+		producer.setDefaultEndpointUri("seda:input");
 		allListMap = new TreeMap<String,String>();
 		selectedListArray = new ArrayList<String>();
 	}

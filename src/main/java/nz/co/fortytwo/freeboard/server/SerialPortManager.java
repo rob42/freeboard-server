@@ -49,7 +49,7 @@ public class SerialPortManager implements Runnable, Processor {
 	public void run() {
 		// not running, start now.
 		ProducerTemplate producer = CamelContextFactory.getInstance().createProducerTemplate();
-		producer.setDefaultEndpointUri("seda://input?multipleConsumers=true");
+		producer.setDefaultEndpointUri("seda:input");
 		
 		while (running) {
 			// remove any stopped readers

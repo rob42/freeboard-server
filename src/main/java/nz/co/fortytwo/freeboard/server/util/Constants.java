@@ -39,8 +39,6 @@ public class Constants {
 	public static final String MGH = "MGH";
 	/** Mag Heading - true */
 	public static final String MGT = "MGT";
-	/** Mag Declination */
-	public static final String MGD = "MGD";
 	/** Latitude*/
 	public static final String LAT = "LAT";
 	/** Longitude*/

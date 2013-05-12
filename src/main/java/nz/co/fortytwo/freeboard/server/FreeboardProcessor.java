@@ -36,7 +36,7 @@ import org.apache.commons.lang3.StringUtils;
  */
 public class FreeboardProcessor {
 	
-	@Produce(uri = "seda:nmeaOutput?multipleConsumers=true")
+	@Produce(uri = "seda:nmeaOutput")
     ProducerTemplate producer;
 	/**
 	 * If a processor generates an NMEA string, then this method is a convient way to send it to the NMEA stream

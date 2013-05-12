@@ -22,6 +22,11 @@ package nz.co.fortytwo.freeboard.server;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 
+/**
+ * Wraps the message in  a FreeboardMessage which implements a json convertor
+ * @author robert
+ *
+ */
 public class AddSourceProcessor implements Processor {
     String  sourceName;
     public AddSourceProcessor(String name){

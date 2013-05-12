@@ -44,24 +44,24 @@ public class InputFilterProcessor extends FreeboardProcessor implements Processo
 			if(msg.indexOf("!!!VER:")==0){
 				//from IMU or MEGA - good
 				msg=msg.substring(msg.indexOf(",") + 1);
-				exchange.getOut().setBody(stringToHashMap(msg));
+				exchange.getIn().setBody(stringToHashMap(msg));
 				return;
 			}
 			if(p.matcher(msg).matches()){
 				//#CMD: or VAL: - good
-				exchange.getOut().setBody(stringToHashMap(msg));
+				exchange.getIn().setBody(stringToHashMap(msg));
 				return;
 			}
 			if(msg.startsWith("$")){
 				//NMEA - good
-				System.out.println(msg);
-				exchange.getOut().setBody(stringToHashMap(msg));
+				//System.out.println(msg);
+				exchange.getIn().setBody(stringToHashMap(msg));
 				return;
 			}
 			//uh-oh log it, squash it
 			exchange.getUnitOfWork().done(exchange);
 			logger.info("Dropped invalid message:"+msg);
-			exchange.getOut().setBody(null);
+			exchange.getIn().setBody(null);
 			//throw new CamelExchangeException("Invalid msg", exchange);
 		}
 		

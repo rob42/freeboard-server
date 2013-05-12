@@ -45,7 +45,7 @@ public class CombinedProcessor extends FreeboardProcessor implements Processor{
 		for(FreeboardHandler handler:handlers){
 			map=handler.handle(map);
 		}
-		exchange.getOut().setBody(map);
+		exchange.getIn().setBody(map);
 	}
 
 	public void addHandler(FreeboardHandler handler) {

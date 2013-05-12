@@ -105,7 +105,7 @@ public class WaypointViewModel extends SelectorComposer<Window> {
 			FileUtils.forceMkdir(gpxDir);
 			gpxFile = new File(gpxDir, Util.getConfig(null).getProperty(Constants.WAYPOINT_CURRENT));
 			producer = CamelContextFactory.getInstance().createProducerTemplate();
-			producer.setDefaultEndpointUri("seda://input?multipleConsumers=true");
+			producer.setDefaultEndpointUri("seda:input");
 
 			logger.debug("Constructing..");
 		} catch (Exception e) {

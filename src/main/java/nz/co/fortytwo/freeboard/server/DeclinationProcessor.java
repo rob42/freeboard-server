@@ -52,7 +52,7 @@ public class DeclinationProcessor extends FreeboardProcessor implements Processo
 			@SuppressWarnings("unchecked")
 			HashMap<String, Object> map = exchange.getIn().getBody(HashMap.class);
 			map = handle(map);
-			exchange.getOut().setBody(map);
+			exchange.getIn().setBody(map);
 
 		} catch (Exception e) {
 			logger.error(e);
@@ -62,13 +62,17 @@ public class DeclinationProcessor extends FreeboardProcessor implements Processo
 	@Override
 	public HashMap<String, Object> handle(HashMap<String, Object> map) {
 		if (map.containsKey(Constants.LAT)) {
-			calc = true;
-			lat = (Double) map.get(Constants.LAT);
+			if (hasChanged((Double) map.get(Constants.LAT), lat)) {
+				calc = true;
+				lat = (Double) map.get(Constants.LAT);
+			}
 		}
 
 		if (map.containsKey(Constants.LON)) {
-			calc = true;
-			lon = (Double) map.get(Constants.LON);
+			if (hasChanged((Double) map.get(Constants.LON), lon)) {
+				calc = true;
+				lon = (Double) map.get(Constants.LON);
+			}
 		}
 
 		if (calc) {
@@ -80,9 +84,22 @@ public class DeclinationProcessor extends FreeboardProcessor implements Processo
 			calc = false;
 		}
 		if (map.containsKey(Constants.MGH)) {
-			map.put(Constants.MGD, declination);
+			map.put(Constants.DEC, declination);
 
 		}
 		return map;
+	}
+
+	/**
+	 * Compares the lat or lon by rounding to int, with the last value we had
+	 * True if they differ, false otherwise
+	 * Used to stop us constantly recalculating the declination
+	 * @param now
+	 * @param then
+	 * @return
+	 */
+	private boolean hasChanged(double now, double then) {
+		if(Math.round(now)!=Math.round(then))return true;
+		return false;
 	}
 }

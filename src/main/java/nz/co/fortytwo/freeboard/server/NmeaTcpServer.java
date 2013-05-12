@@ -23,13 +23,17 @@ package nz.co.fortytwo.freeboard.server;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
+import java.io.BufferedOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
@@ -153,7 +157,8 @@ public class NmeaTcpServer extends FreeboardProcessor implements Processor{
     private Thread ioThread;                                                            // Performs IO
     private ServerSocket tcpServer;                                                     // The server
     private Socket socket;
-    private List<Socket> sockets=new ArrayList<Socket>();
+    private Map<Socket,BufferedOutputStream> sockets=new HashMap<Socket,BufferedOutputStream>();
+    
 
     public final static String LAST_EXCEPTION_PROP = "lastException";
     private Throwable lastException;
@@ -205,16 +210,21 @@ public class NmeaTcpServer extends FreeboardProcessor implements Processor{
 			public void socketReceived(Event evt) {
 				//we get rid of any that have closed.
 				//we do this here so we dont have to waste time checking on every message in process() method
-				List<Socket> closedSockets=new ArrayList<Socket>();
-				for(Socket socket:sockets){
+				//List<Socket> closedSockets=new ArrayList<Socket>();
+				for(Socket socket:sockets.keySet()){
 					if(socket==null ||socket.isClosed()){
-						closedSockets.add(socket);
+						sockets.remove(socket);
 					}
 				}
-				sockets.removeAll(closedSockets);
+				//sockets.removeAll(closedSockets);
 				//add the new one
-				sockets.add(evt.getSocket());
+				try {
+					sockets.put(evt.getSocket(),new BufferedOutputStream(evt.getSocket().getOutputStream()));
 				
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 			
 		});
@@ -270,7 +280,7 @@ public class NmeaTcpServer extends FreeboardProcessor implements Processor{
         if( this.currentState == State.STARTED ){   // Only if already STARTED
             setState( State.STOPPING );             // Mark as STOPPING
             //close all sockets
-            for(Socket socket:sockets){
+            for(Socket socket:sockets.keySet()){
             	try {
 					socket.close();
 				} catch (IOException e) {
@@ -850,14 +860,15 @@ public class NmeaTcpServer extends FreeboardProcessor implements Processor{
 	public void process(Exchange exchange) throws Exception {
 		try{
 			String nmea = exchange.getIn().getBody(String.class)+"\n";
-			for(Socket socket:sockets){
+			for(Socket socket:sockets.keySet()){
 				try{
 					if(socket.isClosed()){
 						//for efficiency they get removed later when the next socket attaches.
 						continue;
 					}
-					socket.getOutputStream().write(nmea.getBytes());
-					socket.getOutputStream().flush();
+					OutputStream out = sockets.get(socket);
+					out.write(nmea.getBytes());
+					out.flush();
 				}catch(Exception e){
 					LOGGER.info(e.getMessage());
 					if(socket!=null){

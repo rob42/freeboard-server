@@ -68,7 +68,7 @@ public class NMEAProcessor extends FreeboardProcessor implements Processor, Free
 		@SuppressWarnings("unchecked")
 		HashMap<String, Object> map = exchange.getIn().getBody(HashMap.class);
 		map = handle(map);
-		exchange.getOut().setBody(map);
+		exchange.getIn().setBody(map);
 	}
 
 	@Override

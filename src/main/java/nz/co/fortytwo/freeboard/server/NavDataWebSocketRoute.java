@@ -30,6 +30,20 @@ import org.apache.camel.component.websocket.WebsocketComponent;
 /**
  * Main camel route definition to handle Arduino to web processing
  * 
+ * 
+ * <ul>
+ * <li>Basically all input is added to seda:input
+ * <li>From there nmea is copied to seda:nmeaOutput and output on port 5555
+ * <li>Remained is converted to hashmap, processed, 
+ * <ul>
+ * 	<li>commands are sent to direct:command
+ *  <li>generated NMEA is added to seda:nmeaOutput
+ *  </ul> 
+ * <li>Remaining key/values are output by multicast on websocket,cometd, and command
+ * <li>Commands from direct:command are filtered to devices and sent
+ * </ul>
+ * 
+ * 
  * @author robert
  * 
  */
@@ -49,7 +63,7 @@ public class NavDataWebSocketRoute extends RouteBuilder {
 	private GPXProcessor gpxProcessor;
 	private AddSourceProcessor addSrcProcessor = new AddSourceProcessor("freeboard");
 	private CombinedProcessor combinedProcessor = new CombinedProcessor();
-	private Predicate isNmea=null;
+	private Predicate isNmea = null;
 	private NmeaTcpServer nmeaTcpServer;
 
 	public NavDataWebSocketRoute(Properties config) {
@@ -68,10 +82,10 @@ public class NavDataWebSocketRoute extends RouteBuilder {
 	@Override
 	public void configure() throws Exception {
 		// setup Camel web-socket component on the port we have defined
-		//define nmea predicate
-		isNmea= body(String.class).startsWith("$");
-		 nmeaTcpServer = new NmeaTcpServer();
-		 nmeaTcpServer.start();
+		// define nmea predicate
+		isNmea = body(String.class).startsWith("$");
+		nmeaTcpServer = new NmeaTcpServer();
+		nmeaTcpServer.start();
 		WebsocketComponent wc = getContext().getComponent("websocket", WebsocketComponent.class);
 
 		wc.setPort(port);
@@ -80,11 +94,10 @@ public class NavDataWebSocketRoute extends RouteBuilder {
 
 		// init processors who depend on this being started
 		initProcessors();
-		
 
 		if (Boolean.valueOf(config.getProperty(Constants.DEMO))) {
 
-			from("stream:file?fileName=" + serialUrl).to("seda:input?multipleConsumers=true");
+			from("stream:file?fileName=" + serialUrl).to("seda:input");
 
 		} else {
 			// start a serial port manager
@@ -98,35 +111,52 @@ public class NavDataWebSocketRoute extends RouteBuilder {
 		// intercept().when(((String)body(String.class)).trim().length()==0).stop();
 		// deal with errors
 
-		// send to listeners
-		from("seda:input?multipleConsumers=true").onException(Exception.class)
-				.handled(true)
-				.maximumRedeliveries(0)
-					.to("log:nz.co.fortytwo.freeboard.navdata?level=ERROR&showException=true")
-					.end()
-				//output any nmea here
-				.filter(isNmea)
-					.to("seda:nmeaOutput?multipleConsumers=true")
-					.end()
-				//process all here
-				.process(inputFilterProcessor)
-				.process(combinedProcessor)
-				.process(outputFilterProcessor).to("log:nz.co.fortytwo.freeboard.navdata?level=INFO")
-				// and push to all web socket subscribers
-				.multicast()
-					.to("websocket:navData?sendToAll=true").end().process(addSrcProcessor)
-					.to("cometd://0.0.0.0:8082/freeboard/json?jsonCommented=false")
-				.end();
-		
 		// distribute and log commands
-		from("seda:output?multipleConsumers=true")
-				// .process(outputFilterProcessor)
-				.process(serialPortManager).to("log:nz.co.fortytwo.freeboard.command?level=INFO").onException(Exception.class).handled(true)
-				.maximumRedeliveries(0).to("log:nz.co.fortytwo.freeboard.command?level=ERROR&showException=true");
+		from("direct:command")
+				.process(serialPortManager)
+				// .to("log:nz.co.fortytwo.freeboard.command?level=INFO")
+				.onException(Exception.class).handled(true).maximumRedeliveries(0)
+					.to("log:nz.co.fortytwo.freeboard.command?level=ERROR&showException=true&showStackTrace=true")
+					.end();
 		
-		//push NMEA out via TCP
-		from("seda:nmeaOutput?multipleConsumers=true")
-			.process(nmeaTcpServer);
+		// push NMEA out via TCPServer.
+		from("seda:nmeaOutput")
+			.process(nmeaTcpServer)
+			.end();
+		
+		// out to websockets
+		from("direct:websocket").to("websocket:navData?sendToAll=true")
+			.onException(Exception.class).handled(true).maximumRedeliveries(0)
+				.to("log:nz.co.fortytwo.freeboard.websocket?level=ERROR&showException=true&showStackTrace=true")
+				.end();
+
+		// out to cometd
+		from("direct:cometd")
+			 .process(addSrcProcessor)
+			 .to("cometd://0.0.0.0:8082/freeboard/json?jsonCommented=false")
+			 .onException(Exception.class)
+			 .handled(true)
+			 .maximumRedeliveries(0)
+			 .to("log:nz.co.fortytwo.freeboard.json?level=ERROR&showException=true&showStackTrace=true")
+			 .end();
+		
+		//main input to destination route
+		// send input to listeners
+		from("seda:input")
+				// process all here
+				.filter(isNmea).to("seda:nmeaOutput").end().process(inputFilterProcessor).process(combinedProcessor)
+				.process(outputFilterProcessor)
+				// .to("log:nz.co.fortytwo.freeboard.navdata?level=INFO")
+				// and push to all subscribers. We use multicast/direct cos if we use SEDA then we get a queue growth if there are no consumers active.
+				.multicast()
+					.to("direct:websocket")
+					.to("direct:cometd")
+					.to("direct:command")
+				.end()
+				.onException(Exception.class).handled(true).maximumRedeliveries(0)
+					.to("log:nz.co.fortytwo.freeboard.navdata?level=ERROR&showException=true&showStackTrace=true")
+					.end();
+
 	}
 
 	private void initProcessors() {
@@ -135,10 +165,10 @@ public class NavDataWebSocketRoute extends RouteBuilder {
 		// add combined processors
 		combinedProcessor.addHandler(nmeaProcessor);
 		combinedProcessor.addHandler(windProcessor);
-		combinedProcessor.addHandler(commandProcessor);
 		combinedProcessor.addHandler(declinationProcessor);
+		combinedProcessor.addHandler(commandProcessor);
 		combinedProcessor.addHandler(gpxProcessor);
-		
+
 	}
 
 	public String getSerialUrl() {

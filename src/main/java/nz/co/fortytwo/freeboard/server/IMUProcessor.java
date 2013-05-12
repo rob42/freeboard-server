@@ -66,7 +66,7 @@ public class IMUProcessor implements Processor {
 				//for(String s:bodyArray){
 					
 				//}
-				exchange.getOut().setBody(bodyStr);
+				exchange.getIn().setBody(bodyStr);
 
 			} catch (Exception e) {
 				// e.printStackTrace();

@@ -74,7 +74,7 @@ public class AnchorViewModel extends SelectorComposer<Window>{
 		logger.debug("Constructing..");
 
 		producer = CamelContextFactory.getInstance().createProducerTemplate();
-		producer.setDefaultEndpointUri("seda://input?multipleConsumers=true");
+		producer.setDefaultEndpointUri("seda:input");
 		
 	}
 

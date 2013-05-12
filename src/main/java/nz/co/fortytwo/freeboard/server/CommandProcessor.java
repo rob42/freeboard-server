@@ -41,6 +41,7 @@ public class CommandProcessor extends FreeboardProcessor implements Processor, F
 
 	public CommandProcessor() {
 
+		msgs.add(Constants.DEC);
 		msgs.add(Constants.WST);
 		msgs.add(Constants.WSA);
 		msgs.add(Constants.WDT);
@@ -83,7 +84,7 @@ public class CommandProcessor extends FreeboardProcessor implements Processor, F
 
 	public void init() {
 		this.producer = CamelContextFactory.getInstance().createProducerTemplate();
-		producer.setDefaultEndpointUri("seda:output?multipleConsumers=true");
+		producer.setDefaultEndpointUri("direct:command");
 	}
 
 	@Override
@@ -98,12 +99,16 @@ public class CommandProcessor extends FreeboardProcessor implements Processor, F
 			}
 		}
 
-		// now send to output queue
+		// now send to output queue to MEGA
 		if (!outMap.isEmpty()) {
 			outMap.put(Constants.UID, Constants.MEGA);
 			producer.sendBody(hashMapToString(outMap));
 		}
 
+		// we send DEC to IMU
+		if (map.containsKey(Constants.DEC)) {
+			producer.sendBody(Constants.UID + ":" + Constants.IMU + "," + Constants.DEC + ":" + map.get(Constants.DEC) + ",");
+		}
 		return map;
 	}
 
