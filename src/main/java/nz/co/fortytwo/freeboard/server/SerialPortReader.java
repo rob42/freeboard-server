@@ -18,9 +18,6 @@
  */
 package nz.co.fortytwo.freeboard.server;
 
-import gnu.io.NRSerialPort;
-
-import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.File;
@@ -28,7 +25,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
@@ -38,11 +34,11 @@ import nz.co.fortytwo.freeboard.server.util.Constants;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
-import com.sun.xml.bind.v2.runtime.reflect.opt.Const;
+import purejavacomm.CommPortIdentifier;
+import purejavacomm.SerialPort;
 
 /**
  * Wrapper to read serial port via rxtx, then fire messages into the camel route
@@ -61,7 +57,7 @@ public class SerialPortReader implements Processor{
 	private boolean running = true;
 	private boolean mapped = false;
 	private String deviceType = null;
-	private NRSerialPort serialPort = null;
+	private SerialPort serialPort = null;
 	
 	private LinkedBlockingQueue<String> queue;
 
@@ -84,9 +80,10 @@ public class SerialPortReader implements Processor{
 	void connect(String portName) throws Exception {
 		this.portName = portName;
 		this.portFile = new File(portName);
-		serialPort = new NRSerialPort(portName, 38400);
-
-		serialPort.connect();
+		CommPortIdentifier portid = CommPortIdentifier.getPortIdentifier(portName);
+		serialPort = (SerialPort) portid.open("PureJavaCommTestSuite", 100);
+		serialPort.setSerialPortParams(115200, 8, 1, 0);
+		
 		(new Thread(new SerialReader())).start();
 		(new Thread(new SerialWriter())).start();
 		
@@ -172,11 +169,10 @@ public class SerialPortReader implements Processor{
 				
 			} finally {
 				try{
-					if(serialPort.isConnected())serialPort.disconnect();
+					serialPort.close();
 				}catch(Exception e){
 					logger.error("Problem disconnecting port "+portName,e);
 				}
-				
 			}
 		}
 
@@ -202,8 +198,9 @@ public class SerialPortReader implements Processor{
 	 */
 	public boolean isRunning() {
 		if (!portFile.exists()) {
+			
 			try{
-				if(serialPort.isConnected())serialPort.disconnect();
+				serialPort.close();
 			}catch(Exception e){
 				logger.error("Problem disconnecting port "+portName,e);
 			}

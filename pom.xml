@@ -13,6 +13,7 @@
 		<jetty.version>7.5.4.v20111024</jetty.version>
 		<camel.version>2.10.1</camel.version>
 		<zk.version>6.5.0</zk.version>
+		<jna.version>3.5.2</jna.version>
 	</properties>
 	<licenses>
 		<license>
@@ -27,17 +28,38 @@
 			<name>ZK CE Repository</name>
 			<url>http://mavensync.zkoss.org/maven2</url>
 		</repository>
+		<repository>
+			<id>PJC</id>
+			<name>Sparetime Repository</name>
+			<url>http://www.sparetimelabs.com/maven2</url>
+		</repository>
 	</repositories>
 	<dependencies>
 		<!-- serial comms -->
 		<!-- dependency> <groupId>org.rxtx</groupId> <artifactId>rxtx</artifactId> 
 			<version>2.1.7</version> </dependency -->
+		<!-- jna -->
+		<dependency>
+			<groupId>net.java.dev.jna</groupId>
+			<artifactId>jna</artifactId>
+			<version>${jna.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>net.java.dev.jna</groupId>
+			<artifactId>platform</artifactId>
+			<version>${jna.version}</version>
+		</dependency>
 		
 		<dependency>
-			<groupId>com.neuronrobotics</groupId>
-			<artifactId>nrjavaserial</artifactId>
-			<version>3.7.7</version>
-		</dependency>
+	      <groupId>com.sparetimelabs</groupId>
+	      <artifactId>purejavacomm</artifactId>
+	      <version>0.0.17</version>
+	   </dependency>
+<!-- 		<dependency> -->
+<!-- 			<groupId>com.neuronrobotics</groupId> -->
+<!-- 			<artifactId>nrjavaserial</artifactId> -->
+<!-- 			<version>3.7.7</version> -->
+<!-- 		</dependency> -->
 		<!-- Camel -->
 		<dependency>
 			<groupId>org.apache.camel</groupId>
