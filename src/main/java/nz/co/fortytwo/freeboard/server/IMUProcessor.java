@@ -26,10 +26,10 @@ import org.apache.commons.lang3.StringUtils;
  * Processes IMU sentences in the body of a message, firing events to interested listeners
  * 
  * <ul>
- * <li>!!!VER:1.9,RLL:-0.52,PCH:0.06,YAW:80.24,IMUH:253,MGX:44,MGY:-254,MGZ:-257,MGH:80.11,LAT:-412937350,LON:1732472000,ALT:14,COG:116,SOG:0,FIX:1,SAT:5,TOW:
+ * <li>!!VER:1.9,RLL:-0.52,PCH:0.06,YAW:80.24,IMUH:253,MGX:44,MGY:-254,MGZ:-257,MGH:80.11,LAT:-412937350,LON:1732472000,ALT:14,COG:116,SOG:0,FIX:1,SAT:5,TOW:
  * 22504700***
  * <li>
- * <li>!!!VER:1.9,RLL:0.49,PCH:-0.53,YAW:80.24,IMUH:253,MGX:45,MGY:-253,MGZ:-257,MGH:80.08,TOW:22504700***</LI>
+ * <li>!!VER:1.9,RLL:0.49,PCH:-0.53,YAW:80.24,IMUH:253,MGX:45,MGY:-253,MGZ:-257,MGH:80.08,TOW:22504700***</LI>
  * <li></li>
  * <li>Roll: Measured in degrees with positive and increasing as the right wing drops</li>
  * <li>Pitch: Measured in degrees with positive and increasing as the nose rises</li>
@@ -57,7 +57,7 @@ public class IMUProcessor implements Processor {
 			return;
 		// so we have a string
 		String bodyStr = exchange.getIn().getBody(String.class).trim();
-		if (bodyStr.startsWith("!!!VER:")) {
+		if (bodyStr.startsWith("!!VER:") || bodyStr.startsWith("!!!VER:")) {
 			try {
 				// trim start/end, add comma
 				bodyStr=bodyStr.substring(bodyStr.indexOf(",") + 1, bodyStr.lastIndexOf("***"))+",";
