@@ -37,6 +37,9 @@ else
         echo "**No update found" >>logs/update.log 2>&1
 fi
 
+#temporary until linux-arm.jar is in purejavacom.jar
+export LD_LIBRARY_PATH=$FREEBOARD_HOME/jna
+
 #start server
 JAVA_HOME=/home/pi/jdk1.7.0_06
 export JAVA_HOME

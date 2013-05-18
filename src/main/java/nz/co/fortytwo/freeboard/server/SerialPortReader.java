@@ -82,7 +82,7 @@ public class SerialPortReader implements Processor{
 		this.portFile = new File(portName);
 		CommPortIdentifier portid = CommPortIdentifier.getPortIdentifier(portName);
 		serialPort = (SerialPort) portid.open("PureJavaCommTestSuite", 100);
-		serialPort.setSerialPortParams(115200, 8, 1, 0);
+		serialPort.setSerialPortParams(38400, 8, 1, 0);
 		
 		(new Thread(new SerialReader())).start();
 		(new Thread(new SerialWriter())).start();
