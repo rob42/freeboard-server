@@ -24,6 +24,7 @@ import gnu.io.NoSuchPortException;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -42,7 +43,7 @@ public class SerialPortManager implements Runnable, Processor {
 
 	private static Logger logger = Logger.getLogger(SerialPortManager.class);
 
-	private List<SerialPortReader> serialPortList = new ArrayList<SerialPortReader>();
+	private List<SerialPortReader> serialPortList = new CopyOnWriteArrayList<SerialPortReader>();
 
 	private boolean running = true;
 

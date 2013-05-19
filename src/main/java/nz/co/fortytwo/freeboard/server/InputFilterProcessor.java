@@ -41,7 +41,7 @@ public class InputFilterProcessor extends FreeboardProcessor implements Processo
 		String msg = (String) exchange.getIn().getBody(String.class);
 		if(msg !=null){
 			msg=msg.trim();
-			if(msg.indexOf("!!VER:")==0 ){
+			if(msg.indexOf("!!VER:")>=0 ){
 				//from IMU or MEGA - good
 				msg=msg.substring(msg.indexOf(",") + 1);
 				exchange.getIn().setBody(stringToHashMap(msg));

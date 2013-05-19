@@ -18,11 +18,14 @@
  */
 package nz.co.fortytwo.freeboard.server;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.CharBuffer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -39,6 +42,8 @@ import org.apache.log4j.Logger;
 
 import purejavacomm.CommPortIdentifier;
 import purejavacomm.SerialPort;
+import purejavacomm.SerialPortEvent;
+import purejavacomm.SerialPortEventListener;
 
 /**
  * Wrapper to read serial port via rxtx, then fire messages into the camel route
@@ -47,7 +52,7 @@ import purejavacomm.SerialPort;
  * @author robert
  * 
  */
-public class SerialPortReader implements Processor{
+public class SerialPortReader implements Processor {
 
 	private static Logger logger = Logger.getLogger(SerialPortReader.class);
 	private String portName;
@@ -58,12 +63,13 @@ public class SerialPortReader implements Processor{
 	private boolean mapped = false;
 	private String deviceType = null;
 	private SerialPort serialPort = null;
-	
+
 	private LinkedBlockingQueue<String> queue;
+	private SerialReader serialReader;
 
 	public SerialPortReader() {
 		super();
-		queue=new LinkedBlockingQueue<String>(100);
+		queue = new LinkedBlockingQueue<String>(100);
 	}
 
 	/**
@@ -81,12 +87,15 @@ public class SerialPortReader implements Processor{
 		this.portName = portName;
 		this.portFile = new File(portName);
 		CommPortIdentifier portid = CommPortIdentifier.getPortIdentifier(portName);
-		serialPort = (SerialPort) portid.open("PureJavaCommTestSuite", 100);
+		serialPort = (SerialPort) portid.open("FreeboardSerialReader", 100);
 		serialPort.setSerialPortParams(38400, 8, 1, 0);
-		
-		(new Thread(new SerialReader())).start();
+		serialReader = new SerialReader();
+		serialPort.enableReceiveTimeout(1000);
+		serialPort.notifyOnDataAvailable(true);
+		serialPort.addEventListener(serialReader);
+		//(new Thread(new SerialReader())).start();
 		(new Thread(new SerialWriter())).start();
-		
+
 	}
 
 	public class SerialWriter implements Runnable {
@@ -98,88 +107,109 @@ public class SerialPortReader implements Processor{
 			this.out = new BufferedOutputStream(serialPort.getOutputStream());
 
 		}
+
 		public void run() {
-			
+
 			try {
 				while (running) {
 					String msg = queue.poll(5, TimeUnit.SECONDS);
-					if(msg!=null){
+					if (msg != null) {
 						out.write((msg + "\n").getBytes());
 						out.flush();
 					}
 				}
-			}catch(IOException e) {
+			} catch (IOException e) {
 				running = false;
-				logger.error(portName, e);
+				logger.error(portName+":"+ e.getMessage());
+				logger.debug(e.getMessage(),e);
 			} catch (InterruptedException e) {
-				//do nothing
+				// do nothing
 			}
 		}
-	
+
 	}
 
 	/** */
-	public class SerialReader implements Runnable {
+	public class SerialReader implements SerialPortEventListener {
 
-		BufferedReader in;
+		//BufferedReader in;
+		
 		private Pattern uid;
 		List<String> lines = new ArrayList<String>();
-
+		StringBuffer line = new StringBuffer(60);
+		
+		private boolean complete;
+		private InputStream in;
+		
 		public SerialReader() throws Exception {
-
-			this.in = new BufferedReader(new InputStreamReader(serialPort.getInputStream()));
-			uid=Pattern.compile(Constants.UID+":");
+			
+			//this.in = new BufferedReader(new InputStreamReader(serialPort.getInputStream()));
+			this.in = new BufferedInputStream(serialPort.getInputStream());
+			uid = Pattern.compile(Constants.UID + ":");
+			logger.info("Setup serialReader on :"+portName);
 		}
 
-		public void run() {
-			try {
-				try {
-					while (running) {
-
-						if (in.ready()) {
-							
-							String line=in.readLine();
-								if(line!=null){
-									if (!mapped && uid.matcher(line).matches()) {
+		@Override
+		public void serialEvent(SerialPortEvent event) {
+			logger.debug("SerialEvent:"+event.getEventType());
+			try{
+				if (event.getEventType() == SerialPortEvent.DATA_AVAILABLE) {
+					
+						int r=0;
+						byte[] buff = new byte[256]; 
+						int x=0;
+						while(r>-1){
+							try {
+								r = in.read();
+								buff[x]=(byte) r;
+								x++;
+								
+								//10=LF, 13=CR, lines should end in CR/LF
+								if(r==10  ||x==256){
+									if(r==10)complete=true;
+									line.append(new String(buff));
+									buff=new byte[256];
+									x=0;
+								}
+								
+							} catch (IOException e) {
+								logger.error(portName + ":"+e.getMessage());
+								logger.debug(e.getMessage(),e);
+								return;
+							}
+							//we have a line ending in CR/LF
+							if (complete) {
+								String lineStr = line.toString().trim();
+								//its not empty!
+								if(lineStr.length()>0){
+									//map it if we havent already
+									if (!mapped && uid.matcher(lineStr).matches()) {
 										// add to map
-										logger.debug(portName + ":Serial Recieved:" + line);
-										String type = StringUtils.substringBetween(line, Constants.UID+":",",");
-										if(type!=null){
+										logger.debug(portName + ":Serial Recieved:" + lineStr);
+										String type = StringUtils.substringBetween(lineStr, Constants.UID + ":", ",");
+										if (type != null) {
 											logger.debug(portName + ":  device name:" + type);
 											deviceType = type.trim();
 											mapped = true;
 										}
 									}
-									producer.sendBody(line);
+									producer.sendBody(lineStr);
 								}
+								complete=false;
+								line=new StringBuffer(60);
 							}
-							
-						
-						// delay for a bit (msecs), we dont want to burn up CPU for nothing
-						try {
-							Thread.currentThread().sleep(50);
-						} catch (InterruptedException ie) {
 						}
-					}
-					
-				} catch (IOException e) {
-					running = false;
-					logger.error(portName, e);
 				}
-				
-			} finally {
-				try{
-					serialPort.close();
-				}catch(Exception e){
-					logger.error("Problem disconnecting port "+portName,e);
-				}
+			}catch (Exception e) {
+				running=false;
+				logger.error(portName, e);
 			}
+		
 		}
 
 	}
 
 	/** */
-	
 
 	/**
 	 * Set the camel producer, which fire the messages into camel
@@ -198,11 +228,13 @@ public class SerialPortReader implements Processor{
 	 */
 	public boolean isRunning() {
 		if (!portFile.exists()) {
-			
-			try{
+
+			try {
 				serialPort.close();
-			}catch(Exception e){
-				logger.error("Problem disconnecting port "+portName,e);
+				serialPort.removeEventListener();
+			} catch (Exception e) {
+				logger.error("Problem disconnecting port " + portName +", "+ e.getMessage());
+				logger.debug(e.getMessage(),e);
 			}
 			running = false;
 		}
@@ -219,7 +251,6 @@ public class SerialPortReader implements Processor{
 		this.running = running;
 	}
 
-
 	public String getPortName() {
 		return portName;
 	}
@@ -228,18 +259,20 @@ public class SerialPortReader implements Processor{
 		this.portName = portName;
 	}
 
-	/* Handles the messages to be delivered to the device attached to this port.
+	/*
+	 * Handles the messages to be delivered to the device attached to this port.
+	 * 
 	 * @see org.apache.camel.Processor#process(org.apache.camel.Exchange)
 	 */
 	public void process(Exchange exchange) throws Exception {
-		//send to device
+		// send to device
 		String message = exchange.getIn().getBody(String.class);
 		logger.debug(portName + ":msg received for device:" + message);
 		if (message != null) {
 			// check its valid for this device
 			if (running && deviceType == null || message.contains(Constants.UID + ":" + deviceType)) {
 				logger.debug(portName + ":wrote out to device:" + message);
-				//queue them and write in background
+				// queue them and write in background
 				queue.put(message);
 			}
 		}
