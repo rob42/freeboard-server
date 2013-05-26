@@ -142,6 +142,7 @@ public class Util {
 		props.setProperty(Constants.WAYPOINTS,"/tracks");
 		props.setProperty(Constants.WAYPOINTS_RESOURCE,"./tracks");
 		props.setProperty(Constants.WAYPOINT_CURRENT,"waypoints.gpx");
+		props.setProperty(Constants.SERIAL_PORTS,"/dev/ttyUSB0,/dev/ttyUSB1,/dev/ttyUSB2");
 
 	}
 	

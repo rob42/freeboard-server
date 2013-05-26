@@ -76,9 +76,6 @@ public class SerialPortReader implements Processor {
 	 * Opens a connection to the serial port, and starts two threads, one to read, one to write.
 	 * A background thread looks for new/lost USB devices and (re)attaches them
 	 * 
-	 * NOTE: This uses nrjavaserial-3.7.7.jar built from the src, with a few minor mods to deal with timeouts etc
-	 * see http://code.google.com/p/nrjavaserial/
-	 * Since the last maven version is 3.7.5, you will need to build it, which will add it to the local maven respoitory!!
 	 * 
 	 * @param portName
 	 * @throws Exception
@@ -88,6 +85,7 @@ public class SerialPortReader implements Processor {
 		this.portFile = new File(portName);
 		CommPortIdentifier portid = CommPortIdentifier.getPortIdentifier(portName);
 		serialPort = (SerialPort) portid.open("FreeboardSerialReader", 100);
+		//TODO: change baud rate to config based setup
 		serialPort.setSerialPortParams(38400, 8, 1, 0);
 		serialReader = new SerialReader();
 		serialPort.enableReceiveTimeout(1000);

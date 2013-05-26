@@ -73,7 +73,7 @@ class ForkWorker extends SwingWorker<String,String> {
     // Done on the swing event thread
 	  SwingUtilities.invokeLater(new Runnable() {
 		    public void run() {
-		    	output.append("\nDONE\n");  
+		    	output.append("\nOK\n");  
 		    }
 		  });
     

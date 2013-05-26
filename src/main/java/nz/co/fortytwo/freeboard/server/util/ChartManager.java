@@ -97,7 +97,7 @@ public class ChartManager extends JFrame {
 			try {
 				ChartProcessor processor = new ChartProcessor(true,textArea);
 				redirectSystemStreams();
-				processor.processChart(f, false);
+				processor.processChart(f, true);
 			
 				
 			} catch (Exception e) {

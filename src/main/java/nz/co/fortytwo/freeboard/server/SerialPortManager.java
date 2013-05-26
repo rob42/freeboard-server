@@ -22,9 +22,15 @@ package nz.co.fortytwo.freeboard.server;
 import gnu.io.NoSuchPortException;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 import java.util.concurrent.CopyOnWriteArrayList;
+
+import nz.co.fortytwo.freeboard.server.util.Constants;
+import nz.co.fortytwo.freeboard.server.util.Util;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -66,9 +72,14 @@ public class SerialPortManager implements Runnable, Processor {
 			
 			//not reliable, cant properly deal with hot-plug
 			//Enumeration<CommPortIdentifier> ports = CommPortIdentifier.getPortIdentifiers();
-			
-
-			String[] ports = {"/dev/ttyUSB0","/dev/ttyUSB1","/dev/ttyUSB2"};
+			String portStr ="/dev/ttyUSB0,/dev/ttyUSB1,/dev/ttyUSB2";
+			try {
+				Properties config = Util.getConfig(null);
+				portStr = config.getProperty(Constants.SERIAL_PORTS);
+			} catch (IOException e1) {
+				logger.error(e1.getMessage(),e1);
+			}
+			String[] ports = portStr.split(",");
 			for (String port:ports) {
 				boolean portOk = false;
 				File portFile = new File(port);

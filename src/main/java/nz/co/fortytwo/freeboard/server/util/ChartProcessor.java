@@ -224,10 +224,10 @@ public class ChartProcessor {
         File layers = new File(dir,"freeboard.txt");
         FileUtils.writeStringToFile(layers, snippet);
         //now zip the result
-      //now zip the result
         System.out.print("Zipping directory...\n");
-		//ZipUtils.zip(dir, new File(dir.getParentFile(),chartName+".zip"));
-		System.out.print("Zipping directory complete\n");
+		ZipUtils.zip(dir, new File(dir.getParentFile(),chartName+".zip"));
+		System.out.print("Zipping directory complete, in "+new File(dir.getParentFile(),chartName+".zip").getAbsolutePath()+"\n");
+		System.out.print("Conversion of "+chartName+" was completed successfully!\n");
 	}
 
 	/**
