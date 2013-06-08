@@ -103,9 +103,10 @@ public class SerialPortManager implements Runnable, Processor {
 					
 					SerialPortReader serial = new SerialPortReader();
 					serial.setProducer(producer);
-					
-					logger.debug("Comm port " + port + " found and connecting...");
-					serial.connect(port);
+					String baudStr = Util.getConfig(null).getProperty("freeboard.serial.port.baud", "38400");
+					int baudRate = Integer.valueOf(baudStr);
+					logger.debug("Comm port " + port + " found and connecting at "+baudRate+"...");
+					serial.connect(port, baudRate);
 					logger.info("Comm port " + port + " found and connected");
 					serialPortList.add(serial);
 				} catch (NullPointerException np) {

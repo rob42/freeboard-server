@@ -70,6 +70,16 @@ function addLayers(map) {
 		tms: true
 		}).addTo(map);
 
+
+	var UK_6559_1 = L.tileLayer("http://{s}.{server}:8080/mapcache/UK_6559_1/{z}/{x}/{y}.png", {
+		server: host,
+		subdomains: 'abcd',
+		attribution: 'UK_6559_1 The Solent - Partie Ouest (1:31600)',
+		minZoom: 9,
+		maxZoom: 14,
+		tms: true
+		}).addTo(map);
+
 	baseLayers = {
 		"World": WORLD,
 	};
@@ -81,6 +91,7 @@ function addLayers(map) {
 		"NZ6144 Abel Tasman": NZ6144,
 		"NZ6142_1 Nelson Harbour & Entrance": NZ6142_1,
 		"NZ6142_2 Nelson Harbour & Entrance - Port Nelson": NZ6142_2,
+		"UK_6559_1 The Solent - Partie Ouest (1:31600)": UK_6559_1,
 	};
 	layers = L.control.layers(baseLayers, overlays).addTo(map);
 	};

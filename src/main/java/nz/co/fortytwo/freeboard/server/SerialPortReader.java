@@ -66,6 +66,7 @@ public class SerialPortReader implements Processor {
 
 	private LinkedBlockingQueue<String> queue;
 	private SerialReader serialReader;
+	
 
 	public SerialPortReader() {
 		super();
@@ -80,13 +81,13 @@ public class SerialPortReader implements Processor {
 	 * @param portName
 	 * @throws Exception
 	 */
-	void connect(String portName) throws Exception {
+	void connect(String portName, int baudRate) throws Exception {
 		this.portName = portName;
 		this.portFile = new File(portName);
 		CommPortIdentifier portid = CommPortIdentifier.getPortIdentifier(portName);
 		serialPort = (SerialPort) portid.open("FreeboardSerialReader", 100);
 		//TODO: change baud rate to config based setup
-		serialPort.setSerialPortParams(38400, 8, 1, 0);
+		serialPort.setSerialPortParams(baudRate, 8, 1, 0);
 		serialReader = new SerialReader();
 		serialPort.enableReceiveTimeout(1000);
 		serialPort.notifyOnDataAvailable(true);
@@ -183,7 +184,7 @@ public class SerialPortReader implements Processor {
 									//map it if we havent already
 									if (!mapped && uid.matcher(lineStr).matches()) {
 										// add to map
-										logger.debug(portName + ":Serial Recieved:" + lineStr);
+										logger.debug(portName + ":Serial Received:" + lineStr);
 										String type = StringUtils.substringBetween(lineStr, Constants.UID + ":", ",");
 										if (type != null) {
 											logger.debug(portName + ":  device name:" + type);

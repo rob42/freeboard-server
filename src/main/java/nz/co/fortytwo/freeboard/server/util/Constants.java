@@ -183,7 +183,9 @@ public class Constants {
 	public static final String GOTO_LON = "freeboard.goto.lon";
 	public static final String FROM_LAT = "freeboard.from.lat";
 	public static final String FROM_LON = "freeboard.from.lon";
+	
 	public static final String SERIAL_PORTS = "freeboard.serial.ports";
+	public static final String SERIAL_PORT_BAUD = "freeboard.serial.port.baud";
 	
 	
 	public Constants() {
