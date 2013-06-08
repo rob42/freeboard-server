@@ -47,7 +47,7 @@ public class Util {
 	private static Logger logger = Logger.getLogger(Util.class);
 	private static Properties props;
 	public static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd_hh:mm:ss");
-	private static File cfg = null;
+	public static File cfg = null;
 	private static boolean timeSet=false;
 	/**
 	 * Smooth the data a bit

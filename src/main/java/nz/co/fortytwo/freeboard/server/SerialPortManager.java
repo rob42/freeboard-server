@@ -103,7 +103,13 @@ public class SerialPortManager implements Runnable, Processor {
 					
 					SerialPortReader serial = new SerialPortReader();
 					serial.setProducer(producer);
-					String baudStr = Util.getConfig(null).getProperty("freeboard.serial.port.baud", "38400");
+					//default 38400, then freeboard.cfg default, then freeboard.cfg per port
+					String baudStr = Util.getConfig(null).getProperty(Constants.SERIAL_PORT_BAUD, "38400");
+					logger.debug("Comm port default found and connecting at "+baudStr+"...");
+					//get port name
+					String portName = port.substring(port.lastIndexOf("/")+1);
+					baudStr = Util.getConfig(null).getProperty(Constants.SERIAL_PORT_BAUD+"."+portName, baudStr);
+					logger.debug("Comm port "+Constants.SERIAL_PORT_BAUD+"."+portName+" override="+Util.getConfig(null).getProperty(Constants.SERIAL_PORT_BAUD+"."+portName));
 					int baudRate = Integer.valueOf(baudStr);
 					logger.debug("Comm port " + port + " found and connecting at "+baudRate+"...");
 					serial.connect(port, baudRate);

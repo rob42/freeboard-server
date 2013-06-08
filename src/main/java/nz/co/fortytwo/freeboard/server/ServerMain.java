@@ -19,6 +19,7 @@
 
 package nz.co.fortytwo.freeboard.server;
 
+import java.io.File;
 import java.util.Properties;
 
 import javax.servlet.ServletContext;
@@ -53,6 +54,8 @@ public class ServerMain {
 	public ServerMain(String configDir) throws Exception {
 		
 		config=Util.getConfig(configDir);
+		//make sure we have all the correct dirs and files now
+		ensureInstall();
 		
 		logger.info("Freeboard starting....");
 
@@ -141,6 +144,24 @@ public class ServerMain {
 		route.stopSerial();
 		server.stop();
 		System.exit(0);
+	}
+
+	private void ensureInstall() {
+
+		File rootDir = new File(".");
+		if(Util.cfg!=null){
+			rootDir = Util.cfg.getParentFile();
+		}
+		//do we have a log dir?
+		File logDir = new File(rootDir,"logs");
+		if(!logDir.exists()){
+			logDir.mkdirs();
+		}
+		//do we have a mapcache
+		File mapDir = new File(rootDir,config.getProperty(Constants.MAPCACHE_RESOURCE));
+		if(!mapDir.exists()){
+			mapDir.mkdirs();
+		}
 	}
 
 	public static void main(String[] args) throws Exception {

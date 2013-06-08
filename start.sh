@@ -41,7 +41,7 @@ fi
 export LD_LIBRARY_PATH=$FREEBOARD_HOME/jna
 
 #start server
-JAVA_HOME=/home/pi/jdk1.7.0_06
+JAVA_HOME=/home/pi/jdk1.8.0
 export JAVA_HOME
 JAVA=$JAVA_HOME/bin/java
 EXT="-Djava.util.Arrays.useLegacyMergeSort=true"

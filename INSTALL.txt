@@ -21,7 +21,7 @@ Hardware:
 		#make sure to 'sudo apt-get install gdal-bin python-gdal imagemagick'
 		#add sun (Oracle) jdk8 manually, into /home/pi/jdk1.8.0
 		#create dir /home/pi/freeboard
-			mkdirs /home/pi/freeboard
+			mkdir /home/pi/freeboard
 		#copy the following from your dev system to /home/pi/freeboard
 		 	 	conf/  
              	freeboard/  
@@ -30,6 +30,7 @@ Hardware:
 		 		mapcache/  - you create this when you import charts, I currently only have NZ charts, I will import a world map shortly, so you can at least see something basic.
 		 		start.sh  
 		 		stop.sh  
+		 		# rename the freeboard-server*with-dependancies.jar!
 		 		target/freeboard-server.jar  
 		
 		cd /home/pi/freeboard
@@ -40,6 +41,24 @@ Hardware:
 
 	ArduIMU - load as per FreeBoard ArduIMU project
 		connect via USB
+		
+	Misc NMEA devices
+		connect via USB
+
+Baud rates for attached devices:
+	In conf/freeboard.cfg there is support for configuring baud rates per USB port. These entries control this
+		
+		# the port range thats scanned for devices - yours may be ttyACM0, edit to suit
+		freeboard.serial.ports=/dev/ttyUSB0,/dev/ttyUSB1,/dev/ttyUSB2
+		#default baud is 38400, this sets default for all ports to something else
+		freeboard.serial.port.baud=38400
+		#this sets ttyUSB0 to 9600, others stay at the default 
+		freeboard.serial.port.baud.ttyUSB0=9600
+		
+		Be careful with the last one, it may not work as you expect, as devices dont always get the same ports. 
+		Using udev rules in linux fixes this, but its complex - email me. 
+		
+Connecting from a web browser:
 	
 	Assuming IP_ADDRESS is either the ip address or dns name of your raspberry pi (eg your boat name)
 	freeboard will be available on http://IP_ADDRESS:8080/freeboard

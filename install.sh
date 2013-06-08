@@ -19,7 +19,7 @@
 
 # Install after unpacking tar file
 #
-JAVA_HOME=/home/pi/jdk1.7.0_06
+JAVA_HOME=/home/pi/jdk1.8.0
 export JAVA_HOME
 JAVA=$JAVA_HOME/bin/java
 FREEBOARD_HOME=$HOME/freeboard
@@ -28,8 +28,10 @@ JAR=freeboard-server-*-jar-with-dependencies.jar
 echo "Setting up into $FREEBOARD_HOME"
 #make sure we are in the right place
 cd $HOME
-mkdirs $FREEBOARD_HOME
+mkdir $FREEBOARD_HOME
+mkdir $FREEBOARD_HOME/logs
+mkdir $FREEBOARD_HOME/mapcache
+mkdir $FREEBOARD_HOME/target
 cd $FREEBOARD_HOME
-mkdir target
-cp ../$JAR target/
+cp ../$JAR target/freeboard-server.jar
 echo "Done, use './start.sh' to start freeboard"
