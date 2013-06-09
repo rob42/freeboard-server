@@ -1,0 +1,64 @@
+DNS problems
+
+There is a dns related problem that occurs if you dont connect via the pi's built-in WIFI. 
+
+If you connect over the pi's own wifi net, it provides dns name resolution as well. 
+But if you  are connecting over your inhouse wifi/ethernet(?) the dns doesnt 
+resolve the pi's address properly.
+
+To explain in more detail (I use my boat name as the pi's hostname):
+The chart widget needs to open lots of tiles as you pan and zoom. But browsers only allow 
+2 x TCP/IP connections per host, so its slow going. So we cheat by 
+defining a.motu, b.motu, c.motu, d.motu as subdomains. 
+
+Then we get 8 connections at a time, 2 each. 
+The pi does this, and expects it, but your home network just 
+has the one address (motu). So the browser tries to get a chart 
+from a.motu, get a dns time-out, and so on - endless 'processing' 
+while nothing is found.
+
+The quick and dirty fix is to add the extra hostnames to your dns, 
+but that may not be possible easily depending on your setup. You 
+could add them to the hosts file on your PC, that will work. So 
+my pi's /etc/hosts looks like:
+
++++++++++++++++++++++++++++
+127.0.0.1         localhost www.zkoss.org
+#use YOUR boats name here!
+#wifi
+#192.168.0.1     motu a.motu b.motu c.motu d.motu
+#home
+10.1.1.3        motu a.motu b.motu c.motu d.motu
+::1             localhost ip6-localhost ip6-loopback
+fe00::0         ip6-localnet
+ff00::0         ip6-mcastprefix
+ff02::1         ip6-allnodes
+ff02::2         ip6-allrouters
+
+127.0.0.1       raspberrypi
++++++++++++++++++++++++
+
+And on my laptop I put:
+
++++++++++++++++++++++++++
+127.0.0.1       localhost.localdomain   localhost a.localhost b.localhost c.localhost d.localhost
+::1     rth     localhost6.localdomain6 localhost6
+#10.1.1.5       spartar
+127.0.1.1       rth
+#Temp fix for freeboard
+10.1.1.3        motu a.motu b.motu c.motu d.motu
+
+#10.1.1.128     www www.42.co.nz
+# The following lines are desirable for IPv6 capable hosts
+::1     localhost ip6-localhost ip6-loopback
+fe00::0 ip6-localnet
+ff00::0 ip6-mcastprefix
+ff02::1 ip6-allnodes
+ff02::2 ip6-allrouters
+ff02::3 ip6-allhosts
+++++++++++++++++++++++++++++
+
+And it works!
+I'll need to find a better way for non-pi networks I think :-)
+
+Robert

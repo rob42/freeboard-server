@@ -242,11 +242,11 @@ public class ChartProcessor {
 	 * @throws InterruptedException 
 	 */
 	private void executeGdal( File chartFile, String chartName, List<String> argList, List<String> tilesList ) throws IOException, InterruptedException {
-		File dir = new File(config.getProperty(Constants.MAPCACHE_RESOURCE));
+		File processDir = chartFile.getParentFile();
 		//mkdir $1
 		//gdal_translate -of vrt -expand rgba $1.kap temp.vrt
 		 ProcessBuilder pb = new ProcessBuilder(argList);
-		 pb.directory(dir);
+		 pb.directory(processDir);
 		 //pb.inheritIO();
 		 if(manager){
 			 ForkWorker fork = new ForkWorker(textArea, pb);
@@ -269,10 +269,10 @@ public class ChartProcessor {
 			 }
 		 }
 		//gdal2tiles.py temp.vrt $1
-		 File tileDir = new File(dir,chartName);
+		 File tileDir = new File(processDir,chartName);
 		 tileDir.mkdir();
 		 pb = new ProcessBuilder("gdal2tiles.py", "temp.vrt", chartName);
-		 pb.directory(dir);
+		 pb.directory(processDir);
 		 //pb.inheritIO();
 		 if(manager){
 			 ForkWorker fork = new ForkWorker(textArea, pb);

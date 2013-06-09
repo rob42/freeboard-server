@@ -14,6 +14,7 @@ sudo mount -tvfat -oasync,nodev,noatime,nodiratime,gid=floppy,umask=000 /dev/sda
 
 # start script for freeboard
 FREEBOARD_HOME=/home/pi/freeboard
+#FREEBOARD_HOME=.
 
 JAR=freeboard-server.jar
 #

@@ -208,16 +208,21 @@ public class ConfigViewModel extends SelectorComposer<Window> {
 		File layersDir = new File(Util.getConfig(null).getProperty(Constants.MAPCACHE_RESOURCE));
 		int c=0;
 		for(File layerDir: layersDir.listFiles()){
+			//avoid files starting with dot (.)
+			if(layerDir.getName().startsWith("."))continue;
 			if(layerDir.isFile())continue;
 			try{
 				File layerFile = new File(layerDir,"freeboard.txt");
-			
-				String layer = FileUtils.readFileToString(layerFile);
-				String chart = layerFile.getName();
-				chart=chart.substring(0,chart.indexOf("."));
-				String name = getChartName(layer, chart);
-				allListMap.put(name, layer);
-				logger.debug("Found:"+name);
+				if(layerFile.exists()){
+					String layer = FileUtils.readFileToString(layerFile);
+					String chart = layerFile.getName();
+					chart=chart.substring(0,chart.indexOf("."));
+					String name = getChartName(layer, chart);
+					allListMap.put(name, layer);
+					logger.debug("Found:"+name);
+				}else{
+					logger.warn(layerFile.getAbsolutePath()+" does not exist");
+				}
 			}catch(Exception e){
 				logger.error(e.getMessage(),e);
 			}
