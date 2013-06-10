@@ -58,5 +58,10 @@ NOTE: I use linux, a Windows translation would be appreciated. I assume the free
 
     /home/pi/freeboard/mapcache/NZ46/...
 
-  Restart freeboard to use the new chart. Click the 'Config' button on the bottom toolbar, select the 'Charts' tab and move you charts to the right-hand box.
+  Restart freeboard to use the new chart. 
+  Click the 'Config' button on the bottom toolbar, select the 'Charts' tab and move you charts to the right-hand box.
+  
+  IMPORTANT: Select "Home" if your Pi is connected to your home network, and 'Boat' if your pi is running on a stand-alone network, eg in your boat. 
+  If you see the 'Processing' message forever..., then you need to choose 'Home'. ('Boat' is much faster but has DNS issues on home networks.)
+  
   Save and your chart should be available in the chart list (top-right button of chartplotter)

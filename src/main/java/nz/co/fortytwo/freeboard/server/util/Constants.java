@@ -187,6 +187,10 @@ public class Constants {
 	public static final String SERIAL_PORTS = "freeboard.serial.ports";
 	public static final String SERIAL_PORT_BAUD = "freeboard.serial.port.baud";
 	
+	public static final String DNS_USE_CHOICE = "freeboard.dns.use";
+	public static final String DNS_USE_BOAT = "boat";
+	public static final String DNS_USE_HOME = "home";
+	
 	
 	public Constants() {
 		// TODO Auto-generated constructor stub

@@ -110,6 +110,12 @@
 					</vbox>
 					</hbox>
 					<hbox>
+					<radiogroup id="useHomeGroup" tooltiptext="Select Boat if the Pi is your DNS server, eg your standalone boat network. 
+						Select Home if you are putting the Pi onto an existing network like your home network.
+						The boat option is much faster, but to use it on an existing network requires DNS configuration, or you get errors - see install notes">
+						<radio id="useBoatRadio" label="Boat" value="false" />
+						<radio id="useHomeRadio" label="Home" value="true" />
+					</radiogroup>
 					<button id="chartSave" label="Save" />
 									<button id="chartCancel"
 										label="Cancel" />

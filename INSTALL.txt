@@ -63,7 +63,7 @@ Connecting from a web browser:
 	Assuming IP_ADDRESS is either the ip address or dns name of your raspberry pi (eg your boat name)
 	freeboard will be available on http://IP_ADDRESS:8080/freeboard
 	
-	See the info in DNS_NOTES.txt, or you will suffer the 'processing' wait forever - aaargh!!
+	See the info in CHART_INSTALL.txt, and DNS_NOTES.txt, or you will suffer the 'Processing' message forever - aaargh!!
 
 Hostapd notes:
   Use a supported wifi dongle - try RT5370 USB - works but seems to suffer arbitrary freezes (possibly due to a known driver problem)

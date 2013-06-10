@@ -1,5 +1,7 @@
 DNS problems
 
+[UPDATE: there is now an option in the Config>Charts tab. Select "Home" and save the chart config. Reload the browser.]
+
 There is a dns related problem that occurs if you dont connect via the pi's built-in WIFI. 
 
 If you connect over the pi's own wifi net, it provides dns name resolution as well. 

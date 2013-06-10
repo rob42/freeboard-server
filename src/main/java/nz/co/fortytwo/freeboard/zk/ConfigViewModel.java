@@ -59,6 +59,8 @@ import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.ListitemRenderer;
 import org.zkoss.zul.Messagebox;
+import org.zkoss.zul.Radio;
+import org.zkoss.zul.Radiogroup;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
@@ -109,7 +111,13 @@ public class ConfigViewModel extends SelectorComposer<Window> {
 	private Listbox selectedCharts;
 	private ListModelList<String> selectedChartsModel;
 	
+	@Wire ("radioGroup#useHomeGroup")
+	Radiogroup useHomeGroup;
 	
+	@Wire ("radio#useBoatRadio")
+	Radio useBoatRadio;
+	@Wire ("radio#useHomeRadio")
+	Radio useHomeRadio;
 	
 	private ProducerTemplate producer;
 
@@ -155,7 +163,7 @@ public class ConfigViewModel extends SelectorComposer<Window> {
 		
 	}
 
-	private void saveLayers() throws Exception {
+	private void saveLayers(boolean useHomeChoice) throws Exception {
 		
 		File layersFile = new File(Util.getConfig(null).getProperty(Constants.FREEBOARD_RESOURCE)+"/js/layers.js");
 		StringBuffer layers = new StringBuffer();
@@ -184,8 +192,15 @@ public class ConfigViewModel extends SelectorComposer<Window> {
 		layers.append("\t};\n");
 		layers.append("\tlayers = L.control.layers(baseLayers, overlays).addTo(map);\n");
 		layers.append("\t};\n");
-		logger.debug(layers);
-		FileUtils.writeStringToFile(layersFile, layers.toString());
+		String layersStr = layers.toString();
+		if(useHomeChoice){
+			//we parse out all refs to the subdomains
+			// remove {s}.
+			layersStr=StringUtils.remove(layersStr, "{s}.");
+			layersStr=StringUtils.remove(layersStr, "subdomains: 'abcd',");
+		}
+		logger.debug(layersStr);
+		FileUtils.writeStringToFile(layersFile,layersStr );
 	}
 
 	private String getChartName(String snippet, String chart) {
@@ -256,7 +271,13 @@ public class ConfigViewModel extends SelectorComposer<Window> {
 	public void chartSaveClick(MouseEvent event) {
 		logger.debug(" chartSave button event = " + event);
 		try {
-			saveLayers();
+			boolean useHomeChoice = Boolean.valueOf( (String)useHomeGroup.getSelectedItem().getValue());
+			if(useHomeChoice){
+				Util.getConfig(null).setProperty(Constants.DNS_USE_CHOICE, Constants.DNS_USE_HOME);
+			}else{
+				Util.getConfig(null).setProperty(Constants.DNS_USE_CHOICE, Constants.DNS_USE_BOAT);
+			}
+			saveLayers(useHomeChoice);
 		} catch (Exception e) {
 			logger.error(e.getMessage(),e);
 		} 
@@ -359,7 +380,13 @@ public class ConfigViewModel extends SelectorComposer<Window> {
 	private void setConfigDefaults(){
 		try{
 			Properties config = Util.getConfig(null);
-			cfgWindOffset.setValue((String) config.get(Constants.WIND_ZERO_OFFSET));
+			cfgWindOffset.setValue(config.getProperty(Constants.WIND_ZERO_OFFSET));
+			String useChoice = config.getProperty(Constants.DNS_USE_CHOICE);
+			if(Constants.DNS_USE_BOAT.equals(useChoice)){
+				useHomeGroup.setSelectedItem(useBoatRadio);
+			}else{
+				useHomeGroup.setSelectedItem(useHomeRadio);
+			}
 		} catch (Exception e) {
 			logger.error(e.getMessage(),e);
 			Messagebox.show("There has been a problem with loading the configuration:"+e.getMessage());
