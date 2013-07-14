@@ -107,25 +107,25 @@ public class AutopilotViewModel extends SelectorComposer<Window>{
 	@Listen("onClick = button#apPort1")
 	public void apPort1Click(MouseEvent event) {
 	    logger.debug(" apPort1 button event = "+event);
-	    producer.sendBody(Constants.UID+":"+Constants.MEGA+","+Constants.AUTOPILOT_ADJUST+":-1,");
+	    producer.sendBody(Constants.UID+":"+Constants.MEGA+","+Constants.AUTOPILOT_ADJUST_CMD+":-1,");
 	}
 	
 	@Listen("onClick = button#apStbd1")
 	public void apStbd1Click(MouseEvent event) {
 	    logger.debug(" apStbd1 button event = "+event);
-	    producer.sendBody(Constants.UID+":"+Constants.MEGA+","+Constants.AUTOPILOT_ADJUST+":1,");
+	    producer.sendBody(Constants.UID+":"+Constants.MEGA+","+Constants.AUTOPILOT_ADJUST_CMD+":1,");
 	}
 	
 	@Listen("onClick = button#apPort10")
 	public void apPort10Click(MouseEvent event) {
 	    logger.debug(" apPort10 button event = "+event);
-	    producer.sendBody(Constants.UID+":"+Constants.MEGA+","+Constants.AUTOPILOT_ADJUST+":-10,");
+	    producer.sendBody(Constants.UID+":"+Constants.MEGA+","+Constants.AUTOPILOT_ADJUST_CMD+":-10,");
 	}
 	
 	@Listen("onClick = button#apStbd10")
 	public void apStbd10Click(MouseEvent event) {
 	    logger.debug(" apStbd10 button event = "+event);
-	    producer.sendBody(Constants.UID+":"+Constants.MEGA+","+Constants.AUTOPILOT_ADJUST+":10,");
+	    producer.sendBody(Constants.UID+":"+Constants.MEGA+","+Constants.AUTOPILOT_ADJUST_CMD+":10,");
 	}
 	
 	@Listen("onCheck = toolbarbutton#apOnOff")
@@ -143,11 +143,11 @@ public class AutopilotViewModel extends SelectorComposer<Window>{
 		 if(autopilotOn){
 		    	apOnOff.setImage("./js/img/stop.png");
 		    	apOnOff.setLabel("Stop");
-		    	producer.sendBody(Constants.UID+":"+Constants.MEGA+","+Constants.AUTOPILOT_STATE+":1,");
+		    	producer.sendBody(Constants.UID+":"+Constants.MEGA+","+Constants.AUTOPILOT_STATE_CMD+":1,");
 		    }else{
 		    	apOnOff.setImage("./js/img/tick.png");
 		    	apOnOff.setLabel("Start");
-		    	producer.sendBody(Constants.UID+":"+Constants.MEGA+","+Constants.AUTOPILOT_STATE+":0,");
+		    	producer.sendBody(Constants.UID+":"+Constants.MEGA+","+Constants.AUTOPILOT_STATE_CMD+":0,");
 		    }
 	}
 
@@ -186,7 +186,7 @@ public class AutopilotViewModel extends SelectorComposer<Window>{
 			    if(!apCompassOnOff.isChecked())apCompassOnOff.setChecked(true);
 		 }
 		 //now propagate command
-		 producer.sendBody(Constants.UID+":"+Constants.MEGA+","+Constants.AUTOPILOT_SOURCE+":"+APS+",");
+		 producer.sendBody(Constants.UID+":"+Constants.MEGA+","+Constants.AUTOPILOT_SOURCE_CMD+":"+APS+",");
 		 
 	}
 

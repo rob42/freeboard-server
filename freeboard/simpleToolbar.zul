@@ -1,0 +1,60 @@
+<!-- 
+	Copyright 2012,2013 Robert Huitema robert@42.co.nz
+	
+	This file is part of FreeBoard. (http://www.42.co.nz/freeboard)
+	
+	FreeBoard is free software: you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation, either version 3 of the License, or
+	(at your option) any later version.
+	
+	FreeBoard is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
+	
+	You should have received a copy of the GNU General Public License
+	along with FreeBoard.  If not, see <http://www.gnu.org/licenses/>.
+-->
+<?page title="autopilot" contentType="text/html;charset=UTF-8"?>
+<?script src="./js/jquery-1.8.2.min.js"?>
+<?script src="./js/tween-min.js"?>
+<?script src="./js/steelseries.js"?>
+<?script src="./js/websocket.js"?>
+<?script src="./js/autopilot.js"?>
+<?script src="./js/anchor.js"?>
+<zk xmlns:w="http://www.zkoss.org/2005/zk/client">
+	<style>
+	.z-panel-body { overflow: visible; }
+	.z-menu-body .z-menu-inner-m div {	background-image:url('js/img/btn-arrow.gif')} 
+	
+	</style>
+	<!-- main menubar, left side -->
+	<menubar id="menubar" autodrop="true"  hflex="1"
+		style="float:left; height: 20px;">
+		<menuitem id="help" label="Help" popup="helpPopup" />
+		<menu label="Instruments">
+			<menupopup>
+				<menuitem label="Chartplotter"
+					href='./floating.zul' />
+				<menuitem label="Anchor Alarm"
+					onClick='mainWindow.query("include #anchorWindow").setVisible(!mainWindow.query("include #anchorWindow").isVisible());' />
+			</menupopup>
+		</menu>
+
+		<menuitem label="Autopilot"
+				onClick='mainWindow.query("include #autopilotWindow").setVisible(!mainWindow.query("include #autopilotWindow").isVisible());' />
+		<menuitem label="Config"
+				onClick='mainWindow.query("include #configWindow").setVisible(!mainWindow.query("include #configWindow").isVisible());' />
+	</menubar>
+	
+	
+	<!-- autopilot -->	
+	<include src="./autopilotWindow.zul" />
+	
+	<!-- anchor -->	
+	<include src="./anchorWindow.zul"  />
+	<!-- anchor -->	
+	<include src="./configWindow.zul"  />
+	
+</zk>

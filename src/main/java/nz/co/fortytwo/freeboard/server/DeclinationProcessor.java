@@ -59,7 +59,7 @@ public class DeclinationProcessor extends FreeboardProcessor implements Processo
 		}
 	}
 
-	@Override
+	//@Override
 	public HashMap<String, Object> handle(HashMap<String, Object> map) {
 		if (map.containsKey(Constants.LAT)) {
 			if (hasChanged((Double) map.get(Constants.LAT), lat)) {
@@ -83,8 +83,8 @@ public class DeclinationProcessor extends FreeboardProcessor implements Processo
 			logger.debug("Declination = " + declination);
 			calc = false;
 		}
-		if (map.containsKey(Constants.MGH)) {
-			map.put(Constants.DEC, declination);
+		if (map.containsKey(Constants.MAG_HEADING)) {
+			map.put(Constants.MAG_DECLINATION, declination);
 
 		}
 		return map;

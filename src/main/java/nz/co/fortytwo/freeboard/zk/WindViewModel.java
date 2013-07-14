@@ -99,7 +99,7 @@ public class WindViewModel extends SelectorComposer<Window>{
 			}
 			windScale.setValue(String.valueOf(scale));
 			//adjust wind zero point here
-			producer.sendBody(Constants.UID+":"+Constants.MEGA+","+Constants.WIND_ZERO_ADJUST+":"+Util.getConfig(null).getProperty(Constants.WIND_ZERO_OFFSET)+",");
+			producer.sendBody(Constants.UID+":"+Constants.MEGA+","+Constants.WIND_ZERO_ADJUST_CMD+":"+Util.getConfig(null).getProperty(Constants.WIND_ZERO_OFFSET)+",");
 	}
 	
 	@Listen("onMove = #wind")

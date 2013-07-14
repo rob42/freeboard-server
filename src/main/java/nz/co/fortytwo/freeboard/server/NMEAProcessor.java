@@ -29,6 +29,7 @@ import java.util.concurrent.ConcurrentMap;
 import net.sf.marineapi.nmea.event.SentenceEvent;
 import net.sf.marineapi.nmea.event.SentenceListener;
 import net.sf.marineapi.nmea.parser.SentenceFactory;
+import net.sf.marineapi.nmea.sentence.BVESentence;
 import net.sf.marineapi.nmea.sentence.HeadingSentence;
 import net.sf.marineapi.nmea.sentence.MWVSentence;
 import net.sf.marineapi.nmea.sentence.PositionSentence;
@@ -71,7 +72,7 @@ public class NMEAProcessor extends FreeboardProcessor implements Processor, Free
 		exchange.getIn().setBody(map);
 	}
 
-	@Override
+	//@Override
 	public HashMap<String, Object> handle(HashMap<String, Object> map) {
 		// so we have a string
 		String bodyStr = (String) map.get(Constants.NMEA);
@@ -242,9 +243,9 @@ public class NMEAProcessor extends FreeboardProcessor implements Processor, Free
 				if (evt.getSentence() instanceof HeadingSentence) {
 					HeadingSentence sen = (HeadingSentence) evt.getSentence();
 					if (sen.isTrue()) {
-						map.put(Constants.COG, sen.getHeading());
+						map.put(Constants.COURSE_OVER_GND, sen.getHeading());
 					} else {
-						map.put(Constants.MGH, sen.getHeading());
+						map.put(Constants.MAG_HEADING, sen.getHeading());
 					}
 				}
 				if (evt.getSentence() instanceof RMCSentence) {
@@ -252,16 +253,16 @@ public class NMEAProcessor extends FreeboardProcessor implements Processor, Free
 					Util.checkTime(sen);
 
 					previousSpeed = Util.movingAverage(ALPHA, previousSpeed, sen.getSpeed());
-					map.put(Constants.SOG, previousSpeed);
+					map.put(Constants.SPEED_OVER_GND, previousSpeed);
 				}
 				if (evt.getSentence() instanceof VHWSentence) {
 					// ;
 					VHWSentence sen = (VHWSentence) evt.getSentence();
 					previousSpeed = Util.movingAverage(ALPHA, previousSpeed, sen.getSpeedKnots());
-					map.put(Constants.SOG, previousSpeed);
+					map.put(Constants.SPEED_OVER_GND, previousSpeed);
 
-					map.put(Constants.MGH, sen.getMagneticHeading());
-					map.put(Constants.COG, sen.getHeading());
+					map.put(Constants.MAG_HEADING, sen.getMagneticHeading());
+					map.put(Constants.COURSE_OVER_GND, sen.getHeading());
 
 				}
 
@@ -279,10 +280,39 @@ public class NMEAProcessor extends FreeboardProcessor implements Processor, Free
 					// } else {
 					// relative to bow
 					double angle = sen.getAngle();
-					map.put(Constants.WDA, angle);
-					map.put(Constants.WSA, sen.getSpeed());
-					map.put(Constants.WSU, sen.getSpeedUnit());
+					map.put(Constants.WIND_DIR_APPARENT, angle);
+					map.put(Constants.WIND_SPEED_APPARENT, sen.getSpeed());
+					map.put(Constants.WIND_SPEED_UNITS, sen.getSpeedUnit());
 					// }
+				}
+				//Cruzpro BVE sentence
+				if (evt.getSentence() instanceof BVESentence) {
+					BVESentence sen = (BVESentence)evt.getSentence();
+					if(sen.isFuelGuage()){
+						map.put(Constants.FUEL_REMAINING, sen.getFuelRemaining());
+						map.put(Constants.FUEL_USE_RATE, sen.getFuelUseRateUnitsPerHour());
+						map.put(Constants.FUEL_USED, sen.getFuelUsedOnTrip());
+					}
+					if(sen.isEngineRpm()){
+						map.put(Constants.ENGINE_RPM, sen.getEngineRpm());
+						map.put(Constants.ENGINE_HOURS, sen.getEngineHours());
+						map.put(Constants.ENGINE_MINUTES, sen.getEngineMinutes());
+
+					}
+					if(sen.isTempGuage()){
+						map.put(Constants.ENGINE_TEMP, sen.getEngineTemp());
+						map.put(Constants.ENGINE_VOLTS, sen.getVoltage());
+						//map.put(Constants.ENGINE_TEMP_HIGH_ALARM, sen.getHighTempAlarmValue());
+						//map.put(Constants.ENGINE_TEMP_LOW_ALARM, sen.getLowTempAlarmValue());
+
+					}
+					if(sen.isPressureGuage()){
+						map.put(Constants.ENGINE_OIL_PRESSURE, sen.getPressure());
+						//map.put(Constants.ENGINE_PRESSURE_HIGH_ALARM, sen.getHighPressureAlarmValue());
+						//map.put(Constants.ENGINE_PRESSURE_LOW_ALARM, sen.getLowPressureAlarmValue());
+
+					}
+
 				}
 
 			}

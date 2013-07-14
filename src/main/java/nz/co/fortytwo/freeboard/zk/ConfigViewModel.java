@@ -257,7 +257,7 @@ public class ConfigViewModel extends SelectorComposer<Window> {
 				config.setProperty(Constants.WIND_ZERO_OFFSET, cfgWindOffset.getValue());
 				Util.saveConfig();
 				//notify others
-				producer.sendBody(Constants.WIND_ZERO_ADJUST+":"+cfgWindOffset.getValue() +",");
+				producer.sendBody(Constants.WIND_ZERO_ADJUST_CMD+":"+cfgWindOffset.getValue() +",");
 			}else{
 				Messagebox.show("Wind offset must be numeric");
 			}

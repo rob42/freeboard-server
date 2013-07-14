@@ -41,35 +41,35 @@ public class CommandProcessor extends FreeboardProcessor implements Processor, F
 
 	public CommandProcessor() {
 
-		msgs.add(Constants.DEC);
-		msgs.add(Constants.WST);
-		msgs.add(Constants.WSA);
-		msgs.add(Constants.WDT);
-		msgs.add(Constants.WDA);
-		msgs.add(Constants.WSU);
+		msgs.add(Constants.MAG_DECLINATION);
+		msgs.add(Constants.WIND_SPEED_TRUE);
+		msgs.add(Constants.WIND_SPEED_APPARENT);
+		msgs.add(Constants.WIND_DIR_TRUE);
+		msgs.add(Constants.WIND_DIR_APPARENT);
+		msgs.add(Constants.WIND_SPEED_UNITS);
 		msgs.add(Constants.LAT);
 		msgs.add(Constants.LON);
-		msgs.add(Constants.COG);
-		msgs.add(Constants.MGH);
-		msgs.add(Constants.SOG);
+		msgs.add(Constants.COURSE_OVER_GND);
+		msgs.add(Constants.MAG_HEADING);
+		msgs.add(Constants.SPEED_OVER_GND);
 		msgs.add(Constants.YAW);
-		msgs.add(Constants.PCH);
-		msgs.add(Constants.RLL);
-		msgs.add(Constants.AUTOPILOT_ADJUST);
+		msgs.add(Constants.PITCH);
+		msgs.add(Constants.ROLL);
+		msgs.add(Constants.AUTOPILOT_ADJUST_CMD);
 		// msgs.add(Constants.AUTOPILOT_GOAL);
-		msgs.add(Constants.AUTOPILOT_SOURCE);
+		msgs.add(Constants.AUTOPILOT_SOURCE_CMD);
 		// msgs.add(Constants.AUTOPILOT_TARGET);
-		msgs.add(Constants.AUTOPILOT_STATE);
+		msgs.add(Constants.AUTOPILOT_STATE_CMD);
 		// anchor alarm
-		msgs.add(Constants.ANCHOR_ALARM_STATE);
-		msgs.add(Constants.ANCHOR_ALARM_ADJUST);
-		msgs.add(Constants.ANCHOR_ALARM_LAT);
-		msgs.add(Constants.ANCHOR_ALARM_LON);
-		msgs.add(Constants.ANCHOR_ALARM_RADIUS);
+		msgs.add(Constants.ANCHOR_ALARM_STATE_CMD);
+		msgs.add(Constants.ANCHOR_ALARM_ADJUST_CMD);
+		msgs.add(Constants.ANCHOR_ALARM_LAT_CMD);
+		msgs.add(Constants.ANCHOR_ALARM_LON_CMD);
+		msgs.add(Constants.ANCHOR_ALARM_RADIUS_CMD);
 		// wind
-		msgs.add(Constants.WIND_ZERO_ADJUST);
-		msgs.add(Constants.WIND_ALARM_KNOTS);
-		msgs.add(Constants.WIND_SPEED_ALARM_STATE);
+		msgs.add(Constants.WIND_ZERO_ADJUST_CMD);
+		msgs.add(Constants.WIND_ALARM_KNOTS_CMD);
+		msgs.add(Constants.WIND_SPEED_ALARM_STATE_CMD);
 
 	}
 
@@ -87,7 +87,7 @@ public class CommandProcessor extends FreeboardProcessor implements Processor, F
 		producer.setDefaultEndpointUri("direct:command");
 	}
 
-	@Override
+	//@Override
 	public HashMap<String, Object> handle(HashMap<String, Object> map) {
 		HashMap<String, Object> outMap = new HashMap<String, Object>();
 
@@ -106,8 +106,8 @@ public class CommandProcessor extends FreeboardProcessor implements Processor, F
 		}
 
 		// we send DEC to IMU
-		if (map.containsKey(Constants.DEC)) {
-			producer.sendBody(Constants.UID + ":" + Constants.IMU + "," + Constants.DEC + ":" + map.get(Constants.DEC) + ",");
+		if (map.containsKey(Constants.MAG_DECLINATION)) {
+			producer.sendBody(Constants.UID + ":" + Constants.IMU + "," + Constants.MAG_DECLINATION + ":" + map.get(Constants.MAG_DECLINATION) + ",");
 		}
 		return map;
 	}

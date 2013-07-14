@@ -128,7 +128,7 @@ public class GPXProcessor extends FreeboardProcessor implements Processor, Freeb
 
 	}
 
-	@Override
+	//@Override
 	public HashMap<String, Object> handle(HashMap<String, Object> map) {
 		// <trkpt lat="-41.19408333" lon="173.24741667"><ele>2376</ele><time>2007-10-14T10:09:57Z</time></trkpt>
 		if (map.containsKey(Constants.LAT) && map.containsKey(Constants.LON)) {

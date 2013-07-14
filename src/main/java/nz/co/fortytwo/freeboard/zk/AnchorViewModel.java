@@ -97,22 +97,22 @@ public class AnchorViewModel extends SelectorComposer<Window>{
 	@Listen("onClick = button#anchorRadiusUp1")
 	public void anchorRadiusUp1Click(MouseEvent event) {
 	    logger.debug(" anchorRadiusUp1 button event = "+event);
-	    producer.sendBody(Constants.UID+":"+Constants.MEGA+","+Constants.ANCHOR_ALARM_ADJUST+":1,");
+	    producer.sendBody(Constants.UID+":"+Constants.MEGA+","+Constants.ANCHOR_ALARM_ADJUST_CMD+":1,");
 	}
 	@Listen("onClick = button#anchorRadiusDown1")
 	public void anchorRadiusDown1Click(MouseEvent event) {
 	    logger.debug(" anchorRadiusDown1 button event = "+event);
-	    producer.sendBody(Constants.UID+":"+Constants.MEGA+","+Constants.ANCHOR_ALARM_ADJUST+":-1,");
+	    producer.sendBody(Constants.UID+":"+Constants.MEGA+","+Constants.ANCHOR_ALARM_ADJUST_CMD+":-1,");
 	}
 	@Listen("onClick = button#anchorRadiusUp10")
 	public void anchorRadiusUp10Click(MouseEvent event) {
 	    logger.debug(" anchorRadiusUp10 button event = "+event);
-	    producer.sendBody(Constants.UID+":"+Constants.MEGA+","+Constants.ANCHOR_ALARM_ADJUST+":10,");
+	    producer.sendBody(Constants.UID+":"+Constants.MEGA+","+Constants.ANCHOR_ALARM_ADJUST_CMD+":10,");
 	}
 	@Listen("onClick = button#anchorRadiusDown10")
 	public void anchorRadiusDown10Click(MouseEvent event) {
 	    logger.debug(" anchorRadiusDown10 button event = "+event);
-	    producer.sendBody(Constants.UID+":"+Constants.MEGA+","+Constants.ANCHOR_ALARM_ADJUST+":-10,");
+	    producer.sendBody(Constants.UID+":"+Constants.MEGA+","+Constants.ANCHOR_ALARM_ADJUST_CMD+":-10,");
 	}
 	@Listen("onCheck = toolbarbutton#anchorAlarmOnOff")
 	public void anchorAlarmOnOffCheck(CheckEvent event) {
@@ -130,11 +130,11 @@ public class AnchorViewModel extends SelectorComposer<Window>{
 		 if(anchorAlarmOn){
 		    	anchorAlarmOnOff.setImage("./js/img/stop.png");
 		    	anchorAlarmOnOff.setLabel("Stop");
-		    	producer.sendBody(Constants.UID+":"+Constants.MEGA+","+Constants.ANCHOR_ALARM_STATE+":1,");
+		    	producer.sendBody(Constants.UID+":"+Constants.MEGA+","+Constants.ANCHOR_ALARM_STATE_CMD+":1,");
 		    }else{
 		    	anchorAlarmOnOff.setImage("./js/img/tick.png");
 		    	anchorAlarmOnOff.setLabel("Start");
-		    	producer.sendBody(Constants.UID+":"+Constants.MEGA+","+Constants.ANCHOR_ALARM_STATE+":0,");
+		    	producer.sendBody(Constants.UID+":"+Constants.MEGA+","+Constants.ANCHOR_ALARM_STATE_CMD+":0,");
 		    }
 	}
 

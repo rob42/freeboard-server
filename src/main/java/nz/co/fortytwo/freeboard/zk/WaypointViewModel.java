@@ -179,7 +179,7 @@ public class WaypointViewModel extends SelectorComposer<Window> {
 			logger.error(e.getMessage(), e);
 		}
 		wptWindow.setVisible(false);
-		producer.sendBody(Constants.WPC + ":0,");
+		producer.sendBody(Constants.WAYPOINT_CHANGE_EVENT + ":0,");
 
 	}
 
@@ -216,9 +216,9 @@ public class WaypointViewModel extends SelectorComposer<Window> {
 			logger.error(e.getMessage(), e);
 		}
 		if (gotoLat == null && gotoLon == null) {
-			producer.sendBody(Constants.WPG + ":0,");
+			producer.sendBody(Constants.WAYPOINT_GOTO_EVENT + ":0,");
 		} else {
-			producer.sendBody(Constants.WPG + ":" + gotoLat + "|" + gotoLon + "|" + fromLat + "|" + fromLon + ",");
+			producer.sendBody(Constants.WAYPOINT_GOTO_EVENT + ":" + gotoLat + "|" + gotoLon + "|" + fromLat + "|" + fromLon + ",");
 		}
 
 	}
@@ -250,7 +250,7 @@ public class WaypointViewModel extends SelectorComposer<Window> {
 			logger.error(e.getMessage(), e);
 		}
 		wptWindow.setVisible(false);
-		producer.sendBody(Constants.WPC + ":0,");
+		producer.sendBody(Constants.WAYPOINT_CHANGE_EVENT + ":0,");
 	}
 
 	private void deleteWaypoint(GPX gpx, String name) {
@@ -300,7 +300,7 @@ public class WaypointViewModel extends SelectorComposer<Window> {
 			}
 			new GPXParser().writeGPX(gpx, gpxFile);
 			// refresh waypoints
-			producer.sendBody(Constants.WPC + ":0,");
+			producer.sendBody(Constants.WAYPOINT_CHANGE_EVENT + ":0,");
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
 		}
@@ -346,7 +346,7 @@ public class WaypointViewModel extends SelectorComposer<Window> {
 			GPX gpx = new GPXParser().parseGPX(gpxFile);
 			Waypoint wp = gpx.getWaypointByLocation((Double) latlon[0], (Double) latlon[1]);
 			deleteWaypoint(gpx, wp);
-			producer.sendBody(Constants.WPC + ":0,");
+			producer.sendBody(Constants.WAYPOINT_CHANGE_EVENT + ":0,");
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
 		}

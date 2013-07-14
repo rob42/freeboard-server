@@ -139,6 +139,8 @@ public class SerialPortReader implements Processor {
 		
 		private boolean complete;
 		private InputStream in;
+		byte[] buff = new byte[256]; 
+		int x=0;
 		
 		public SerialReader() throws Exception {
 			
@@ -148,16 +150,16 @@ public class SerialPortReader implements Processor {
 			logger.info("Setup serialReader on :"+portName);
 		}
 
-		@Override
+		
+		//@Override
 		public void serialEvent(SerialPortEvent event) {
-			logger.debug("SerialEvent:"+event.getEventType());
+			logger.trace("SerialEvent:"+event.getEventType());
 			try{
 				if (event.getEventType() == SerialPortEvent.DATA_AVAILABLE) {
 					
 						int r=0;
-						byte[] buff = new byte[256]; 
-						int x=0;
-						while(r>-1){
+						
+						while((r>-1)&& in.available()>0 ){
 							try {
 								r = in.read();
 								buff[x]=(byte) r;
@@ -179,6 +181,7 @@ public class SerialPortReader implements Processor {
 							//we have a line ending in CR/LF
 							if (complete) {
 								String lineStr = line.toString().trim();
+								logger.debug(portName + ":Serial Received:" + lineStr);
 								//its not empty!
 								if(lineStr.length()>0){
 									//map it if we havent already

@@ -1,0 +1,151 @@
+<!-- 
+	Copyright 2012,2013 Robert Huitema robert@42.co.nz
+	
+	This file is part of FreeBoard. (http://www.42.co.nz/freeboard)
+	
+	FreeBoard is free software: you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation, either version 3 of the License, or
+	(at your option) any later version.
+	
+	FreeBoard is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
+	
+	You should have received a copy of the GNU General Public License
+	along with FreeBoard.  If not, see <http://www.gnu.org/licenses/>.
+-->
+<?page title="Freeboard"?>
+<!-- leaflet -->
+<?link rel="stylesheet" type="text/css" href="./js/leaflet.css"?>
+<?link rel="stylesheet" type="text/css" href="./js/leaflet.measure.css" ?>
+<?link rel="stylesheet" type="text/css" href="./js/leaflet.draw.css" ?>
+<?script src="./js/jquery-1.8.2.min.js"?>
+<?script src="./js/org/cometd.js"?>
+<?script src="./js/org/cometd/ReloadExtension.js"?>
+<?script src="./js/org/cometd/Cometd.js"?>
+<?script src="./js/org/cometd/AckExtension.js"?>
+<?script src="./js/jquery.cookie.js"?>
+<?script src="./js/jquery.cometd.js"?>
+<?script src="./js/jquery.cometd-reload.js"?>
+<?script src="./js/freeboard-comet.js"?>
+<?script src="./js/websocket.js"?>
+
+<?script src="./js/leaflet-src.js" ?>
+<?script src="./js/leaflet.draw-src.js" ?>
+<?script src="./js/leaflet.measure.js" ?>
+<?script src="./js/Marker.Rotate.js" ?>
+<?script src="./js/GPX.js" ?>
+
+<?script src="./js/layers.js" ?>
+<?script src="./js/tween-min.js"?>
+<?script src="./js/steelseries.js"?>
+<?script src="./js/engine.js"?>
+<?script src="./js/autopilot.js"?>
+<?script src="./js/anchor.js"?>
+<zk>
+	<style>
+		#map { height: 100%; border: 1px solid #888; }
+		.hboxRemoveWhiteStrips td.z-hbox-sep { width: 0; padding: 0;}
+	</style>
+
+	<window id="mainWindow"
+		xmlns:w="http://www.zkoss.org/2005/zk/client"
+		apply="nz.co.fortytwo.freeboard.zk.EngineViewModel" vflex="true"
+		style="margin-left:auto;">
+		<borderlayout>
+			<center>
+
+				<div vflex="1" hflex="1"
+					style="background-color: white;">
+					<label id="layerVisibility" value=""
+						visible="false" />
+
+					<div vflex="1" hflex="1">
+						<vlayout>
+							<hlayout
+								style="margin-left:auto; margin-right:auto; text-align:center;">
+
+								<html style="overflow: visible">
+									<canvas id="canvasEngineRpm"
+										width="450px" height="450px">
+										No canvas in your
+										browser...sorry...
+									</canvas>
+									<canvas id="canvasDepth"
+										width="150px" height="450px">
+										No canvas in your
+										browser...sorry...
+									</canvas>
+									<canvas id="canvasBoatSpeed"
+										width="450px" height="450px">
+										No canvas in your
+										browser...sorry...
+									</canvas>
+								</html>
+							</hlayout>
+							<hlayout
+								style="margin-left:auto; margin-right:auto; text-align:center;">
+								<html>
+									<canvas id="canvasOil" width="200px"
+										height="200px" />
+								</html>
+								<html>
+									<canvas id="canvasTemp" width="200px"
+										height="200px" />
+								</html>
+								<html>
+									<canvas id="canvasTrim" width="200px"
+										height="200px" />
+								</html>
+								<html>
+									<canvas id="canvasVolts" width="200px"
+										height="200px" />
+								</html>
+								<html>
+									<canvas id="canvasFuel" width="200px"
+										height="200px" />
+								</html>
+							</hlayout>
+						</vlayout>
+
+						<script type="text/javascript" defer="true">
+							//initCharts(); posInit();
+							initEngine();
+						</script>
+					</div>
+
+				</div>
+			</center>
+			<south>
+				<hbox pack="stretch" width="100%"
+					sclass="hboxRemoveWhiteStrips">
+					<include src="./simpleToolbar.zul" />
+				</hbox>
+
+			</south>
+		</borderlayout>
+	</window>
+
+
+	<popup id="helpPopup">
+		<html>
+
+
+			
+			<![CDATA[ <h2>Freeboard Help</H2> <p>To resize the
+			instruments use the + and - buttons within the
+			instruments</p> <p>To move the instruments click-drag the
+			tab just above the instruments</p> <p>To close the
+			instruments click the ^ icon in the tab just above the
+			instruments</p> <p>Click-drag the chart to scroll in any
+			direction</p> <p>Use the blue + and - buttons in top left to
+			zoom, or use mouse wheel</p> <p>The blue + tab at the top
+			right to manage chart visibility</p> ]]>
+			
+			
+		
+		</html>
+	</popup>
+</zk>

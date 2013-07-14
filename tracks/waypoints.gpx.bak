@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<gpx>
+  <wpt lat="-40.85563020812578" lon="173.03295135498047">
+    <ele>0.0</ele>
+    <time>2013-04-22T08:17:37Z</time>
+    <name>Awaroa</name>
+    <desc>Somewhere off the beach</desc>
+  </wpt>
+  <wpt lat="-40.991958509680735" lon="173.05953649186802">
+    <ele>0.0</ele>
+    <time>2013-02-14T14:46:22Z</time>
+    <name>Adele South</name>
+    <desc>Outside the pass between Adele and Fishermans Is</desc>
+  </wpt>
+  <wpt lat="-41.14298432129295" lon="173.39927673339844">
+    <ele>0.0</ele>
+    <time>2013-02-26T14:31:17Z</time>
+    <name>Pepin Island</name>
+    <desc>Just off Cable Bay</desc>
+  </wpt>
+  <wpt lat="-41.17245194931261" lon="173.11294555664062">
+    <ele>0.0</ele>
+    <time>2013-02-28T09:53:03Z</time>
+    <name>Mussel farm (SW)</name>
+    <desc>Mussel farm south west corner</desc>
+  </wpt>
+  <wpt lat="-40.85563020812578" lon="173.03295135498047">
+    <ele>0.0</ele>
+    <time>2013-02-25T21:56:23Z</time>
+    <name>West Coast</name>
+    <desc>Somewhere off the west coast</desc>
+  </wpt>
+  <wpt lat="-41.03741270082242" lon="173.61694335937497">
+    <ele>0.0</ele>
+    <time>2013-02-26T15:41:56Z</time>
+    <name>Crosielles</name>
+    <desc>Just off the entrance</desc>
+  </wpt>
+  <wpt lat="-42.286922669298626" lon="148.70947567496108">
+    <ele>0.0</ele>
+    <time>2013-02-09T11:48:37Z</time>
+    <name>Hobart</name>
+    <desc>test</desc>
+  </wpt>
+  <wpt lat="-41.259743000980805" lon="173.24615478515625">
+    <ele>0.0</ele>
+    <time>2013-02-09T12:08:16Z</time>
+    <name>Nelson Harbour (outside)</name>
+    <desc>Outside the cut</desc>
+  </wpt>
+  <wpt lat="-41.18252993852271" lon="173.1565475463867">
+    <ele>0.0</ele>
+    <time>2013-02-28T09:52:22Z</time>
+    <name>Mussel farm (SE)</name>
+    <desc>Talleys huge mussel farm</desc>
+  </wpt>
+  <wpt lat="-40.85563020812578" lon="173.03295135498047">
+    <ele>0.0</ele>
+    <time>2013-02-26T16:10:18Z</time>
+    <name>Awaroa</name>
+    <desc>Somewhere off the beach</desc>
+  </wpt>
+</gpx>

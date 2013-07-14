@@ -35,6 +35,7 @@
 		<menuitem id="help" label="Help" popup="helpPopup" />
 		<menu label="Instruments">
 			<menupopup>
+				<menuitem label="Engine" href='./engine.zul' />
 				<menuitem label="Wind" onClick='mainWindow.query("include #wind").setVisible(!mainWindow.query("include #wind").isVisible());' />
 				<menuitem label="Log" onClick='mainWindow.query("include #logg").setVisible(!mainWindow.query("include #logg").isVisible());' />
 				<menuitem label="Anchor Alarm"

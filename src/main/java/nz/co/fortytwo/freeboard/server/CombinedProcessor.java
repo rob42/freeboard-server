@@ -35,7 +35,7 @@ import org.apache.camel.Processor;
 public class CombinedProcessor extends FreeboardProcessor implements Processor{
 
 	private List<FreeboardHandler> handlers =new ArrayList<FreeboardHandler>();
-	@Override
+	//@Override
 	public void process(Exchange exchange) throws Exception {
 		if (exchange.getIn().getBody() == null) {
 			return;

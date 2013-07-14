@@ -61,16 +61,16 @@ public class WindProcessor extends FreeboardProcessor implements Processor, Free
 			// int heading=0;
 
 			// we need HDG, and LOG
-			if (map.containsKey(Constants.SOG)) {
-				vesselSpeed = (Double) map.get(Constants.SOG);
+			if (map.containsKey(Constants.SPEED_OVER_GND)) {
+				vesselSpeed = (Double) map.get(Constants.SPEED_OVER_GND);
 				valid = true;
 			}
-			if (map.containsKey(Constants.WSA)) {
-				apparentWindSpeed = (Double) map.get(Constants.WSA);
+			if (map.containsKey(Constants.WIND_SPEED_APPARENT)) {
+				apparentWindSpeed = (Double) map.get(Constants.WIND_SPEED_APPARENT);
 				valid = true;
 			}
-			if (map.containsKey(Constants.WDA)) {
-				apparentDirection = (Double) map.get(Constants.WDA);
+			if (map.containsKey(Constants.WIND_DIR_APPARENT)) {
+				apparentDirection = (Double) map.get(Constants.WIND_DIR_APPARENT);
 				valid = true;
 			}
 			// if(s.startsWith(Constants.COG)){
@@ -82,10 +82,10 @@ public class WindProcessor extends FreeboardProcessor implements Processor, Free
 				calcTrueWindDirection(apparentWindSpeed, apparentDirection, vesselSpeed);
 
 				if (!Double.isNaN(trueDirection)) {
-					map.put(Constants.WDT, round(trueDirection, 2));
+					map.put(Constants.WIND_DIR_TRUE, round(trueDirection, 2));
 				}
 				if (!Double.isNaN(trueWindSpeed)) {
-					map.put(Constants.WST, round(trueWindSpeed, 2));
+					map.put(Constants.WIND_SPEED_TRUE, round(trueWindSpeed, 2));
 				}
 
 			}

@@ -206,7 +206,7 @@ public class NmeaTcpServer extends FreeboardProcessor implements Processor{
     private void init() {
 		addTcpServerListener(new NmeaTcpServer.Listener(){
 
-			@Override
+			//@Override
 			public void socketReceived(Event evt) {
 				//we get rid of any that have closed.
 				//we do this here so we dont have to waste time checking on every message in process() method
@@ -247,7 +247,7 @@ public class NmeaTcpServer extends FreeboardProcessor implements Processor{
             assert ioThread == null : ioThread;             // Shouldn't have a thread
 
             Runnable run = new Runnable() {
-                @Override
+                //@Override
                 public void run() {
                     runServer();                            // This runs for a long time
                     ioThread = null;          
@@ -856,7 +856,7 @@ public class NmeaTcpServer extends FreeboardProcessor implements Processor{
 	 * 
 	 * @see org.apache.camel.Processor#process(org.apache.camel.Exchange)
 	 */
-	@Override
+	//@Override
 	public void process(Exchange exchange) throws Exception {
 		try{
 			String nmea = exchange.getIn().getBody(String.class)+"\n";

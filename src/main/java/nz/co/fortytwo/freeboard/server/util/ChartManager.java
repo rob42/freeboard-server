@@ -153,7 +153,7 @@ public class ChartManager extends JFrame {
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 
-			@Override
+			//@Override
 			public void run() {
 				new ChartManager("Chart Manager").setVisible(true);
 			}
