@@ -27,6 +27,7 @@ import nz.co.fortytwo.freeboard.server.util.Util;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.log4j.Logger;
 
 
 /**
@@ -36,10 +37,12 @@ import org.apache.commons.lang3.StringUtils;
  */
 public class FreeboardProcessor {
 	
+	private static Logger logger = Logger.getLogger(FreeboardProcessor.class);
+	
 	@Produce(uri = "seda:nmeaOutput")
     ProducerTemplate producer;
 	/**
-	 * If a processor generates an NMEA string, then this method is a convient way to send it to the NMEA stream
+	 * If a processor generates an NMEA string, then this method is a convenient way to send it to the NMEA stream
 	 * 
 	 * @param nmea
 	 */
@@ -75,10 +78,13 @@ public class FreeboardProcessor {
 	 * @return
 	 */
 	public HashMap<String, Object> stringToHashMap(String msg){
+		logger.debug("Mesg to map:"+msg);
 		HashMap<String, Object> map = new HashMap<String, Object>();
 		if(msg.startsWith("$")){
+			logger.debug("Mesg to NMEA in map:"+msg);
 			map.put(Constants.NMEA, msg);
 		}else{
+			logger.debug("Mesg split in map:"+msg);
 			String[] bodyArray = msg.split(",");
 			//reuse
 			String[] pair;

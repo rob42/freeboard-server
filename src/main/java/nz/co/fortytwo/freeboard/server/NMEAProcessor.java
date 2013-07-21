@@ -30,6 +30,7 @@ import net.sf.marineapi.nmea.event.SentenceEvent;
 import net.sf.marineapi.nmea.event.SentenceListener;
 import net.sf.marineapi.nmea.parser.SentenceFactory;
 import net.sf.marineapi.nmea.sentence.BVESentence;
+import net.sf.marineapi.nmea.sentence.DepthSentence;
 import net.sf.marineapi.nmea.sentence.HeadingSentence;
 import net.sf.marineapi.nmea.sentence.MWVSentence;
 import net.sf.marineapi.nmea.sentence.PositionSentence;
@@ -44,6 +45,7 @@ import nz.co.fortytwo.freeboard.server.util.Util;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.log4j.Logger;
 
 /**
  * Processes NMEA sentences in the body of a message, firing events to interested listeners
@@ -53,6 +55,7 @@ import org.apache.commons.lang3.StringUtils;
  */
 public class NMEAProcessor extends FreeboardProcessor implements Processor, FreeboardHandler {
 
+	private static Logger logger = Logger.getLogger(NMEAProcessor.class);
 	private static final String DISPATCH_ALL = "DISPATCH_ALL";
 
 	// map of sentence listeners
@@ -72,18 +75,19 @@ public class NMEAProcessor extends FreeboardProcessor implements Processor, Free
 		exchange.getIn().setBody(map);
 	}
 
-	//@Override
+	// @Override
 	public HashMap<String, Object> handle(HashMap<String, Object> map) {
 		// so we have a string
 		String bodyStr = (String) map.get(Constants.NMEA);
 		if (StringUtils.isNotBlank(bodyStr)) {
 			try {
-				//dont need the NMEA now
+				logger.debug("Processing NMEA:"+bodyStr);
+				// dont need the NMEA now
 				map.remove(Constants.NMEA);
 				Sentence sentence = SentenceFactory.getInstance().createParser(bodyStr);
 				fireSentenceEvent(map, sentence);
 			} catch (Exception e) {
-				// e.printStackTrace();
+				e.printStackTrace();
 			}
 		}
 		return map;
@@ -153,8 +157,10 @@ public class NMEAProcessor extends FreeboardProcessor implements Processor, Free
 	 *            sentence string.
 	 */
 	private void fireSentenceEvent(HashMap<String, Object> map, Sentence sentence) {
-		if (!sentence.isValid())
+		if (!sentence.isValid()){
+			logger.warn("NMEA Sentence is invalid:"+sentence.toSentence());
 			return;
+		}
 
 		String type = sentence.getSentenceId();
 		Set<SentenceListener> list = new HashSet<SentenceListener>();
@@ -172,6 +178,7 @@ public class NMEAProcessor extends FreeboardProcessor implements Processor, Free
 				sl.sentenceRead(se);
 			} catch (Exception e) {
 				// ignore listener failures
+				e.printStackTrace();
 			}
 		}
 
@@ -285,34 +292,39 @@ public class NMEAProcessor extends FreeboardProcessor implements Processor, Free
 					map.put(Constants.WIND_SPEED_UNITS, sen.getSpeedUnit());
 					// }
 				}
-				//Cruzpro BVE sentence
+				// Cruzpro BVE sentence
 				if (evt.getSentence() instanceof BVESentence) {
-					BVESentence sen = (BVESentence)evt.getSentence();
-					if(sen.isFuelGuage()){
+					BVESentence sen = (BVESentence) evt.getSentence();
+					if (sen.isFuelGuage()) {
 						map.put(Constants.FUEL_REMAINING, sen.getFuelRemaining());
 						map.put(Constants.FUEL_USE_RATE, sen.getFuelUseRateUnitsPerHour());
 						map.put(Constants.FUEL_USED, sen.getFuelUsedOnTrip());
 					}
-					if(sen.isEngineRpm()){
+					if (sen.isEngineRpm()) {
 						map.put(Constants.ENGINE_RPM, sen.getEngineRpm());
 						map.put(Constants.ENGINE_HOURS, sen.getEngineHours());
 						map.put(Constants.ENGINE_MINUTES, sen.getEngineMinutes());
 
 					}
-					if(sen.isTempGuage()){
+					if (sen.isTempGuage()) {
 						map.put(Constants.ENGINE_TEMP, sen.getEngineTemp());
 						map.put(Constants.ENGINE_VOLTS, sen.getVoltage());
-						//map.put(Constants.ENGINE_TEMP_HIGH_ALARM, sen.getHighTempAlarmValue());
-						//map.put(Constants.ENGINE_TEMP_LOW_ALARM, sen.getLowTempAlarmValue());
+						// map.put(Constants.ENGINE_TEMP_HIGH_ALARM, sen.getHighTempAlarmValue());
+						// map.put(Constants.ENGINE_TEMP_LOW_ALARM, sen.getLowTempAlarmValue());
 
 					}
-					if(sen.isPressureGuage()){
+					if (sen.isPressureGuage()) {
 						map.put(Constants.ENGINE_OIL_PRESSURE, sen.getPressure());
-						//map.put(Constants.ENGINE_PRESSURE_HIGH_ALARM, sen.getHighPressureAlarmValue());
-						//map.put(Constants.ENGINE_PRESSURE_LOW_ALARM, sen.getLowPressureAlarmValue());
+						// map.put(Constants.ENGINE_PRESSURE_HIGH_ALARM, sen.getHighPressureAlarmValue());
+						// map.put(Constants.ENGINE_PRESSURE_LOW_ALARM, sen.getLowPressureAlarmValue());
 
 					}
 
+				}
+				if (evt.getSentence() instanceof DepthSentence) {
+					DepthSentence sen = (DepthSentence) evt.getSentence();
+					//in meters
+					map.put(Constants.DEPTH_BELOW_TRANSDUCER, sen.getDepth());
 				}
 
 			}

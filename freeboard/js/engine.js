@@ -17,81 +17,90 @@
  *  along with FreeBoard.  If not, see <http://www.gnu.org/licenses/>.
  */
 //var  radialWindTrue, radialWindDirTrue
-var avgArrayA = [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ];
-var avgPosA = 0;
-var avgArrayT = [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ];
-var avgPosT = 0;
 
 
+/*
+ * // Fuel gauge constants
+	public static final String FUEL_REMAINING = "FFV";
+	public static final String FUEL_USED = "FFU";
+	public static final String FUEL_USE_RATE = "FFR";
+
+	public static final String ENGINE_RPM = "RPM";
+	public static final String ENGINE_HOURS = "EHH";
+	public static final String ENGINE_MINUTES = "EMM";
+	public static final String ENGINE_TEMP = "ETT";
+	public static final String ENGINE_VOLTS = "EVV";
+	public static final String ENGINE_OIL_PRESSURE = "EPP";
+	public static final String DEPTH_BELOW_TRANSDUCER = "DBT";
+ */
 
 function Engine () {
 	this.onmessage = function (mArray) {
-		/*
+		
 		
 		jQuery.each(mArray, function(i, data) {
 			//avoid commands
 			if(data && data.indexOf('#')>=0)return true;
+			//FUEL_REMAINING
+			if (data && data.indexOf('FFV') >= 0) {
+				var c = parseFloat(data.substring(4));
+				if($.isNumeric(c)){
+					radialFuel.setValue(c);
+				}
+				c=null;
+			}
+			//depth
+			if (data && data.indexOf('DPT') >= 0) {
+				var c = parseFloat(data.substring(4));
+				if($.isNumeric(c)){
+					linearDepth.setValue(c);
+				}
+				c=null;
+			}
+			//speed
+			if (data && data.indexOf('SOG') >= 0) {
+				var c = parseFloat(data.substring(4));
+				if($.isNumeric(c)){
+					radialBoatSpeed.setValue(c);
+				}
+				c=null;
+			}
+			//rpm
+			if (data && data.indexOf('RPM') >= 0) {
+				var c = parseFloat(data.substring(4));
+				if($.isNumeric(c)){
+					radialEngineRpm.setValue(c);
+				}
+				c=null;
+			}
+			//temp
+			if (data && data.indexOf('ETT') >= 0) {
+				var c = parseFloat(data.substring(4));
+				if($.isNumeric(c)){
+					radialTemp.setValue(c);
+				}
+				c=null;
+			}
+			//volts
+			if (data && data.indexOf('EVV') >= 0) {
+				var c = parseFloat(data.substring(4));
+				if($.isNumeric(c)){
+					radialVolts.setValue(c);
+				}
+				c=null;
+			}
+			//pressure
+			if (data && data.indexOf('EPP') >= 0) {
+				var c = parseFloat(data.substring(4));
+				if($.isNumeric(c)){
+					radialOil.setValue(c);
+				}
+				c=null;
+			}
 			
-			if (data && data.indexOf('WSA') >= 0) {
-				var c = parseFloat(data.substring(4));
-				if($.isNumeric(c)){
-					radialWindApp.setValue(c);
-				}
-				c=null;
-			}
-			if (data && data.indexOf('WST') >= 0) {
-				var c = parseFloat(data.substring(4));
-				if($.isNumeric(c)){
-					radialWindTrue.setValue(c);
-				}
-				c=null;
-			}
-			if (data && data.indexOf('WDA') >= 0) {
-				var c = parseFloat(data.substring(4));
-				if($.isNumeric(c)){
-					// -180 <> 180
-					if (c >= 179) {
-						radialWindDirApp.setValueLatest(-(360 - c));
-					} else {
-						radialWindDirApp.setValueLatest(c);
-					}
-					// make average
-					avgArrayA[avgPosA] = c;
-					avgPosA = avgPosA + 1;
-					if (avgPosA >= avgArrayA.length)
-						avgPosA = 0;
-					var v = 0;
-					for ( var i = 0; i < avgArrayA.length; i++) {
-						v = v + avgArrayA[i];
-					}
-					if (c >= 179) {
-						radialWindDirApp.setValueAverage(-(360 - (v / avgArrayA.length)));
-					} else {
-						radialWindDirApp.setValueAverage(v / avgArrayA.length);
-					}
-				}
-				c=null;
-			}
-			if (data && data.indexOf('WDT') >= 0) {
-				var c = parseFloat(data.substring(4));
-				if($.isNumeric(c)){
-					radialWindDirTrue.setValueLatest(c);
-					// make average
-					avgArrayT[avgPosT] = c;
-					avgPosT = avgPosT + 1;
-					if (avgPosT >= avgArrayT.length)
-						avgPosT = 0;
-					var v = 0;
-					for ( var i = 0; i < avgArrayT.length; i++) {
-						v = v + avgArrayT[i];
-					}
-					radialWindDirTrue.setValueAverage(v / avgArrayT.length);
-				}
-				c=null;
-			}
 			data=null;
-		});*/
-	}
+		});
+	};
 	
 }
 
@@ -149,7 +158,7 @@ function initEngine() {
 	});
 	
 	// Depth dir
-	radialDepth = new steelseries.Linear('canvasDepth', {
+	linearDepth = new steelseries.Linear('canvasDepth', {
 		//size : document.getElementById('canvasWindDirApp').width,
 		titleString : "Depth",
 		maxValue : 60,
@@ -255,7 +264,7 @@ function initEngine() {
 	
 	var fuelSections = [ steelseries.Section(0, minFuel, 'rgba(220, 0, 0, 0.3)'),
 	     			steelseries.Section(minFuel, maxFuel, 'rgba(0, 220, 0, 0.3)') ];
-	radialTrim = new steelseries.RadialVertical('canvasFuel', {
+	radialFuel = new steelseries.RadialVertical('canvasFuel', {
 		gaugeType : steelseries.GaugeType.TYPE4,
 		//size : document.getElementById('canvasWindTrue').width,
 		minValue : 0,

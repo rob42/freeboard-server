@@ -142,6 +142,9 @@ public class Constants {
 	public static final String ENGINE_VOLTS = "EVV";
 	public static final String ENGINE_OIL_PRESSURE = "EPP";
 	
+	//depth
+	public static final String DEPTH_BELOW_TRANSDUCER = "DBT";
+	
 	// config constants
 	public static final String DEMO = "freeboard.demo";
 	public static final String FREEBOARD_URL = "freeboard.web.url";

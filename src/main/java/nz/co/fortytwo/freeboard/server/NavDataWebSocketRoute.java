@@ -144,7 +144,8 @@ public class NavDataWebSocketRoute extends RouteBuilder {
 		// send input to listeners
 		from("seda:input")
 				// process all here
-				.filter(isNmea).to("seda:nmeaOutput").end().process(inputFilterProcessor).process(combinedProcessor)
+				.filter(isNmea).to("seda:nmeaOutput").end()
+				.process(inputFilterProcessor).process(combinedProcessor)
 				.process(outputFilterProcessor)
 				// .to("log:nz.co.fortytwo.freeboard.navdata?level=INFO")
 				// and push to all subscribers. We use multicast/direct cos if we use SEDA then we get a queue growth if there are no consumers active.
