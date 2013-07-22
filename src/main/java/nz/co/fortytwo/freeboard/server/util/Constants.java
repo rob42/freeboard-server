@@ -204,7 +204,8 @@ public class Constants {
 	public static final String DNS_USE_CHOICE = "freeboard.dns.use";
 	public static final String DNS_USE_BOAT = "boat";
 	public static final String DNS_USE_HOME = "home";
-	
+	public static final String NMEA_XDR = "freeboard.nmea.";
+	public static final String XDR =  "XDR.";
 
 	public Constants() {
 		// TODO Auto-generated constructor stub

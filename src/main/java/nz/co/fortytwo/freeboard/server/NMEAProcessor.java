@@ -29,6 +29,7 @@ import java.util.concurrent.ConcurrentMap;
 import net.sf.marineapi.nmea.event.SentenceEvent;
 import net.sf.marineapi.nmea.event.SentenceListener;
 import net.sf.marineapi.nmea.parser.SentenceFactory;
+import net.sf.marineapi.nmea.parser.XDRValue;
 import net.sf.marineapi.nmea.sentence.BVESentence;
 import net.sf.marineapi.nmea.sentence.DepthSentence;
 import net.sf.marineapi.nmea.sentence.HeadingSentence;
@@ -38,6 +39,7 @@ import net.sf.marineapi.nmea.sentence.RMCSentence;
 import net.sf.marineapi.nmea.sentence.Sentence;
 import net.sf.marineapi.nmea.sentence.SentenceId;
 import net.sf.marineapi.nmea.sentence.VHWSentence;
+import net.sf.marineapi.nmea.sentence.XDRSentence;
 import net.sf.marineapi.nmea.util.CompassPoint;
 import nz.co.fortytwo.freeboard.server.util.Constants;
 import nz.co.fortytwo.freeboard.server.util.Util;
@@ -161,7 +163,7 @@ public class NMEAProcessor extends FreeboardProcessor implements Processor, Free
 			logger.warn("NMEA Sentence is invalid:"+sentence.toSentence());
 			return;
 		}
-
+		//TODO: Why am I creating all these lists?
 		String type = sentence.getSentenceId();
 		Set<SentenceListener> list = new HashSet<SentenceListener>();
 
@@ -221,6 +223,7 @@ public class NMEAProcessor extends FreeboardProcessor implements Processor, Free
 			public void sentenceRead(SentenceEvent evt) {
 				// Exchange exchange = (Exchange) evt.getSource();
 				// StringBuilder body = new StringBuilder();
+				@SuppressWarnings("unchecked")
 				HashMap<String, Object> map = (HashMap<String, Object>) evt.getSource();
 				if (evt.getSentence() instanceof PositionSentence) {
 					PositionSentence sen = (PositionSentence) evt.getSentence();
@@ -326,7 +329,37 @@ public class NMEAProcessor extends FreeboardProcessor implements Processor, Free
 					//in meters
 					map.put(Constants.DEPTH_BELOW_TRANSDUCER, sen.getDepth());
 				}
-
+				// Cruzpro YXXDR sentence
+				//from Cruzpro - The fields in the YXXDR sentence are always from the same "critical" functions, in order:
+					//RPM
+					//Battery #1 Volts
+					//Depth
+					//Oil Pressure
+					//Engine Temperature
+				//freeboard.nmea.YXXDR.MaxVu110=RPM,EVV,DBT,EPP,ETT
+				if (evt.getSentence() instanceof XDRSentence) {
+					XDRSentence sen = (XDRSentence) evt.getSentence();
+					
+					if(StringUtils.isNotBlank(sen.getDevice())){
+						try {
+							String key = Util.getConfig(null).getProperty(Constants.NMEA_XDR+sen.getTalkerId()+Constants.XDR+sen.getDevice());
+							String[] keys = key.split(",");
+							List<XDRValue> values = sen.getValues();
+							if(values.size()==keys.length){
+								//iterate through the values assigning to Freeboard keys
+								for(int x=0;x<keys.length;x++){
+									if(StringUtils.isNotBlank(keys[x])){
+										map.put(keys[x], values.get(x).getValue());
+									}
+								}
+							}
+						
+						} catch (Exception e) {
+							logger.debug(e.getMessage(),e);
+						}
+					}
+				}
+				
 			}
 
 			public void readingStopped() {

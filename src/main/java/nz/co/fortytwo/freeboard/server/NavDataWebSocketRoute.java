@@ -113,11 +113,12 @@ public class NavDataWebSocketRoute extends RouteBuilder {
 
 		// distribute and log commands
 		from("direct:command")
-				.process(serialPortManager)
-				// .to("log:nz.co.fortytwo.freeboard.command?level=INFO")
 				.onException(Exception.class).handled(true).maximumRedeliveries(0)
 					.to("log:nz.co.fortytwo.freeboard.command?level=ERROR&showException=true&showStackTrace=true")
-					.end();
+					.end()
+				.process(serialPortManager);
+				// .to("log:nz.co.fortytwo.freeboard.command?level=INFO")
+				
 		
 		// push NMEA out via TCPServer.
 		from("seda:nmeaOutput")
@@ -125,27 +126,38 @@ public class NavDataWebSocketRoute extends RouteBuilder {
 			.end();
 		
 		// out to websockets
-		from("direct:websocket").to("websocket:navData?sendToAll=true")
-			.onException(Exception.class).handled(true).maximumRedeliveries(0)
+		from("direct:websocket")
+			.onException(Exception.class)
+				.handled(true)
+				.maximumRedeliveries(0)
 				.to("log:nz.co.fortytwo.freeboard.websocket?level=ERROR&showException=true&showStackTrace=true")
-				.end();
+				.end()
+			.to("websocket:navData?sendToAll=true");
 
 		// out to cometd
 		from("direct:cometd")
-			 .process(addSrcProcessor)
-			 .to("cometd://0.0.0.0:8082/freeboard/json?jsonCommented=false")
-			 .onException(Exception.class)
-			 .handled(true)
-			 .maximumRedeliveries(0)
-			 .to("log:nz.co.fortytwo.freeboard.json?level=ERROR&showException=true&showStackTrace=true")
-			 .end();
+			.onException(Exception.class)
+				.handled(true)
+				.maximumRedeliveries(0)
+				.to("log:nz.co.fortytwo.freeboard.json?level=ERROR&showException=true&showStackTrace=true")
+				.end()
+			.process(addSrcProcessor)
+			.to("cometd://0.0.0.0:8082/freeboard/json?jsonCommented=false");
 		
 		//main input to destination route
 		// send input to listeners
 		from("seda:input")
+				.onException(Exception.class)
+					.handled(true)
+					.maximumRedeliveries(0)
+					.to("log:nz.co.fortytwo.freeboard.navdata?level=ERROR&showException=true&showStackTrace=true")
+					.end()
 				// process all here
-				.filter(isNmea).to("seda:nmeaOutput").end()
-				.process(inputFilterProcessor).process(combinedProcessor)
+				.filter(isNmea)
+					.to("seda:nmeaOutput")
+					.end()
+				.process(inputFilterProcessor)
+				.process(combinedProcessor)
 				.process(outputFilterProcessor)
 				// .to("log:nz.co.fortytwo.freeboard.navdata?level=INFO")
 				// and push to all subscribers. We use multicast/direct cos if we use SEDA then we get a queue growth if there are no consumers active.
@@ -153,10 +165,7 @@ public class NavDataWebSocketRoute extends RouteBuilder {
 					.to("direct:websocket")
 					.to("direct:cometd")
 					.to("direct:command")
-				.end()
-				.onException(Exception.class).handled(true).maximumRedeliveries(0)
-					.to("log:nz.co.fortytwo.freeboard.navdata?level=ERROR&showException=true&showStackTrace=true")
-					.end();
+				.end();
 
 	}
 
