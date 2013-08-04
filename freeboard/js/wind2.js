@@ -69,9 +69,9 @@ function Wind2 () {
 				if($.isNumeric(c)){
 					// -180 <> 180
 					if (c > 180) {
-						radialWindDirApp.setValueLatest(-(360 - c));
+						radialWindDirApp.setValueAnimatedLatest(-(360 - c));
 					} else {
-						radialWindDirApp.setValueLatest(c);
+						radialWindDirApp.setValueAnimatedLatest(c);
 					}
 					
 					// make average
@@ -84,9 +84,9 @@ function Wind2 () {
 						v = v + avgArrayA[i];
 					}
 					if (c > 180) {
-						radialWindDirApp.setValueAverage(-(360 - (v / avgArrayA.length)));
+						radialWindDirApp.setValueAnimatedAverage(-(360 - (v / avgArrayA.length)));
 					} else {
-						radialWindDirApp.setValueAverage(v / avgArrayA.length);
+						radialWindDirApp.setValueAnimatedAverage(v / avgArrayA.length);
 					}
 				}
 				c=null;
@@ -95,9 +95,9 @@ function Wind2 () {
 				var c = parseFloat(data.substring(4));
 				if($.isNumeric(c)){
 					if(c>0.0 || c<360.0)
-						radialWindDirTrue.setValueLatest(c);
+						radialWindDirTrue.setValueAnimatedLatest(c);
 					else
-						radialWindDirTrue.setValueLatest(0.0);
+						radialWindDirTrue.setValueAnimatedLatest(0.0);
 					
 					// make average
 					avgArrayT[avgPosT] = c;
@@ -109,9 +109,9 @@ function Wind2 () {
 						v = v + avgArrayT[i];
 					}
 					if(v>0.0)
-						radialWindDirTrue.setValueAverage(v / avgArrayT.length);
+						radialWindDirTrue.setValueAnimatedAverage(v / avgArrayT.length);
 					else
-						radialWindDirTrue.setValueAverage(0.0);
+						radialWindDirTrue.setValueAnimatedAverage(0.0);
 				}
 				c=null;
 			}

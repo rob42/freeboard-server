@@ -33,8 +33,8 @@ public class AddSourceProcessor implements Processor {
       sourceName = name;
     }
     public void process(Exchange exchange) throws Exception {
-        exchange.getOut().setHeader("srcName",sourceName);
+        exchange.getIn().setHeader("srcName",sourceName);
         FreeboardMessage msg = new FreeboardMessage(sourceName, (String)exchange.getIn().getBody());
-        exchange.getOut().setBody(msg);
+        exchange.getIn().setBody(msg);
     }
 }
