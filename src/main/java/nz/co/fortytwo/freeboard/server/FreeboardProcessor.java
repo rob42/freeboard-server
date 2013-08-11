@@ -126,4 +126,8 @@ public class FreeboardProcessor {
 		}
 		return builder.toString();
 	}
+	public HashMap<String, Object> handle(HashMap<String, Object> map) {
+		// TODO Auto-generated method stub
+		return map;
+	}
 }

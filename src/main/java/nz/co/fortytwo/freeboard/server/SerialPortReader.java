@@ -20,12 +20,9 @@ package nz.co.fortytwo.freeboard.server;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.nio.CharBuffer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -33,6 +30,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
 import nz.co.fortytwo.freeboard.server.util.Constants;
+import nz.co.fortytwo.freeboard.server.util.Util;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -112,7 +110,7 @@ public class SerialPortReader implements Processor {
 			try {
 				while (running) {
 					String msg = queue.poll(5, TimeUnit.SECONDS);
-					if (msg != null) {
+					if (StringUtils.isNotBlank(msg)) {
 						out.write((msg + "\n").getBytes());
 						out.flush();
 					}
@@ -136,7 +134,7 @@ public class SerialPortReader implements Processor {
 		private Pattern uid;
 		List<String> lines = new ArrayList<String>();
 		StringBuffer line = new StringBuffer(60);
-		
+		private boolean sendMessage=true;
 		private boolean complete;
 		private InputStream in;
 		byte[] buff = new byte[256]; 
@@ -148,6 +146,7 @@ public class SerialPortReader implements Processor {
 			this.in = new BufferedInputStream(serialPort.getInputStream());
 			uid = Pattern.compile(Constants.UID + ":");
 			logger.info("Setup serialReader on :"+portName);
+			sendMessage = new Boolean(Util.getConfig(null).getProperty(Constants.SEND_MESSAGE, "true"));
 		}
 
 		
@@ -195,7 +194,11 @@ public class SerialPortReader implements Processor {
 											mapped = true;
 										}
 									}
-									producer.sendBody(lineStr);
+									if(sendMessage){
+										producer.sendBody(lineStr);
+									}else{
+										logger.debug("sendMessage false:"+lineStr);
+									}
 								}
 								complete=false;
 								line=new StringBuffer(60);
@@ -270,12 +273,14 @@ public class SerialPortReader implements Processor {
 		// send to device
 		String message = exchange.getIn().getBody(String.class);
 		logger.debug(portName + ":msg received for device:" + message);
-		if (message != null) {
+		if (StringUtils.isNotBlank(message)) {
 			// check its valid for this device
 			if (running && deviceType == null || message.contains(Constants.UID + ":" + deviceType)) {
 				logger.debug(portName + ":wrote out to device:" + message);
 				// queue them and write in background
-				queue.put(message);
+				if(!queue.offer(message)){
+					logger.debug("Output queue id ful for "+portName);
+				}
 			}
 		}
 	}

@@ -61,7 +61,7 @@ function initWebSocket(){
 			};
 			this._ws.onmessage = function(m) {
 				//for debug
-				//console.log(m.data);
+				console.log(m.data);
 				//iterate the array and process each, avoid NMEA for now
 				if(m.data.trim().startsWith('$'))return;
 				

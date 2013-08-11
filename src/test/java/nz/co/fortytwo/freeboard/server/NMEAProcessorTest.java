@@ -42,15 +42,16 @@ public class NMEAProcessorTest {
 	}
 
 	@Test
-	public void shouldHandleCruzproXDR() {
+	public void shouldHandleCruzproXDR() throws FileNotFoundException, IOException {
 		NMEAProcessor processor = new NMEAProcessor();
-		HashMap<String, Object> map = new HashMap<>();
+		HashMap<String, Object> map = new HashMap<String, Object>();
+		Util.getConfig(null).setProperty("freeboard.nmea.YXXDR.MaxVu110", "RPM,EVV,SKIP,EPP,ETT");
 		map.put(Constants.NMEA, "$YXXDR,G,0004,,G,12.27,,G,,,G,003.3,,G,0012,,MaxVu110*4E");
 		processor.handle(map);
 		//RPM,EVV,DBT,EPP,ETT
 		Assert.assertEquals(4.0,map.get(Constants.ENGINE_RPM));
 		Assert.assertEquals(12.27,map.get(Constants.ENGINE_VOLTS));
-		Assert.assertEquals(0.0,map.get(Constants.DEPTH_BELOW_TRANSDUCER));
+		Assert.assertEquals(null,map.get(Constants.DEPTH_BELOW_TRANSDUCER));
 		Assert.assertEquals(3.3,map.get(Constants.ENGINE_OIL_PRESSURE));
 		Assert.assertEquals(12.0,map.get(Constants.ENGINE_TEMP));
 	}
@@ -58,9 +59,9 @@ public class NMEAProcessorTest {
 	@Test
 	public void shouldHandleSkipValue() throws FileNotFoundException, IOException {
 		NMEAProcessor processor = new NMEAProcessor();
-		HashMap<String, Object> map = new HashMap<>();
+		HashMap<String, Object> map = new HashMap<String, Object>();
 		//freeboard.nmea.YXXDR.MaxVu110=RPM,EVV,DBT,EPP,ETT
-		Util.getConfig(null).setProperty("freeboard.nmea.YXXDR.MaxVu110", "RPM,EVV,,EPP,ETT");
+		Util.getConfig(null).setProperty("freeboard.nmea.YXXDR.MaxVu110", "RPM,EVV,SKIP,EPP,ETT");
 		map.put(Constants.NMEA, "$YXXDR,G,0004,,G,12.27,,G,,,G,003.3,,G,0012,,MaxVu110*4E");
 		processor.handle(map);
 		//RPM,EVV,DBT,EPP,ETT
@@ -73,9 +74,9 @@ public class NMEAProcessorTest {
 	@Test
 	public void shouldRejectMismatchedValues() throws FileNotFoundException, IOException {
 		NMEAProcessor processor = new NMEAProcessor();
-		HashMap<String, Object> map = new HashMap<>();
+		HashMap<String, Object> map = new HashMap<String, Object>();
 		//freeboard.nmea.YXXDR.MaxVu110=RPM,EVV,DBT,EPP,ETT
-		Util.getConfig(null).setProperty("freeboard.nmea.YXXDR.MaxVu110", "RPM,EVV,,EPP");
+		Util.getConfig(null).setProperty("freeboard.nmea.YXXDR.MaxVu110", "RPM,EVV,SKIP,EPP");
 		map.put(Constants.NMEA, "$YXXDR,G,0004,,G,12.27,,G,,,G,003.3,,G,0012,,MaxVu110*4E");
 		processor.handle(map);
 		//RPM,EVV,DBT,EPP,ETT

@@ -142,6 +142,9 @@ public class Constants {
 	public static final String ENGINE_VOLTS = "EVV";
 	public static final String ENGINE_OIL_PRESSURE = "EPP";
 	
+	public static final String ENGINE_DRIVE_TRIM = "EDT";
+	public static final String XDR_SKIP = "SKIP";
+	
 	//depth
 	public static final String DEPTH_BELOW_TRANSDUCER = "DBT";
 	
@@ -206,7 +209,9 @@ public class Constants {
 	public static final String DNS_USE_HOME = "home";
 	public static final String NMEA_XDR = "freeboard.nmea.";
 	public static final String XDR =  "XDR.";
-
+	
+	//debug flags
+	public static final String SEND_MESSAGE = "freeboard.debug.sendMessage";
 	public Constants() {
 		// TODO Auto-generated constructor stub
 	}

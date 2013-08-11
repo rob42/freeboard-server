@@ -98,6 +98,15 @@ function Engine () {
 				c=null;
 			}
 			
+			//trim
+			if (data && data.indexOf('EDT') >= 0) {
+				var c = parseFloat(data.substring(4));
+				if($.isNumeric(c)){
+					radialTrim.setValue(c);
+				}
+				c=null;
+			}
+			
 			data=null;
 		});
 	};
@@ -248,7 +257,7 @@ function initEngine() {
 		gaugeType : steelseries.GaugeType.TYPE4,
 		//size : document.getElementById('canvasWindTrue').width,
 		minValue : 0,
-		maxValue : 40,
+		maxValue : 1000,
 		//threshold : 300,
 		//section : sections,
 		titleString : "Trim",

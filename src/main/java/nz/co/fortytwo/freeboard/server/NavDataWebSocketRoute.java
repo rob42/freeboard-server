@@ -24,6 +24,7 @@ import nz.co.fortytwo.freeboard.server.util.Constants;
 
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
+import org.apache.camel.ShutdownRunningTask;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.websocket.WebsocketComponent;
 
@@ -95,21 +96,24 @@ public class NavDataWebSocketRoute extends RouteBuilder {
 		// init processors who depend on this being started
 		initProcessors();
 
+		// dump nulls
+		intercept().when(body().isNull()).stop();
+		
+		// intercept().when(((String)body(String.class)).trim().length()==0).stop();
+		// deal with errors
+				
 		if (Boolean.valueOf(config.getProperty(Constants.DEMO))) {
 
 			from("stream:file?fileName=" + serialUrl).to("seda:input");
 
-		} else {
-			// start a serial port manager
+		} 
+		// start a serial port manager
 
-			serialPortManager = new SerialPortManager();
-			// serialPortManager.setWc(wc);
-			new Thread(serialPortManager).start();
-		}
-		// dump nulls
-		intercept().when(body().isNull()).stop();
-		// intercept().when(((String)body(String.class)).trim().length()==0).stop();
-		// deal with errors
+		serialPortManager = new SerialPortManager();
+		// serialPortManager.setWc(wc);
+		new Thread(serialPortManager).start();
+	
+		
 
 		// distribute and log commands
 		from("direct:command")

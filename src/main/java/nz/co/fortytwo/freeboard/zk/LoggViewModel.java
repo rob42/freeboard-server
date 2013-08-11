@@ -88,7 +88,7 @@ public class LoggViewModel extends SelectorComposer<Window>{
 			logScale.setValue(String.valueOf(scale));
 	}
 	
-	@Listen("onMove = #logg")
+	@Listen("onMove =  #logg")
 	public void onMoveWindow(Event event) {
 		    logger.debug(" move event = "+((Window)event.getTarget()).getLeft()+", "+((Window)event.getTarget()).getTop());
 		    try {
@@ -103,7 +103,7 @@ public class LoggViewModel extends SelectorComposer<Window>{
 	    
 	}
 
-	@Listen("onClick = button#logShrink")
+	@Listen("onClick =  button#logShrink")
 	public void logShrinkClick(MouseEvent event) {
 		logger.debug(" shrink event = "+event);
 		try {
@@ -114,7 +114,7 @@ public class LoggViewModel extends SelectorComposer<Window>{
 		logScale.setValue(String.valueOf(scale));
 	}
 
-	@Listen("onClick = button#logGrow")
+	@Listen("onClick =   button#logGrow")
 	public void logGrowClick(MouseEvent event) {
 		logger.debug(" grow event = "+event);
 		try{

@@ -28,6 +28,8 @@ import java.util.concurrent.ConcurrentMap;
 
 import net.sf.marineapi.nmea.event.SentenceEvent;
 import net.sf.marineapi.nmea.event.SentenceListener;
+import net.sf.marineapi.nmea.parser.BVEParser;
+import net.sf.marineapi.nmea.parser.CruzproXDRParser;
 import net.sf.marineapi.nmea.parser.SentenceFactory;
 import net.sf.marineapi.nmea.parser.XDRValue;
 import net.sf.marineapi.nmea.sentence.BVESentence;
@@ -41,6 +43,7 @@ import net.sf.marineapi.nmea.sentence.SentenceId;
 import net.sf.marineapi.nmea.sentence.VHWSentence;
 import net.sf.marineapi.nmea.sentence.XDRSentence;
 import net.sf.marineapi.nmea.util.CompassPoint;
+import net.sf.marineapi.nmea.util.Measurement;
 import nz.co.fortytwo.freeboard.server.util.Constants;
 import nz.co.fortytwo.freeboard.server.util.Util;
 
@@ -64,6 +67,9 @@ public class NMEAProcessor extends FreeboardProcessor implements Processor, Free
 	private ConcurrentMap<String, List<SentenceListener>> listeners = new ConcurrentHashMap<String, List<SentenceListener>>();
 
 	public NMEAProcessor() {
+		//register BVE
+		SentenceFactory.getInstance().registerParser("BVE", BVEParser.class);
+		SentenceFactory.getInstance().registerParser("XDR",CruzproXDRParser.class);
 		setNmeaListeners();
 	}
 
@@ -89,7 +95,8 @@ public class NMEAProcessor extends FreeboardProcessor implements Processor, Free
 				Sentence sentence = SentenceFactory.getInstance().createParser(bodyStr);
 				fireSentenceEvent(map, sentence);
 			} catch (Exception e) {
-				e.printStackTrace();
+				logger.debug(e.getMessage(),e);
+				logger.error(e.getMessage()+" : "+bodyStr);
 			}
 		}
 		return map;
@@ -179,8 +186,7 @@ public class NMEAProcessor extends FreeboardProcessor implements Processor, Free
 				SentenceEvent se = new SentenceEvent(map, sentence);
 				sl.sentenceRead(se);
 			} catch (Exception e) {
-				// ignore listener failures
-				e.printStackTrace();
+				logger.error(e.getMessage(),e);
 			}
 		}
 
@@ -337,28 +343,33 @@ public class NMEAProcessor extends FreeboardProcessor implements Processor, Free
 					//Oil Pressure
 					//Engine Temperature
 				//freeboard.nmea.YXXDR.MaxVu110=RPM,EVV,DBT,EPP,ETT
-				if (evt.getSentence() instanceof XDRSentence) {
-					XDRSentence sen = (XDRSentence) evt.getSentence();
-					
-					if(StringUtils.isNotBlank(sen.getDevice())){
-						try {
-							String key = Util.getConfig(null).getProperty(Constants.NMEA_XDR+sen.getTalkerId()+Constants.XDR+sen.getDevice());
-							String[] keys = key.split(",");
-							List<XDRValue> values = sen.getValues();
-							if(values.size()==keys.length){
-								//iterate through the values assigning to Freeboard keys
-								for(int x=0;x<keys.length;x++){
-									if(StringUtils.isNotBlank(keys[x])){
-										map.put(keys[x], values.get(x).getValue());
+				if (evt.getSentence() instanceof CruzproXDRParser) {
+					CruzproXDRParser sen = (CruzproXDRParser) evt.getSentence();
+						
+						logger.debug("XDR:"+sen.toString());
+						if(StringUtils.isNotBlank(sen.getDevice())){
+							try {
+								String key = Util.getConfig(null).getProperty(Constants.NMEA_XDR+sen.getTalkerId()+Constants.XDR+sen.getDevice());
+								if(StringUtils.isNotBlank(key)){
+									String[] keys = key.split(",");
+									List<Measurement> values = sen.getMeasurements();
+									if(values.size()==keys.length){
+										//iterate through the values assigning to Freeboard keys
+										for(int x=0;x<keys.length;x++){
+											if(StringUtils.isNotBlank(keys[x]) && !Constants.XDR_SKIP.equals(keys[x])){
+												logger.debug(  "XDR:"+keys[x]+":"+ values.get(x).getValue());
+												map.put(keys[x], values.get(x).getValue());
+											}
+										}
 									}
 								}
+							
+							} catch (Exception e) {
+								logger.error(e.getMessage(),e);
 							}
-						
-						} catch (Exception e) {
-							logger.debug(e.getMessage(),e);
 						}
 					}
-				}
+				
 				
 			}
 

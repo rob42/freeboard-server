@@ -60,7 +60,7 @@ public class DummyExtensionParser implements IExtensionParser {
 		node.appendChild(sampleNode);
 	}
 
-	@Override
+	//@Override
 	public void writeTrackExtensionData(Node node, Track wpt, Document doc) {
 		Node sampleNode = doc.createElement("mySampleExtension");
 		sampleNode.setNodeValue("mySampleTrackValue");
@@ -68,7 +68,7 @@ public class DummyExtensionParser implements IExtensionParser {
 		
 	}
 
-	@Override
+	//@Override
 	public void writeRouteExtensionData(Node node, Route wpt, Document doc) {
 		Node sampleNode = doc.createElement("mySampleExtension");
 		sampleNode.setNodeValue("mySampleRouteValue");

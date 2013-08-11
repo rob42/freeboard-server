@@ -88,7 +88,7 @@ import net.sf.marineapi.nmea.sentence.TalkerId;
  * 
  * @author Robert Huitema
  */
-class BVEParser extends SentenceParser implements BVESentence {
+public class BVEParser extends SentenceParser implements BVESentence {
 
 	// types
 	public static final String CHAIN_COUNTER = "A";
@@ -146,7 +146,7 @@ class BVEParser extends SentenceParser implements BVESentence {
 	 *            TalkerId to set
 	 */
 	public BVEParser(TalkerId talker) {
-		super(talker, SentenceId.BVE, 1);
+		super(talker, "BVE", 1);
 	}
 
 	public boolean isFuelGuage(){
