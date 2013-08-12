@@ -1,0 +1,9 @@
+
+	var WORLD1 = L.tileLayer("http://{s}.{server}:8080/mapcache/WORLD1/{z}/{x}/{y}.png", {
+		server: host,
+		subdomains: 'abcd',
+		attribution: 'Natural Earth',
+		minZoom: 3,
+		maxZoom: 6,
+		tms: true
+		}).addTo(map);
