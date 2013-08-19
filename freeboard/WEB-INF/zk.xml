@@ -1,13 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <zk>
-	<!-- [Optional]
-	Uncomment if you want to defines the application's name 
-	
-	<preference>
-		<name>org.zkoss.zk.ui.WebApp.name</name>
-		<value>zk</value>
-	</preference>
-	-->
-	
+	<!-- [Optional] Uncomment if you want to defines the application's name 
+		<preference> <name>org.zkoss.zk.ui.WebApp.name</name> <value>zk</value> </preference> -->
+		
+	<device-config>
+		<device-type>ajax</device-type>
+		<device-class>org.zkoss.zk.device.AjaxDevice</device-class>
+		<server-push-class>org.zkoss.zk.ui.impl.PollingServerPush
+		</server-push-class>
+		<timeout-uri>/timeout.zul</timeout-uri><!-- An empty URL can cause the 
+			browser to reload the same URL -->
+	</device-config>
 </zk>

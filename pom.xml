@@ -12,7 +12,7 @@
 		<!-- <bundle.name>nsb-${project.version}</bundle.name> -->
 		<jetty.version>7.5.4.v20111024</jetty.version>
 		<camel.version>2.10.1</camel.version>
-		<zk.version>6.5.0</zk.version>
+		<zk.version>6.5.2</zk.version>
 		<jna.version>3.6.0-SNAPSHOT</jna.version>
 	</properties>
 	<licenses>
@@ -129,26 +129,31 @@
 		</dependency>
 		<!-- ZK -->
 		<dependency>
-			<groupId>org.zkoss.zk</groupId>
-			<artifactId>zkplus</artifactId>
-			<version>${zk.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.zkoss.zk</groupId>
-			<artifactId>zhtml</artifactId>
-			<version>${zk.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.zkoss.zk</groupId>
-			<artifactId>zkbind</artifactId>
-			<version>${zk.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.zkoss.zk</groupId>
-			<artifactId>zul</artifactId>
-			<version>${zk.version}</version>
-		</dependency>
-
+            <groupId>org.zkoss.zk</groupId>
+            <artifactId>zkbind</artifactId>
+            <version>${zk.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.zkoss.zk</groupId>
+            <artifactId>zul</artifactId>
+            <version>${zk.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.zkoss.zk</groupId>
+            <artifactId>zkplus</artifactId>
+            <version>${zk.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.zkoss.zk</groupId>
+            <artifactId>zhtml</artifactId>
+            <version>${zk.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.zkoss.common</groupId>
+            <artifactId>zweb</artifactId>
+            <version>${zk.version}</version>
+        </dependency>
+         
 		<dependency>
 			<groupId>commons-codec</groupId>
 			<artifactId>commons-codec</artifactId>
@@ -218,6 +223,7 @@
 	</dependencies>
 	<build>
 		<plugins>
+		
 			<!-- Allows the example to be run via 'mvn compile exec:java' -->
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
