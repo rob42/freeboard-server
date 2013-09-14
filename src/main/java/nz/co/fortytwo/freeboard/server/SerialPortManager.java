@@ -24,6 +24,7 @@ import gnu.io.NoSuchPortException;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -35,7 +36,10 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.SystemUtils;
 import org.apache.log4j.Logger;
+
+import purejavacomm.CommPortIdentifier;
 
 /**
  * A manager to monitor the USB tty ports. It dynamically adds/removes
@@ -69,8 +73,6 @@ public class SerialPortManager implements Runnable, Processor {
 			}
 			serialPortList.removeAll(tmpPortList);
 			
-			//not reliable, cant properly deal with hot-plug
-			//Enumeration<CommPortIdentifier> ports = CommPortIdentifier.getPortIdentifiers();
 			String portStr ="/dev/ttyUSB0,/dev/ttyUSB1,/dev/ttyUSB2";
 			try {
 				Properties config = Util.getConfig(null);
@@ -81,11 +83,15 @@ public class SerialPortManager implements Runnable, Processor {
 			String[] ports = portStr.split(",");
 			for (String port:ports) {
 				boolean portOk = false;
-				File portFile = new File(port);
+				
 				try {
-					if (!portFile.exists()){
-						logger.debug("Comm port "+port+" doesnt exist");
-						continue;
+					//this doesnt work  on windozy
+					if(!SystemUtils.IS_OS_WINDOWS){
+						File portFile = new File(port);
+						if (!portFile.exists()){
+							logger.debug("Comm port "+port+" doesnt exist");
+							continue;
+						}
 					}
 					for (SerialPortReader reader : serialPortList) {
 						if (StringUtils.equals(port, reader.getPortName())) {
@@ -106,7 +112,10 @@ public class SerialPortManager implements Runnable, Processor {
 					String baudStr = Util.getConfig(null).getProperty(Constants.SERIAL_PORT_BAUD, "38400");
 					logger.debug("Comm port default found and connecting at "+baudStr+"...");
 					//get port name
-					String portName = port.substring(port.lastIndexOf("/")+1);
+					String portName = port;
+					if(port.indexOf("/")>0){
+						portName=port.substring(port.lastIndexOf("/")+1);
+					}
 					baudStr = Util.getConfig(null).getProperty(Constants.SERIAL_PORT_BAUD+"."+portName, baudStr);
 					logger.debug("Comm port "+Constants.SERIAL_PORT_BAUD+"."+portName+" override="+Util.getConfig(null).getProperty(Constants.SERIAL_PORT_BAUD+"."+portName));
 					int baudRate = Integer.valueOf(baudStr);

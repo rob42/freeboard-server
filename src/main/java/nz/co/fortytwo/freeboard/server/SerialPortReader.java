@@ -36,6 +36,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.SystemUtils;
 import org.apache.log4j.Logger;
 
 import purejavacomm.CommPortIdentifier;
@@ -81,7 +82,9 @@ public class SerialPortReader implements Processor {
 	 */
 	void connect(String portName, int baudRate) throws Exception {
 		this.portName = portName;
-		this.portFile = new File(portName);
+		if(!SystemUtils.IS_OS_WINDOWS){
+			this.portFile = new File(portName);
+		}
 		CommPortIdentifier portid = CommPortIdentifier.getPortIdentifier(portName);
 		serialPort = (SerialPort) portid.open("FreeboardSerialReader", 100);
 		//TODO: change baud rate to config based setup
@@ -232,7 +235,8 @@ public class SerialPortReader implements Processor {
 	 * @return
 	 */
 	public boolean isRunning() {
-		if (!portFile.exists()) {
+		//no good on windoze
+		if (!SystemUtils.IS_OS_WINDOWS && !portFile.exists()) {
 
 			try {
 				serialPort.close();
