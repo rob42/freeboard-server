@@ -30,36 +30,39 @@
 <zk>
 
 	<window border="none" vflex="true">
-
-		<vlayout vflex="1" hflex="min"
+		
+		<vlayout vflex="1" hflex="min" 
 			style="margin-left:auto; margin-right:auto; text-align:center;">
 			<image src="img/logo.png" />
 
 			<hlayout hflex="1">
-				<groupbox mold="3d">
+				<groupbox mold="3d" >
 					<caption label="Chartplotter + Instruments" />
 
-					<button label="Laptop" mold="trendy"
-						href="floating.zul" />
-					<button label="Tablet" mold="trendy" />
-					<button label="Cellphone" mold="trendy" />
+					<button label="Laptop" mold="trendy" width="100px" style="padding:10px; font-size:14px; font-weight: bold;"
+						height="75px" href="floating.zul" />
+					<button label="Tablet" mold="trendy" width="100px" style="padding:10px; font-size:14px; font-weight: bold;"
+						height="75px"/>
+					<button label="Cellphone" mold="trendy" width="100px" style="padding:10px; font-size:14px; font-weight: bold;"
+						height="75px"/>
 				</groupbox>
 
 			</hlayout>
-			<hlayout hflex="1">
+			<hlayout hflex="1"  >
 				<groupbox mold="3d">
 					<caption label="Instruments only" />
-					<button label="Engine" mold="trendy"
-						href="engine.zul" />
-					<button label="Wind + Log" mold="trendy"
-						href="mainToolbar.zul" />
+					<button label="Engine" mold="trendy" width="100px"
+						height="75px" href="engine.zul" style="padding:10px; font-size:14px; font-weight: bold;"/>
+					<button label="Wind + Log" mold="trendy" width="100px" style="padding:10px; font-size:14px; font-weight: bold;"
+						height="75px" href="mainToolbar.zul" />
 				</groupbox>
-				
+
 			</hlayout>
 			<separator />
 			<groupbox mold="3d" hflex="1">
 				<html
 					style="font-family:arial, sans-serif;font-size:12px">
+
 
 					
 					<![CDATA[<p>Copyright 2012,2013 Robert Huitema
@@ -72,6 +75,7 @@
 					>ABSOLUTELY NO WARRANTY</a></p> <p><b>This software
 					does not replace the use of official navigation
 					charts to ensure the safety of your vessel</b>]]>
+					
 					
 				</html>
 			</groupbox>
