@@ -114,7 +114,7 @@ public class SerialPortReader implements Processor {
 				while (running) {
 					String msg = queue.poll(5, TimeUnit.SECONDS);
 					if (StringUtils.isNotBlank(msg)) {
-						out.write((msg + "\n").getBytes());
+						out.write((msg + "\r\n").getBytes());
 						out.flush();
 					}
 				}

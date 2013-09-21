@@ -51,9 +51,10 @@
 					<caption label="Instruments only" />
 					<button label="Engine" mold="trendy"
 						href="engine.zul" />
-<!-- 					<button label="Wind" mold="trendy" -->
-<!-- 						href="wind2.zul" /> -->
+					<button label="Wind + Log" mold="trendy"
+						href="mainToolbar.zul" />
 				</groupbox>
+				
 			</hlayout>
 			<separator />
 			<groupbox mold="3d" hflex="1">

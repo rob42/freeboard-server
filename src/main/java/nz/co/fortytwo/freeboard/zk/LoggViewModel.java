@@ -52,7 +52,6 @@ public class LoggViewModel extends SelectorComposer<Window>{
 	@Wire ("#logg")
 	Window logg;
 	
-	
 	@Wire ("#logScale")
 	Label logScale;
 
@@ -86,6 +85,8 @@ public class LoggViewModel extends SelectorComposer<Window>{
 				scale = Double.valueOf(Util.getConfig(null).getProperty(Constants.LOGG_SCALE));
 			}
 			logScale.setValue(String.valueOf(scale));
+			//resize
+			
 	}
 	
 	@Listen("onMove =  #logg")

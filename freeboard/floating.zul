@@ -42,10 +42,8 @@
 <?script src="./js/chartplotter.js" ?>
 <?script src="./js/tween-min.js"?>
 <?script src="./js/steelseries.js"?>
-<?script src="./js/logg.js"?>
-<?script src="./js/wind2.js"?>
-<?script src="./js/autopilot.js"?>
-<?script src="./js/anchor.js"?>
+<?script src="./js/websocket.js"?>
+
 <zk>
 	<style>
 		#map { height: 100%; border: 1px solid #888;  }
@@ -61,6 +59,14 @@
 		apply="nz.co.fortytwo.freeboard.zk.ChartplotterViewModel" vflex="true"
 		style="margin-left:auto;">
 		<borderlayout>
+		<north>
+				<hbox pack="stretch" width="100%"
+					sclass="hboxRemoveWhiteStrips">
+					<include src="./mainToolbar.zul"/>
+					<include src="./cpToolbar.zul"/>
+				</hbox>
+
+			</north>
 			<center>
 			
 				<div vflex="1" hflex="1"
@@ -82,14 +88,7 @@
 
 				</div>
 			</center>
-			<south>
-				<hbox pack="stretch" width="100%"
-					sclass="hboxRemoveWhiteStrips">
-					<include src="./mainToolbar.zul"/>
-					<include src="./cpToolbar.zul"/>
-				</hbox>
-
-			</south>
+			
 		</borderlayout>
 	</window>
 	<window id="wptWindow" title="Waypoint"

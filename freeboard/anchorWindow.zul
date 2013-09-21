@@ -21,8 +21,9 @@
 <?script src="./js/tween-min.js"?>
 <?script src="./js/steelseries.js"?>
 <?script src="./js/websocket.js"?>
-<?script src="./js/anchor.js"?>
+
 <zk xmlns:w="http://www.zkoss.org/2005/zk/client">
+<script type="text/javascript" src="./js/anchor.js" />
 <window id="anchorWindow" 
 		apply="nz.co.fortytwo.freeboard.zk.AnchorViewModel"
 		title="Anchor Alarm"   mode="overlapped" visible="false" minimizable="true" >
@@ -71,5 +72,5 @@
 			
 		</vbox>
 	</window>
-	<script type="text/javascript" defer="true">initSocket(); initAnchorAlarm();</script>
+	<script type="text/javascript"  defer="true">initSocket(); initAnchorAlarm();</script>
 </zk>

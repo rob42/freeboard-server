@@ -21,8 +21,9 @@
 <?script src="./js/tween-min.js"?>
 <?script src="./js/steelseries.js"?>
 <?script src="./js/websocket.js"?>
-<?script src="./js/autopilot.js"?>
+
 <zk xmlns:w="http://www.zkoss.org/2005/zk/client">
+<script type="text/javascript" src="./js/autopilot.js" />
 <window id="autopilotWindow" 
 		apply="nz.co.fortytwo.freeboard.zk.AutopilotViewModel"
 		title="Autopilot"   mode="overlapped" visible="false" minimizable="true">
@@ -68,5 +69,5 @@
 			
 		</vbox>
 	</window>
-	<script type="text/javascript" defer="true">initSocket(); initAutopilot(); </script>
+	<script type="text/javascript"  defer="true">initSocket(); initAutopilot(); </script>
 </zk>

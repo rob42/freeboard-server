@@ -21,13 +21,12 @@
 <?script src="./js/tween-min.js"?>
 <?script src="./js/steelseries.js"?>
 <?script src="./js/websocket.js"?>
-<?script src="./js/logg.js"?>
 <zk xmlns:w="http://www.zkoss.org/2005/zk/client">
-	
+<script type="text/javascript" src="./js/logg.js" />
 <window id="logg" 
 		apply="nz.co.fortytwo.freeboard.zk.LoggViewModel"
 		height="30px" width="100px" title="Log" 
-		 mode="overlapped" visible="true" minimizable="true" >
+		 mode="overlapped" visible="false" minimizable="true" >
 		 <style>.z-panel-body { overflow: visible; }"</style>
 		<style>
 			.z-panel-body, .z-window-modal-cnt-noborder, .z-window-highlighted-cnt-noborder, .z-window-embedded-cnt-noborder, .z-window-overlapped-cnt-noborder, .z-window-popup-cnt-noborder
@@ -76,6 +75,6 @@
 	</hlayout>
 </window>
 
-	<script type="text/javascript" defer="true">initSocket(); initLogg();resizeLog()</script>
+	<script type="text/javascript" defer="true">initSocket(); initLogg();</script>
 	
 </zk>

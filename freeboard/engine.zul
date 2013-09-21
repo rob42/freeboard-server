@@ -41,10 +41,8 @@
 <?script src="./js/layers.js" ?>
 <?script src="./js/tween-min.js"?>
 <?script src="./js/steelseries.js"?>
-<?script src="./js/engine.js"?>
-<?script src="./js/autopilot.js"?>
-<?script src="./js/anchor.js"?>
 <zk>
+	<script type="text/javascript" src="./js/engine.js" />
 	<style>
 		#map { height: 100%; border: 1px solid #888; }
 		.hboxRemoveWhiteStrips td.z-hbox-sep { width: 0; padding: 0;}
@@ -55,6 +53,12 @@
 		apply="nz.co.fortytwo.freeboard.zk.EngineViewModel" vflex="true"
 		style="margin-left:auto;">
 		<borderlayout>
+			<north>
+					<hbox pack="stretch" width="100%"
+					sclass="hboxRemoveWhiteStrips">
+					<include src="./simpleToolbar.zul" />
+				</hbox>
+			</north>
 			<center>
 
 				<div vflex="1" hflex="1"
@@ -92,45 +96,39 @@
 										height="200px" />
 								</html>
 								<html>
-									<canvas id="canvasTemp" width="200px"
-										height="200px" />
+									<canvas id="canvasTemp"
+										width="200px" height="200px" />
 								</html>
 								<html>
-									<canvas id="canvasTrim" width="200px"
-										height="200px" />
+									<canvas id="canvasTrim"
+										width="200px" height="200px" />
 								</html>
 								<html>
-									<canvas id="canvasVolts" width="200px"
-										height="200px" />
+									<canvas id="canvasVolts"
+										width="200px" height="200px" />
 								</html>
 								<html>
-									<canvas id="canvasFuel" width="200px"
-										height="200px" />
+									<canvas id="canvasFuel"
+										width="200px" height="200px" />
 								</html>
 							</hlayout>
 						</vlayout>
 
 						<script type="text/javascript" defer="true">
-							//initCharts(); posInit();
 							initEngine();
 						</script>
 					</div>
 
 				</div>
 			</center>
-			<south>
-				<hbox pack="stretch" width="100%"
-					sclass="hboxRemoveWhiteStrips">
-					<include src="./simpleToolbar.zul" />
-				</hbox>
-
-			</south>
+			
 		</borderlayout>
 	</window>
 
 
 	<popup id="helpPopup">
 		<html>
+
 
 
 			
@@ -143,6 +141,7 @@
 			direction</p> <p>Use the blue + and - buttons in top left to
 			zoom, or use mouse wheel</p> <p>The blue + tab at the top
 			right to manage chart visibility</p> ]]>
+			
 			
 			
 		

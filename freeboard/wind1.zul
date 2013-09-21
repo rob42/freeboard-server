@@ -21,8 +21,8 @@
 <?script src="./js/tween-min.js"?>
 <?script src="./js/steelseries.js"?>
 <?script src="./js/websocket.js"?>
-<?script src="./js/wind.js"?>
 <zk xmlns:w="http://www.zkoss.org/2005/zk/client">
+<script type="text/javascript" src="./js/wind.js" />
 <window id="wind" height="30px" width="100px" title="Wind"
 		 top="10px" left="50px"  mode="overlapped" visible="true" minimizable="true" >
 		 
@@ -74,5 +74,5 @@
 
 	</hlayout>
 	</window>
-	<script type="text/javascript" defer="true">initSocket();initWind(); resizeWind(-0.4)</script>
+	<script type="text/javascript"  defer="true">initSocket();initWind(); resizeWind(-0.4)</script>
 </zk>
