@@ -72,7 +72,12 @@ public class Util {
 		if(props==null){
 			//we do a quick override so we get nice sorted output :-)
 			props = new Properties() {
-			    @Override
+			    /**
+				 * 
+				 */
+				private static final long serialVersionUID = 1L;
+
+				@Override
 			    public Set<Object> keySet(){
 			        return Collections.unmodifiableSet(new TreeSet<Object>(super.keySet()));
 			    }
@@ -197,6 +202,7 @@ public class Util {
 	 * Attempt to set the system time using the GPS time
 	 * @param sen
 	 */
+	@SuppressWarnings("deprecation")
 	public static void checkTime(RMCSentence sen) {
 			if(timeSet)return;
 			try {

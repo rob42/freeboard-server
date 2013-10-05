@@ -21,7 +21,8 @@ package nz.co.fortytwo.freeboard.server;
 
 import java.util.Map;
 
-import org.eclipse.jetty.util.ajax.*;
+import org.eclipse.jetty.util.ajax.JSON;
+import org.eclipse.jetty.util.ajax.JSONPojoConvertor;
 
 public class FreeboardMessage  implements JSON.Convertible {
 		  String source;
@@ -30,6 +31,7 @@ public class FreeboardMessage  implements JSON.Convertible {
 			this.source=sourceName;
 			this.message=body;
 		}
+		@SuppressWarnings("rawtypes")
 		public void fromJSON(Map object){}
 		  
 		public void toJSON(JSON.Output out){

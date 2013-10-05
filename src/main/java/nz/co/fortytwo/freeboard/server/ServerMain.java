@@ -22,8 +22,6 @@ package nz.co.fortytwo.freeboard.server;
 import java.io.File;
 import java.util.Properties;
 
-import javax.servlet.ServletContext;
-
 import nz.co.fortytwo.freeboard.server.util.Constants;
 import nz.co.fortytwo.freeboard.server.util.Util;
 

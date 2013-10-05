@@ -19,18 +19,32 @@
 
 package nz.co.fortytwo.freeboard.server.util;
 
-import java.awt.*;
-import java.io.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.EventQueue;
+import java.io.File;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.PrintStream;
 
-import javax.swing.*;
-import javax.swing.border.Border;
+import javax.swing.BorderFactory;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.SwingUtilities;
 import javax.swing.filechooser.FileNameExtensionFilter;
-
-import org.zkoss.mesg.MessageConst;
 
 /** @see http://stackoverflow.com/questions/4053090 */
 public class ChartManager extends JFrame {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private static final String title = "Select a file";
 	private ProcessingPanel processingPanel = new ProcessingPanel();
 	private JLabel result = new JLabel(title, JLabel.CENTER);
@@ -54,6 +68,7 @@ public class ChartManager extends JFrame {
 		
 	}
 
+	@SuppressWarnings("serial")
 	class ChartFileChooser extends JFileChooser {
 
 		@Override
@@ -77,6 +92,7 @@ public class ChartManager extends JFrame {
 		}
 	}
 
+	@SuppressWarnings("serial")
 	class ProcessingPanel extends JPanel {
 
 		private JTextArea textArea = new JTextArea();

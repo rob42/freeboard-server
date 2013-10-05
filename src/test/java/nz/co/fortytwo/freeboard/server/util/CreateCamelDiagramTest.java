@@ -53,6 +53,7 @@ import org.junit.Test;
 
 public class CreateCamelDiagramTest {
 
+	@SuppressWarnings("unused")
 	private static final Logger LOG = Logger.getLogger(CreateCamelDiagramTest.class);
 
 	private static String DOT_FILE_NAME = "src/test/resources/routes.dot";

@@ -19,7 +19,7 @@
 
 package nz.co.fortytwo.freeboard.server.util;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.util.ArrayList;

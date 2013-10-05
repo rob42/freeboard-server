@@ -23,8 +23,6 @@ import java.util.Properties;
 import nz.co.fortytwo.freeboard.server.util.Constants;
 
 import org.apache.camel.Predicate;
-import org.apache.camel.Processor;
-import org.apache.camel.ShutdownRunningTask;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.websocket.WebsocketComponent;
 

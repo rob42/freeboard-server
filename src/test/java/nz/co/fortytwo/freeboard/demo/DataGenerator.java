@@ -70,6 +70,7 @@ public class DataGenerator implements Runnable{
 		
 	}
 
+	@SuppressWarnings("static-access")
 	public void run() {
 		while(true){
 			//We want to output a stream of random data

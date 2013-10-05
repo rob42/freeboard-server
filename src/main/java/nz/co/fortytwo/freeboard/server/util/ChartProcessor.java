@@ -193,7 +193,8 @@ public class ChartProcessor {
         logger.debug("Box:"+minx+","+miny+","+maxx+","+maxy);
 
         //we need TileSets, each tileset has an href, we need first and last for zooms
-        List<Attribute> list = document.selectNodes( "//TileSets/TileSet/@href" );
+        @SuppressWarnings("unchecked")
+		List<Attribute> list = document.selectNodes( "//TileSets/TileSet/@href" );
         int minZoom = 18;
         int maxZoom = 0;
         for (Attribute attribute : list){
@@ -241,6 +242,7 @@ public class ChartProcessor {
 	 * @throws IOException 
 	 * @throws InterruptedException 
 	 */
+	@SuppressWarnings("static-access")
 	private void executeGdal( File chartFile, String chartName, List<String> argList, List<String> tilesList ) throws IOException, InterruptedException {
 		File processDir = chartFile.getParentFile();
 		//mkdir $1

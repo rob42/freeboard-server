@@ -24,7 +24,6 @@ import gnu.io.NoSuchPortException;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -38,8 +37,6 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
 import org.apache.log4j.Logger;
-
-import purejavacomm.CommPortIdentifier;
 
 /**
  * A manager to monitor the USB tty ports. It dynamically adds/removes
@@ -56,6 +53,7 @@ public class SerialPortManager implements Runnable, Processor {
 
 	private boolean running = true;
 
+	@SuppressWarnings("static-access")
 	public void run() {
 		// not running, start now.
 		ProducerTemplate producer = CamelContextFactory.getInstance().createProducerTemplate();

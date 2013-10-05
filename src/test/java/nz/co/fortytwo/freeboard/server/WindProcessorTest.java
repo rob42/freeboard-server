@@ -21,7 +21,6 @@ package nz.co.fortytwo.freeboard.server;
 
 import static org.junit.Assert.assertEquals;
 
-import org.apache.camel.util.ExchangeHelper;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

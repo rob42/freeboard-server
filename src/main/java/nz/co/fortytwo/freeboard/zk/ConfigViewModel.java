@@ -19,45 +19,29 @@
 package nz.co.fortytwo.freeboard.zk;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Properties;
 import java.util.TreeMap;
-import java.util.TreeSet;
 
 import nz.co.fortytwo.freeboard.server.CamelContextFactory;
 import nz.co.fortytwo.freeboard.server.util.Constants;
 import nz.co.fortytwo.freeboard.server.util.Util;
 
-import org.alternativevision.gpx.GPXParser;
-import org.alternativevision.gpx.beans.GPX;
-import org.alternativevision.gpx.beans.Waypoint;
 import org.apache.camel.ProducerTemplate;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.log4j.Logger;
 import org.zkoss.zk.ui.Session;
-import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.MouseEvent;
 import org.zkoss.zk.ui.select.SelectorComposer;
 import org.zkoss.zk.ui.select.annotation.Listen;
 import org.zkoss.zk.ui.select.annotation.Wire;
 import org.zkoss.zk.ui.select.annotation.WireVariable;
-import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zul.Button;
-import org.zkoss.zul.Decimalbox;
 import org.zkoss.zul.Image;
-import org.zkoss.zul.Label;
-import org.zkoss.zul.ListModelArray;
 import org.zkoss.zul.ListModelList;
-import org.zkoss.zul.ListModelMap;
 import org.zkoss.zul.Listbox;
-import org.zkoss.zul.Listitem;
-import org.zkoss.zul.ListitemRenderer;
 import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Radio;
 import org.zkoss.zul.Radiogroup;
@@ -221,7 +205,6 @@ public class ConfigViewModel extends SelectorComposer<Window> {
 
 	private void setAllChartLayers() throws Exception {
 		File layersDir = new File(Util.getConfig(null).getProperty(Constants.MAPCACHE_RESOURCE));
-		int c=0;
 		for(File layerDir: layersDir.listFiles()){
 			//avoid files starting with dot (.)
 			if(layerDir.getName().startsWith("."))continue;
@@ -241,7 +224,7 @@ public class ConfigViewModel extends SelectorComposer<Window> {
 			}catch(Exception e){
 				logger.error(e.getMessage(),e);
 			}
-			c++;
+			
 		}
 		
 		allChartsModel=new ListModelList<String>(allListMap.keySet());

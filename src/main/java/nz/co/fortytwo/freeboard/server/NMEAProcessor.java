@@ -31,7 +31,6 @@ import net.sf.marineapi.nmea.event.SentenceListener;
 import net.sf.marineapi.nmea.parser.BVEParser;
 import net.sf.marineapi.nmea.parser.CruzproXDRParser;
 import net.sf.marineapi.nmea.parser.SentenceFactory;
-import net.sf.marineapi.nmea.parser.XDRValue;
 import net.sf.marineapi.nmea.sentence.BVESentence;
 import net.sf.marineapi.nmea.sentence.DepthSentence;
 import net.sf.marineapi.nmea.sentence.HeadingSentence;
@@ -41,7 +40,6 @@ import net.sf.marineapi.nmea.sentence.RMCSentence;
 import net.sf.marineapi.nmea.sentence.Sentence;
 import net.sf.marineapi.nmea.sentence.SentenceId;
 import net.sf.marineapi.nmea.sentence.VHWSentence;
-import net.sf.marineapi.nmea.sentence.XDRSentence;
 import net.sf.marineapi.nmea.util.CompassPoint;
 import net.sf.marineapi.nmea.util.Measurement;
 import nz.co.fortytwo.freeboard.server.util.Constants;
@@ -239,7 +237,7 @@ public class NMEAProcessor extends FreeboardProcessor implements Processor, Free
 						startLat = false;
 					}
 					previousLat = Util.movingAverage(ALPHA, previousLat, sen.getPosition().getLatitude());
-					if (sen.getPosition().getLatHemisphere() == CompassPoint.SOUTH) {
+					if (sen.getPosition().getLatitudeHemisphere() == CompassPoint.SOUTH) {
 						map.put(Constants.LAT, 0 - previousLat);
 					} else {
 						map.put(Constants.LAT, previousLat);
@@ -249,7 +247,7 @@ public class NMEAProcessor extends FreeboardProcessor implements Processor, Free
 						startLon = false;
 					}
 					previousLon = Util.movingAverage(ALPHA, previousLon, sen.getPosition().getLongitude());
-					if (sen.getPosition().getLonHemisphere() == CompassPoint.WEST) {
+					if (sen.getPosition().getLongitudeHemisphere() == CompassPoint.WEST) {
 						map.put(Constants.LON, 0 - previousLon);
 					} else {
 						map.put(Constants.LON, previousLon);

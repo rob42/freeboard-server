@@ -28,11 +28,9 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
@@ -152,7 +150,6 @@ public class NmeaTcpServer extends FreeboardProcessor implements Processor{
     private Event event = new Event(this);                                              // Shared event
     private PropertyChangeSupport propSupport = new PropertyChangeSupport(this);        // Properties
     
-    private NmeaTcpServer This = this;                                                      // To aid in synchronizing
     private ThreadFactory threadFactory;                                                // Optional thread factory
     private Thread ioThread;                                                            // Performs IO
     private ServerSocket tcpServer;                                                     // The server
@@ -360,6 +357,9 @@ public class NmeaTcpServer extends FreeboardProcessor implements Processor{
                 });
                 stop();
                 break;
+            case STARTING:
+            case STOPPED:
+            case STOPPING:
         }   // end switch
     }
     

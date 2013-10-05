@@ -60,12 +60,12 @@ public class SGImplify {
         
         int n = V.length;
         
-        int i, k, m, pv;
+        int i, k, pv;
         double tol2 = tol*tol;
         Tuple2f [] vt = new Tuple2f[n];
         int [] mk = new int[n];
         
-        Vector sV = new Vector();
+        Vector<Tuple2f> sV = new Vector<Tuple2f>();
         
         for (int b = 0; b < n; b++){
             mk[b] = 0;
@@ -90,7 +90,7 @@ public class SGImplify {
         simplifyDP2D(tol, vt, 0, k-1, mk);
         
         //copy marked vertices to output
-        for (i=m=0; i<k; i++) {
+        for (i=0; i<k; i++) {
             if (mk[i] == 1)
                 sV.add(vt[i]);
         }

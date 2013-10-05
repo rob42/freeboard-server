@@ -75,7 +75,7 @@ package nz.co.fortytwo.freeboard.server.util;
 	
 	  private static double pi = 3.14159265358979;
 	  private static final double a = 6378.16;	/* major radius (km) IAU66 ellipsoid */
-	  private static final double f = 1.0 / 298.25;	/* inverse flattening IAU66 ellipsoid */
+	  //private static final double f = 1.0 / 298.25;	/* inverse flattening IAU66 ellipsoid */
 	  private static final double b = 6378.16 * (1.0 -1.0 / 298.25 );
 		/* minor radius b=a*(1-f) */
 	  private static final double r_0 = 6371.2;	/* "mean radius" for spherical harmonic expansion */

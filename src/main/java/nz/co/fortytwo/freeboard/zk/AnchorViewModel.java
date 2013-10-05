@@ -24,7 +24,6 @@ import nz.co.fortytwo.freeboard.server.util.Util;
 
 import org.apache.camel.ProducerTemplate;
 import org.apache.log4j.Logger;
-import org.zkoss.bind.annotation.AfterCompose;
 import org.zkoss.zk.ui.Session;
 import org.zkoss.zk.ui.event.CheckEvent;
 import org.zkoss.zk.ui.event.Event;
@@ -34,7 +33,6 @@ import org.zkoss.zk.ui.select.annotation.Listen;
 import org.zkoss.zk.ui.select.annotation.Wire;
 import org.zkoss.zk.ui.select.annotation.WireVariable;
 import org.zkoss.zul.Button;
-import org.zkoss.zul.Label;
 import org.zkoss.zul.Toolbarbutton;
 import org.zkoss.zul.Window;
 

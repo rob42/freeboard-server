@@ -22,7 +22,6 @@ package nz.co.fortytwo.freeboard.server.util;
 
 
 import java.io.InputStream;
-import java.util.Iterator;
 
 import javax.swing.JTextArea;
 import javax.swing.SwingUtilities;

@@ -118,6 +118,7 @@ public class ZipUtils {
 	public static void unzip(File targetDir,File zipFile) throws ZipException, IOException{
 		ZipFile zip = new ZipFile(zipFile);
 		
+		@SuppressWarnings("unchecked")
 		Enumeration<ZipEntry> z = (Enumeration<ZipEntry>) zip.entries();
 		while(z.hasMoreElements()){
 			ZipEntry entry = z.nextElement();

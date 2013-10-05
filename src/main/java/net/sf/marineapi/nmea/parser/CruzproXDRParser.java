@@ -137,7 +137,6 @@ public class CruzproXDRParser extends SentenceParser implements XDRSentence {
 	}
 
 	public List<Measurement> getMeasurements() {
-		// TODO Auto-generated method stub
 		return measurements;
 	}
 
@@ -151,6 +150,13 @@ public class CruzproXDRParser extends SentenceParser implements XDRSentence {
 	 */
 	public void setMeasurements(List<Measurement> measurements) {
 		this.measurements=measurements;
+		
+	}
+
+	public void addMeasurement(Measurement... m) {
+		for(Measurement mt : m){
+			measurements.add(mt);
+		}
 		
 	}
 
