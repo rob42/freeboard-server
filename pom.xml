@@ -10,8 +10,8 @@
 	<description>Webserver and data server for FreeBoard</description>
 	<properties>
 		<!-- <bundle.name>nsb-${project.version}</bundle.name> -->
-		<jetty.version>7.5.4.v20111024</jetty.version>
-		<camel.version>2.10.1</camel.version>
+		<jetty.version>7.6.13.v20130916</jetty.version>
+		<camel.version>2.12.1</camel.version>
 		<zk.version>6.5.2</zk.version>
 		<jna.version>3.6.0-SNAPSHOT</jna.version>
 	</properties>
