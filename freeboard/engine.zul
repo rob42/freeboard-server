@@ -16,6 +16,7 @@
 	You should have received a copy of the GNU General Public License
 	along with FreeBoard.  If not, see <http://www.gnu.org/licenses/>.
 -->
+<?page viewport="width=device-width, initial-scale=1.0, user-scalable=yes"?>
 <?page title="Freeboard"?>
 <!-- leaflet -->
 <?link rel="stylesheet" type="text/css" href="./js/leaflet.css"?>
@@ -53,12 +54,12 @@
 		apply="nz.co.fortytwo.freeboard.zk.EngineViewModel" vflex="true"
 		style="margin-left:auto;">
 		<borderlayout>
-			<north>
-					<hbox pack="stretch" width="100%"
-					sclass="hboxRemoveWhiteStrips">
-					<include src="./simpleToolbar.zul" />
-				</hbox>
-			</north>
+			<west border="none">
+				<vbox  height="100%">
+					<include src="./mainToolbar.zul" />
+				</vbox>
+
+			</west>
 			<center>
 
 				<div vflex="1" hflex="1"

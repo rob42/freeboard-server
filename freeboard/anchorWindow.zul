@@ -16,6 +16,7 @@
   You should have received a copy of the GNU General Public License
   along with FreeBoard.  If not, see <http://www.gnu.org/licenses/>.
  -->
+<?page viewport="width=device-width, initial-scale=1.0, user-scalable=yes"?>
 <?page title="Wind" contentType="text/html;charset=UTF-8"?>
 <?script src="./js/jquery-1.8.2.min.js"?>
 <?script src="./js/tween-min.js"?>
@@ -38,17 +39,17 @@
 		<vbox align="end">
 			
 			<hbox>
-				<button id="anchorRadiusDown10" tooltiptext="Shrink by 10M"
-					image="./js/img/control_port10_blue.png" />
-				<button id="anchorRadiusDown1" tooltiptext="Shrink by 1M"
-					image="./js/img/control_port_blue.png" />
-				<toolbarbutton id="anchorAlarmOnOff" tooltiptext="Start/stop the anchor watch"
+				<toolbarbutton id="anchorRadiusDown10" tooltiptext="Shrink by 10M" 
+					image="img/fast-back.png" />
+				<toolbarbutton id="anchorRadiusDown1" tooltiptext="Shrink by 1M" 
+					image="img/backward.png" />
+				<toolbarbutton id="anchorAlarmOnOff" tooltiptext="Start/stop the anchor watch" 
 					image="./js/img/tick.png" label="Start" mode="toggle"/>
 				
-				<button id="anchorRadiusUp1" tooltiptext="Expand by 1M"
-					image="./js/img/control_stbd_blue.png" />
-				<button id="anchorRadiusUp10" tooltiptext="Expand by 10M"
-					image="./js/img/control_stbd10_blue.png" />
+				<toolbarbutton id="anchorRadiusUp1" tooltiptext="Expand by 1M" 
+					image="img/forward.png" />
+				<toolbarbutton id="anchorRadiusUp10" tooltiptext="Expand by 10M" 
+					image="img/fast-forward.png" />
 			</hbox>
 			<hbox align="center">
 				<label value="Alarm Radius"/>

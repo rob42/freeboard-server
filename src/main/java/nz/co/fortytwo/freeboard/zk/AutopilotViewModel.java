@@ -100,7 +100,7 @@ public class AutopilotViewModel extends SelectorComposer<Window>{
 				logger.debug("  autopilot location set to default "+autopilotWindow.getPosition());
 			}
 		apCompassOnOff.setChecked(APS.equals(Constants.AUTOPILOT_COMPASS)?true:false);
-		apWindOnOff.setChecked(APS.equals(Constants.AUTOPILOT_COMPASS)?true:false);
+		apWindOnOff.setChecked(APS.equals(Constants.AUTOPILOT_WIND)?true:false);
 		setAutopilotState();
 	}
 	

@@ -16,6 +16,7 @@
 	You should have received a copy of the GNU General Public License
 	along with FreeBoard.  If not, see <http://www.gnu.org/licenses/>.
 -->
+<?page viewport="width=device-width, initial-scale=1.0, user-scalable=yes"?>
 <?page title="autopilot" contentType="text/html;charset=UTF-8"?>
 <?script src="./js/jquery-1.8.2.min.js"?>
 <?script src="./js/tween-min.js"?>
@@ -29,25 +30,21 @@
 	</style>
 	<div id="mainToolBar">
 	<!-- main menubar, left side -->
-	<menubar id="menubar" autodrop="true"  hflex="1"
-		style="float:left; height: 20px;">
-		<menuitem id="help" label="Help" popup="helpPopup" />
-		<menuitem label="Home" href='./index.zul' />
-		<menu label="Instruments">
-			<menupopup>
-				<menuitem label="Engine" href='./engine.zul' />
-				<menuitem label="Overlay Wind" onClick='mainToolBar.query("include #wind").setVisible(!mainToolBar.query("include #wind").isVisible());' />
-				<menuitem label="Overlay Log" onClick='mainToolBar.query("include #logg").setVisible(!mainToolBar.query("include #logg").isVisible());' />
-				<menuitem label="Anchor Alarm"
+	<toolbar id="menubar"    orient="vertical"
+		style="float:left; background:none;border:0 none;" >
+		<toolbarbutton id="help" image="img/help.png" tooltiptext="Help" popup="helpPopup" />
+		<toolbarbutton image="img/back43x38.png" tooltiptext="Home" href='./index.zul' />
+				<toolbarbutton mold="toggle" image="img/engine48x36.png" tooltiptext="Engine" href='./engine.zul' />
+				<toolbarbutton mold="toggle"  image="img/anemometer46x38.png" tooltiptext="Wind"
+				onClick='mainToolBar.query("include #wind").setVisible(!mainToolBar.query("include #wind").isVisible());' />
+				<toolbarbutton image="img/log43x38.png" tooltiptext="Log" onClick='mainToolBar.query("include #logg").setVisible(!mainToolBar.query("include #logg").isVisible());' />
+				<toolbarbutton image="img/anchor44x38.png" tooltiptext="Anchor"
 					onClick='mainToolBar.query("include #anchorWindow").setVisible(!mainToolBar.query("include #anchorWindow").isVisible());' />
-			</menupopup>
-		</menu>
-
-		<menuitem label="Autopilot"
+		<toolbarbutton image="img/android43x38.png" tooltiptext="Autopilot"
 				onClick='mainToolBar.query("include #autopilotWindow").setVisible(!mainToolBar.query("include #autopilotWindow").isVisible());' />
-		<menuitem label="Config"
+		<toolbarbutton tooltiptext="Config" image="img/config43x38.png"
 				onClick='mainToolBar.query("include #configWindow").setVisible(!mainToolBar.query("include #configWindow").isVisible());' />
-	</menubar>
+	</toolbar>
 	<!-- wind -->
 	<include  src="./wind2.zul"  />
 	<!-- logg -->	

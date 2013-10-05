@@ -18,18 +18,13 @@
  -->
  <!-- toolbar included on chartplotter pages, right-side -->
 <toolbar xmlns:w="http://www.zkoss.org/2005/zk/client"
-	orient="horizontal" align="end" hflex="1"
-	style="float:right;height: 20px;">
-	<!-- ship pos -->
-	<label value="Boat: " style="padding-right:0px; padding-left:10px;" />
-	<label id="posLat" value=""
-		style="padding-right:0px; padding-left:10px;" />
-	<label id="posLon" value=""
-		style="padding-right:0px; padding-left:10px;" />
-	<separator visible="true" orient="vertical" bar="true" />
+	orient="vertical"
+		style="float:left; background:none;border:0 none;"
+	>
+	
 	<!-- menu/centre buttons -->
-	<toolbarbutton label="Find boat" w:onClick="centerBoat()" />
-	<toolbarbutton id="followBoatButton" label="Follow Boat" w:onClick="followBoatPosition()" mode="toggle"/>
+	<toolbarbutton tooltiptext="Find boat" image="img/boat43x38.png" w:onClick="centerBoat()" />
+	<toolbarbutton id="followBoatButton" tooltiptext="Follow Boat" image="img/crosshair43x38.png" w:onClick="followBoatPosition()" mode="toggle"/>
 
 
 </toolbar>

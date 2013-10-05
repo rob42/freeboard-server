@@ -16,6 +16,7 @@
   You should have received a copy of the GNU General Public License
   along with FreeBoard.  If not, see <http://www.gnu.org/licenses/>.
  -->
+<?page viewport="width=device-width, initial-scale=1.0, user-scalable=yes"?>
 <?page title="Wind" contentType="text/html;charset=UTF-8"?>
 <?script src="./js/jquery-1.8.2.min.js"?>
 <?script src="./js/tween-min.js"?>
@@ -37,16 +38,16 @@
 		<vbox>
 			
 			<hbox>
-				<button id="apPort10" tooltiptext="Turn to port 10 deg"
-					image="./js/img/control_port10_blue.png" />
-				<button id="apPort1" tooltiptext="Turn to port 1 deg"
-					image="./js/img/control_port_blue.png" />
-				<toolbarbutton  id="apOnOff" tooltiptext="Start/stop the autopilot"
+				<toolbarbutton id="apPort10" tooltiptext="Turn to port 10 deg" 
+					image="img/fast-back.png" />
+				<toolbarbutton id="apPort1" tooltiptext="Turn to port 1 deg" 
+					image="img/backward.png" />
+				<toolbarbutton  id="apOnOff" tooltiptext="Start/stop the autopilot" 
 					image="./js/img/tick.png" label="Start" mode="toggle"/>
-				<button id="apStbd1" tooltiptext="Turn to starboard 1 deg"
-					image="./js/img/control_stbd_blue.png" />
-				<button id="apStbd10" tooltiptext="Turn to starboard 10 deg"
-					image="./js/img/control_stbd10_blue.png" />
+				<toolbarbutton id="apStbd1" tooltiptext="Turn to starboard 1 deg" 
+					image="img/forward.png" />
+				<toolbarbutton id="apStbd10" tooltiptext="Turn to starboard 10 deg" 
+					image="img/fast-forward.png" />
 			</hbox>
 			<hbox>
 				<html style="overflow: visible">
@@ -57,12 +58,12 @@
 				</html>
 				
 					<vbox>
-						<toolbarbutton id="apCompassOnOff" mode="toggle"
+						<toolbarbutton id="apCompassOnOff" mode="toggle" 
 							tooltiptext="Follow compass, toggle on or off" checked="true"
-							label="Follow compass" />
-						<toolbarbutton id="apWindOnOff"
-							tooltiptext="Follow wind, toggle on or off"
-							mode="toggle" label="Follow Wind" />
+							image="img/compass32x32.png" label="Follow Compass"/>
+						<toolbarbutton id="apWindOnOff" 
+							tooltiptext="Follow wind, toggle on or off" checked="true"
+							mode="toggle" image="img/anemometer46x38.png" label="Follow Wind" />
 					</vbox>
 				
 			</hbox>

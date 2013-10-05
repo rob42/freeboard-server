@@ -16,6 +16,7 @@
 	You should have received a copy of the GNU General Public License
 	along with FreeBoard.  If not, see <http://www.gnu.org/licenses/>.
 -->
+<?page viewport="width=device-width, initial-scale=1.0, user-scalable=yes"?>
 <?page title="Freeboard" contentType="text/html;charset=UTF-8"?>
 <?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c" ?>
 <?script src="./js/jquery-1.8.2.min.js"?>
