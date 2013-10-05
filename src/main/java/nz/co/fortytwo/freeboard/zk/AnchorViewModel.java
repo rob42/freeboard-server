@@ -126,12 +126,12 @@ public class AnchorViewModel extends SelectorComposer<Window>{
 	
 	private void setAnchorAlarmState() {
 		 if(anchorAlarmOn){
-		    	anchorAlarmOnOff.setImage("./js/img/stop.png");
-		    	anchorAlarmOnOff.setLabel("Stop");
+		    	anchorAlarmOnOff.setImage("img/stop43x38.png");
+		    	
 		    	producer.sendBody(Constants.UID+":"+Constants.MEGA+","+Constants.ANCHOR_ALARM_STATE_CMD+":1,");
 		    }else{
-		    	anchorAlarmOnOff.setImage("./js/img/tick.png");
-		    	anchorAlarmOnOff.setLabel("Start");
+		    	anchorAlarmOnOff.setImage("img/tick43x38.png");
+		    	
 		    	producer.sendBody(Constants.UID+":"+Constants.MEGA+","+Constants.ANCHOR_ALARM_STATE_CMD+":0,");
 		    }
 	}

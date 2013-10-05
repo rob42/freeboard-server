@@ -44,7 +44,7 @@
 				<toolbarbutton id="anchorRadiusDown1" tooltiptext="Shrink by 1M" 
 					image="img/backward.png" />
 				<toolbarbutton id="anchorAlarmOnOff" tooltiptext="Start/stop the anchor watch" 
-					image="./js/img/tick.png" label="Start" mode="toggle"/>
+					image="img/tick43x38.png" mode="toggle"/>
 				
 				<toolbarbutton id="anchorRadiusUp1" tooltiptext="Expand by 1M" 
 					image="img/forward.png" />

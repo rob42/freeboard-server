@@ -141,12 +141,12 @@ public class AutopilotViewModel extends SelectorComposer<Window>{
 	
 	private void setAutopilotState() {
 		 if(autopilotOn){
-		    	apOnOff.setImage("./js/img/stop.png");
-		    	apOnOff.setLabel("Stop");
+		    	apOnOff.setImage("img/stop43x38.png");
+		    	
 		    	producer.sendBody(Constants.UID+":"+Constants.MEGA+","+Constants.AUTOPILOT_STATE_CMD+":1,");
 		    }else{
-		    	apOnOff.setImage("./js/img/tick.png");
-		    	apOnOff.setLabel("Start");
+		    	apOnOff.setImage("img/tick43x38.png");
+		    	
 		    	producer.sendBody(Constants.UID+":"+Constants.MEGA+","+Constants.AUTOPILOT_STATE_CMD+":0,");
 		    }
 	}

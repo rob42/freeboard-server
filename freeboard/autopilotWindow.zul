@@ -43,7 +43,7 @@
 				<toolbarbutton id="apPort1" tooltiptext="Turn to port 1 deg" 
 					image="img/backward.png" />
 				<toolbarbutton  id="apOnOff" tooltiptext="Start/stop the autopilot" 
-					image="./js/img/tick.png" label="Start" mode="toggle"/>
+					image="img/tick43x38.png" mode="toggle"/>
 				<toolbarbutton id="apStbd1" tooltiptext="Turn to starboard 1 deg" 
 					image="img/forward.png" />
 				<toolbarbutton id="apStbd10" tooltiptext="Turn to starboard 10 deg" 
