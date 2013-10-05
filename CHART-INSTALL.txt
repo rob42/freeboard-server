@@ -11,7 +11,7 @@ NOTE: I use linux, a Windows translation would be appreciated. I assume the free
     Seems to be a difficult one :-( 
   I dont have a windows PC to test on but this link seems to be the best starting point
     http://trac.osgeo.org/osgeo4w/wiki
-  You will probably need to mess with installing it, and email me for help with the - sorry.
+  You will probably need to mess with installing it, and email me for help - sorry.
  
   Checkout the freeboard-server project to your PC into a suitable directory (eg ~/git/freeboard-server). (See github for how) 
   We will call this directory FREEBOARD_SERVER for this discussion.

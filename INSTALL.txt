@@ -27,14 +27,18 @@ Hardware:
              	freeboard/  
 		 		install.sh  
 		 		logs/  
-		 		mapcache/  - you create this when you import charts, I currently only have NZ charts, I will import a world map shortly, so you can at least see something basic.
+		 		mapcache/  - you create this when you import charts, the mapcache dir has a world shoreline map so at least you see something basic. But its a very large directory!
 		 		start.sh  
-		 		stop.sh  
-		 		# rename the freeboard-server*with-dependancies.jar!
+
+		 		# rename the current freeboard-server*with-dependancies.jar in the /target directory!
 		 		target/freeboard-server.jar  
 		
 		cd /home/pi/freeboard
 		./start.sh
+		
+		There is an auto-start shell script freeboard.init.d.sh. This can be used to make freeboard autostart on bootup. See http://www.debian-administration.org/articles/28
+		
+		To stop freeboard, 'killall java', or reboot.
 
 	Arduino - Mega 1260 - load as per  freeboardPLC project
 		connect via USB
@@ -89,6 +93,7 @@ Setup files:
   
   #use YOUR boats name here!
   # Note: the a.motu, b.motu, etc entries are used by the Leaflet mapping lib to speed up map loading, you only need them if you are using the chartplotter.
+  # See DNS_NOTES.txt too.
   192.168.0.1     motu a.motu b.motu c.motu d.motu
   224.0.0.1       all-systems.mcast.net
 
