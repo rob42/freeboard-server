@@ -42,10 +42,8 @@
 
 					<button label="Laptop" mold="trendy" width="100px" style="padding:10px; font-size:14px; font-weight: bold;"
 						height="75px" href="floating.zul" />
-					<button label="Tablet" mold="trendy" width="100px" style="padding:10px; font-size:14px; font-weight: bold;"
-						height="75px"/>
 					<button label="Cellphone" mold="trendy" width="100px" style="padding:10px; font-size:14px; font-weight: bold;"
-						height="75px"/>
+						height="75px" disabled="true" tooltiptext="Will provide special small screens for cellphones one day.."/>
 				</groupbox>
 
 			</hlayout>

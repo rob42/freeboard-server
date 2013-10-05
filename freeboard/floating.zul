@@ -57,7 +57,7 @@
 	<window id="mainWindow"
 		xmlns:w="http://www.zkoss.org/2005/zk/client"
 		apply="nz.co.fortytwo.freeboard.zk.ChartplotterViewModel" vflex="true"
-		style="margin-left:auto;">
+		>
 		<borderlayout>
 			<west border="none">
 				<vbox  height="100%">

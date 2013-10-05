@@ -34,6 +34,7 @@
 		style="float:left; background:none;border:0 none;" >
 		<toolbarbutton id="help" image="img/help.png" tooltiptext="Help" popup="helpPopup" />
 		<toolbarbutton image="img/back43x38.png" tooltiptext="Home" href='./index.zul' />
+		<toolbarbutton image="img/chart43x38.png" tooltiptext="Chartplotter" href='./floating.zul' />
 				<toolbarbutton mold="toggle" image="img/engine48x36.png" tooltiptext="Engine" href='./engine.zul' />
 				<toolbarbutton mold="toggle"  image="img/anemometer46x38.png" tooltiptext="Wind"
 				onClick='mainToolBar.query("include #wind").setVisible(!mainToolBar.query("include #wind").isVisible());' />
