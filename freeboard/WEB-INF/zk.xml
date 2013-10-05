@@ -3,7 +3,7 @@
 <zk>
 	<!-- [Optional] Uncomment if you want to defines the application's name 
 		<preference> <name>org.zkoss.zk.ui.WebApp.name</name> <value>zk</value> </preference> -->
-		
+
 	<device-config>
 		<device-type>ajax</device-type>
 		<device-class>org.zkoss.zk.device.AjaxDevice</device-class>
@@ -12,4 +12,17 @@
 		<timeout-uri>/timeout.zul</timeout-uri><!-- An empty URL can cause the 
 			browser to reload the same URL -->
 	</device-config>
+
+	<library-property>
+		<name>org.zkoss.zul.theme.fontSizeM</name>
+		<value>16px</value>
+	</library-property>
+	<library-property>
+		<name>org.zkoss.zul.theme.fontSizeS</name>
+		<value>14px</value>
+	</library-property>
+	<library-property>
+		<name>org.zkoss.zul.theme.fontSizeXS</name>
+		<value>12px</value>
+	</library-property>
 </zk>

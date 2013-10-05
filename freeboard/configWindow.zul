@@ -29,7 +29,7 @@
 
 
 		<tabbox>
-			<tabs>
+			<tabs >
 				<tab label="Config" />
 				<tab label="Charts" />
 			</tabs>
@@ -53,8 +53,8 @@
 							</row>
 							<row>
 								<hbox>
-									<button id="cfgSave" label="Save" />
-									<button id="cfgCancel"
+									<button id="cfgSave" label="Save" height="38px" />
+									<button id="cfgCancel" height="38px" 
 										label="Cancel" />
 								</hbox>
 
