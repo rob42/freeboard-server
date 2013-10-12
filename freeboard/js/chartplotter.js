@@ -100,7 +100,9 @@ function initCharts() {
 		}
 	});
 	map.addControl(drawControl);
-
+	
+	L.control.mousePosition({position: 'bottomright'}).addTo(map);
+	
 	// ship
 	var myIcon = L.icon({
 		iconUrl : './js/img/ship_red.png',

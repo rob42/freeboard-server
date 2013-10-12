@@ -53,7 +53,7 @@
 					<button label="Engine" mold="trendy" width="100px"
 						height="75px" href="engine.zul" style="padding:10px; font-size:14px; font-weight: bold;"/>
 					<button label="Wind + Log" mold="trendy" width="100px" style="padding:10px; font-size:14px; font-weight: bold;"
-						height="75px" href="mainToolbar.zul" />
+						height="75px" href="windLogg.zul" />
 				</groupbox>
 
 			</hlayout>

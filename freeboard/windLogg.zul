@@ -22,7 +22,6 @@
 <?link rel="stylesheet" type="text/css" href="./js/leaflet.css"?>
 <?link rel="stylesheet" type="text/css" href="./js/leaflet.measure.css" ?>
 <?link rel="stylesheet" type="text/css" href="./js/leaflet.draw.css" ?>
-<?link rel="stylesheet" type="text/css" href="./js/L.Control.MousePosition.css" ?>
 <?script src="./js/jquery-1.8.2.min.js"?>
 <?script src="./js/org/cometd.js"?>
 <?script src="./js/org/cometd/ReloadExtension.js"?>
@@ -39,32 +38,25 @@
 <?script src="./js/leaflet.measure.js" ?>
 <?script src="./js/Marker.Rotate.js" ?>
 <?script src="./js/GPX.js" ?>
-<?script src="./js/L.Control.MousePosition.js" ?>
 
 <?script src="./js/layers.js" ?>
-<?script src="./js/chartplotter.js" ?>
 <?script src="./js/tween-min.js"?>
 <?script src="./js/steelseries.js"?>
-<?script src="./js/websocket.js"?>
-
 <zk>
+	<script type="text/javascript" src="./js/windLogg.js" />
 	<style>
 		#map { height: 100%; border: 1px solid #888; }
 		.hboxRemoveWhiteStrips td.z-hbox-sep { width: 0; padding: 0;}
 	</style>
-	<script type="text/javascript">
-		function setGotoWpt(toLat, toLon, fromLat,fromLon){
-		setGotoDestination(toLat,toLon,fromLat,fromLon); }
-	</script>
+
 	<window id="mainWindow"
 		xmlns:w="http://www.zkoss.org/2005/zk/client"
-		apply="nz.co.fortytwo.freeboard.zk.ChartplotterViewModel" vflex="true"
-		>
+		apply="nz.co.fortytwo.freeboard.zk.EngineViewModel" vflex="true"
+		style="margin-left:auto;">
 		<borderlayout>
 			<west border="none">
-				<vbox  height="100%">
-					<include src="./mainToolbar.zul" />
-					<include src="./cpToolbar.zul" />
+				<vbox height="100%">
+					<include src="./simpleToolbar.zul" />
 				</vbox>
 
 			</west>
@@ -72,80 +64,91 @@
 
 				<div vflex="1" hflex="1"
 					style="background-color: white;">
-					<label id="firstLat" value="0.0" visible="false" />
-					<label id="firstLon" value="0.0" visible="false" />
-					<label id="firstZoom" value="0.0" visible="false" />
 					<label id="layerVisibility" value=""
 						visible="false" />
 
 					<div vflex="1" hflex="1">
-						<html>
-							<div id="map"></div>
-						</html>
+						<hlayout style="overflow: visible">
+							<vbox hflex="4" align="center"
+								style="overflow: visible">
+
+								<html style="overflow: visible">
+									<canvas id="canvasWindApp"
+										style="overflow: visible" width="${mainWindow$composer.size}"
+										height="${mainWindow$composer.size}">
+									</canvas>
+								</html>
+								<html>
+									<canvas id="canvasWindTrue"
+										width="${mainWindow$composer.size*.75}"
+										height="${mainWindow$composer.size*.75}">
+									</canvas>
+								</html>
+							</vbox>
+							<vbox hflex="4" align="center"
+								style="overflow: visible">
+								<html style="overflow: visible">
+									<canvas id="canvasWindDirApp"
+										style="overflow: visible" width="${mainWindow$composer.size}"
+										height="${mainWindow$composer.size}">
+									</canvas>
+								</html>
+								<html
+									style="margin-left:auto;margin-right:auto;" width="100%">
+									<canvas id="canvasWindDirTrue"
+										width="${mainWindow$composer.size*.75}"
+										height="${mainWindow$composer.size*.75}">
+										No canvas in your
+										browser...sorry...
+									</canvas>
+								</html>
+							</vbox>
+							<vbox hflex="4" style="overflow: visible"
+								align="center">
+								<html>
+									<canvas id="canvasLog"
+										width="${mainWindow$composer.size}"
+										height="${mainWindow$composer.size}" />
+								</html>
+
+								<html>
+									<canvas id="canvasLon" width="245px"
+										height="55px" />
+								</html>
+								<html>
+									<canvas id="canvasLat" width="245px"
+										height="55px" />
+								</html>
+
+
+							</vbox>
+
+
+
+						</hlayout>
 
 						<script type="text/javascript" defer="true">
-							initCharts(); posInit();
+							initSocket(); initWind();
 						</script>
 					</div>
 
 				</div>
 			</center>
-			<south>
-				<!-- ship pos -->
-				<hbox>
-					<label>Ships Position: </label>
-					<label id="posLat" value=""
-						style="padding-right:0px; padding-left:10px;" />
-					<label id="posLon" value=""
-						style="padding-right:0px; padding-left:10px;" />
-				</hbox>
-			</south>
+
 		</borderlayout>
 	</window>
-	<window id="wptWindow" title="Waypoint"
-		apply="nz.co.fortytwo.freeboard.zk.WaypointViewModel" vflex="true"
-		mode="modal" minimizable="true" visible="false" width="400px">
-		<label id="curLat" value="0.0" visible="false" />
-		<label id="curLon" value="0.0" visible="false" />
-		<grid hflex="1">
-			<columns>
-				<column hflex="min"></column>
-				<column hflex="1"></column>
-			</columns>
-			<rows>
-				<row>
-					<label>Latitude</label>
-					<decimalbox id="latBox" hflex="1" readonly="true"></decimalbox>
-				</row>
-				<row>
-					<label>Longitude</label>
-					<decimalbox id="lonBox" hflex="1" readonly="true"></decimalbox>
-				</row>
-				<row>
-					<label>Name</label>
-					<textbox id="nameBox" hflex="1"></textbox>
-				</row>
-				<row>
-					<label>Description</label>
-					<textbox id="descBox" rows="4" hflex="1"></textbox>
-				</row>
-				<row>
-					<label id="editMark" value="false" visible="false" />
-					<hbox>
-						<button id="gotoWpt" label="Go To" />
-						<button id="gotoCancel" label="Cancel Go To" />
-						<button id="ok" label="Save" />
-						<button id="cancel" label="Cancel" />
-						<button id="delete" label="Delete" />
-					</hbox>
-				</row>
-			</rows>
-		</grid>
 
-	</window>
 
 	<popup id="helpPopup">
 		<html>
+
+
+
+
+
+
+
+
 
 
 			
@@ -158,6 +161,14 @@
 			direction</p> <p>Use the blue + and - buttons in top left to
 			zoom, or use mouse wheel</p> <p>The blue + tab at the top
 			right to manage chart visibility</p> ]]>
+			
+			
+			
+			
+			
+			
+			
+			
 			
 			
 		
