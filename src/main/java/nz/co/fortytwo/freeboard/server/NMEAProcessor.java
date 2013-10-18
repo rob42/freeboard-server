@@ -237,8 +237,10 @@ public class NMEAProcessor extends FreeboardProcessor implements Processor, Free
 						startLat = false;
 					}
 					previousLat = Util.movingAverage(ALPHA, previousLat, sen.getPosition().getLatitude());
+					logger.debug("lat position:"+sen.getPosition().getLatitude()+", hemi="+sen.getPosition().getLatitudeHemisphere());
 					if (sen.getPosition().getLatitudeHemisphere() == CompassPoint.SOUTH) {
-						map.put(Constants.LAT, 0 - previousLat);
+						map.put(Constants.LAT, previousLat);
+						//logger.debug("map.put="+(previousLat));
 					} else {
 						map.put(Constants.LAT, previousLat);
 					}
