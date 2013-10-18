@@ -46,7 +46,7 @@ function initCharts() {
 	var firstLat = zk.Widget.$("$firstLat").getValue();
 	var firstLon = zk.Widget.$("$firstLon").getValue();
 	var firstZoom = zk.Widget.$("$firstZoom").getValue();
-	console.log(firstLat+","+firstLon+","+firstZoom);
+	//console.log(firstLat+","+firstLon+","+firstZoom);
 	map = L.map('map', {
 		//attributionControl: false,
 	}).setView(new L.LatLng(firstLat,firstLon),firstZoom,true);
@@ -219,7 +219,7 @@ function setLayerVisibility(){
  * @param spd
  */
 function setPosition(llat, llon, brng, spd) {
-
+	//console.log("Chartplotter:setPos:to lat:"+llat);
 	if (llat > 0) {
 		eLat.setValue(llat.toFixed(5) + ' N');
 	} else {
@@ -232,6 +232,7 @@ function setPosition(llat, llon, brng, spd) {
 		eLon.setValue(llon.toFixed(5) + ' W');
 	}
 	if(map.hasLayer(shipMarker)){
+		//console.log("Chartplotter:moveBoat to "+llat+","+llon);
 		shipMarker.setLatLng(new L.LatLng(llat, llon));
 		shipMarker.setIconAngle(brng);
 	}
@@ -376,7 +377,7 @@ function refreshWaypoints() {
 //
 function ChartPlotter() {
 	this.onmessage = function(mArray) {
-
+		//console.log("Chartplotter:"+mArray);
 		var setPos = false;
 		jQuery.each(mArray, function(i, data) {
 
@@ -386,6 +387,7 @@ function ChartPlotter() {
 
 			if (data && data.indexOf('LAT') >= 0) {
 				var c = parseFloat(data.substring(4));
+				//console.log("Chartplotter:LAT="+c);
 				if ($.isNumeric(c)) {
 					lat = c;
 					setPos = true;
@@ -447,6 +449,7 @@ function ChartPlotter() {
 			data = null;
 		});
 		if (setPos) {
+			//console.log("Chartplotter:setPos");
 			// avoid the 0,0 point
 			if (lat < 0.001 && lat > -0.001 && lon < 0.001 && lon > -0.001)
 				return;
