@@ -52,6 +52,13 @@ public class InputFilterProcessor extends FreeboardProcessor implements Processo
 				exchange.getIn().setBody(stringToHashMap(msg));
 				return;
 			}
+			
+			if(msg.startsWith("!AIVDM")){
+				//AIS
+				//!AIVDM,1,1,,B,15MwkRUOidG?GElEa<iQk1JV06Jd,0*6D
+				exchange.getIn().setBody(stringToHashMap(msg));
+				return;
+			}
 			if(msg.startsWith("$")){
 				//NMEA - good
 				//System.out.println(msg);

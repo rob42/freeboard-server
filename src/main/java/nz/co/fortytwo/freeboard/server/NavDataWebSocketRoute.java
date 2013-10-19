@@ -63,6 +63,7 @@ public class NavDataWebSocketRoute extends RouteBuilder {
 	private AddSourceProcessor addSrcProcessor = new AddSourceProcessor("freeboard");
 	private CombinedProcessor combinedProcessor = new CombinedProcessor();
 	private Predicate isNmea = null;
+	private Predicate isAis = null;
 	private NmeaTcpServer nmeaTcpServer;
 
 	public NavDataWebSocketRoute(Properties config) {
@@ -83,6 +84,7 @@ public class NavDataWebSocketRoute extends RouteBuilder {
 		// setup Camel web-socket component on the port we have defined
 		// define nmea predicate
 		isNmea = body(String.class).startsWith("$");
+		isAis = body(String.class).startsWith("!AIVDM");
 		nmeaTcpServer = new NmeaTcpServer();
 		nmeaTcpServer.start();
 		WebsocketComponent wc = getContext().getComponent("websocket", WebsocketComponent.class);
@@ -155,6 +157,9 @@ public class NavDataWebSocketRoute extends RouteBuilder {
 					.to("log:nz.co.fortytwo.freeboard.navdata?level=ERROR&showException=true&showStackTrace=true")
 					.end()
 				// process all here
+				.filter(isNmea)
+					.to("seda:nmeaOutput")
+					.end()
 				.filter(isNmea)
 					.to("seda:nmeaOutput")
 					.end()

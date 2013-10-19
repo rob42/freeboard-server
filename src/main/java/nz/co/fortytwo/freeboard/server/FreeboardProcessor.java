@@ -80,9 +80,14 @@ public class FreeboardProcessor {
 	public HashMap<String, Object> stringToHashMap(String msg){
 		logger.debug("Mesg to map:"+msg);
 		HashMap<String, Object> map = new HashMap<String, Object>();
+		//AIS
+		//!AIVDM,1,1,,B,15MwkRUOidG?GElEa<iQk1JV06Jd,0*6D
 		if(msg.startsWith("$")){
 			logger.debug("Mesg to NMEA in map:"+msg);
 			map.put(Constants.NMEA, msg);
+		}else if(msg.startsWith("!AIVDM")){
+			logger.debug("Mesg to NMEA in map:"+msg);
+			map.put(Constants.AIS, msg);
 		}else{
 			logger.debug("Mesg split in map:"+msg);
 			String[] bodyArray = msg.split(",");

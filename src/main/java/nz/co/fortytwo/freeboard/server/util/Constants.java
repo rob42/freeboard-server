@@ -129,6 +129,7 @@ public class Constants {
 	/** +/- in degrees to adjust zero wind dir reading on Mega */
 	public static final String WIND_ZERO_ADJUST_CMD = "#WZJ";
 	public static final String NMEA = "NMEA";
+	public static final String AIS = "AIS";
 
 	// Fuel gauge constants
 	public static final String FUEL_REMAINING = "FFV";
