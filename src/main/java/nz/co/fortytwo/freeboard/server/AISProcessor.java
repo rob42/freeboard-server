@@ -87,6 +87,7 @@ public class AISProcessor extends FreeboardProcessor implements Processor, Freeb
 						AisMessage message = packet.getAisMessage();
 						logger.debug("AisMessage:"+message.toString());
 						map.put("TEST", message.getMsgId());
+						map.put("MSG", message);
 					}
 					
 					//fireSentenceEvent(map, sentence);

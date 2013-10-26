@@ -376,61 +376,38 @@ function refreshWaypoints() {
 }
 //
 function ChartPlotter() {
-	this.onmessage = function(mArray) {
+	this.onmessage = function(navObj) {
 		//console.log("Chartplotter:"+mArray);
 		var setPos = false;
-		jQuery.each(mArray, function(i, data) {
+		if (!navObj)
+			return true;
 
-			// avoid commands
-			if (data && data.indexOf('#') >= 0)
-				return true;
-
-			if (data && data.indexOf('LAT') >= 0) {
-				var c = parseFloat(data.substring(4));
-				//console.log("Chartplotter:LAT="+c);
-				if ($.isNumeric(c)) {
-					lat = c;
+		if (navObj.LAT) {
+					lat = navObj.LAT;
 					setPos = true;
-				}
-				c = null;
 			}
-			if (data && data.indexOf('LON') >= 0) {
-				var c = parseFloat(data.substring(4));
-				if ($.isNumeric(c)) {
-					lon = c;
+			if (navObj.LON) {
+					lon = navObj.LON;
 					setPos = true;
-				}
-				c = null;
 			}
-			if (data && data.indexOf('MGH') >= 0) {
-				var c = parseFloat(data.substring(4));
-				if ($.isNumeric(c)) {
-					heading = c;
+			if (navObj.MGH) {
+					heading = navObj.MGH;
 					setPos = true;
-				}
-				c = null;
 			}
-			if (data && data.indexOf('SOG') >= 0) {
-				var c = parseFloat(data.substring(4));
-				if ($.isNumeric(c)) {
-					speed = c;
+			if (navObj.SOG) {
+					speed = navObj.SOG;
 					setPos = true;
-				}
-				c = null;
 			}
-			if (data && data.indexOf('MGD') >= 0) {
-				var c = parseFloat(data.substring(4));
-				if ($.isNumeric(c)) {
-					declination = c;
-				}
-				c = null;
+			if (navObj.MGD) {
+			declination = navObj.MGD;	
 			}
-			if (data && data.indexOf('WPC') >= 0) {
+			if (navObj.WPC ) {
 				// we refresh the waypoint layer
 				refreshWaypoints();
 			}
-			if (data && data.indexOf('WPG') >= 0) {
-				var coords = data.substring(4);
+			if (navObj.WPG) {
+				
+				var coords = navObj.WPG;
 				// console.log(coords);
 				var coordsArray = coords.split('|');
 				// console.log(coordsArray);
@@ -446,8 +423,7 @@ function ChartPlotter() {
 					setGotoDestination(null, null, null, null);
 				}
 			}
-			data = null;
-		});
+		
 		if (setPos) {
 			//console.log("Chartplotter:setPos");
 			// avoid the 0,0 point

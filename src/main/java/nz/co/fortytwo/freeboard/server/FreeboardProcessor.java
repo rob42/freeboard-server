@@ -131,6 +131,16 @@ public class FreeboardProcessor {
 		}
 		return builder.toString();
 	}
+	
+	/**
+	 * Convert hashmap of key/value pairs back to JSON
+	 * @param map
+	 * @return
+	 */
+	public String hashMapToJSON(HashMap<String, Object> map){
+		
+		return null;//builder.toString();
+	}
 	public HashMap<String, Object> handle(HashMap<String, Object> map) {
 		// TODO Auto-generated method stub
 		return map;

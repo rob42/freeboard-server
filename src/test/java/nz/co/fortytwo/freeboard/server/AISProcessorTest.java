@@ -21,25 +21,34 @@ package nz.co.fortytwo.freeboard.server;
 
 import static org.junit.Assert.*;
 
+import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Map;
 
 import junit.framework.Assert;
 import nz.co.fortytwo.freeboard.server.util.Constants;
 
+import org.apache.camel.EndpointInject;
+import org.apache.camel.Produce;
+import org.apache.camel.ProducerTemplate;
+import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.model.dataformat.JsonLibrary;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.util.CamelContextHelper;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-public class AISProcessorTest {
+public class AISProcessorTest extends CamelTestSupport {
 
-	@Before
-	public void setUp() throws Exception {
-	}
-
-	@After
-	public void tearDown() throws Exception {
-	}
+	@EndpointInject(uri = "mock:result")
+    protected MockEndpoint resultEndpoint;
+ 
+    @Produce(uri = "direct:start")
+    protected ProducerTemplate template;
+    
+	
 
 	@Test
 	public void shouldParseSingleMessage() {
@@ -115,5 +124,50 @@ public class AISProcessorTest {
 		Assert.assertNull(map.get(Constants.AIS));
 		Assert.assertEquals(map.get("TEST"), 5);
 	}
+	
+	@Test
+	public void shouldProduceJson() throws InterruptedException, UnsupportedEncodingException{
+		resultEndpoint.expectedMessageCount(1);
+		String msg = "$PGHP,1,2010,6,11,11,46,11,929,244,0,,1,72*21\r\n";
+        msg += "\\1G2:0125,c:1354719387*0D";
+        msg += "\\!AIVDM,2,1,4,A,539LiHP2;42`@pE<000<tq@V1<TpL4000000001?1SV@@73R0J0TQCAD,0*1E\r\n";
+        msg += "\\2G2:0125*7B";
+        msg += "\\!AIVDM,2,2,4,A,R0EQCP000000000,2*45";
+		AISProcessor processor = new AISProcessor();
+		HashMap<String, Object>map = new HashMap<String,Object>();
+		map.put(Constants.AIS, msg);
+		processor.handle(map);
+		//RouteBuilder builder = createRouteBuilder();
+		template.sendBody(map);
+		resultEndpoint.assertIsSatisfied();
+		byte[] bytes = (byte[]) resultEndpoint.getReceivedExchanges().get(0).getIn().getBody();
+		String json = new String(bytes, "UTF-8");
+				
+		log.debug(json);
+	}
+	
+	@Test
+	public void shouldProduceJson2() throws InterruptedException, UnsupportedEncodingException{
+		resultEndpoint.expectedMessageCount(1);
+		
+		HashMap<String, Object>map = new HashMap<String,Object>();
+		map.put(Constants.AIS, 123);
+		//processor.handle(map);
+		//RouteBuilder builder = createRouteBuilder();
+		template.sendBody(map);
+		resultEndpoint.assertIsSatisfied();
+		byte[] bytes = (byte[]) resultEndpoint.getReceivedExchanges().get(0).getIn().getBody();
+		String json = new String(bytes, "UTF-8");
+				
+		log.debug(json);
+	}
 
+	@Override
+    protected RouteBuilder createRouteBuilder() {
+        return new RouteBuilder() {
+            public void configure() {
+                from("direct:start").marshal().json(JsonLibrary.Jackson).to("mock:result");
+            }
+        };
+    }
 }

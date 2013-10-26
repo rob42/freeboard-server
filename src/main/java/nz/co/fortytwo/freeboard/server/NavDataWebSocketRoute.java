@@ -25,6 +25,7 @@ import nz.co.fortytwo.freeboard.server.util.Constants;
 import org.apache.camel.Predicate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.websocket.WebsocketComponent;
+import org.apache.camel.model.dataformat.JsonLibrary;
 
 /**
  * Main camel route definition to handle Arduino to web processing
@@ -60,7 +61,6 @@ public class NavDataWebSocketRoute extends RouteBuilder {
 	private CommandProcessor commandProcessor = new CommandProcessor();
 	private DeclinationProcessor declinationProcessor = new DeclinationProcessor();
 	private GPXProcessor gpxProcessor;
-	private AddSourceProcessor addSrcProcessor = new AddSourceProcessor("freeboard");
 	private CombinedProcessor combinedProcessor = new CombinedProcessor();
 	private Predicate isNmea = null;
 	private Predicate isAis = null;
@@ -113,13 +113,22 @@ public class NavDataWebSocketRoute extends RouteBuilder {
 		// serialPortManager.setWc(wc);
 		new Thread(serialPortManager).start();
 	
-		
+		from("direct:json")
+			.onException(Exception.class).handled(true).maximumRedeliveries(0)
+					.to("log:nz.co.fortytwo.freeboard.json?level=ERROR&showException=true&showStackTrace=true")
+					.end()
+			.marshal().json(JsonLibrary.Jackson)
+	 		.multicast()
+	 			.to("direct:websocket")
+	 			.to("direct:cometd")
+	 		.end();
 
 		// distribute and log commands
 		from("direct:command")
 				.onException(Exception.class).handled(true).maximumRedeliveries(0)
 					.to("log:nz.co.fortytwo.freeboard.command?level=ERROR&showException=true&showStackTrace=true")
 					.end()
+				.process(outputFilterProcessor)
 				.process(serialPortManager);
 				// .to("log:nz.co.fortytwo.freeboard.command?level=INFO")
 				
@@ -143,10 +152,10 @@ public class NavDataWebSocketRoute extends RouteBuilder {
 			.onException(Exception.class)
 				.handled(true)
 				.maximumRedeliveries(0)
-				.to("log:nz.co.fortytwo.freeboard.json?level=ERROR&showException=true&showStackTrace=true")
+				.to("log:nz.co.fortytwo.freeboard.cometd?level=ERROR&showException=true&showStackTrace=true")
 				.end()
-			.process(addSrcProcessor)
-			.to("cometd://0.0.0.0:8082/freeboard/json?jsonCommented=false");
+			//.process(addSrcProcessor)
+			.to("cometd://0.0.0.0:8082/freeboard/cometd?jsonCommented=false&logLevel=0");
 		
 		//main input to destination route
 		// send input to listeners
@@ -160,18 +169,16 @@ public class NavDataWebSocketRoute extends RouteBuilder {
 				.filter(isNmea)
 					.to("seda:nmeaOutput")
 					.end()
-				.filter(isNmea)
+				.filter(isAis)
 					.to("seda:nmeaOutput")
 					.end()
 				.process(inputFilterProcessor)
 				.process(combinedProcessor)
-				.process(outputFilterProcessor)
-				// .to("log:nz.co.fortytwo.freeboard.navdata?level=INFO")
+				.to("log:nz.co.fortytwo.freeboard.navdata?level=INFO")
 				// and push to all subscribers. We use multicast/direct cos if we use SEDA then we get a queue growth if there are no consumers active.
 				.multicast()
-					.to("direct:websocket")
-					.to("direct:cometd")
-					.to("direct:command")
+				 	.to("direct:json")
+				 	.to("direct:command")
 				.end();
 
 	}

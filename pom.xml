@@ -54,22 +54,22 @@
 			<artifactId>jna</artifactId>
 			<version>${jna.version}</version>
 		</dependency>
-<!-- 		<dependency> -->
-<!-- 			<groupId>net.java.dev.jna</groupId> -->
-<!-- 			<artifactId>platform</artifactId> -->
-<!-- 			<version>${jna.version}</version> -->
-<!-- 		</dependency> -->
-		
+		<!-- <dependency> -->
+		<!-- <groupId>net.java.dev.jna</groupId> -->
+		<!-- <artifactId>platform</artifactId> -->
+		<!-- <version>${jna.version}</version> -->
+		<!-- </dependency> -->
+
 		<dependency>
-	      <groupId>com.sparetimelabs</groupId>
-	      <artifactId>purejavacomm</artifactId>
-	      <version>0.0.17</version>
-	   </dependency>
-<!-- 		<dependency> -->
-<!-- 			<groupId>com.neuronrobotics</groupId> -->
-<!-- 			<artifactId>nrjavaserial</artifactId> -->
-<!-- 			<version>3.7.7</version> -->
-<!-- 		</dependency> -->
+			<groupId>com.sparetimelabs</groupId>
+			<artifactId>purejavacomm</artifactId>
+			<version>0.0.17</version>
+		</dependency>
+		<!-- <dependency> -->
+		<!-- <groupId>com.neuronrobotics</groupId> -->
+		<!-- <artifactId>nrjavaserial</artifactId> -->
+		<!-- <version>3.7.7</version> -->
+		<!-- </dependency> -->
 		<!-- Camel -->
 		<dependency>
 			<groupId>org.apache.camel</groupId>
@@ -99,6 +99,16 @@
 		<dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-exec</artifactId>
+			<version>${camel.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.camel</groupId>
+			<artifactId>camel-jackson</artifactId>
+			<version>${camel.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.camel</groupId>
+			<artifactId>camel-test</artifactId>
 			<version>${camel.version}</version>
 		</dependency>
 		<!-- jetty -->
@@ -134,31 +144,31 @@
 		</dependency>
 		<!-- ZK -->
 		<dependency>
-            <groupId>org.zkoss.zk</groupId>
-            <artifactId>zkbind</artifactId>
-            <version>${zk.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.zkoss.zk</groupId>
-            <artifactId>zul</artifactId>
-            <version>${zk.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.zkoss.zk</groupId>
-            <artifactId>zkplus</artifactId>
-            <version>${zk.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.zkoss.zk</groupId>
-            <artifactId>zhtml</artifactId>
-            <version>${zk.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.zkoss.common</groupId>
-            <artifactId>zweb</artifactId>
-            <version>${zk.version}</version>
-        </dependency>
-         
+			<groupId>org.zkoss.zk</groupId>
+			<artifactId>zkbind</artifactId>
+			<version>${zk.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.zkoss.zk</groupId>
+			<artifactId>zul</artifactId>
+			<version>${zk.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.zkoss.zk</groupId>
+			<artifactId>zkplus</artifactId>
+			<version>${zk.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.zkoss.zk</groupId>
+			<artifactId>zhtml</artifactId>
+			<version>${zk.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.zkoss.common</groupId>
+			<artifactId>zweb</artifactId>
+			<version>${zk.version}</version>
+		</dependency>
+
 		<dependency>
 			<groupId>commons-codec</groupId>
 			<artifactId>commons-codec</artifactId>
@@ -175,14 +185,14 @@
 			<artifactId>marineapi</artifactId>
 			<version>0.6.0-SNAPSHOT</version>
 		</dependency>
-<!-- ais -->
-<!-- <module>ais-lib-messages</module> -->
-<!--     <module>ais-lib-utils</module> -->
-<!--     <module>ais-lib-cli</module> -->
+		<!-- ais -->
+		<!-- <module>ais-lib-messages</module> -->
+		<!-- <module>ais-lib-utils</module> -->
+		<!-- <module>ais-lib-cli</module> -->
 		<dependency>
 			<groupId>dk.dma.ais.lib</groupId>
-			  <artifactId>ais-lib-communication</artifactId>
-			  <version>2.0-SNAPSHOT</version>
+			<artifactId>ais-lib-communication</artifactId>
+			<version>2.0-SNAPSHOT</version>
 		</dependency>
 		<!-- logging to the console -->
 		<dependency>
@@ -236,7 +246,7 @@
 	</dependencies>
 	<build>
 		<plugins>
-		
+
 			<!-- Allows the example to be run via 'mvn compile exec:java' -->
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>

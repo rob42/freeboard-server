@@ -35,80 +35,46 @@
  */
 
 function Engine () {
-	this.onmessage = function (mArray) {
+	this.onmessage = function (navObj) {
 		
-		
-		jQuery.each(mArray, function(i, data) {
 			//avoid commands
-			if(data && data.indexOf('#')>=0)return true;
+			if (!navObj)
+				return true;
 			//FUEL_REMAINING
-			if (data && data.indexOf('FFV') >= 0) {
-				var c = parseFloat(data.substring(4));
-				if($.isNumeric(c)){
-					radialFuel.setValue(c);
-				}
-				c=null;
+			if (navObj.FFV) {
+					radialFuel.setValue(navObj.FFV);
 			}
 			//depth
-			if (data && data.indexOf('DPT') >= 0) {
-				var c = parseFloat(data.substring(4));
-				if($.isNumeric(c)){
-					linearDepth.setValue(c);
-				}
-				c=null;
+			if (navObj.DPT) {
+					linearDepth.setValue(navObj.DPT);
 			}
 			//speed
-			if (data && data.indexOf('SOG') >= 0) {
-				var c = parseFloat(data.substring(4));
-				if($.isNumeric(c)){
-					radialBoatSpeed.setValue(c);
-				}
-				c=null;
+			if (navObj.SOG) {
+					radialBoatSpeed.setValue(navObj.SOG);
 			}
 			//rpm
-			if (data && data.indexOf('RPM') >= 0) {
-				var c = parseFloat(data.substring(4));
-				if($.isNumeric(c)){
-					radialEngineRpm.setValue(c);
-				}
-				c=null;
+			if (navObj.RPM) {
+					radialEngineRpm.setValue(navObj.RPM);
 			}
 			//temp
-			if (data && data.indexOf('ETT') >= 0) {
-				var c = parseFloat(data.substring(4));
-				if($.isNumeric(c)){
-					radialTemp.setValue(c);
-				}
-				c=null;
+			if (navObj.ETT) {
+					radialTemp.setValue(navObj.ETT);
 			}
 			//volts
-			if (data && data.indexOf('EVV') >= 0) {
-				var c = parseFloat(data.substring(4));
-				if($.isNumeric(c)){
-					radialVolts.setValue(c);
-				}
-				c=null;
+			if (navObj.EVV) {
+					radialVolts.setValue(navObj.EVV);
 			}
 			//pressure
-			if (data && data.indexOf('EPP') >= 0) {
-				var c = parseFloat(data.substring(4));
-				if($.isNumeric(c)){
-					radialOil.setValue(c);
-				}
-				c=null;
+			if (navObj.EPP) {
+					radialOil.setValue(navObj.EPP);
 			}
 			
 			//trim
-			if (data && data.indexOf('EDT') >= 0) {
-				var c = parseFloat(data.substring(4));
-				if($.isNumeric(c)){
-					radialTrim.setValue(c);
-				}
-				c=null;
+			if (navObj.EDT) {
+					radialTrim.setValue(navObj.EDT);
 			}
 			
-			data=null;
-		});
+		
 	};
 	
 }
