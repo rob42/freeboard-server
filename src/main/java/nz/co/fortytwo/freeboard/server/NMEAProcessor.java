@@ -250,7 +250,7 @@ public class NMEAProcessor extends FreeboardProcessor implements Processor, Free
 					}
 					previousLon = Util.movingAverage(ALPHA, previousLon, sen.getPosition().getLongitude());
 					if (sen.getPosition().getLongitudeHemisphere() == CompassPoint.WEST) {
-						map.put(Constants.LON, 0 - previousLon);
+						map.put(Constants.LON, previousLon);
 					} else {
 						map.put(Constants.LON, previousLon);
 					}

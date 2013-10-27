@@ -61,6 +61,7 @@ public class NavDataWebSocketRoute extends RouteBuilder {
 	private CommandProcessor commandProcessor = new CommandProcessor();
 	private DeclinationProcessor declinationProcessor = new DeclinationProcessor();
 	private GPXProcessor gpxProcessor;
+	private AISProcessor aisProcessor=new AISProcessor();
 	private CombinedProcessor combinedProcessor = new CombinedProcessor();
 	private Predicate isNmea = null;
 	private Predicate isAis = null;
@@ -192,6 +193,7 @@ public class NavDataWebSocketRoute extends RouteBuilder {
 		combinedProcessor.addHandler(declinationProcessor);
 		combinedProcessor.addHandler(commandProcessor);
 		combinedProcessor.addHandler(gpxProcessor);
+		combinedProcessor.addHandler(aisProcessor);
 
 	}
 

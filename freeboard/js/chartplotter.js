@@ -30,6 +30,8 @@ var overlays;
 var layers;
 var drawnItems;
 var trackLine;
+var aisGroup;
+var aisList = new Array();
 
 //vars of global interest
 var followBoat = false;
@@ -156,6 +158,9 @@ function initCharts() {
 		});
 		zAu.send(new zk.Event(zk.Widget.$("$this"), 'onWaypointMove', edits));
 	});
+	//ais
+	aisGroup = new L.LayerGroup();
+	map.addLayer(aisGroup);
 	
 	map.on('zoomend', function(e) {
 		zAu.send(new zk.Event(zk.Widget.$("$this"), 'onChartChange', new Array(map.getCenter().lat,map.getCenter().lng, map.getZoom())));
@@ -374,6 +379,32 @@ function refreshWaypoints() {
 	
 	layers.addOverlay(wgpxLayer, "Waypoints");
 }
+
+function refreshAis(){
+	//{"AIS":{"position":{"latitude":37.839843333333334,"longitude":-122.44135666666666,"latitudeAsString":"37 50.391N","longitudeAsString":"122 26.481W"},"navStatus":0,"rot":128,"sog":240,"cog":1436,"trueHeading":511,"utcSec":25,"userId":366985330}}
+	aisGroup.clearLayers(); 
+	$.each(aisList, function(i,item){
+		var lat = item.AIS.position.latitude;
+		var lng = item.AIS.position.longitude;
+		var boatIcon = L.icon({
+			iconUrl : './js/img/ship_red.png',
+			iconSize : [ 10, 24 ],
+			iconAnchor : [ 5, 10 ],
+		});
+		var marker = new L.Marker(new L.LatLng(lat,lng), {icon:boatIcon});
+		marker.options.course = item.AIS.cog/10;
+		marker.options.status = item.AIS.navStatus;
+		marker.setIconAngle(marker.options.course);
+		marker.options.mmsi = item.AIS.userId;
+		marker.on('click', function(e) {
+			var popup = new L.Popup({'minWidth': 350});
+			popup.setLatLng(e.target._latlng);
+			popup.setContent('blah');
+			map.openPopup(popup);
+		});
+		aisGroup.addLayer(marker);
+	});
+}
 //
 function ChartPlotter() {
 	this.onmessage = function(navObj) {
@@ -422,6 +453,14 @@ function ChartPlotter() {
 				} else {
 					setGotoDestination(null, null, null, null);
 				}
+			}
+			if (navObj.AIS ) {
+				// we refresh the ais layer
+				aisList = jQuery.grep(aisList, function( ais ) {
+					return ais.userId !== navObj.AIS.userId ;
+				});
+				aisList.push(navObj.AIS);
+				refreshAis();
 			}
 		
 		if (setPos) {
