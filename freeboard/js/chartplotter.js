@@ -380,30 +380,35 @@ function refreshWaypoints() {
 	layers.addOverlay(wgpxLayer, "Waypoints");
 }
 
-function refreshAis(){
+function refreshAis(ais){
 	//{"AIS":{"position":{"latitude":37.839843333333334,"longitude":-122.44135666666666,"latitudeAsString":"37 50.391N","longitudeAsString":"122 26.481W"},"navStatus":0,"rot":128,"sog":240,"cog":1436,"trueHeading":511,"utcSec":25,"userId":366985330}}
-	aisGroup.clearLayers(); 
-	$.each(aisList, function(i,item){
-		var lat = item.AIS.position.latitude;
-		var lng = item.AIS.position.longitude;
+	//aisGroup.clearLayers();
+	aisGroup.eachLayer(function (layer) {
+			if (layer.options.mmsi === ais.userId){
+				mylayergroup.removeLayer(layer);
+			}
+		});	
+	aisGroup.removeLayer(ais.userId.toString());
+		var lat = ais.position.latitude;
+		var lng = ais.position.longitude;
 		var boatIcon = L.icon({
 			iconUrl : './js/img/ship_red.png',
 			iconSize : [ 10, 24 ],
 			iconAnchor : [ 5, 10 ],
 		});
-		var marker = new L.Marker(new L.LatLng(lat,lng), {icon:boatIcon});
-		marker.options.course = item.AIS.cog/10;
-		marker.options.status = item.AIS.navStatus;
+		var marker = new L.Marker(new L.LatLng(lat,lng), {id:ais.userId.toString(), icon:boatIcon});
+		marker.options.course = ais.cog/10;
+		marker.options.status = ais.navStatus;
 		marker.setIconAngle(marker.options.course);
-		marker.options.mmsi = item.AIS.userId;
+		marker.options.mmsi = ais.userId;
 		marker.on('click', function(e) {
 			var popup = new L.Popup({'minWidth': 350});
 			popup.setLatLng(e.target._latlng);
-			popup.setContent('blah');
+			popup.setContent('MMSI: '+ais.userId+'<br/>SOG: '+ais.sog/10+'<br/>COG: '+ais.cog/10);
 			map.openPopup(popup);
 		});
 		aisGroup.addLayer(marker);
-	});
+
 }
 //
 function ChartPlotter() {
@@ -456,11 +461,7 @@ function ChartPlotter() {
 			}
 			if (navObj.AIS ) {
 				// we refresh the ais layer
-				aisList = jQuery.grep(aisList, function( ais ) {
-					return ais.userId !== navObj.AIS.userId ;
-				});
-				aisList.push(navObj.AIS);
-				refreshAis();
+				refreshAis(navObj.AIS);
 			}
 		
 		if (setPos) {
