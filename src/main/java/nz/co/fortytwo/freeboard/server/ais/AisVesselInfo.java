@@ -19,7 +19,9 @@
 
 package nz.co.fortytwo.freeboard.server.ais;
 
+import dk.dma.ais.message.AisMessage18;
 import dk.dma.ais.message.AisPositionMessage;
+import dk.dma.ais.message.AisStaticCommon;
 import dk.dma.enav.model.geometry.Position;
 
 /**
@@ -79,13 +81,49 @@ public class AisVesselInfo {
      */
     protected int utcSec; // 6 bits : UTC Seconds
     protected int userId; // 30 bit: MMSI number
+    protected String name; //vessel name
+	/**
+     * Call sign: 7 = 6 bit ASCII characters, @@@@@@@ = not available = default
+     */
+    protected String callsign; // 7x6 (42) bits
+    /**
+     * Type of ship and cargo type: 0 = not available or no ship = default 1-99 = as defined in  3.3.2 100-199 =
+     * reserved, for regional use 200-255 = reserved, for future use Not applicable to SAR aircraft
+     */
+    protected int shipType; // 8 bits
+    
+    //time message received, so we can clean up old ones
+    protected long received; //millis time message recieved
     
 	public AisVesselInfo(AisPositionMessage vessel){
+		received=System.currentTimeMillis();
 		userId=vessel.getUserId();
 		utcSec=vessel.getUtcSec();
 		position=vessel.getValidPosition();
 		navStatus=vessel.getNavStatus();
 		rot=vessel.getRot();
+		sog=vessel.getSog();
+		cog=vessel.getCog();
+		trueHeading=vessel.getTrueHeading();
+	}
+
+	public AisVesselInfo(AisStaticCommon vessel) {
+		received=System.currentTimeMillis();
+		userId=vessel.getUserId();
+		position=vessel.getValidPosition();
+		name = vessel.getName();
+		callsign = vessel.getCallsign();
+		shipType = vessel.getShipType();
+		
+	}
+
+	public AisVesselInfo(AisMessage18 vessel) {
+		received=System.currentTimeMillis();
+		userId=vessel.getUserId();
+		utcSec=vessel.getUtcSec();
+		position=vessel.getValidPosition();
+		//navStatus=vessel.getNavStatus();
+		//rot=vessel.getRot();
 		sog=vessel.getSog();
 		cog=vessel.getCog();
 		trueHeading=vessel.getTrueHeading();
@@ -154,6 +192,38 @@ public class AisVesselInfo {
 
 	public void setUserId(int userId) {
 		this.userId = userId;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getCallsign() {
+		return callsign;
+	}
+
+	public void setCallsign(String callsign) {
+		this.callsign = callsign;
+	}
+
+	public int getShipType() {
+		return shipType;
+	}
+
+	public void setShipType(int shipType) {
+		this.shipType = shipType;
+	}
+
+	public long getReceived() {
+		return received;
+	}
+
+	public void setReceived(long received) {
+		this.received = received;
 	}
 	
 

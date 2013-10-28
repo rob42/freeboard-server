@@ -62,7 +62,7 @@
 		>
 		<borderlayout>
 			<west border="none">
-				<vbox  height="100%">
+				<vbox >
 					<include src="./mainToolbar.zul" />
 					<include src="./cpToolbar.zul" />
 				</vbox>

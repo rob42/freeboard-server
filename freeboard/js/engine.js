@@ -117,7 +117,8 @@ function initEngine() {
 	//engine rpm
 	radialEngineRpm = new steelseries.Radial('canvasEngineRpm', {
 		gaugeType : steelseries.GaugeType.TYPE4,
-		//size : document.getElementById('canvasWindApp').width,
+		//size : document.getElementById('canvasEngineRpm').width,
+		size: window.innerWidth/3,
 		minValue : 0,
 		maxValue : maxRpm,
 		threshold : redLineRpm,
@@ -134,7 +135,9 @@ function initEngine() {
 	
 	// Depth dir
 	linearDepth = new steelseries.Linear('canvasDepth', {
-		//size : document.getElementById('canvasWindDirApp').width,
+		//size : document.getElementById('canvasDepth').width,
+		width: window.innerWidth/8,
+		height: window.innerHeight*.6,
 		titleString : "Depth",
 		maxValue : 60,
 		lcdVisible : true,
@@ -147,7 +150,7 @@ function initEngine() {
 	// wind dir
 	radialBoatSpeed = new steelseries.Radial('canvasBoatSpeed', {
 		gaugeType : steelseries.GaugeType.TYPE4,
-		//size : document.getElementById('canvasWindDirApp').width,
+		size : window.innerWidth/3,
 		titleString : "SPEED",
 		maxValue : maxBoatSpeed,
 		lcdVisible : true,
@@ -164,7 +167,7 @@ function initEngine() {
 		     			steelseries.Section(maxOilPsi, oilPsiFullScale, 'rgba(220,0, 0, 0.3)') ];
 	radialOil = new steelseries.RadialVertical('canvasOil', {
 		gaugeType : steelseries.GaugeType.TYPE4,
-		//size : document.getElementById('canvasWindTrue').width,
+		size : window.innerWidth/7,
 		maxValue : oilPsiFullScale,
 		//threshold : OilPsi,
 		section : oilSections,
@@ -184,7 +187,7 @@ function initEngine() {
 		     			steelseries.Section(maxTemp, tempFullScale, 'rgba(220,0, 0, 0.3)') ];
 	radialTemp = new steelseries.RadialVertical('canvasTemp', {
 		gaugeType : steelseries.GaugeType.TYPE4,
-		//size : document.getElementById('canvasWindTrue').width,
+		size : window.innerWidth/7,
 		maxValue : tempFullScale,
 		//threshold : 300,
 		section : tempSections,
@@ -204,7 +207,7 @@ function initEngine() {
 			steelseries.Section(maxVolts, voltsFullScale, 'rgba(220,0, 0, 0.3)') ];
 	radialVolts = new steelseries.RadialVertical('canvasVolts', {
 		gaugeType : steelseries.GaugeType.TYPE4,
-		//size : document.getElementById('canvasWindTrue').width,
+		size : window.innerWidth/7,
 		minValue : voltsMinScale,
 		maxValue : voltsFullScale,
 		//threshold : 13.0,
@@ -221,7 +224,7 @@ function initEngine() {
 	// wind true
 	radialTrim = new steelseries.RadialVertical('canvasTrim', {
 		gaugeType : steelseries.GaugeType.TYPE4,
-		//size : document.getElementById('canvasWindTrue').width,
+		size : window.innerWidth/7,
 		minValue : 0,
 		maxValue : 1000,
 		//threshold : 300,
@@ -241,7 +244,7 @@ function initEngine() {
 	     			steelseries.Section(minFuel, maxFuel, 'rgba(0, 220, 0, 0.3)') ];
 	radialFuel = new steelseries.RadialVertical('canvasFuel', {
 		gaugeType : steelseries.GaugeType.TYPE4,
-		//size : document.getElementById('canvasWindTrue').width,
+		size : window.innerWidth/7,
 		minValue : 0,
 		maxValue : maxFuel,
 		//threshold : 300,

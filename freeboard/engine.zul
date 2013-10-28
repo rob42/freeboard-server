@@ -55,7 +55,7 @@
 		style="margin-left:auto;">
 		<borderlayout>
 			<west border="none">
-				<vbox  height="100%">
+				<vbox >
 					<include src="./mainToolbar.zul" />
 				</vbox>
 
@@ -67,50 +67,37 @@
 					<label id="layerVisibility" value=""
 						visible="false" />
 
-					<div vflex="1" hflex="1">
-						<vlayout>
-							<hlayout
-								style="margin-left:auto; margin-right:auto; text-align:center;">
+					<div vflex="1" hflex="1" style="background-color: none;">
+						<vlayout vflex="1" hflex="1">
+							<hlayout vflex="2" hflex="1"
+								style="margin-left:auto; margin-right:auto; text-align:center;overflow: visible;">
 
-								<html style="overflow: visible">
-									<canvas id="canvasEngineRpm"
-										width="450px" height="450px">
+								<html style="overflow: visible;" >
+								
+									<canvas id="canvasEngineRpm" >
 										No canvas in your
 										browser...sorry...
 									</canvas>
-									<canvas id="canvasDepth"
-										width="150px" height="450px">
+									<canvas id="canvasDepth" >
 										No canvas in your
 										browser...sorry...
 									</canvas>
-									<canvas id="canvasBoatSpeed"
-										width="450px" height="450px">
+									
+									<canvas id="canvasBoatSpeed" >
 										No canvas in your
 										browser...sorry...
 									</canvas>
+									
 								</html>
 							</hlayout>
-							<hlayout
-								style="margin-left:auto; margin-right:auto; text-align:center;">
-								<html>
-									<canvas id="canvasOil" width="200px"
-										height="200px" />
-								</html>
-								<html>
-									<canvas id="canvasTemp"
-										width="200px" height="200px" />
-								</html>
-								<html>
-									<canvas id="canvasTrim"
-										width="200px" height="200px" />
-								</html>
-								<html>
-									<canvas id="canvasVolts"
-										width="200px" height="200px" />
-								</html>
-								<html>
-									<canvas id="canvasFuel"
-										width="200px" height="200px" />
+							<hlayout vflex="1" hflex="1"
+								style="margin-left:auto; margin-right:auto; text-align:center; overflow: visible;">
+								<html style="overflow: visible">
+									<canvas id="canvasOil" />
+									<canvas id="canvasTemp" />
+									<canvas id="canvasTrim" />
+									<canvas id="canvasVolts" />
+									<canvas id="canvasFuel" />
 								</html>
 							</hlayout>
 						</vlayout>

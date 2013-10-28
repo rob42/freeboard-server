@@ -202,7 +202,6 @@ function setLayerVisibility(){
 		if (lyr[0].length > 0) {
 			jQuery.each(layers._layers, function(i, n){
 					if(n.name == lyr[0]){
-						//console.log(n.name+":"+lyr[1]);
 						if (lyr[1] === 'false') {
 							if(map.hasLayer(n.layer))map.removeLayer(n.layer);
 						} else {
@@ -385,18 +384,17 @@ function refreshAis(ais){
 	//aisGroup.clearLayers();
 	aisGroup.eachLayer(function (layer) {
 			if (layer.options.mmsi === ais.userId){
-				mylayergroup.removeLayer(layer);
+				aisGroup.removeLayer(layer);
 			}
 		});	
-	aisGroup.removeLayer(ais.userId.toString());
 		var lat = ais.position.latitude;
 		var lng = ais.position.longitude;
 		var boatIcon = L.icon({
-			iconUrl : './js/img/ship_red.png',
-			iconSize : [ 10, 24 ],
-			iconAnchor : [ 5, 10 ],
+			iconUrl : './js/img/white_ship.png',
+			iconSize : [ 24, 24 ],
+			iconAnchor : [ 10, 10 ],
 		});
-		var marker = new L.Marker(new L.LatLng(lat,lng), {id:ais.userId.toString(), icon:boatIcon});
+		var marker = new L.Marker(new L.LatLng(lat,lng), { icon:boatIcon});
 		marker.options.course = ais.cog/10;
 		marker.options.status = ais.navStatus;
 		marker.setIconAngle(marker.options.course);
@@ -404,7 +402,11 @@ function refreshAis(ais){
 		marker.on('click', function(e) {
 			var popup = new L.Popup({'minWidth': 350});
 			popup.setLatLng(e.target._latlng);
-			popup.setContent('MMSI: '+ais.userId+'<br/>SOG: '+ais.sog/10+'<br/>COG: '+ais.cog/10);
+			var name = "Unknown";
+			if(ais.name)name=ais.name;
+			var callsign = "Unknown";
+			if(ais.callsign)callsign=ais.callsign;
+			popup.setContent('MMSI: '+ais.userId+', Name: '+name+', Callsign: '+callsign+'<br/>SOG: '+ais.sog/10+', COG: '+ais.cog/10);
 			map.openPopup(popup);
 		});
 		aisGroup.addLayer(marker);
