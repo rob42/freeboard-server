@@ -30,6 +30,7 @@ import net.sf.marineapi.nmea.event.SentenceEvent;
 import net.sf.marineapi.nmea.event.SentenceListener;
 import net.sf.marineapi.nmea.parser.BVEParser;
 import net.sf.marineapi.nmea.parser.CruzproXDRParser;
+import net.sf.marineapi.nmea.parser.ROTParser;
 import net.sf.marineapi.nmea.parser.SentenceFactory;
 import net.sf.marineapi.nmea.sentence.BVESentence;
 import net.sf.marineapi.nmea.sentence.DepthSentence;
@@ -68,6 +69,7 @@ public class NMEAProcessor extends FreeboardProcessor implements Processor, Free
 		//register BVE
 		SentenceFactory.getInstance().registerParser("BVE", BVEParser.class);
 		SentenceFactory.getInstance().registerParser("XDR",CruzproXDRParser.class);
+		SentenceFactory.getInstance().registerParser("ROT",ROTParser.class);
 		setNmeaListeners();
 	}
 

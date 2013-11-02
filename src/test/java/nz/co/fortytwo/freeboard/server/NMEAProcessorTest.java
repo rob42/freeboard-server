@@ -27,12 +27,15 @@ import junit.framework.Assert;
 import nz.co.fortytwo.freeboard.server.util.Constants;
 import nz.co.fortytwo.freeboard.server.util.Util;
 
+import org.apache.log4j.Logger;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 public class NMEAProcessorTest {
 
+	private static Logger logger = Logger.getLogger(NMEAProcessorTest.class);
+	
 	@Before
 	public void setUp() throws Exception {
 	}
@@ -41,6 +44,19 @@ public class NMEAProcessorTest {
 	public void tearDown() throws Exception {
 	}
 
+	@Test
+	public void shouldHandleGPRMC(){
+		 String nmea1 = "$GPRMC,144629.20,A,5156.91111,N,00434.80385,E,0.295,,011113,,,A*78";
+		 String nmea2 = "$GPRMC,144629.30,A,5156.91115,N,00434.80383,E,1.689,,011113,,,A*73";
+		 String nmea3 = "$GPRMC,144629.50,A,5156.91127,N,00434.80383,E,1.226,,011113,,,A*75";
+		 NMEAProcessor processor = new NMEAProcessor();
+		 HashMap<String, Object> map =new HashMap<>();
+		 map.put(Constants.NMEA, nmea1);
+		 map = processor.handle(map);
+		 logger.debug(map);
+		 Assert.assertTrue(map.containsKey(Constants.LAT));
+		 logger.debug("Lat :"+map.get(Constants.LAT));
+	}
 	@Test
 	public void shouldHandleCruzproXDR() throws FileNotFoundException, IOException {
 		NMEAProcessor processor = new NMEAProcessor();
