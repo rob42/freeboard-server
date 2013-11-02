@@ -41,7 +41,7 @@ public class SGImplifyTest {
 		String gpxDirStr = "./src/test/resources/";
 		File gpxDir = new File(gpxDirStr);
 		//File gpxFile = new File(gpxDir, Util.getConfig(null).getProperty(Constants.TRACK_CURRENT));
-		File gpxFile = new File(gpxDir, "2013-02-12_04:45:44.gpx");
+		File gpxFile = new File(gpxDir, "2013-02-12_04-45-44.gpx");
 		
 		gpx = new GPXParser().parseGPX(gpxFile);
 	}
