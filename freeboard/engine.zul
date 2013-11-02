@@ -54,7 +54,7 @@
 		apply="nz.co.fortytwo.freeboard.zk.EngineViewModel" vflex="true"
 		style="margin-left:auto;">
 		<borderlayout>
-			<west border="none">
+			<west border="none" width="50px">
 				<vbox  height="100%">
 					<include src="./mainToolbar.zul" />
 				</vbox>

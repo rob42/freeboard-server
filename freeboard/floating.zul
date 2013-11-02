@@ -61,7 +61,7 @@
 		apply="nz.co.fortytwo.freeboard.zk.ChartplotterViewModel" vflex="true"
 		>
 		<borderlayout>
-			<west border="none">
+			<west border="none" width="50px">
 				<vbox  height="100%">
 					<include src="./mainToolbar.zul" />
 					<include src="./cpToolbar.zul" />
