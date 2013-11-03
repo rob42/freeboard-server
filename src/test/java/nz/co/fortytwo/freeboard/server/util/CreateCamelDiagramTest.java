@@ -67,7 +67,7 @@ public class CreateCamelDiagramTest {
 
 		// context.addRoutes(createIntegrationTestRoute());
 
-		StringBuffer buffer = new StringBuffer();
+	/*	StringBuffer buffer = new StringBuffer();
 		System.out.println("Start");
 		buffer.append("\ndigraph simple {\n");
 		NavDataWebSocketRoute freeboardRoute = new NavDataWebSocketRoute(Util.getConfig(null));
@@ -112,7 +112,7 @@ public class CreateCamelDiagramTest {
 		System.out.println(dotFileStr);
 		File dotFile = new File(DOT_FILE_NAME);
 		System.out.println("Write dot file:" + dotFile.getAbsolutePath());
-		FileUtils.writeStringToFile(dotFile, dotFileStr);
+		FileUtils.writeStringToFile(dotFile, dotFileStr);*/
 
 	}
 

@@ -37,11 +37,10 @@ public class OutputFilterProcessor extends FreeboardProcessor implements Process
 		
 		@SuppressWarnings("unchecked")
 		HashMap<String, Object> map = exchange.getIn().getBody(HashMap.class);
-		String outStr = hashMapToString(map);
-
-		exchange.getOut().setBody(outStr);
-
-
+		if(map!=null){
+			String outStr = hashMapToString(map);
+			exchange.getIn().setBody(outStr);
+		}
 	}
 
 }
