@@ -170,6 +170,7 @@ public class Constants {
 	public static final String CFG_FILE = "freeboard.cfg.file";
 	public static final String SERIAL_URL = "freeboard.serial.demo.file";
 	public static final String VIRTUAL_URL = "freeboard.virtual.url";
+	public static final String ENABLE_COMET = "freeboard.comet.enable";
 
 	public static final String WIND_ZERO_OFFSET = "freeboard.wind.offset";
 

@@ -57,19 +57,19 @@ function initWebSocket(){
 			//alert(location);
 			
 			this._ws = new WebSocket(location);
+			this._ws.binaryType = "arraybuffer";
 			this._ws.onopen = function() {
 			};
 			this._ws.onmessage = function(m) {
 				//for debug
-				//console.log(m.data);
-				//iterate the array and process each, avoid NMEA for now
-				if(m.data.trim().startsWith('$'))return;
+				console.log(m.data);
+				var mObj = $.parseJSON(m.data);
 				
 				//TODO: Note memory leak in native websockets code  - https://code.google.com/p/chromium/issues/detail?id=146304
 				
-				var mArray=m.data.trim().split(",");
+				//var mArray=m.data.trim().split(",");
 				jQuery.each(wsList, function(i, obj) {
-				      obj.onmessage(mArray);
+				      obj.onmessage(mObj);
 				  });
 				//mArray=null;
 				m=null;
@@ -97,5 +97,5 @@ function reloadSocket(){
 	}
 }
 
-setInterval(function(){reloadSocket()},30000);
+setInterval(function(){reloadSocket();},60000);
 

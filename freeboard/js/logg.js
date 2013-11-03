@@ -44,14 +44,14 @@ function resizeLog(amount){
 	this.initLogg();
 }
 function Logg () {
-	this.onmessage = function (mArray) {
+	this.onmessage = function (navObj) {
 	
-		jQuery.each(mArray, function(i, data) {
+		
 			//avoid commands
-			if(data && data.indexOf('#')>=0)return true;
+			if(!navObj)return true;
 			
-			if (data && data.indexOf('LAT:') >= 0) {
-				var c = parseFloat(data.substring(4));
+			if (navObj.LAT) {
+				var c = navObj.LAT;
 				if($.isNumeric(c)){
 					if(c>0){
 						lcdLat.setValue(c.toFixed(5)+' N');
@@ -61,8 +61,8 @@ function Logg () {
 				}
 				c=null;
 			}
-			if (data && data.indexOf('LON:') >= 0) {
-				var c = parseFloat(data.substring(4));
+			if (navObj.LON) {
+				var c = navObj.LON;
 				if($.isNumeric(c)){
 					if(c>0){
 						lcdLon.setValue(c.toFixed(5)+' E');
@@ -72,22 +72,16 @@ function Logg () {
 				}
 				c=null;
 			}
-			if (data && data.indexOf('SOG:') >= 0) {
-				var c = parseFloat(data.substring(4));
-				if($.isNumeric(c)){
-					lcdLog.setValue(c);
-				}
-				c=null;
+			if (navObj.SOG) {
+					lcdLog.setValue(navObj.SOG);
+				
 			}
-			if (data && data.indexOf('MGH:') >= 0) {
-				var c = parseFloat(data.substring(4));
-				if($.isNumeric(c)){
-					lcdHeading.setValue(c);
-				}
-				c=null;
+			if (navObj.MGH) {
+					lcdHeading.setValue(navObj.MGH);
+				
 			}
-			if (data && data.indexOf('YAW:') >= 0) {
-				var c = parseFloat(data.substring(4));
+			if (navObj.YAW) {
+				var c = navObj.YAW;
 				if($.isNumeric(c)){
 					// -180 <> 180
 					if (c >= 179) {
@@ -98,9 +92,8 @@ function Logg () {
 				}
 				c=null;
 			}
-			data=null;
-		});
-	}
+			
+	};
 	
 }
 

@@ -22,92 +22,80 @@ var avgPosA = 0;
 var avgArrayT = [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ];
 var avgPosT = 0;
 
-function resizeWind(amount){
+function resizeWind(amount) {
 	var size = $("#canvasWindDirTrue").width();
-	$("#canvasWindDirTrue").width(size+(size*amount));
-	$("#canvasWindDirTrue").height(size+(size*amount));
-	$("#canvasWindDirApp").width(size+(size*amount));
-	$("#canvasWindDirApp").height(size+(size*amount));
-	var smallSize =  $("#canvasWindTrue").width();
-	$("#canvasWindTrue").width(smallSize+(smallSize*amount));
-	$("#canvasWindTrue").height(smallSize+(smallSize*amount));
-	$("#canvasWindApp").width(smallSize+(smallSize*amount));
-	$("#canvasWindApp").height(smallSize+(smallSize*amount));
+	$("#canvasWindDirTrue").width(size + (size * amount));
+	$("#canvasWindDirTrue").height(size + (size * amount));
+	$("#canvasWindDirApp").width(size + (size * amount));
+	$("#canvasWindDirApp").height(size + (size * amount));
+	var smallSize = $("#canvasWindTrue").width();
+	$("#canvasWindTrue").width(smallSize + (smallSize * amount));
+	$("#canvasWindTrue").height(smallSize + (smallSize * amount));
+	$("#canvasWindApp").width(smallSize + (smallSize * amount));
+	$("#canvasWindApp").height(smallSize + (smallSize * amount));
 	this.initWind();
-	
+
 }
 
-function Wind () {
-	this.onmessage = function (mArray) {
-		
-		
-		jQuery.each(mArray, function(i, data) {
-			//avoid commands
-			if(data && data.indexOf('#')>=0)return true;
-			
-			if (data && data.indexOf('WSA') >= 0) {
-				var c = parseFloat(data.substring(4));
-				if($.isNumeric(c)){
-					radialWindApp.setValue(c);
-				}
-				c=null;
+function Wind() {
+	this.onmessage = function(navObj) {
+
+		// avoid commands
+		if (!navObj)
+			return true;
+
+		if (navObj.WSA) {
+			radialWindApp.setValue(navObj.WSA);
+		}
+		if (navObj.WST) {
+			radialWindTrue.setValue(navObj.WST);
+		}
+		if (navObj.WDA) {
+			var c = navObj.WDA;
+			// -180 <> 180
+			if (c >= 179) {
+				radialWindDirApp.setValueAnimatedLatest(-(360 - c));
+			} else {
+				radialWindDirApp.setValueAnimatedLatest(c);
 			}
-			if (data && data.indexOf('WST') >= 0) {
-				var c = parseFloat(data.substring(4));
-				if($.isNumeric(c)){
-					radialWindTrue.setValue(c);
-				}
-				c=null;
+			// make average
+			avgArrayA[avgPosA] = c;
+			avgPosA = avgPosA + 1;
+			if (avgPosA >= avgArrayA.length)
+				avgPosA = 0;
+			var v = 0;
+			for ( var i = 0; i < avgArrayA.length; i++) {
+				v = v + avgArrayA[i];
 			}
-			if (data && data.indexOf('WDA') >= 0) {
-				var c = parseFloat(data.substring(4));
-				if($.isNumeric(c)){
-					// -180 <> 180
-					if (c >= 179) {
-						radialWindDirApp.setValueAnimatedLatest(-(360 - c));
-					} else {
-						radialWindDirApp.setValueAnimatedLatest(c);
-					}
-					// make average
-					avgArrayA[avgPosA] = c;
-					avgPosA = avgPosA + 1;
-					if (avgPosA >= avgArrayA.length)
-						avgPosA = 0;
-					var v = 0;
-					for ( var i = 0; i < avgArrayA.length; i++) {
-						v = v + avgArrayA[i];
-					}
-					if (c >= 179) {
-						radialWindDirApp.setValueAnimatedAverage(-(360 - (v / avgArrayA.length)));
-					} else {
-						radialWindDirApp.setValueAnimatedAverage(v / avgArrayA.length);
-					}
-				}
-				c=null;
+			if (c >= 179) {
+				radialWindDirApp
+						.setValueAnimatedAverage(-(360 - (v / avgArrayA.length)));
+			} else {
+				radialWindDirApp.setValueAnimatedAverage(v / avgArrayA.length);
 			}
-			if (data && data.indexOf('WDT') >= 0) {
-				var c = parseFloat(data.substring(4));
-				if($.isNumeric(c)){
-					radialWindDirTrue.setValueAnimatedLatest(c);
-					// make average
-					avgArrayT[avgPosT] = c;
-					avgPosT = avgPosT + 1;
-					if (avgPosT >= avgArrayT.length)
-						avgPosT = 0;
-					var v = 0;
-					for ( var i = 0; i < avgArrayT.length; i++) {
-						v = v + avgArrayT[i];
-					}
-					radialWindDirTrue.setValueAnimatedAverage(v / avgArrayT.length);
-				}
-				c=null;
+
+			c = null;
+		}
+		if (navObj.WDT) {
+			var c = navObj.WDT;
+			radialWindDirTrue.setValueAnimatedLatest(c);
+			// make average
+			avgArrayT[avgPosT] = c;
+			avgPosT = avgPosT + 1;
+			if (avgPosT >= avgArrayT.length)
+				avgPosT = 0;
+			var v = 0;
+			for ( var i = 0; i < avgArrayT.length; i++) {
+				v = v + avgArrayT[i];
 			}
-			data=null;
-		});
-	}
+			radialWindDirTrue.setValueAnimatedAverage(v / avgArrayT.length);
+		}
+		c = null;
+
+	};
 }
 
-var tackAngle=45;
+var tackAngle = 45;
 
 function initWind() {
 
@@ -116,10 +104,12 @@ function initWind() {
 			steelseries.Section(20, 35, 'rgba(0, 220, 0, 0.3)'),
 			steelseries.Section(35, 75, 'rgba(220,0, 0, 0.3)') ];
 
-	var areasCloseHaul = [ steelseries.Section((0-tackAngle), 0, 'rgba(0, 0, 220, 0.3)'),
+	var areasCloseHaul = [
+			steelseries.Section((0 - tackAngle), 0, 'rgba(0, 0, 220, 0.3)'),
 			steelseries.Section(0, tackAngle, 'rgba(0, 0, 220, 0.3)') ];
-	var areasCloseHaulTrue = [ steelseries.Section((360-tackAngle), 0, 'rgba(0, 0, 220, 0.3)'),
-	           			steelseries.Section(0, tackAngle, 'rgba(0, 0, 220, 0.3)') ];
+	var areasCloseHaulTrue = [
+			steelseries.Section((360 - tackAngle), 0, 'rgba(0, 0, 220, 0.3)'),
+			steelseries.Section(0, tackAngle, 'rgba(0, 0, 220, 0.3)') ];
 
 	// Initialzing gauges
 
@@ -127,7 +117,7 @@ function initWind() {
 	// wind
 	radialWindApp = new steelseries.Radial('canvasWindApp', {
 		gaugeType : steelseries.GaugeType.TYPE4,
-		//size : document.getElementById('canvasWindApp').width,
+		// size : document.getElementById('canvasWindApp').width,
 		minValue : 0,
 		maxValue : 60,
 		threshold : 35,
@@ -136,49 +126,49 @@ function initWind() {
 		titleString : "WIND APPARENT",
 		unitString : "knots",
 		lcdVisible : true,
-		lcdColor: steelseries.LcdColor.BEIGE,
+		lcdColor : steelseries.LcdColor.BEIGE,
 		pointerType : steelseries.PointerType.TYPE2,
-		backgroundColor: steelseries.BackgroundColor.BROWN,
+		backgroundColor : steelseries.BackgroundColor.BROWN,
 	});
 
 	// wind dir
 	radialWindDirApp = new steelseries.WindDirection('canvasWindDirApp', {
-		//size : document.getElementById('canvasWindDirApp').width,
+		// size : document.getElementById('canvasWindDirApp').width,
 		titleString : "WIND           APP",
 		lcdVisible : true,
-		lcdColor: steelseries.LcdColor.BEIGE,
+		lcdColor : steelseries.LcdColor.BEIGE,
 		pointSymbolsVisible : false,
 		degreeScaleHalf : true,
 		section : areasCloseHaul,
 		area : areasCloseHaul,
 		pointerTypeLatest : steelseries.PointerType.TYPE2,
 		pointerTypeAverage : steelseries.PointerType.TYPE1,
-		backgroundColor: steelseries.BackgroundColor.BROWN,
+		backgroundColor : steelseries.BackgroundColor.BROWN,
 	});
-	
+
 	// wind true
 	radialWindTrue = new steelseries.Radial('canvasWindTrue', {
 		gaugeType : steelseries.GaugeType.TYPE4,
-		//size : document.getElementById('canvasWindTrue').width,
+		// size : document.getElementById('canvasWindTrue').width,
 		maxValue : 60,
 		threshold : 35,
 		section : sections,
 		titleString : "WIND          TRUE",
 		unitString : "knots",
 		lcdVisible : true,
-		lcdColor: steelseries.LcdColor.BEIGE,
+		lcdColor : steelseries.LcdColor.BEIGE,
 		pointerType : steelseries.PointerType.TYPE2,
-		backgroundColor: steelseries.BackgroundColor.BROWN,
+		backgroundColor : steelseries.BackgroundColor.BROWN,
 	});
 
 	// wind dir
 
 	radialWindDirTrue = new steelseries.WindDirection('canvasWindDirTrue', {
-		//size : document.getElementById('canvasWindDirTrue').width,
+		// size : document.getElementById('canvasWindDirTrue').width,
 		titleString : "WIND     TRUE",
 		roseVisible : false,
 		lcdVisible : true,
-		lcdColor: steelseries.LcdColor.BEIGE,
+		lcdColor : steelseries.LcdColor.BEIGE,
 		section : areasCloseHaulTrue,
 		area : areasCloseHaulTrue,
 		pointSymbolsVisible : false,
@@ -186,9 +176,9 @@ function initWind() {
 		lcdTitleStrings : [ "Latest", "Average" ],
 		pointerTypeLatest : steelseries.PointerType.TYPE2,
 		pointerTypeAverage : steelseries.PointerType.TYPE1,
-		backgroundColor: steelseries.BackgroundColor.BROWN,
+		backgroundColor : steelseries.BackgroundColor.BROWN,
 	});
 	// make a web socket
-	
+
 	addSocketListener(new Wind());
 }

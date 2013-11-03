@@ -26,41 +26,27 @@ var radius=true;
 	public static final String ANCHOR_ALARM_LON = "#AAE";
  */
 function AnchorAlarm() {
-	this.onmessage = function(mArray) {
-			jQuery.each(mArray, function(i, data) {
+	this.onmessage = function(navObj) {
+			
 				
 				//get autopilot state, avoid commands
-				if(data && data.indexOf('#')>=0){
+				if (!navObj)
 					return true;
-				}
-				
-				if (data && data.indexOf('AAX:') >= 0) {
-					var c =parseInt(data.substring(4));
-					if(c==1){
+				if (navObj.AAX) {
+					if(navObj.AAX==1){
 						anchorAlarmOn=true;
 					}else{
 						anchorAlarmOn=false;
 					}
-					c=null;
 				}
-				if (data && data.indexOf('AAR:') >= 0) {
-					var c =parseInt(data.substring(4));
-					if ($.isNumeric(c)) {
-						alcdRadius.setValue(c);
-					}
-					c = null;
+				if (navObj.AAR) {
+						alcdRadius.setValue(navObj.AAR);
 				}
-				if (data && data.indexOf('AAD:') >= 0) {
-					var c =parseInt(data.substring(4));
-					if ($.isNumeric(c)) {
-						alcdDistance.setValue(c);
-					}
-					c = null;
+				if (navObj.AAD) {
+						alcdDistance.setValue(navObj.AAD);
 				}
-				
-				data = null;
-			});
-	}
+			
+	};
 
 }
 

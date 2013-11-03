@@ -30,6 +30,8 @@ var overlays;
 var layers;
 var drawnItems;
 var trackLine;
+var aisGroup;
+var aisList = new Array();
 
 //vars of global interest
 var followBoat = false;
@@ -40,6 +42,8 @@ var speed = 0.0;
 var declination = 0.0;
 var trackCount = 0;
 var moveCount = 0;
+
+var ONE_KNOT_LAT=(1000 / 40075017) * 360;
 
 function initCharts() {
 	//
@@ -156,6 +160,9 @@ function initCharts() {
 		});
 		zAu.send(new zk.Event(zk.Widget.$("$this"), 'onWaypointMove', edits));
 	});
+	//ais
+	aisGroup = new L.LayerGroup();
+	map.addLayer(aisGroup);
 	
 	map.on('zoomend', function(e) {
 		zAu.send(new zk.Event(zk.Widget.$("$this"), 'onChartChange', new Array(map.getCenter().lat,map.getCenter().lng, map.getZoom())));
@@ -197,7 +204,6 @@ function setLayerVisibility(){
 		if (lyr[0].length > 0) {
 			jQuery.each(layers._layers, function(i, n){
 					if(n.name == lyr[0]){
-						//console.log(n.name+":"+lyr[1]);
 						if (lyr[1] === 'false') {
 							if(map.hasLayer(n.layer))map.removeLayer(n.layer);
 						} else {
@@ -247,6 +253,7 @@ function setPosition(llat, llon, brng, spd) {
 	}
 	if(map.hasLayer(bearingLayer)){
 		bearingLayer.setLatLngs([ start_point, end_point ]);
+		bearingLayer.setIconAngle(45);
 	}
 	// add to tracks
 	trackLine.addLatLng(new L.LatLng(llat, llon));
@@ -374,63 +381,89 @@ function refreshWaypoints() {
 	
 	layers.addOverlay(wgpxLayer, "Waypoints");
 }
+
+function refreshAis(ais){
+	//{"AIS":{"position":{"latitude":37.839843333333334,"longitude":-122.44135666666666,"latitudeAsString":"37 50.391N","longitudeAsString":"122 26.481W"},"navStatus":0,"rot":128,"sog":240,"cog":1436,"trueHeading":511,"utcSec":25,"userId":366985330}}
+	//aisGroup.clearLayers();
+	var now = new Date().getTime();
+	//10 min max
+	now=now-600000;
+	var found;
+	aisGroup.eachLayer(function (layer) {
+			if (layer.options.mmsi === ais.userId){
+				//updatemarker.options.course = (ais.cog)/10;
+				layer.options.status = ais.navStatus;
+				layer.setIconAngle(marker.options.course - 90);
+				found="true";
+			}
+			//cleanup after 10 min.
+			if(ais.received < now){
+				aisGroup.removeLayer(layer);
+			}
+		});	
+	if(found)return;
+	//new one here
+	var lat = ais.position.latitude;
+	var lng = ais.position.longitude;
+	var boatIcon = L.icon({
+		iconUrl : './js/img/white_ship.png',
+		iconSize : [ 24, 24 ],
+		iconAnchor : [ 10, 10 ],
+	});
+	var marker = new L.Marker(new L.LatLng(lat,lng), { icon:boatIcon});
+	marker.options.course = (ais.cog)/10;
+	marker.options.status = ais.navStatus;
+	marker.setIconAngle(marker.options.course - 90);
+	marker.options.mmsi = ais.userId;
+	marker.on('click', function(e) {
+		var popup = new L.Popup({'minWidth': 350});
+		popup.setLatLng(e.target._latlng);
+		var name = "Unknown";
+		if(ais.name)name=ais.name;
+		var callsign = "Unknown";
+		if(ais.callsign)callsign=ais.callsign;
+		popup.setContent('MMSI: '+ais.userId+', Name: '+name+', Callsign: '+callsign+'<br/>SOG: '+ais.sog/10+', COG: '+ais.cog/10 +'<br/>True Heading: '+ais.trueHeading);
+		map.openPopup(popup);
+	});
+	aisGroup.addLayer(marker);
+
+}
+
+
 //
 function ChartPlotter() {
-	this.onmessage = function(mArray) {
+	this.onmessage = function(navObj) {
 		//console.log("Chartplotter:"+mArray);
 		var setPos = false;
-		jQuery.each(mArray, function(i, data) {
+		if (!navObj)
+			return true;
 
-			// avoid commands
-			if (data && data.indexOf('#') >= 0)
-				return true;
-
-			if (data && data.indexOf('LAT') >= 0) {
-				var c = parseFloat(data.substring(4));
-				//console.log("Chartplotter:LAT="+c);
-				if ($.isNumeric(c)) {
-					lat = c;
+		if (navObj.LAT) {
+					lat = navObj.LAT;
 					setPos = true;
-				}
-				c = null;
 			}
-			if (data && data.indexOf('LON') >= 0) {
-				var c = parseFloat(data.substring(4));
-				if ($.isNumeric(c)) {
-					lon = c;
+			if (navObj.LON) {
+					lon = navObj.LON;
 					setPos = true;
-				}
-				c = null;
 			}
-			if (data && data.indexOf('MGH') >= 0) {
-				var c = parseFloat(data.substring(4));
-				if ($.isNumeric(c)) {
-					heading = c;
+			if (navObj.MGH) {
+					heading = navObj.MGH;
 					setPos = true;
-				}
-				c = null;
 			}
-			if (data && data.indexOf('SOG') >= 0) {
-				var c = parseFloat(data.substring(4));
-				if ($.isNumeric(c)) {
-					speed = c;
+			if (navObj.SOG) {
+					speed = navObj.SOG;
 					setPos = true;
-				}
-				c = null;
 			}
-			if (data && data.indexOf('MGD') >= 0) {
-				var c = parseFloat(data.substring(4));
-				if ($.isNumeric(c)) {
-					declination = c;
-				}
-				c = null;
+			if (navObj.MGD) {
+			declination = navObj.MGD;	
 			}
-			if (data && data.indexOf('WPC') >= 0) {
+			if (navObj.WPC ) {
 				// we refresh the waypoint layer
 				refreshWaypoints();
 			}
-			if (data && data.indexOf('WPG') >= 0) {
-				var coords = data.substring(4);
+			if (navObj.WPG) {
+				
+				var coords = navObj.WPG;
 				// console.log(coords);
 				var coordsArray = coords.split('|');
 				// console.log(coordsArray);
@@ -446,8 +479,11 @@ function ChartPlotter() {
 					setGotoDestination(null, null, null, null);
 				}
 			}
-			data = null;
-		});
+			if (navObj.AIS ) {
+				// we refresh the ais layer
+				refreshAis(navObj.AIS);
+			}
+		
 		if (setPos) {
 			//console.log("Chartplotter:setPos");
 			// avoid the 0,0 point

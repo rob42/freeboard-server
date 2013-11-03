@@ -144,6 +144,7 @@ public class Util {
 		props.setProperty(Constants.WAYPOINT_CURRENT,"waypoints.gpx");
 		props.setProperty(Constants.SERIAL_PORTS,"/dev/ttyUSB0,/dev/ttyUSB1,/dev/ttyUSB2");
 		props.setProperty(Constants.DNS_USE_CHOICE,Constants.DNS_USE_BOAT);
+		props.setProperty(Constants.ENABLE_COMET,"false");
 	}
 	
 

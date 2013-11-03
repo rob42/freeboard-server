@@ -19,63 +19,44 @@
 var autopilotOn=false;
 var followCompass=true;
 function Autopilot() {
-	this.onmessage = function(mArray) {
-			jQuery.each(mArray, function(i, data) {
+	this.onmessage = function(navObj) {
 				
 				//get autopilot state, avoid commands
-				if(data && data.indexOf('#')>=0){
+				if (!navObj)
 					return true;
-				}
-				
-				if (data && data.indexOf('APX:') >= 0) {
-					var c =parseInt(data.substring(4));
-					if(c==1){
+				if (navObj.APX) {
+					if(navObj.APX==1){
 						autopilotOn=true;
 					}else{
 						autopilotOn=false;
 					}
-					c=null;
 				}
-				if (data && data.indexOf('APS:') >= 0) {
-					var c = data.substring(4);
-					if ('W' == c) {
+				if (navObj.APS) {
+					if ('W' == navObj.APS) {
 						followCompass=false;
 					}else{
 						followCompass=true;
 					}
-					c = null;
 				}
 				// show either compass or apparent wind depending on ap source
-				if (!autopilotOn && followCompass && data && data.indexOf('MGH:') >= 0) {
-					var c = parseFloat(data.substring(4));
-					if ($.isNumeric(c)) {
-						autopilotTarget.setValue(c);
-					}
-					c = null;
+				if (!autopilotOn && followCompass && navObj.MGH) {
+						autopilotTarget.setValue(navObj.MGH);
 				}
-				if (!autopilotOn && !followCompass &&  data && data.indexOf('WDA:') >= 0) {
-					var c = parseFloat(data.substring(4));
-					if ($.isNumeric(c)) {
+				if (!autopilotOn && !followCompass &&  navObj.WDA) {
+					var c = navObj.WDA;
 						// -180 <> 180
 						if (c >= 179) {
 							autopilotTarget.setValue(-(360 - c));
 						} else {
 							autopilotTarget.setValue(c);
 						}
-					}
-					c = null;
 				}
 				//autopilot on, show target
-				if (autopilotOn && data && data.indexOf('APT:') >= 0) {
-					var c = parseFloat(data.substring(4));
-					if ($.isNumeric(c)) {
-						autopilotTarget.setValue(c);
-					}
-					c = null;
+				if (autopilotOn && navObj.APT) {
+						autopilotTarget.setValue(navObj.APT);
 				}
-				data = null;
-			});
-	}
+			
+	};
 
 }
 

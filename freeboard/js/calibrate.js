@@ -41,12 +41,14 @@ var y_magmax=0.0;
 var z_magmax=0.0;
 
 function Cal () {
-	this.onmessage = function (m) {
+	this.onmessage = function (navObj) {
 		var mArray=m.data.split(",");
-		jQuery.each(mArray, function(i, data) {
+		if (!navObj)
+			return true;
 			//accelerator
-			if (data && data.indexOf('AN3') >= 0) {
-				var c = parseFloat(data.substring(data.indexOf('AN3') + 4));
+		if (navObj.AN3) {
+	
+				var c = navObj.AN3;
 				if(x_min>c)x_min=c;
 				if(x_max<c)x_max=c;
 				//lcdLat.setValue(parseFloat(c));
@@ -57,8 +59,8 @@ function Cal () {
 				var x_calWidget = zk.Widget.$("$x_cal");
 				x_calWidget.setValue(-(x_min+x_max)/2);
 			}
-			if (data && data.indexOf('AN4') >= 0) {
-				var c = parseFloat(data.substring(data.indexOf('AN4') + 4));
+		if (navObj.AN4) {
+				var c = navObj.AN4;
 				if(y_min>c)y_min=c;
 				if(y_max<c)y_max=c;
 				//lcdLat.setValue(parseFloat(c));
@@ -69,8 +71,8 @@ function Cal () {
 				var y_calWidget = zk.Widget.$("$y_cal");
 				y_calWidget.setValue(-(y_min+y_max)/2);
 			}
-			if (data && data.indexOf('AN5') >= 0) {
-				var c = parseFloat(data.substring(data.indexOf('AN5') + 4));
+		if (navObj.AN5) {
+			var c = navObj.AN5;
 				if(z_min>c)z_min=c;
 				if(z_max<c)z_max=c;
 				//lcdLat.setValue(parseFloat(c));
@@ -82,8 +84,8 @@ function Cal () {
 				z_calWidget.setValue(-(z_min+z_max)/2);
 			}
 			//gyro
-			if (data && data.indexOf('AN0') >= 0) {
-				var c = parseFloat(data.substring(data.indexOf('AN0') + 4));
+		if (navObj.AN0) {
+			var c = navObj.AN0;
 				if(x_gyromin>c)x_gyromin=c;
 				if(x_gyromax<c)x_gyromax=c;
 				//lcdLat.setValue(parseFloat(c));
@@ -94,8 +96,8 @@ function Cal () {
 				var x_gyrocalWidget = zk.Widget.$("$x_gyrocal");
 				x_gyrocalWidget.setValue(-(x_gyromin+x_gyromax)/2);
 			}
-			if (data && data.indexOf('AN1') >= 0) {
-				var c = parseFloat(data.substring(data.indexOf('AN1') + 4));
+		if (navObj.AN1) {
+			var c = navObj.AN1;
 				if(y_gyromin>c)y_gyromin=c;
 				if(y_gyromax<c)y_gyromax=c;
 				//lcdLat.setValue(parseFloat(c));
@@ -106,8 +108,8 @@ function Cal () {
 				var y_gyrocalWidget = zk.Widget.$("$y_gyrocal");
 				y_gyrocalWidget.setValue(-(y_gyromin+y_gyromax)/2);
 			}
-			if (data && data.indexOf('AN2') >= 0) {
-				var c = parseFloat(data.substring(data.indexOf('AN2') + 4));
+		if (navObj.AN2) {
+			var c = navObj.AN2;
 				if(z_gyromin>c)z_gyromin=c;
 				if(z_gyromax<c)z_gyromax=c;
 				//lcdLat.setValue(parseFloat(c));
@@ -120,8 +122,8 @@ function Cal () {
 			}
 			
 			//mag
-			if (data && data.indexOf('MGX') >= 0) {
-				var c = parseFloat(data.substring(data.indexOf('MGX') + 4));
+		if (navObj.MGX) {
+			var c = navObj.MGX;
 				if(x_magmin>c)x_magmin=c;
 				if(x_magmax<c)x_magmax=c;
 				//lcdLat.setValue(parseFloat(c));
@@ -132,8 +134,8 @@ function Cal () {
 				var x_magcalWidget = zk.Widget.$("$x_magcal");
 				x_magcalWidget.setValue(-(x_magmin+x_magmax)/2);
 			}
-			if (data && data.indexOf('MGY') >= 0) {
-				var c = parseFloat(data.substring(data.indexOf('MGY') + 4));
+		if (navObj.MGY) {
+			var c = navObj.MGY;
 				if(y_magmin>c)y_magmin=c;
 				if(y_magmax<c)y_magmax=c;
 				//lcdLat.setValue(parseFloat(c));
@@ -144,8 +146,8 @@ function Cal () {
 				var y_magcalWidget = zk.Widget.$("$y_magcal");
 				y_magcalWidget.setValue(-(y_magmin+y_magmax)/2);
 			}
-			if (data && data.indexOf('MGZ') >= 0) {
-				var c = parseFloat(data.substring(data.indexOf('MGZ') + 4));
+		if (navObj.MGZ) {
+			var c = navObj.MGZ;
 				if(z_magmin>c)z_magmin=c;
 				if(z_magmax<c)z_magmax=c;
 				//lcdLat.setValue(parseFloat(c));
@@ -156,9 +158,8 @@ function Cal () {
 				var z_magcalWidget = zk.Widget.$("$z_magcal");
 				z_magcalWidget.setValue(-(z_magmin+z_magmax)/2);
 			}
-			
-		});
-	}
+	
+	};
 	
 }
 

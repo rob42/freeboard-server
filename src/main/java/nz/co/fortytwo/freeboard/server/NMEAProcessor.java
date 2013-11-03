@@ -240,6 +240,7 @@ public class NMEAProcessor extends FreeboardProcessor implements Processor, Free
 					}
 					previousLat = Util.movingAverage(ALPHA, previousLat, sen.getPosition().getLatitude());
 					logger.debug("lat position:"+sen.getPosition().getLatitude()+", hemi="+sen.getPosition().getLatitudeHemisphere());
+
 					map.put(Constants.LAT, previousLat);
 					
 					if (startLon) {
