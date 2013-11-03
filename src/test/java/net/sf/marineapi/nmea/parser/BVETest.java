@@ -49,7 +49,6 @@ public class BVETest {
  * JJAF = 153 + 1280 = 1433 = 143.3 units of fuel remaining
  */
 	@Test
-	@Ignore
 	public void shouldHandleFuelData(){
 		try{
 			//empty = new BVEParser(TalkerId.GP);
@@ -96,7 +95,6 @@ public class BVETest {
 	 */
 	
 	@Test
-	@Ignore
 	public void shouldHandleTempData(){
 		try{
 			//empty = new BVEParser(TalkerId.GP);
@@ -149,7 +147,6 @@ MLAA = 16*12 + 11 + 4096*0 +256*0
 MLAA = 203 psi
 	 */
 	@Test
-	@Ignore
 	public void shouldHandlePressureData(){
 		try{
 			//empty = new BVEParser(TalkerId.GP);
@@ -209,7 +206,6 @@ FMAK = 16*5 + 12 + 4096*0 +256*10
 FMAK = 2652 RPM
 	 */
 	@Test
-	@Ignore
 	public void shouldHandleEngineData(){
 		try{
 			//empty = new BVEParser(TalkerId.GP);
