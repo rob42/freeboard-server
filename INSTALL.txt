@@ -36,9 +36,19 @@ Hardware:
 		cd /home/pi/freeboard
 		./start.sh
 		
-		There is an auto-start shell script freeboard.init.d.sh. This can be used to make freeboard autostart on bootup. See http://www.debian-administration.org/articles/28
-		
 		To stop freeboard, 'killall java', or reboot.
+		Useful logs are in logs/start.log and logs/freeboard.log
+		
+		There is an auto-start shell script freeboard.init.d.sh. This can be used to make freeboard autostart on bootup. See http://www.debian-administration.org/articles/28
+		Basically the following:
+			#copy and rename the file to /etc/init.d - you must do this as root hence 'sudo'
+			sudo cp freeboard.init.d.sh /etc/init.d/freeboard
+			# change owner and permissions
+			sudo chmod 755 /etc/init.d/freeboard
+			sudo chown root:root /etc/init.d/freeboard
+			# add to startup process
+			sudo update-rc.d freeboard defaults
+		
 
 	Arduino - Mega 1260 - load as per  freeboardPLC project
 		connect via USB

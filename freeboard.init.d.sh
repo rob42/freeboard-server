@@ -13,8 +13,7 @@
 # Author: giorgioatmadrisio <giorgioatmadrisio@movi.fvg.it>
 #
 
-# PATH should only include /usr/* if it runs after the mountnfs.sh
-script
+# PATH should only include /usr/* if it runs after the mountnfs.sh script
 PATH=/sbin:/usr/sbin:/bin:/usr/bin
 DESC="FreeBoard web based navigation"
 NAME=freeboard
@@ -47,17 +46,13 @@ do_start()
 # 0 if daemon has been started
 # 1 if daemon was already running
 # 2 if daemon could not be started
-start-stop-daemon --start --quiet --pidfile $PIDFILE
-$EXTRA_ARGS --startas $DAEMON --test > /dev/null \
+start-stop-daemon --start --quiet --pidfile $PIDFILE $EXTRA_ARGS --startas $DAEMON --test > /dev/null \
 || return 1
-start-stop-daemon --start --quiet --pidfile $PIDFILE
-$EXTRA_ARGS --startas $DAEMON -- \
+start-stop-daemon --start --quiet --pidfile $PIDFILE $EXTRA_ARGS --startas $DAEMON -- \
 $DAEMON_ARGS \
 || return 2
-# Add code here, if necessary, that waits for the process to be
-ready
-# to handle requests from services started subsequently which
-depend
+# Add code here, if necessary, that waits for the process to be ready
+# to handle requests from services started subsequently which depend
 # on this one. As a last resort, sleep for some time.
 }
 
@@ -71,21 +66,16 @@ do_stop()
 # 1 if daemon was already stopped
 # 2 if daemon could not be stopped
 # other if a failure occurred
-start-stop-daemon --stop --quiet --retry=TERM/30/KILL/5
---pidfile $PIDFILE
+start-stop-daemon --stop --quiet --retry=TERM/30/KILL/5 --pidfile $PIDFILE
 RETVAL="$?"
 [ "$RETVAL" = 2 ] && return 2
-# Wait for children to finish too if this is a daemon that
-forks
+# Wait for children to finish too if this is a daemon that forks
 # and if the daemon is only ever run from this initscript.
-# If the above conditions are not satisfied then add some other
-code
-# that waits for the process to drop all resources that could
-be
+# If the above conditions are not satisfied then add some other code
+# that waits for the process to drop all resources that could be
 # needed by services started subsequently. A last resort is to
 # sleep for some time.
-start-stop-daemon --stop --quiet --oknodo --retry=0/30/KILL/5
---pidfile $PIDFILE
+start-stop-daemon --stop --quiet --oknodo --retry=0/30/KILL/5 --pidfile $PIDFILE
 [ "$?" = 2 ] && return 2
 # Many daemons don't delete their pidfiles when they exit.
 rm -f $PIDFILE
@@ -105,7 +95,7 @@ start-stop-daemon --stop --signal 1 --quiet --pidfile $PIDFILE
 return 0
 }
 
-case "$1" in
+case "$1" in 
 start)
 [ "$VERBOSE" != no ] && log_daemon_msg "Starting $DESC" "$NAME"
 do_start
@@ -127,8 +117,7 @@ status_of_proc "$DAEMON" "$NAME" && exit 0 || exit $?
 ;;
 #reload|force-reload)
 #
-# If do_reload() is not implemented then leave this commented
-out
+# If do_reload() is not implemented then leave this commented out
 # and leave 'force-reload' as an alias for 'restart'.
 #
 #log_daemon_msg "Reloading $DESC" "$NAME"
@@ -147,8 +136,7 @@ case "$?" in
 do_start
 case "$?" in
 0) log_end_msg 0 ;;
-1) log_end_msg 1 ;; # Old process is still
-running
+1) log_end_msg 1 ;; # Old process is still running
 *) log_end_msg 1 ;; # Failed to start
 esac
 ;;
