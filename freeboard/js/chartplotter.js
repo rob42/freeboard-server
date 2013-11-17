@@ -253,7 +253,6 @@ function setPosition(llat, llon, brng, spd) {
 	}
 	if(map.hasLayer(bearingLayer)){
 		bearingLayer.setLatLngs([ start_point, end_point ]);
-		bearingLayer.setIconAngle(45);
 	}
 	// add to tracks
 	trackLine.addLatLng(new L.LatLng(llat, llon));
