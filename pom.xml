@@ -4,7 +4,7 @@
 
 	<groupId>nz.co.fortytwo.freeboard</groupId>
 	<artifactId>freeboard-server</artifactId>
-	<version>SNAPSHOT</version>
+	<version>0.5.5-SNAPSHOT</version>
 	<name>Freeboard Server</name>
 
 	<description>Webserver and data server for FreeBoard</description>
@@ -22,6 +22,28 @@
 			<distribution>repo</distribution>
 		</license>
 	</licenses>
+	<organization>
+		<name>Tasman Consulting Ltd</name>
+		<url>www.42.co.nz</url>
+	</organization>
+	<developers>
+		<developer>
+			<id>rob42</id>
+			<name>Robert Huitema</name>
+			<email>robert@42.co.nz</email>
+		</developer>
+	</developers>
+
+	<scm>
+		<connection>scm:git:git@github.com:rob42/freeboard-server.git</connection>
+		<developerConnection>scm:git:git@github.com:rob42/freeboard-server.git</developerConnection>
+		<url>git@github.com:rob42/freeboard-server.git</url>
+	</scm>
+	<issueManagement>
+		<system>Github</system>
+		<url>https://github.com/rob42/freeboard-server/issues</url>
+	</issueManagement>
+
 	<repositories>
 		<repository>
 			<id>java.net jni</id>
@@ -43,33 +65,34 @@
 			<name>DMA AisLib Repository</name>
 			<url>http://repository-dma.forge.cloudbees.com/release</url>
 		</repository>
+
 	</repositories>
+	<pluginRepositories>
+		<pluginRepository>
+			<id>autoincrement-versions-maven-plugin</id>
+			<name>autoincrement-versions-maven-plugin</name>
+			<url>http://autoincrement-versions-maven-plugin.googlecode.com/svn/repo</url>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+		</pluginRepository>
+	</pluginRepositories>
 	<dependencies>
 		<!-- serial comms -->
-		<!-- dependency> <groupId>org.rxtx</groupId> <artifactId>rxtx</artifactId> 
-			<version>2.1.7</version> </dependency -->
+
 		<!-- jna -->
 		<dependency>
 			<groupId>net.java.dev.jna</groupId>
 			<artifactId>jna</artifactId>
 			<version>${jna.version}</version>
 		</dependency>
-		<!-- <dependency> -->
-		<!-- <groupId>net.java.dev.jna</groupId> -->
-		<!-- <artifactId>platform</artifactId> -->
-		<!-- <version>${jna.version}</version> -->
-		<!-- </dependency> -->
 
 		<dependency>
 			<groupId>com.sparetimelabs</groupId>
 			<artifactId>purejavacomm</artifactId>
-			<version>0.0.17</version>
+			<version>0.0.21</version>
 		</dependency>
-		<!-- <dependency> -->
-		<!-- <groupId>com.neuronrobotics</groupId> -->
-		<!-- <artifactId>nrjavaserial</artifactId> -->
-		<!-- <version>3.7.7</version> -->
-		<!-- </dependency> -->
+
 		<!-- Camel -->
 		<dependency>
 			<groupId>org.apache.camel</groupId>
@@ -110,6 +133,7 @@
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-test</artifactId>
 			<version>${camel.version}</version>
+			<scope>test</scope>
 		</dependency>
 		<!-- jetty -->
 		<dependency>
@@ -184,6 +208,12 @@
 			<groupId>net.sf.marineapi</groupId>
 			<artifactId>marineapi</artifactId>
 			<version>0.6.1-SNAPSHOT</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.codehaus.mojo</groupId>
+					<artifactId>cobertura-maven-plugin</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<!-- ais -->
 		<!-- <module>ais-lib-messages</module> -->
@@ -245,6 +275,7 @@
 		</dependency>
 	</dependencies>
 	<build>
+
 		<plugins>
 
 			<!-- Allows the example to be run via 'mvn compile exec:java' -->
@@ -271,33 +302,57 @@
 			<plugin>
 				<artifactId>maven-assembly-plugin</artifactId>
 				<version>2.2.1</version>
-				<configuration>
-					<descriptorRefs>
-						<!-- Tell Maven-Assembly to include dependencies in jar -->
-						<descriptorRef>jar-with-dependencies</descriptorRef>
-					</descriptorRefs>
-					<archive>
-						<manifest>
-							<!-- Specify class to be run at startup -->
-							<mainClass>nz.co.fortytwo.freeboard.server.ServerMain</mainClass>
-						</manifest>
-					</archive>
-				</configuration>
 				<!-- Tell Maven when to execute this plugin -->
 				<executions>
 					<execution>
-						<id>make-assembly</id>
+						<id>make-assembly-jar</id>
 						<phase>package</phase>
+						<configuration>
+							<descriptorRefs>
+								<!-- Tell Maven-Assembly to include dependencies in jar -->
+								<descriptorId>jar-with-dependencies</descriptorId>
+							</descriptorRefs>
+							<archive>
+								<manifest>
+									<!-- Specify class to be run at startup -->
+									<mainClass>nz.co.fortytwo.freeboard.server.ServerMain</mainClass>
+								</manifest>
+							</archive>
+						</configuration>
 						<goals>
 							<goal>single</goal>
 						</goals>
-						<!-- <configuration> -->
-						<!-- <finalName>freeboard${version}</finalName> -->
-						<!-- <appendAssemblyId>false</appendAssemblyId> -->
-						<!-- <descriptors> -->
-						<!-- <descriptor>assembly/webapp.xml</descriptor> -->
-						<!-- </descriptors> -->
-						<!-- </configuration> -->
+					</execution>
+					<execution>
+						<id>make-assembly-zip</id>
+						<phase>package</phase>
+						<configuration>
+							<descriptors>
+								<!-- make installation zip -->
+								<descriptor>src/main/release/assembly.xml</descriptor>
+							</descriptors>
+						</configuration>
+						<goals>
+							<goal>single</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>autoincrement-versions-maven-plugin</artifactId>
+				<version>2.0-SNAPSHOT</version>
+				<executions>
+					<execution>
+						<id>update-pom-versions</id>
+						<goals>
+							<goal>increment</goal>
+<!-- 							<goal>commit</goal> -->
+						</goals>
+						<phase>install</phase>
+						<configuration>
+							<autoIncrementVersion>true</autoIncrementVersion>
+						</configuration>
 					</execution>
 				</executions>
 			</plugin>
@@ -305,8 +360,5 @@
 
 	</build>
 
-	<organization>
-		<name>Tasman Consulting Ltd</name>
-		<url>www.42.co.nz</url>
-	</organization>
+	
 </project>

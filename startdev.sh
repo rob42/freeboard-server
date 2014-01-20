@@ -5,7 +5,7 @@
 #FREEBOARD_HOME=/home/pi/freeboard
 FREEBOARD_HOME=`pwd`
 
-JAR=freeboard-server.jar
+JAR=freeboard-server-*-SNAPSHOT-jar-with-dependencies.jar
 #
 cd $FREEBOARD_HOME
 

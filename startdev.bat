@@ -5,7 +5,7 @@ REM.set FREEBOARD_HOME=C:\freeboard
 
 set FREEBOARD_HOME=%CD%
 
-set JAR=freeboard-server.jar
+set JAR=freeboard-server-*-SNAPSHOT-jar-with-dependencies.jar
 REM.
 cd %FREEBOARD_HOME%
 
