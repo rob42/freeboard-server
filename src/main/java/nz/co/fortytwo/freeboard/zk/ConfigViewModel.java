@@ -22,6 +22,8 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Properties;
 import java.util.TreeMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import nz.co.fortytwo.freeboard.server.CamelContextFactory;
 import nz.co.fortytwo.freeboard.server.util.Constants;
@@ -30,6 +32,7 @@ import nz.co.fortytwo.freeboard.server.util.Util;
 import org.apache.camel.ProducerTemplate;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.SystemUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.log4j.Logger;
 import org.zkoss.zk.ui.Session;
@@ -39,6 +42,8 @@ import org.zkoss.zk.ui.select.annotation.Listen;
 import org.zkoss.zk.ui.select.annotation.Wire;
 import org.zkoss.zk.ui.select.annotation.WireVariable;
 import org.zkoss.zul.Button;
+import org.zkoss.zul.Combobox;
+import org.zkoss.zul.Comboitem;
 import org.zkoss.zul.Image;
 import org.zkoss.zul.ListModelList;
 import org.zkoss.zul.Listbox;
@@ -56,6 +61,8 @@ public class ConfigViewModel extends SelectorComposer<Window> {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+	private Pattern portNamesRegexLinux = Pattern.compile("(/dev/ttyUSB|/dev/ttyACM|/dev/ttyAMA|/dev/cu)[0-9]{1,3}");
+	private Pattern portNamesRegexWindows = Pattern.compile("COM[0-9]{1,2}");
 
 	@WireVariable
 	private Session sess;
@@ -67,6 +74,12 @@ public class ConfigViewModel extends SelectorComposer<Window> {
 	
 	@Wire("textbox#cfgWindOffset")
 	private Textbox cfgWindOffset; 
+	
+	@Wire("textbox#portsToScan")
+	private Textbox portsToScan;
+	
+	@Wire("combobox#portBaudRate")
+	private Combobox portBaudRate;
 	
 	@Wire("image#chooseAllBtn")
 	private Image chooseAllBtn;
@@ -236,6 +249,17 @@ public class ConfigViewModel extends SelectorComposer<Window> {
 		logger.debug(" cfgSave button event = " + event);
 		try {
 			Properties config = Util.getConfig(null);
+			if(isValidPort(portsToScan.getText())){
+				config.setProperty(Constants.SERIAL_PORTS, portsToScan.getValue());
+			}else{
+				Messagebox.show("Device ports to scan is invalid. In Linux (pi) '/dev/ttyUSB0,/dev/ttyUSB1,etc', in MS Windows 'COM1,COM2,COM3,etc'");
+			}
+			if(isValidBaudRate(portBaudRate.getValue())){
+				config.setProperty(Constants.SERIAL_PORT_BAUD, portBaudRate.getValue());
+				Util.saveConfig();
+			}else{
+				Messagebox.show("Device baud rate (speed) must be one of 4800,9600,19200,38400,57600");
+			}
 			if(NumberUtils.isNumber(cfgWindOffset.getValue())){
 				config.setProperty(Constants.WIND_ZERO_OFFSET, cfgWindOffset.getValue());
 				Util.saveConfig();
@@ -250,6 +274,51 @@ public class ConfigViewModel extends SelectorComposer<Window> {
 		
 	}
 	
+	private boolean isValidPort(String text) {
+		if(StringUtils.isBlank(text))return false;
+		String[] ports = text.trim().split(",");
+		boolean ok = false;
+		//linux (and OSX?)
+		if(SystemUtils.IS_OS_LINUX || SystemUtils.IS_OS_MAC_OSX){
+			//each will be /dev/tty* or /dev/cu*
+			for(String port:ports){
+				if(StringUtils.isBlank(port))continue;
+				if(portNamesRegexLinux.matcher(port.trim()).matches()){
+					//must be at least one good
+					ok=true;
+				}else{
+					//doesnt match, its bad so outa here.
+					return false;
+				}
+				
+			}
+		}
+		
+		//windows
+		if(SystemUtils.IS_OS_WINDOWS){
+			//each will be COM*
+			for(String port:ports){
+				if(StringUtils.isBlank(port))continue;
+				if(portNamesRegexWindows.matcher(port.trim()).matches()){
+					//must be at least one good
+					ok=true;
+				}else{
+					//doesnt match, its bad so outa here.
+					return false;
+				}
+				
+			}
+		}
+		return ok;
+	}
+
+	private boolean isValidBaudRate(String value) {
+		if(!NumberUtils.isNumber(value)) return false;
+		int rate = Integer.valueOf(value);
+		if( rate== 4800 || rate== 9600 || rate== 19200 || rate== 38400 || rate== 57600 )return true;
+		return false;
+	}
+
 	@Listen("onClick = button#chartSave")
 	public void chartSaveClick(MouseEvent event) {
 		logger.debug(" chartSave button event = " + event);
@@ -363,6 +432,13 @@ public class ConfigViewModel extends SelectorComposer<Window> {
 	private void setConfigDefaults(){
 		try{
 			Properties config = Util.getConfig(null);
+			
+			for(Comboitem item: portBaudRate.getItems()){
+				if(config.getProperty(Constants.SERIAL_PORT_BAUD).equals(item.getValue())){
+					portBaudRate.setSelectedItem(item);
+				}
+			}
+			portsToScan.setValue(config.getProperty(Constants.SERIAL_PORTS));
 			cfgWindOffset.setValue(config.getProperty(Constants.WIND_ZERO_OFFSET));
 			String useChoice = config.getProperty(Constants.DNS_USE_CHOICE);
 			if(Constants.DNS_USE_BOAT.equals(useChoice)){

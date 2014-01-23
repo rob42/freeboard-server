@@ -42,6 +42,22 @@
 						</columns>
 						<rows>
 							<row hflex="min">
+								<label value="Device ports to scan:" />
+								<textbox id="portsToScan"
+									tooltiptext="In Linux (pi) '/dev/ttyUSB0,/dev/ttyUSB1,etc', in MS Windows 'COM1,COM2,COM3,etc'" />
+							</row>
+							<row hflex="min">
+								<label value="Device baud rate (speed):" />
+								<combobox id="portBaudRate"
+									tooltiptext="Applies to all ports. Freeboard default = '38400'. NMEA devices could be '4800', '9600',etc" >
+									<comboitem label="4800" value="4800"/>
+									<comboitem label="9600" value="9600"/>
+									<comboitem label="19200" value="19200"/>
+									<comboitem label="38400" value="38400"/>
+									<comboitem label="57200" value="57200"/>
+									</combobox>
+							</row>
+							<row hflex="min">
 								<label value="Wind Correction" />
 								<textbox id="cfgWindOffset"
 									tooltip="+/- degrees offset" />

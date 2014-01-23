@@ -35,6 +35,7 @@ import java.util.TreeSet;
 import net.sf.marineapi.nmea.sentence.RMCSentence;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.SystemUtils;
 import org.apache.log4j.Logger;
 
 /**
@@ -142,7 +143,10 @@ public class Util {
 		props.setProperty(Constants.WAYPOINTS,"/tracks");
 		props.setProperty(Constants.WAYPOINTS_RESOURCE,"./tracks");
 		props.setProperty(Constants.WAYPOINT_CURRENT,"waypoints.gpx");
-		props.setProperty(Constants.SERIAL_PORTS,"/dev/ttyUSB0,/dev/ttyUSB1,/dev/ttyUSB2");
+		props.setProperty(Constants.SERIAL_PORTS,"/dev/ttyUSB0,/dev/ttyUSB1,/dev/ttyUSB2,/dev/ttyACM0,/dev/ttyACM1,/dev/ttyACM2");
+		if(SystemUtils.IS_OS_WINDOWS){
+			props.setProperty(Constants.SERIAL_PORTS,"COM1,COM2,COM3,COM4");
+		}
 		props.setProperty(Constants.DNS_USE_CHOICE,Constants.DNS_USE_BOAT);
 		props.setProperty(Constants.ENABLE_COMET,"false");
 	}
