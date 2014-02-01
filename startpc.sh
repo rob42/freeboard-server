@@ -8,6 +8,7 @@ FREEBOARD_HOME=`pwd`
 JAR=freeboard-server.jar
 #
 cd $FREEBOARD_HOME
+mkdir logs
 
 #temporary until linux-arm.jar is in purejavacom.jar
 export LD_LIBRARY_PATH=$FREEBOARD_HOME/jna

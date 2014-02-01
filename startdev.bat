@@ -8,6 +8,7 @@ set FREEBOARD_HOME=%CD%
 set JAR=freeboard-server-*-SNAPSHOT-jar-with-dependencies.jar
 REM.
 cd %FREEBOARD_HOME%
+mkdir logs
 
 REM.start server
 set JAVA=java

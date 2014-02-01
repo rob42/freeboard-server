@@ -19,6 +19,8 @@ FREEBOARD_HOME=/home/pi/freeboard
 JAR=freeboard-server.jar
 #
 cd $FREEBOARD_HOME
+mkdir logs
+
 # Check if we have an update to install. If a file called 'done' exists weve done this already
 if [[ -f "$MEDIA_HOME/updates/$JAR" && ! -f "$MEDIA_HOME/updates/done" ]]; then
         #copy to working dir after backing up current one

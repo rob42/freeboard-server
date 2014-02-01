@@ -1,71 +1,57 @@
+
 Follow the instructions on http://elinux.org/BeagleBoardUbuntu#BeagleBone to install ubuntu 13.04 
 
-Put sdcard into bbb and connect to usb to power up
+Use the 'raw microSD image' section 1/3 down the page.
+The file I used was https://rcn-ee.net/deb/microsd/saucy/BBB-ubuntu-13.10-2013-12-17-4gb.img.xz
+
+Follow the instructions and copy it onto the microSD card
+Put sdcard into bbb and connect to usb to power up. In linux it creates an ethernet over USB link, 
+so you can connect to it by ssh:
+
+  robert@rth:$ ssh ubuntu@192.168.7.2 
+
+Otherwise, you can connect over your inhouse ethernet but its a pain finding the right IP address.
+In windows use putty to connect, in linux:
+
+  robert@rth:$ ssh ubuntu@[your_home_network] 
 
 Connect to inhouse network with ethernet cable
-Find ip address (dhcp)
-Log in as ubuntu/temppwd
+Find the assigned ip address (via your dhcp server, or a network scan)
+Log in as ubuntu, password temppwd
 
-robert@rth:$ ssh ubuntu@10.1.1.11
+  robert@rth:$ ssh ubuntu@10.1.1.11 
+    **Use the correct IP address for your BBB on your local network!! The rest of this assumes
+      your BBB is at IP 10.1.1.11
 
 At bbb login, make the pi user :
-//need ubuntu adm dialout cdrom floppy audio dip video admin
-ubuntu@arm: sudo adduser pi --ingroup ubuntu
+
+  ubuntu@arm: sudo adduser pi --ingroup ubuntu
+  ubuntu@arm: sudo usermod -G sudo pi
+
+Change the ubuntu users passwd now, for security:
+  
+  ubuntu@arm: passwd
 
 Set a password to suit, and logout
 
-From my laptop:
-robert@rth:$ scp jdk-8-ea-b102-linux-arm-vfp-hflt-07_aug_2013.tar.gz pi@10.1.1.11:/home/pi
+Get the Oracle jdk8 from https://jdk8.java.net/download.html
+I used http://www.java.net/download/jdk8/archive/b124/binaries/jdk-8-ea-b124-linux-arm-vfp-hflt-17_jan_2014.tar.gz
 
-login to bbb as user pi:
-robert@rth:$ ssh pi@10.1.1.11
+From my laptop, I copied the latest jdk8 for arm to the BBB (in windows use winscp):
+robert@rth:$ scp jdk-8-ea-b124-linux-arm-vfp-hflt-17_jan_2014.tar.gz pi@10.1.1.11:/home/pi
+robert@rth:$ scp freeboard-server-5.5.5-SNAPSHOT-all.zip pi@10.1.1.11:/home/pi
+robert@rth:$ scp install_bbb.sh pi@10.1.1.11:/home/pi
+
+Login to your BBB as user pi:
+  robert@rth:$ ssh pi@10.1.1.11
 
 At pi login prompt:
 
- pi@arm:~$ tar xvzf jdk-8-ea-b102-linux-arm-vfp-hflt-07_aug_2013.tar.gz 
- pi@arm:~$ jdk1.8.0/bin/java
+  pi@arm:~$ ./install_bbb.sh
 
-Results in :
+Follow the script, answering the questions, usually take the default answer.
 
-Usage: java [-options] class [args...]
-           (to execute a class)
-   or  java [-options] -jar jarfile [args...]
-           (to execute a jar file)
-where options include:
-    -d32          use a 32-bit data model if available
-    -d64          use a 64-bit data model if available
-    -client       to select the "client" VM
-....etc, 
-
-which shows java runs ok
-
-On laptop copy the freeboard dist across:
-robert@rth:~/gitrep/freeboard-server$ scp basemaps.tar.gz freeboard.tar.gz pi@10.1.1.11:/home/pi
-
-On bbb:
-pi@arm:~$ mkdir freeboard
-pi@arm:~$ cd freeboard
-pi@arm:~/freeboard$ mkdir logs
-pi@arm:~/freeboard$ tar xvzf ../basemaps.tar.gz 
-pi@arm:~/freeboard$ tar xvzf ../freeboard.tar.gz
-
-start the freeboard-server
-pi@arm:~/freeboard$ ./start.sh
-
-watch the logs
-pi@arm:~/freeboard$ less logs/start.log
-   (Shift-F to tail the log, Cntrl-C to stop tailing)
-
-
-JNA compile
-
-pi@arm:~$ sudo apt-get update
-pi@arm:~$ sudo apt-get install unzip build-essential ant
-pi@arm:~/jna$ sudo apt-get install libx11-dev libxt-dev
-pi@arm:~$ unzip jna.zip
-pi@arm:~$ export JAVA_HOME=/home/pi/jdk1.8.0
-pi@arm:~$ cd jna
-pi@arm:~$ ant
+Log out and reboot. Use a web browser to go to http://10.1.1.11:8080/freeboard
 
 
 
