@@ -28,7 +28,7 @@
 	<files>
 		<file>
 			<source>target/freeboard-server-${project.version}-jar-with-dependencies.jar</source>
-			<outputDirectory>target/</outputDirectory>
+			<outputDirectory>freeboard/target/</outputDirectory>
 			<destName>freeboard-server.jar</destName>
 		</file>
 	</files>
