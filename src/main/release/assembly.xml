@@ -13,6 +13,7 @@
 			<includes>
 				<include>conf/log4j.properties</include>
 				<include>docs/**</include>
+				<include>logs/placeholder.txt</include>
 				<include>freeboard/**</include>
 				<include>jna/**</include>
 				<include>mapcache/WORLD*/**</include>
