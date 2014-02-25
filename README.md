@@ -3,6 +3,8 @@ Freeboard Navigation Instruments and Chartplotter
 
 Freeboard is a new way to provide marine instruments and navigation tools over WIFI with low cost open hardware (Arduino and Raspberry Pi).
 
+NEW: Freeboard interface pcb arrives. See https://www.42.co.nz/freeboard/news/custompcboardprototypearrives.html
+
 Goals
 -----
 
