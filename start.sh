@@ -44,7 +44,11 @@ fi
 export LD_LIBRARY_PATH=$FREEBOARD_HOME/jna
 
 #start server
-JAVA_HOME=/home/pi/jdk1.8.0
+JAVA_HOME="/usr/lib/jvm/jdk-7-oracle-armhf"
+if [[ -d "/home/pi/jdk1.8.0" ]]; then
+  JAVA_HOME=/home/pi/jdk1.8.0
+fi
+
 export JAVA_HOME
 JAVA=$JAVA_HOME/bin/java
 EXT="-Djava.util.Arrays.useLegacyMergeSort=true"

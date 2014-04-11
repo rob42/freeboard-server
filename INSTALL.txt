@@ -7,57 +7,16 @@ This has been developed in Eclipse Juno, with maven3 and zk plugins (among other
 This project is still fairly new, so if you are developing, expect some pain getting it all setup/building/etc. Email me for help.
 
 Hardware:
-	Raspberry Pi (Model B, 256 Mb RAM) - currently using hard-fp image (for oracle JDK8-ea java for ARM)
-	
-			sudo apt-get install git-core
+	Raspberry Pi or Beaglebone black - see detailed install instructions in the docs directory. After install your hostname will be 'freeboard'.
 		
-		#install the firmware updates from hexxeh according to https://github.com/Hexxeh/rpi-update
-		
-			sudo rpi-update
-		
-		#Turn on overclocking and set various options; desktop on boot off, ssh on, overclock on high, memory on minimum GPU options.
-			sudo raspi-config
-		
-		#make sure to 'sudo apt-get install gdal-bin python-gdal imagemagick'
-		#add sun (Oracle) jdk8 manually, into /home/pi/jdk1.8.0
-		#create dir /home/pi/freeboard
-			mkdir /home/pi/freeboard
-		#copy the following from your dev system to /home/pi/freeboard
-		 	 	conf/  
-             	freeboard/  
-		 		install.sh  
-		 		logs/  
-		 		mapcache/  - you create this when you import charts, the mapcache dir has a world shoreline map so at least you see something basic. But its a very large directory!
-		 		start.sh  
-
-		 		# rename the current freeboard-server*with-dependancies.jar in the /target directory!
-		 		target/freeboard-server.jar  
-		
-		cd /home/pi/freeboard
-		./start.sh
-		
-		To stop freeboard, 'killall java', or reboot.
-		Useful logs are in logs/start.log and logs/freeboard.log
-		
-		There is an auto-start shell script freeboard.init.d.sh. This can be used to make freeboard autostart on bootup. See http://www.debian-administration.org/articles/28
-		Basically the following:
-			#copy and rename the file to /etc/init.d - you must do this as root hence 'sudo'
-			sudo cp freeboard.init.d.sh /etc/init.d/freeboard
-			# change owner and permissions
-			sudo chmod 755 /etc/init.d/freeboard
-			sudo chown root:root /etc/init.d/freeboard
-			# add to startup process
-			sudo update-rc.d freeboard defaults
-		
-
-	Arduino - Mega 1260 - load as per  freeboardPLC project
+	Arduino - Mega 1280 or Mega 2560 - load as per  freeboardPLC project
 		connect via USB
 
 	ArduIMU - load as per FreeBoard ArduIMU project
 		connect via USB
 		
 	Misc NMEA devices
-		connect via USB
+		connect via USB. USE A POWERED HUB!! - you will suffer if you dont :-)
 
 Baud rates for attached devices:
 	In conf/freeboard.cfg there is support for configuring baud rates per USB port. These entries control this
@@ -79,12 +38,11 @@ Connecting from a web browser:
 	
 	See the info in CHART_INSTALL.txt, and DNS_NOTES.txt, or you will suffer the 'Processing' message forever - aaargh!!
 
-Hostapd notes:
-  Use a supported wifi dongle - try RT5370 USB - works but seems to suffer arbitrary freezes (possibly due to a known driver problem)
-  I am trying an atheros ath9k based dongle - its good now. If you are really stuck, use ethernet for dev, and a real Wifi access point on the boat for now.
+WIFI notes:
+  Use a supported wifi dongle - I am trying an atheros ath9k based dongle - its good now. If you are really stuck, use ethernet for dev, and a real Wifi access point on the boat for now.
 
-  'sudo apt-get install wpasupplicant usbutils wireless-tools iw hostapd dnsmasq'
-  'iw list' must return 
+ The followinf command must return the line below marked with **
+  pi@freeboard:$ iw list 
 	      Supported interface modes:
                  * IBSS
                  * managed
@@ -94,62 +52,3 @@ Hostapd notes:
                  * monitor
                  * mesh point
 
-Setup files:
-/etc/hostname
- #use YOUR boats name here!
-  motu 
-/etc/hosts
-  127.0.0.1  	  localhost www.zkoss.org
-  
-  #use YOUR boats name here!
-  # Note: the a.motu, b.motu, etc entries are used by the Leaflet mapping lib to speed up map loading, you only need them if you are using the chartplotter.
-  # See DNS_NOTES.txt too.
-  192.168.0.1     motu a.motu b.motu c.motu d.motu
-  224.0.0.1       all-systems.mcast.net
-
-  ::1             localhost ip6-localhost ip6-loopback
-  fe00::0         ip6-localnet
-  ff00::0         ip6-mcastprefix
-  ff02::1         ip6-allnodes
-  ff02::2         ip6-allrouters
-
-
-
-
-/etc/network/interfaces
-  #allow-hotplug wlan0
-  iface wlan0 inet static
-        address 192.168.0.1
-        netmask 255.255.255.0
-        gateway 192.168.0.1
-
-/etc/dnsmasq.conf
-  # Configuration file for dnsmasq.
-  interface=wlan0
-  dhcp-range=192.168.0.10,192.168.0.128,12h
-
-/etc/hostapd/hostapd.conf
-	interface=wlan0
-	driver=nl80211
-	ctrl_interface=/var/run/hostapd
-	ctrl_interface_group=0
-	#use YOUR boatname here!
-	ssid=Motu
-	hw_mode=g
-	channel=10
-	wpa=1
-	#use your passphrase here!
-	wpa_passphrase=freeboard
-	wpa_key_mgmt=WPA-PSK
-	wpa_pairwise=TKIP
-	rsn_pairwise=CCMP
-	beacon_int=100
-	auth_algs=3
-	wmm_enabled=1
-
-  
-/etc/default/hostapd
-  DAEMON_CONF="/etc/hostapd/hostapd.conf"
-  
-# for USB drive support add pi to the floppy group in /etc/group
- 	sudo nano /etc/group
