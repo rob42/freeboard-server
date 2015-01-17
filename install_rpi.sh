@@ -19,35 +19,48 @@
 #
 # Script to setup and install freeboard to the raspberry pi
 #
+# What this tries to do :
+# In /home/pi
+# Get out a copy of freeboard-server-0.5.10-SNAPSHOT-all.zip
+# unzip it, it will create freeboard-server-0.5.10-SNAPSHOT-all dir - thats wrong
+# Move the contents of freeboard-server-0.5.10-SNAPSHOT-all back into home/pi, so now there is a /home/pi/freeboard/
+# cd freeboard - dont run install if it was already done.
+# Install java-8-oracle, and update start.sh to use this.
+# Setup wifi and networking ready for the boat.
+
+# Now you can run ./start.sh,  go to http://???:8080/freeboard to see.
+#
+# logs will be in /home/pi/freeboard/logs/start.log - send that if its still not up
+#
 #
 
-# Make the pi user, need  adm dialout cdrom floppy audio dip video admin
+# Check the pi user, need  adm dialout cdrom floppy audio dip video admin
+cd /home/pi
 
 sudo usermod -G adm,dialout,cdrom,floppy,audio,dip,video,admin pi
 
 ####################
-#get the date!
+#make sure we are up to date
 
 sudo apt-get update
 sudo apt-get upgrade
 
-# add software
+# add software we need
 sudo apt-get install zip unzip dnsmasq
 sudo apt-get install wpasupplicant usbutils wireless-tools iw hostapd
-sudo apt-get install oracle-java7-jdk
-
-#make sure to 'sudo apt-get install gdal-bin python-gdal imagemagick'
+sudo apt-get install oracle-java8-jdk
 
 #Run the selection option to be sure you are using this version.
-sudo update-java-alternatives -s jdk-7-oracle-armhf
+sudo update-alternatives --install /usr/bin/javac javac /opt/jdk1.8.0/bin/javac 1
+sudo update-alternatives --install /usr/bin/java java /opt/jdk1.8.0/bin/java 1
 
 ###################
 # extract the freeboard-server archive
-unzip freeboard-server-*-all.zip
+FREEBOARD_CURRENT=freeboard-server-0.5.10-SNAPSHOT
+unzip $FREEBOARD_CURRENT-all.zip
+
 #copy the freeboard directory back to here
-FREEBOARD_CURRENT=$(find -maxdepth 1 -type d -name 'freeboard-server-*'| head -n1)
-mkdir freeboard
-cp -rf $FREEBOARD_CURRENT/freeboard/* freeboard/
+cp -rf $FREEBOARD_CURRENT/freeboard .
 #we need the logs directory
 mkdir freeboard/logs
 
@@ -66,6 +79,7 @@ sudo update-rc.d -f apache2 remove
 sudo update-rc.d -f udhcpd remove
 
 ##################
+#Optional: if you are having problems exit here
 #Setup networking
 #/etc/network/interfaces
 if ! grep -Fq "#Run as wireless access point" /etc/network/interfaces 
