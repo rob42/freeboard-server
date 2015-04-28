@@ -107,9 +107,9 @@ sudo sh -c 'echo "192.168.0.1	freeboard a.freeboard b.freeboard c.freeboard d.fr
 sudo sh -c 'echo "interface=wlan0" > /etc/dnsmasq.conf'
 sudo sh -c 'echo "dhcp-range=192.168.0.10,192.168.0.128,12h" >> /etc/dnsmasq.conf'
 sudo sh -c 'echo "" >> /etc/dnsmasq.conf'
-sudo sh -c 'echo "#usb interface " >> /etc/dnsmasq.conf'
-sudo sh -c 'echo "interface  usb0" >> /etc/dnsmasq.conf'
-sudo sh -c 'echo "dhcp-range=192.168.7.1,192.168.7.1,12h" >> /etc/dnsmasq.conf'
+#sudo sh -c 'echo "#usb interface " >> /etc/dnsmasq.conf'
+#sudo sh -c 'echo "interface  usb0" >> /etc/dnsmasq.conf'
+#sudo sh -c 'echo "dhcp-range=192.168.7.1,192.168.7.1,12h" >> /etc/dnsmasq.conf'
 
 
 ##################
