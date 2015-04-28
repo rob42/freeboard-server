@@ -147,6 +147,7 @@ public class Util {
 		if(SystemUtils.IS_OS_WINDOWS){
 			props.setProperty(Constants.SERIAL_PORTS,"COM1,COM2,COM3,COM4");
 		}
+		props.setProperty(Constants.SERIAL_PORT_BAUD,"38400");
 		props.setProperty(Constants.DNS_USE_CHOICE,Constants.DNS_USE_BOAT);
 		props.setProperty(Constants.ENABLE_COMET,"false");
 	}
