@@ -84,31 +84,32 @@ sudo update-rc.d -f udhcpd remove
 #/etc/network/interfaces
 if ! grep -Fq "#Run as wireless access point" /etc/network/interfaces 
 then
-    sudo echo "" >> /etc/network/interfaces
-    sudo echo "#Run as wireless access point" >> /etc/network/interfaces
-    sudo echo "auto wlan0" >> /etc/network/interfaces
-    sudo echo "iface wlan0 inet static" >> /etc/network/interfaces
-    sudo echo "    address 192.168.0.1" >> /etc/network/interfaces
-    sudo echo "    netmask 255.255.255.0" >> /etc/network/interfaces
-    sudo echo "    gateway 192.168.0.1" >> /etc/network/interfaces
+    sudo sh -c 'echo "" >> /etc/network/interfaces'
+    sudo sh -c 'echo "#Run as wireless access point" >> /etc/network/interfaces'
+    sudo sh -c 'echo "auto wlan0" >> /etc/network/interfaces'
+    sudo sh -c 'echo "iface wlan0 inet static" >> /etc/network/interfaces'
+    sudo sh -c 'echo "    address 192.168.0.1" >> /etc/network/interfaces'
+    sudo sh -c 'echo "    netmask 255.255.255.0" >> /etc/network/interfaces'
+    sudo sh -c 'echo "    gateway 192.168.0.1" >> /etc/network/interfaces'
 fi
 #/etc/hostname
-sudo echo "freeboard" > /etc/hostname
+sudo hostname freeboard
+sudo sh -c 'echo "freeboard" > /etc/hostname'
 
 #/etc/hosts
-sudo echo "# www.zkoss.org is in here to speed the web interface when there is no internet connection" > /etc/hosts
-sudo echo "127.0.0.1       localhost www.zkoss.org" >> /etc/hosts
-sudo echo "# Note: the a.freeboard, b.freeboard, etc entries are used by the Leaflet mapping lib to speed up map loading, you only need them if you are using the chartplotter." >> /etc/hosts
-sudo echo "192.168.0.1	freeboard a.freeboard b.freeboard c.freeboard d.freeboard" >> /etc/hosts
+sudo sh -c 'echo "# www.zkoss.org is in here to speed the web interface when there is no internet connection" > /etc/hosts'
+sudo sh -c 'echo "127.0.0.1       localhost www.zkoss.org" >> /etc/hosts'
+sudo sh -c 'echo "# Note: the a.freeboard, b.freeboard, etc entries are used by the Leaflet mapping lib to speed up map loading, you only need them if you are using the chartplotter." >> /etc/hosts'
+sudo sh -c 'echo "192.168.0.1	freeboard a.freeboard b.freeboard c.freeboard d.freeboard" >> /etc/hosts'
 
 #dnsmasq
 # Configuration file for dnsmasq.
-sudo echo "interface=wlan0" > /etc/dnsmasq.conf
-sudo echo "dhcp-range=192.168.0.10,192.168.0.128,12h" >> /etc/dnsmasq.conf
-sudo echo "" >> /etc/dnsmasq.conf
-sudo echo "#usb interface " >> /etc/dnsmasq.conf
-sudo echo "interface  usb0" >> /etc/dnsmasq.conf
-sudo echo "dhcp-range=192.168.7.1,192.168.7.1,12h" >> /etc/dnsmasq.conf
+sudo sh -c 'echo "interface=wlan0" > /etc/dnsmasq.conf'
+sudo sh -c 'echo "dhcp-range=192.168.0.10,192.168.0.128,12h" >> /etc/dnsmasq.conf'
+sudo sh -c 'echo "" >> /etc/dnsmasq.conf'
+sudo sh -c 'echo "#usb interface " >> /etc/dnsmasq.conf'
+sudo sh -c 'echo "interface  usb0" >> /etc/dnsmasq.conf'
+sudo sh -c 'echo "dhcp-range=192.168.7.1,192.168.7.1,12h" >> /etc/dnsmasq.conf'
 
 
 ##################
@@ -118,23 +119,23 @@ sudo mkdir /etc/hostapd
 sudo mv /etc/hostapd/hostapd.conf /etc/hostapd/hostapd.conf.bak
 
 # write hostapd.conf
-sudo echo "interface=wlan0" > /etc/hostapd/hostapd.conf
-sudo echo "driver=nl80211" >> /etc/hostapd/hostapd.conf
-sudo echo "ctrl_interface=/var/run/hostapd" >> /etc/hostapd/hostapd.conf
-sudo echo "ctrl_interface_group=0" >> /etc/hostapd/hostapd.conf
-sudo echo "#use YOUR boatname here!" >> /etc/hostapd/hostapd.conf
-sudo echo "ssid=freeboard" >> /etc/hostapd/hostapd.conf
-sudo echo "hw_mode=g" >> /etc/hostapd/hostapd.conf
-sudo echo "channel=10" >> /etc/hostapd/hostapd.conf
-sudo echo "wpa=1" >> /etc/hostapd/hostapd.conf
-sudo echo "#use your passphrase here!" >> /etc/hostapd/hostapd.conf
-sudo echo "wpa_passphrase=freeboard" >> /etc/hostapd/hostapd.conf
-sudo echo "wpa_key_mgmt=WPA-PSK" >> /etc/hostapd/hostapd.conf
-sudo echo "wpa_pairwise=TKIP" >> /etc/hostapd/hostapd.conf
-sudo echo "rsn_pairwise=CCMP" >> /etc/hostapd/hostapd.conf
-sudo echo "beacon_int=100" >> /etc/hostapd/hostapd.conf
-sudo echo "auth_algs=3" >> /etc/hostapd/hostapd.conf
-sudo echo "wmm_enabled=1" >> /etc/hostapd/hostapd.conf
+sudo sh -c 'echo "interface=wlan0" > /etc/hostapd/hostapd.conf'
+sudo sh -c 'echo "driver=nl80211" >> /etc/hostapd/hostapd.conf'
+sudo sh -c 'echo "ctrl_interface=/var/run/hostapd" >> /etc/hostapd/hostapd.conf'
+sudo sh -c 'echo "ctrl_interface_group=0" >> /etc/hostapd/hostapd.conf'
+sudo sh -c 'echo "#use YOUR boatname here!" >> /etc/hostapd/hostapd.conf'
+sudo sh -c 'echo "ssid=freeboard" >> /etc/hostapd/hostapd.conf'
+sudo sh -c 'echo "hw_mode=g" >> /etc/hostapd/hostapd.conf'
+sudo sh -c 'echo "channel=10" >> /etc/hostapd/hostapd.conf'
+sudo sh -c 'echo "wpa=1" >> /etc/hostapd/hostapd.conf'
+sudo sh -c 'echo "#use your passphrase here!" >> /etc/hostapd/hostapd.conf'
+sudo sh -c 'echo "wpa_passphrase=freeboard" >> /etc/hostapd/hostapd.conf'
+sudo sh -c 'echo "wpa_key_mgmt=WPA-PSK" >> /etc/hostapd/hostapd.conf'
+sudo sh -c 'echo "wpa_pairwise=TKIP" >> /etc/hostapd/hostapd.conf'
+sudo sh -c 'echo "rsn_pairwise=CCMP" >> /etc/hostapd/hostapd.conf'
+sudo sh -c 'echo "beacon_int=100" >> /etc/hostapd/hostapd.conf'
+sudo sh -c 'echo "auth_algs=3" >> /etc/hostapd/hostapd.conf'
+sudo sh -c 'echo "wmm_enabled=1" >> /etc/hostapd/hostapd.conf'
 
 #/etc/default/hostapd
-sudo echo "DAEMON_CONF=\"/etc/hostapd/hostapd.conf\"" > /etc/default/hostapd
+sudo sh -c 'echo "DAEMON_CONF=\"/etc/hostapd/hostapd.conf\"" > /etc/default/hostapd'
