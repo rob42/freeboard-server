@@ -30,7 +30,7 @@ The prompt should look like `pi@raspberrypi ~ $ ` at this stage
 pi@raspberrypi ~ $ ./install_rpi.sh [Enter]
 
 This will take some time as it will update all software and install some additional packages. Make tea, coffee, or whatever...
-When it asks you to confirm you want to install additional software type Y[Enter]
+When it asks you to confirm you want to install additional software type Y[Enter] - note its in CAPS!
 
 If this is the second time you have run install_rpi.sh it will ask you if you want to overwrite various freeboard files, answer  A[Enter] (for All)
 
@@ -83,7 +83,7 @@ Disconnect from the internet.
 
 Check the network configuration:
 
-pi@freeboard ~ $sudo nano /etc/network/interface
+pi@freeboard ~ $sudo nano /etc/network/interfaces
 
 Comment out these lines if they exist:
 
