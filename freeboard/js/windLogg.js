@@ -1,6 +1,6 @@
 /*
  * Copyright 2012,2013 Robert Huitema robert@42.co.nz
- * 
+ *
  * This file is part of FreeBoard. (http://www.42.co.nz/freeboard)
  *
  *  FreeBoard is free software: you can redistribute it and/or modify
@@ -256,6 +256,18 @@ function initWind() {
 		valuesNumeric : false
 
 	});
-	addSocketListener(new Wind2());
+	lcdLon = new steelseries.DisplaySingle('depth', {
+		// gaugeType : steelseries.GaugeType.TYPE4,
+		// width : document.getElementById('depth').width,
+		// height : document.getElementById('depth').height,
+		lcdDecimals : 5,
+		lcdColor : steelseries.LcdColor.BEIGE,
+		// unitString:"",
+		unitStringVisible : false,
+		valuesNumeric : false
+
+	});
+
+addSocketListener(new Wind2());
 
 }

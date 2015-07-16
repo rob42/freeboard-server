@@ -45,8 +45,8 @@ function Engine () {
 					radialFuel.setValue(navObj.FFV);
 			}
 			//depth
-			if (navObj.DPT) {
-					linearDepth.setValue(navObj.DPT);
+			if (navObj.DBT) {
+					linearDepth.setValue(navObj.DBT);
 			}
 			//speed
 			if (navObj.SOG) {
@@ -134,8 +134,8 @@ function initEngine() {
 	});
 
 	// Depth dir
-	linearDepth = new steelseries.Linear('canvasDepth', {
-		//size : document.getElementById('canvasDepth').width,
+	linearDepth = new steelseries.Linear('canvasLinearDepth', {
+		//size : document.getElementById('canvasLinearDepth').width,
 	width: vpSize*.3,
 		height: vpSize*.6,
 		titleString : "Depth",

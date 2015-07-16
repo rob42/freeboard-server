@@ -1,18 +1,18 @@
 /*
  * Copyright 2012,2013 Robert Huitema robert@42.co.nz
- * 
+ *
  * This file is part of FreeBoard. (http://www.42.co.nz/freeboard)
- * 
+ *
  * FreeBoard is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * FreeBoard is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with FreeBoard. If not, see <http://www.gnu.org/licenses/>.
  */
@@ -142,13 +142,13 @@ public class Constants {
 	public static final String ENGINE_TEMP = "ETT";
 	public static final String ENGINE_VOLTS = "EVV";
 	public static final String ENGINE_OIL_PRESSURE = "EPP";
-	
+
 	public static final String ENGINE_DRIVE_TRIM = "EDT";
 	public static final String XDR_SKIP = "SKIP";
-	
+
 	//depth
 	public static final String DEPTH_BELOW_TRANSDUCER = "DBT";
-	
+
 	// config constants
 	public static final String DEMO = "freeboard.demo";
 	public static final String FREEBOARD_URL = "freeboard.web.url";
@@ -173,6 +173,7 @@ public class Constants {
 	public static final String ENABLE_COMET = "freeboard.comet.enable";
 
 	public static final String WIND_ZERO_OFFSET = "freeboard.wind.offset";
+	public static final String DEPTH_UNIT = "freeboard.depth.unit";
 
 	// gui constants
 	public static final String LOGG_X = "freeboard.logg.x";
@@ -180,6 +181,12 @@ public class Constants {
 	public static final String LOGG_W = "freeboard.logg.w";
 	public static final String LOGG_H = "freeboard.logg.h";
 	public static final String LOGG_SCALE = "freeboard.logg.scale";
+
+	public static final String DEPTH_X = "freeboard.depth.x";
+	public static final String DEPTH_Y = "freeboard.depth.y";
+	public static final String DEPTH_W = "freeboard.depth.w";
+	public static final String DEPTH_H = "freeboard.depth.h";
+	public static final String DEPTH_SCALE = "freeboard.depth.scale";
 
 	public static final String AUTOPILOT_X = "freeboard.autopilot.x";
 	public static final String AUTOPILOT_Y = "freeboard.autopilot.y";
@@ -211,7 +218,7 @@ public class Constants {
 	public static final String DNS_USE_HOME = "home";
 	public static final String NMEA_XDR = "freeboard.nmea.";
 	public static final String XDR =  "XDR.";
-	
+
 	//debug flags
 	public static final String SEND_MESSAGE = "freeboard.debug.sendMessage";
 	public Constants() {
