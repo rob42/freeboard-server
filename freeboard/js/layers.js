@@ -31,6 +31,16 @@ function addLayers(map) {
 		}).addTo(map);
 
 
+	var NZ23 = L.tileLayer("http://{server}:8080/mapcache/NZ23/{z}/{x}/{y}.png", {
+		server: host,
+		
+		attribution: 'NZ23 New Zeland North Island',
+		minZoom: 6,
+		maxZoom: 9,
+		tms: true
+		}).addTo(map);
+
+
 	var NZ61 = L.tileLayer("http://{server}:8080/mapcache/NZ61/{z}/{x}/{y}.png", {
 		server: host,
 		
@@ -41,11 +51,11 @@ function addLayers(map) {
 		}).addTo(map);
 
 
-	var NZ614 = L.tileLayer("http://{server}:8080/mapcache/NZ614/{z}/{x}/{y}.png", {
+	var NZ614 = L.tileLayer("http://{server}:8080/mapcache/NZ61401/{z}/{x}/{y}.png", {
 		server: host,
 		
-		attribution: 'NZ614 Tasman Bay',
-		minZoom: 8,
+		attribution: 'NZ61401 Tasman Bay',
+		minZoom: 9,
 		maxZoom: 13,
 		tms: true
 		}).addTo(map);
@@ -87,8 +97,9 @@ function addLayers(map) {
 		"Natural Earth": WORLD,
 		"Natural Earth 1": WORLD1,
 		"NZ14600 New Zeland including Norfolk & Campbell ": NZ14600,
+		"NZ23 New Zeland North Island": NZ23,
 		"NZ61 Karamea River to Stephens Island": NZ61,
-		"NZ614 Tasman Bay": NZ614,
+		"NZ61401 Tasman Bay": NZ614,
 		"NZ6144 Abel Tasman": NZ6144,
 		"NZ6142_1 Nelson Harbour & Entrance": NZ6142_1,
 		"NZ6142_2 Nelson Harbour & Entrance - Port Nelson": NZ6142_2,

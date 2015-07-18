@@ -19,8 +19,6 @@
 
 package nz.co.fortytwo.freeboard.server;
 
-import gnu.io.NoSuchPortException;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -37,6 +35,8 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
 import org.apache.log4j.Logger;
+
+import purejavacomm.NoSuchPortException;
 
 /**
  * A manager to monitor the USB tty ports. It dynamically adds/removes
