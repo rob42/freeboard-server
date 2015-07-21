@@ -31,7 +31,6 @@ import net.sf.marineapi.nmea.event.SentenceListener;
 import net.sf.marineapi.nmea.parser.BVEParser;
 import net.sf.marineapi.nmea.parser.CruzproXDRParser;
 import net.sf.marineapi.nmea.parser.DataNotAvailableException;
-import net.sf.marineapi.nmea.parser.ROTParser;
 import net.sf.marineapi.nmea.parser.SentenceFactory;
 import net.sf.marineapi.nmea.sentence.BVESentence;
 import net.sf.marineapi.nmea.sentence.DBTSentence;
@@ -74,7 +73,7 @@ public class NMEAProcessor extends FreeboardProcessor implements Processor, Free
 		//register BVE
 		SentenceFactory.getInstance().registerParser("BVE", BVEParser.class);
 		SentenceFactory.getInstance().registerParser("XDR", CruzproXDRParser.class);
-		SentenceFactory.getInstance().registerParser("ROT", ROTParser.class);
+		
 		setNmeaListeners();
 
 		// Enable the code below to generate Gausian distributed random depths

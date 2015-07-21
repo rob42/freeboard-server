@@ -4,7 +4,7 @@
 
 	<groupId>nz.co.fortytwo.freeboard</groupId>
 	<artifactId>freeboard-server</artifactId>
-	<version>0.5.44-SNAPSHOT</version>
+	<version>0.5.15-SNAPSHOT</version>
 	<name>Freeboard Server</name>
 
 	<description>Webserver and data server for FreeBoard</description>
@@ -343,6 +343,24 @@
 				</executions>
 			</plugin>
 			<plugin>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<version>1.8</version>
+				<executions>
+					<execution>
+						<id>copy</id>
+						<phase>package</phase>
+						<configuration>
+							<target>
+								<copy file="${project.build.directory}/freeboard-server-${project.version}-jar-with-dependencies.jar" tofile="${project.build.directory}/freeboard-server.jar" />
+							</target>
+						</configuration>
+						<goals>
+							<goal>run</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>autoincrement-versions-maven-plugin</artifactId>
 				<version>2.0-SNAPSHOT</version>
@@ -351,7 +369,7 @@
 						<id>update-pom-versions</id>
 						<goals>
 							<goal>increment</goal>
-<!-- 							<goal>commit</goal> -->
+							<!-- <goal>commit</goal> -->
 						</goals>
 						<phase>install</phase>
 						<configuration>

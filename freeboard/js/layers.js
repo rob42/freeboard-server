@@ -34,6 +34,15 @@ function addLayers(map) {
 	var _1552_2 = L.tileLayer("http://{server}:8080/mapcache/11552_2/{z}/{x}/{y}.png", {
 		server: host,
 		
+		attribution: 'NZ23 New Zeland North Island',
+		minZoom: 6,
+		maxZoom: 9,
+		tms: true
+		}).addTo(map);
+
+
+		server: host,
+		
 		attribution: '11552_2 CONTINUATION OF TRENT RIVER HAYWARD CREE',
 		minZoom: 12,
 		maxZoom: 15,
