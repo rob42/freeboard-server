@@ -60,6 +60,8 @@ sudo update-alternatives --install /usr/bin/java java /opt/jdk1.8.0/bin/java 1
 FREEBOARD_CURRENT=$(find -maxdepth 1 -type f -name 'freeboard-server-*-SNAPSHOT-all.zip'| head -n1)
 unzip $FREEBOARD_CURRENT
 
+#remove suffix
+FREEBOARD_CURRENT=${FREEBOARD_CURRENT%-all.zip}
 #copy the freeboard directory back to here
 cp -rf $FREEBOARD_CURRENT/freeboard .
 #we need the logs directory
