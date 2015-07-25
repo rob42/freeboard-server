@@ -21,9 +21,9 @@
 #
 # What this tries to do :
 # In /home/pi
-# Get out a copy of freeboard-server-0.5.10-SNAPSHOT-all.zip
-# unzip it, it will create freeboard-server-0.5.10-SNAPSHOT-all dir - thats wrong
-# Move the contents of freeboard-server-0.5.10-SNAPSHOT-all back into home/pi, so now there is a /home/pi/freeboard/
+# Get out a copy of freeboard-server-0.5.12-SNAPSHOT-all.zip
+# unzip it, it will create freeboard-server-0.5.12-SNAPSHOT-all dir - thats wrong
+# Move the contents of freeboard-server-0.5.12-SNAPSHOT-all back into home/pi, so now there is a /home/pi/freeboard/
 # cd freeboard - dont run install if it was already done.
 # Install java-8-oracle, and update start.sh to use this.
 # Setup wifi and networking ready for the boat.
@@ -56,8 +56,9 @@ sudo update-alternatives --install /usr/bin/java java /opt/jdk1.8.0/bin/java 1
 
 ###################
 # extract the freeboard-server archive
-FREEBOARD_CURRENT=freeboard-server-0.5.10-SNAPSHOT
-unzip $FREEBOARD_CURRENT-all.zip
+#FREEBOARD_CURRENT=freeboard-server-0.5.12-SNAPSHOT
+FREEBOARD_CURRENT=$(find -maxdepth 1 -type f -name 'freeboard-server-*-SNAPSHOT-all.zip'| head -n1)
+unzip $FREEBOARD_CURRENT
 
 #copy the freeboard directory back to here
 cp -rf $FREEBOARD_CURRENT/freeboard .

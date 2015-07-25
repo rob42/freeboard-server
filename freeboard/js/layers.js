@@ -31,7 +31,19 @@ function addLayers(map) {
 		}).addTo(map);
 
 
-	var _1552_2 = L.tileLayer("http://{server}:8080/mapcache/11552_2/{z}/{x}/{y}.png", {
+	var NZ23 = L.tileLayer("http://{server}:8080/mapcache/NZ23/{z}/{x}/{y}.png", {
+		server: host,
+		
+		attribution: 'NZ23 New Zeland North Island',
+		minZoom: 6,
+		maxZoom: 9,
+		tms: true
+		}).addTo(map);
+
+
+	var NZ614 = L.tileLayer("http://{server}:8080/mapcache/NZ61401/{z}/{x}/{y}.png", {
+		attribution: 'NZ61401 Tasman Bay',
+		minZoom: 9,
 		server: host,
 		
 		attribution: '11552_2 CONTINUATION OF TRENT RIVER HAYWARD CREE',
@@ -67,9 +79,10 @@ function addLayers(map) {
 		"Natural Earth": WORLD,
 		"Natural Earth 1": WORLD1,
 		"11552_1 NEUSE RIVER AND UPPER PART OF BAY RIVER ": _1552_1,
-		"11552_2 CONTINUATION OF TRENT RIVER HAYWARD CREE": _1552_2,
+		"NZ14600 New Zeland including Norfolk & Campbell ": NZ14600,
+		"NZ23 New Zeland North Island": NZ23,
 		"11552_3 CONTINUATION OF TRENT RIVER POLLOCKSVILL": _1552_3,
-		"11552_4 CONTINUATION OF NEUSE RIVER NU/518 RA/41": _1552_4,
+		"NZ61401 Tasman Bay": NZ614,
 	};
 	layers = L.control.layers(baseLayers, overlays).addTo(map);
 	};
