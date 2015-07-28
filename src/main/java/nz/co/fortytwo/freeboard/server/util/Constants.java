@@ -128,6 +128,7 @@ public class Constants {
 	public static final String WIND_ALARM_KNOTS_CMD = "#WSK";
 	/** +/- in degrees to adjust zero wind dir reading on Mega */
 	public static final String WIND_ZERO_ADJUST_CMD = "#WZJ";
+	public static final String DEPTH_ZERO_ADJUST_CMD = "#DZJ";
 	public static final String NMEA = "NMEA";
 	public static final String AIS = "AIS";
 
@@ -173,6 +174,7 @@ public class Constants {
 	public static final String ENABLE_COMET = "freeboard.comet.enable";
 
 	public static final String WIND_ZERO_OFFSET = "freeboard.wind.offset";
+	public static final String DEPTH_ZERO_OFFSET = "freeboard.depth.offset";
 	public static final String DEPTH_UNIT = "freeboard.depth.unit";
 
 	// gui constants

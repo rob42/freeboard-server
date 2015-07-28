@@ -37,7 +37,7 @@
 		</style>
 	<vlayout style="overflow: visible">
 				<html>
-					<canvas id="canvasDepth" width="350px" height="240px" />
+					<canvas id="canvasDepth" width="375px" height="240px" />
 				</html>
 					<hlayout valign="middle">
 						<label id="depthScale" value="0.0" visible="false"/>

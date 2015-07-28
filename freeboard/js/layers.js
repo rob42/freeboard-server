@@ -31,26 +31,6 @@ function addLayers(map) {
 		}).addTo(map);
 
 
-	var _11552_2 = L.tileLayer("http://{server}:8080/mapcache/11552_2/{z}/{x}/{y}.png", {
-		server: host,
-
-		attribution: 'NZ23 New Zeland North Island',
-		minZoom: 6,
-		maxZoom: 9,
-		tms: true
-		}).addTo(map);
-
-
-	var _11552_2 = L.tileLayer("http://{server}:8080/mapcache/11552_2/{z}/{x}/{y}.png", {
-		server: host,
-
-		attribution: '11552_2 CONTINUATION OF TRENT RIVER HAYWARD CREE',
-		minZoom: 12,
-		maxZoom: 15,
-		tms: true
-		}).addTo(map);
-
-
 	var _11552_3 = L.tileLayer("http://{server}:8080/mapcache/11552_3/{z}/{x}/{y}.png", {
 		server: host,
 
@@ -76,9 +56,7 @@ function addLayers(map) {
 	overlays = {
 		"Natural Earth": WORLD,
 		"Natural Earth 1": WORLD1,
-		"11552_1 NEUSE RIVER AND UPPER PART OF BAY RIVER ": _11552_1,
 		"11552_2 CONTINUATION OF TRENT RIVER HAYWARD CREE": _11552_2,
-		"11552_3 CONTINUATION OF TRENT RIVER POLLOCKSVILL": _11552_3,
 		"11552_4 CONTINUATION OF NEUSE RIVER NU/518 RA/41": _11552_4,
 	};
 	layers = L.control.layers(baseLayers, overlays).addTo(map);

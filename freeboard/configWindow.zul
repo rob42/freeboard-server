@@ -67,6 +67,16 @@
 								<textbox id="cfgCompassOffset"
 									tooltip="+/- degrees offset" />
 							</row>
+							<row hflex="min">
+								<label value="Depth Unit" />
+								<textbox id="cfgDepthUnit"
+									tooltip="feet (f) meters (m) or fathoms (F)" />
+							</row>
+							<row hflex="min">
+								<label value="Depth Offset" />
+								<textbox id="cfgDepthOffset"
+									tooltip="Transducer depth below water" />
+							</row>
 							<row>
 								<hbox>
 									<button id="cfgSave" label="Save" height="38px" />
