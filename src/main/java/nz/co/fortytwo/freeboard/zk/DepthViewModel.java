@@ -20,9 +20,11 @@ package nz.co.fortytwo.freeboard.zk;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import nz.co.fortytwo.freeboard.server.CamelContextFactory;
 
 import nz.co.fortytwo.freeboard.server.util.Constants;
 import nz.co.fortytwo.freeboard.server.util.Util;
+import org.apache.camel.ProducerTemplate;
 
 import org.apache.log4j.Logger;
 import org.zkoss.zk.ui.Session;
@@ -67,9 +69,13 @@ public class DepthViewModel extends SelectorComposer<Window>{
 
 	private double scale=0.7;
 
+	private ProducerTemplate producer;
+   
 	public DepthViewModel() {
 		super();
 		logger.debug("Constructing..");
+		producer = CamelContextFactory.getInstance().createProducerTemplate();
+		producer.setDefaultEndpointUri("seda:input");
 
 	}
 
@@ -90,7 +96,8 @@ public class DepthViewModel extends SelectorComposer<Window>{
 			}
 			depthScale.setValue(String.valueOf(scale));
 			depthUnit.setValue(Util.getConfig(null).getProperty(Constants.DEPTH_UNIT));
-			//resize
+			//adjust wind zero point here
+			producer.sendBody(Constants.UID+":"+Constants.MEGA+","+Constants.DEPTH_ZERO_ADJUST_CMD+":"+Util.getConfig(null).getProperty(Constants.DEPTH_ZERO_OFFSET)+",");
 
 	}
 

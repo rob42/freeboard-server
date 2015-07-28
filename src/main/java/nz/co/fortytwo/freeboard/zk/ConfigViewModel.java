@@ -75,6 +75,12 @@ public class ConfigViewModel extends SelectorComposer<Window> {
 	@Wire("textbox#cfgWindOffset")
 	private Textbox cfgWindOffset; 
 	
+	@Wire("textbox#cfgDepthOffset")
+	private Textbox cfgDepthOffset; 
+	
+	@Wire("textbox#cfgDepthUnit")
+	private Textbox cfgDepthUnit; 
+	
 	@Wire("textbox#portsToScan")
 	private Textbox portsToScan;
 	
@@ -268,6 +274,21 @@ public class ConfigViewModel extends SelectorComposer<Window> {
 			}else{
 				Messagebox.show("Wind offset must be numeric");
 			}
+			if(NumberUtils.isNumber(cfgDepthOffset.getValue())){
+				config.setProperty(Constants.DEPTH_ZERO_OFFSET, cfgDepthOffset.getValue());
+				Util.saveConfig();
+				//notify others
+				producer.sendBody(Constants.DEPTH_ZERO_ADJUST_CMD+":"+cfgDepthOffset.getValue() +",");
+			}else{
+				Messagebox.show("Depth offset must be numeric");
+			}
+			if(isValidDepthUnit(cfgDepthUnit.getText())){
+				config.setProperty(Constants.DEPTH_UNIT, cfgDepthUnit.getText());
+				//notify others
+//				producer.sendBody(Constants.DEPTH_UNIT+":"+cfgDepthUnit.getValue() +",");
+			}else{
+				Messagebox.show("Depth unit must be 'f' for feet, 'M or m' for meters or 'F' for fathoms");
+			}
 		} catch (Exception e) {
 			logger.error(e.getMessage(),e);
 		} 
@@ -310,6 +331,18 @@ public class ConfigViewModel extends SelectorComposer<Window> {
 			}
 		}
 		return ok;
+	}
+   
+	private boolean isValidDepthUnit(String text) {
+		if(StringUtils.isBlank(text))return false;
+		String unit = text.trim();
+		boolean ok = false;
+		
+      if ((unit.equals("f"))||(unit.equals("F"))||(unit.equals("m"))|(unit.equals("M"))) {
+            return true;
+      } else {
+         return false;
+      }
 	}
 
 	private boolean isValidBaudRate(String value) {

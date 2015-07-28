@@ -59,7 +59,7 @@ function Depth () {
 			if(!navObj)return true;
 			//depth
 			if (navObj.DBT) {
-					lcdLog.setValue(navObj.DBT);
+					lcdDepth.setValue(navObj.DBT);
 			}
 
 	};
@@ -73,8 +73,10 @@ function initDepth() {
 	if(!window.CanvasRenderingContext2D)return;
 	// Initialzing lcds
 	// depth
+   
+   depthUnit = zk.Widget.$('$depthUnit').getValue();
 
-	lcdLog = new steelseries.DisplaySingle('canvasDepth', {
+	lcdDepth = new steelseries.DisplaySingle('canvasDepth', {
 		// gaugeType : steelseries.GaugeType.TYPE4,
 		//width : document.getElementById('canvasLog').width,
 		//height : document.getElementById('canvasLog').height,
@@ -84,7 +86,7 @@ function initDepth() {
 		headerStringVisible : true,
 //		detailString : "Avg: ",
 //		detailStringVisible : true,
-		nuitString:zk.Widget.$('$depthUnit').getValue(),
+		unitString : depthUnit,
 		unitStringVisible: true
 
 	});
