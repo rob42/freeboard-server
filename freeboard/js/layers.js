@@ -21,7 +21,7 @@ function addLayers(map) {
 		}).addTo(map);
 
 
-	var _11552_1 = L.tileLayer("http://{server}:8080/mapcache/11552_1/{z}/{x}/{y}.png", {
+	var _1552_1 = L.tileLayer("http://{server}:8080/mapcache/11552_1/{z}/{x}/{y}.png", {
 		server: host,
 
 		attribution: '11552_1 NEUSE RIVER AND UPPER PART OF BAY RIVER ',
@@ -31,7 +31,7 @@ function addLayers(map) {
 		}).addTo(map);
 
 
-	var _11552_3 = L.tileLayer("http://{server}:8080/mapcache/11552_3/{z}/{x}/{y}.png", {
+	var _1552_3 = L.tileLayer("http://{server}:8080/mapcache/11552_3/{z}/{x}/{y}.png", {
 		server: host,
 
 		attribution: '11552_3 CONTINUATION OF TRENT RIVER POLLOCKSVILL',
@@ -41,7 +41,7 @@ function addLayers(map) {
 		}).addTo(map);
 
 
-	var _11552_4 = L.tileLayer("http://{server}:8080/mapcache/11552_4/{z}/{x}/{y}.png", {
+	var _1552_4 = L.tileLayer("http://{server}:8080/mapcache/11552_4/{z}/{x}/{y}.png", {
 		server: host,
 
 		attribution: '11552_4 CONTINUATION OF NEUSE RIVER NU/518 RA/41',
@@ -56,8 +56,9 @@ function addLayers(map) {
 	overlays = {
 		"Natural Earth": WORLD,
 		"Natural Earth 1": WORLD1,
-		"11552_2 CONTINUATION OF TRENT RIVER HAYWARD CREE": _11552_2,
-		"11552_4 CONTINUATION OF NEUSE RIVER NU/518 RA/41": _11552_4,
+		"11552_1 NEUSE RIVER AND UPPER PART OF BAY RIVER ": _1552_1,
+		"11552_3 CONTINUATION OF TRENT RIVER POLLOCKSVILL": _1552_3,
+		"11552_4 CONTINUATION OF NEUSE RIVER NU/518 RA/41": _1552_4,
 	};
 	layers = L.control.layers(baseLayers, overlays).addTo(map);
 	};
