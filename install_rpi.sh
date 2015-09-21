@@ -68,7 +68,7 @@ dir_name=${file_name%-all.*}
 echo "#    Directory name = "$dir_name
 
 #copy the freeboard directory back to here
-cp -rf $FREEBOARD_CURRENT/freeboard .
+#cp -rf $FREEBOARD_CURRENT/freeboard .
 cp -rf $dir_name/freeboard .
 
 cd freeboard
@@ -107,7 +107,6 @@ sudo update-rc.d -f udhcpd remove
 echo "#   Setup networking"
 #/etc/network/interfaces
 if ! grep -Fq "#Run as wireless access point" /etc/network/interfaces 
-if ! grep -Fq "#Run as wireless access point" /etc/network/interfaces
 then
     sudo sh -c 'echo "" >> /etc/network/interfaces'
     sudo sh -c 'echo "#Run as wireless access point" >> /etc/network/interfaces'
