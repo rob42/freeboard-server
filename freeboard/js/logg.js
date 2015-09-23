@@ -1,6 +1,6 @@
 /*
  * Copyright 2012,2013 Robert Huitema robert@42.co.nz
- * 
+ *
  * This file is part of FreeBoard. (http://www.42.co.nz/freeboard)
  *
  *  FreeBoard is free software: you can redistribute it and/or modify
@@ -45,11 +45,11 @@ function resizeLog(amount){
 }
 function Logg () {
 	this.onmessage = function (navObj) {
-	
-		
+
+
 			//avoid commands
 			if(!navObj)return true;
-			
+
 			if (navObj.LAT) {
 				var c = navObj.LAT;
 				if($.isNumeric(c)){
@@ -74,11 +74,15 @@ function Logg () {
 			}
 			if (navObj.SOG) {
 					lcdLog.setValue(navObj.SOG);
-				
+
 			}
 			if (navObj.MGH) {
 					lcdHeading.setValue(navObj.MGH);
-				
+
+			}
+			if (navObj.COG) {
+					lcdHeading.setValue(navObj.COG);
+
 			}
 			if (navObj.YAW) {
 				var c = navObj.YAW;
@@ -92,9 +96,9 @@ function Logg () {
 				}
 				c=null;
 			}
-			
+
 	};
-	
+
 }
 
 
@@ -112,7 +116,7 @@ function initLogg() {
 		lcdColor: steelseries.LcdColor.BEIGE,
 		//unitString:"",
 		unitStringVisible: false,
-		valuesNumeric: false	
+		valuesNumeric: false
 
 	});
 	lcdLon = new steelseries.DisplaySingle('canvasLon', {
@@ -126,7 +130,7 @@ function initLogg() {
 		valuesNumeric: false
 
 	});
-	
+
 	// log
 	lcdLog = new steelseries.DisplayMulti('canvasLog', {
 		// gaugeType : steelseries.GaugeType.TYPE4,
@@ -142,7 +146,7 @@ function initLogg() {
 	// unitStringVisible: true
 
 	});
-	
+
 	// heading
 	lcdHeading = new steelseries.DisplayMulti('canvasHeading', {
 		//width : document.getElementById('canvasHeading').width,

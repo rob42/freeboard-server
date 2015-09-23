@@ -452,8 +452,8 @@ function ChartPlotter() {
 					lon = navObj.LON;
 					setPos = true;
 			}
-			if (navObj.MGH) {
-					heading = navObj.MGH;
+			if (navObj.COG) {
+					heading = navObj.COG;
 					setPos = true;
 			}
 			if (navObj.SOG) {

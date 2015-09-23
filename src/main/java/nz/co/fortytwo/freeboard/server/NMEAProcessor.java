@@ -38,6 +38,7 @@ import net.sf.marineapi.nmea.sentence.HeadingSentence;
 import net.sf.marineapi.nmea.sentence.MWVSentence;
 import net.sf.marineapi.nmea.sentence.PositionSentence;
 import net.sf.marineapi.nmea.sentence.RMCSentence;
+
 import net.sf.marineapi.nmea.sentence.Sentence;
 import net.sf.marineapi.nmea.sentence.SentenceId;
 import net.sf.marineapi.nmea.sentence.VHWSentence;
@@ -73,7 +74,8 @@ public class NMEAProcessor extends FreeboardProcessor implements Processor, Free
 		//register BVE
 		SentenceFactory.getInstance().registerParser("BVE", BVEParser.class);
 		SentenceFactory.getInstance().registerParser("XDR", CruzproXDRParser.class);
-		
+
+
 		setNmeaListeners();
 
 		// Enable the code below to generate Gausian distributed random depths
@@ -264,6 +266,8 @@ public class NMEAProcessor extends FreeboardProcessor implements Processor, Free
 					Util.checkTime(sen);
 
 					previousSpeed = Util.movingAverage(ALPHA, previousSpeed, sen.getSpeed());
+					map.put(Constants.COURSE_OVER_GND, sen.getCourse());
+//					System.out.println (sen.getCourse()+"\n");
 					map.put(Constants.SPEED_OVER_GND, previousSpeed);
 				}
 				if (evt.getSentence() instanceof VHWSentence) {

@@ -1,18 +1,18 @@
-<!-- 
+<!--
 	Copyright 2012,2013 Robert Huitema robert@42.co.nz
-	
+
 	This file is part of FreeBoard. (http://www.42.co.nz/freeboard)
-	
+
 	FreeBoard is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
 	the Free Software Foundation, either version 3 of the License, or
 	(at your option) any later version.
-	
+
 	FreeBoard is distributed in the hope that it will be useful,
 	but WITHOUT ANY WARRANTY; without even the implied warranty of
 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 	GNU General Public License for more details.
-	
+
 	You should have received a copy of the GNU General Public License
 	along with FreeBoard.  If not, see <http://www.gnu.org/licenses/>.
 -->
@@ -31,8 +31,8 @@
 <zk>
 
 	<window border="none" vflex="true">
-		
-		<vlayout vflex="1" hflex="min" 
+
+		<vlayout vflex="1" hflex="min"
 			style="margin-left:auto; margin-right:auto; text-align:center;">
 			<image src="img/logo.png" />
 
@@ -54,6 +54,8 @@
 						height="75px" href="engine.zul" style="padding:10px; font-size:14px; font-weight: bold;"/>
 					<button label="Wind + Log" mold="trendy" width="100px" style="padding:10px; font-size:14px; font-weight: bold;"
 						height="75px" href="windLogg.zul" />
+					<button label="Wind Log Depth" mold="trendy" width="100px"
+						height="75px" href="depth.zul" style="padding:10px; font-size:14px; font-weight: bold;"/>
 				</groupbox>
 
 			</hlayout>
@@ -63,7 +65,7 @@
 					style="font-family:arial, sans-serif;font-size:12px">
 
 
-					
+
 					<![CDATA[<p>Copyright 2012,2013 Robert Huitema
 					robert@42.co.nz </p> <p> FreeBoard
 					(http://www.42.co.nz/freeboard) is free software:
@@ -74,8 +76,8 @@
 					>ABSOLUTELY NO WARRANTY</a></p> <p><b>This software
 					does not replace the use of official navigation
 					charts to ensure the safety of your vessel</b>]]>
-					
-					
+
+
 				</html>
 			</groupbox>
 		</vlayout>
