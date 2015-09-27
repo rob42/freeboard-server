@@ -40,7 +40,7 @@ function AnchorAlarm() {
 					}
 				}
 				if (navObj.AAR) {
-						alcdRadius.setValue(navObj.AAR);
+                  alcdRadius.setValue(navObj.AAR);
 				}
 				if (navObj.AAD) {
 						alcdDistance.setValue(navObj.AAD);
@@ -61,10 +61,10 @@ function initAnchorAlarm() {
 		//height : document.getElementById('acanvasRadius').height,
 		lcdDecimals : 0,
 		lcdColor: steelseries.LcdColor.BEIGE,
-		unitString:"Mtrs",
-		unitStringVisible: true,
-		valuesNumeric: true	
-
+		unitString: "Mtrs",
+      unitStringVisible: true,
+      valuesNumeric: true
+      
 	});
 	alcdDistance = new steelseries.DisplaySingle('acanvasDistance', {
 		// gaugeType : steelseries.GaugeType.TYPE4,
@@ -72,9 +72,9 @@ function initAnchorAlarm() {
 		//height : document.getElementById('acanvasDistance').height,
 		lcdDecimals : 0,
 		lcdColor: steelseries.LcdColor.BEIGE,
-		unitString:"Mtrs",
+		unitString: "Mtrs",
 		unitStringVisible: true,
-		valuesNumeric: true	
+      valuesNumeric: true
 
 	});
 	

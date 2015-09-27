@@ -92,22 +92,22 @@ public class AnchorViewModel extends SelectorComposer<Window>{
 		setAnchorAlarmState();
 	}
 	
-	@Listen("onClick = button#anchorRadiusUp1")
+	@Listen("onClick = toolbarbutton#anchorRadiusUp1")
 	public void anchorRadiusUp1Click(MouseEvent event) {
 	    logger.debug(" anchorRadiusUp1 button event = "+event);
 	    producer.sendBody(Constants.UID+":"+Constants.MEGA+","+Constants.ANCHOR_ALARM_ADJUST_CMD+":1,");
 	}
-	@Listen("onClick = button#anchorRadiusDown1")
+	@Listen("onClick = toolbarbutton#anchorRadiusDown1")
 	public void anchorRadiusDown1Click(MouseEvent event) {
 	    logger.debug(" anchorRadiusDown1 button event = "+event);
 	    producer.sendBody(Constants.UID+":"+Constants.MEGA+","+Constants.ANCHOR_ALARM_ADJUST_CMD+":-1,");
 	}
-	@Listen("onClick = button#anchorRadiusUp10")
+	@Listen("onClick = toolbarbutton#anchorRadiusUp10")
 	public void anchorRadiusUp10Click(MouseEvent event) {
 	    logger.debug(" anchorRadiusUp10 button event = "+event);
 	    producer.sendBody(Constants.UID+":"+Constants.MEGA+","+Constants.ANCHOR_ALARM_ADJUST_CMD+":10,");
 	}
-	@Listen("onClick = button#anchorRadiusDown10")
+	@Listen("onClick = toolbarbutton#anchorRadiusDown10")
 	public void anchorRadiusDown10Click(MouseEvent event) {
 	    logger.debug(" anchorRadiusDown10 button event = "+event);
 	    producer.sendBody(Constants.UID+":"+Constants.MEGA+","+Constants.ANCHOR_ALARM_ADJUST_CMD+":-10,");
@@ -126,11 +126,11 @@ public class AnchorViewModel extends SelectorComposer<Window>{
 	
 	private void setAnchorAlarmState() {
 		 if(anchorAlarmOn){
-		    	anchorAlarmOnOff.setImage("img/stop43x38.png");
+		    	anchorAlarmOnOff.setImage("img/tick43x38.png");
 		    	
 		    	producer.sendBody(Constants.UID+":"+Constants.MEGA+","+Constants.ANCHOR_ALARM_STATE_CMD+":1,");
 		    }else{
-		    	anchorAlarmOnOff.setImage("img/tick43x38.png");
+		    	anchorAlarmOnOff.setImage("img/stop43x38.png");
 		    	
 		    	producer.sendBody(Constants.UID+":"+Constants.MEGA+","+Constants.ANCHOR_ALARM_STATE_CMD+":0,");
 		    }
