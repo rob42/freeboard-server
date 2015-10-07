@@ -39,7 +39,6 @@
 			<hlayout hflex="1">
 				<groupbox mold="3d" >
 					<caption label="Chartplotter + Instruments" />
-
 					<button label="Laptop" mold="trendy" width="100px" style="padding:10px; font-size:14px; font-weight: bold;"
 						height="75px" href="floating.zul" />
 					<button label="Cellphone" mold="trendy" width="100px" style="padding:10px; font-size:14px; font-weight: bold;"
@@ -54,8 +53,8 @@
 						height="75px" href="engine.zul" style="padding:10px; font-size:14px; font-weight: bold;"/>
 					<button label="Wind + Log" mold="trendy" width="100px" style="padding:10px; font-size:14px; font-weight: bold;"
 						height="75px" href="windLogg.zul" />
-					<button label="Wind Log Depth" mold="trendy" width="100px"
-						height="75px" href="depth.zul" style="padding:10px; font-size:14px; font-weight: bold;"/>
+					<button label="Sail" mold="trendy" width="100px"
+						height="75px" href="sail.zul" style="padding:10px; font-size:14px; font-weight: bold;"/>
 				</groupbox>
 
 			</hlayout>

@@ -475,6 +475,10 @@
         <ele>0.0</ele>
         <time>2015-09-18T10:43:03Z</time>
       </trkpt>
+      <trkpt lat="35.06476079119513" lon="-76.96789352847092">
+        <ele>0.0</ele>
+        <time>2015-09-28T08:12:28Z</time>
+      </trkpt>
     </trkseg>
   </trk>
 </gpx>
