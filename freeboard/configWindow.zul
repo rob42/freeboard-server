@@ -67,10 +67,21 @@
 								<textbox id="cfgCompassOffset"
 									tooltip="+/- degrees offset" />
 							</row>
-							<row hflex="min">
+<!--
+                     <row hflex="min">
 								<label value="Depth Unit" />
 								<textbox id="cfgDepthUnit"
 									tooltip="feet (f) meters (m) or fathoms (F)" />
+							</row>
+-->
+                     <row hflex="min">
+								<label value="Depth Unit" />
+								<combobox id="cfgDepthUnit"
+									tooltiptext="feet (f) meters (m) or fathoms (F)" >
+									<comboitem label="feet" value="f"/>
+									<comboitem label="meters" value="m"/>
+									<comboitem label="Fathoms" value="F"/>
+									</combobox>
 							</row>
 							<row hflex="min">
 								<label value="Depth Offset" />

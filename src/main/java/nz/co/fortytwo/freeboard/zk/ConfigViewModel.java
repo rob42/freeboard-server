@@ -78,8 +78,8 @@ public class ConfigViewModel extends SelectorComposer<Window> {
 	@Wire("textbox#cfgDepthOffset")
 	private Textbox cfgDepthOffset; 
 	
-	@Wire("textbox#cfgDepthUnit")
-	private Textbox cfgDepthUnit; 
+	@Wire("combobox#cfgDepthUnit")
+	private Combobox cfgDepthUnit; 
 	
 	@Wire("textbox#portsToScan")
 	private Textbox portsToScan;
@@ -282,12 +282,14 @@ public class ConfigViewModel extends SelectorComposer<Window> {
 			}else{
 				Messagebox.show("Depth offset must be numeric");
 			}
-			if(isValidDepthUnit(cfgDepthUnit.getText())){
-				config.setProperty(Constants.DEPTH_UNIT, cfgDepthUnit.getText());
+			String temp = cfgDepthUnit.getSelectedItem().getValue();
+         if(isValidDepthUnit(temp)){
+				config.setProperty(Constants.DEPTH_UNIT, (String)(cfgDepthUnit.getSelectedItem().getValue()));
+				Util.saveConfig();
 				//notify others
 //				producer.sendBody(Constants.DEPTH_UNIT+":"+cfgDepthUnit.getValue() +",");
 			}else{
-				Messagebox.show("Depth unit must be 'f' for feet, 'M or m' for meters or 'F' for fathoms");
+				Messagebox.show("Depth unit must be 'feet' 'Fathoms' or 'meters'");
 			}
 		} catch (Exception e) {
 			logger.error(e.getMessage(),e);
@@ -338,7 +340,7 @@ public class ConfigViewModel extends SelectorComposer<Window> {
 		String unit = text.trim();
 		boolean ok = false;
 		
-      if ((unit.equals("f"))||(unit.equals("F"))||(unit.equals("m"))|(unit.equals("M"))) {
+      if ((unit.equals("f"))||(unit.equals("F"))||(unit.equals("m"))) {
             return true;
       } else {
          return false;
@@ -470,7 +472,14 @@ public class ConfigViewModel extends SelectorComposer<Window> {
 				if(config.getProperty(Constants.SERIAL_PORT_BAUD).equals(item.getValue())){
 					portBaudRate.setSelectedItem(item);
 				}
-			}
+         }
+         
+			for(Comboitem item: cfgDepthUnit.getItems()){
+				if(config.getProperty(Constants.DEPTH_UNIT).equals(item.getValue())){
+					cfgDepthUnit.setSelectedItem(item);
+				}
+         }
+         
 			portsToScan.setValue(config.getProperty(Constants.SERIAL_PORTS));
 			cfgWindOffset.setValue(config.getProperty(Constants.WIND_ZERO_OFFSET));
 			String useChoice = config.getProperty(Constants.DNS_USE_CHOICE);
