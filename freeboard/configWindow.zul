@@ -67,13 +67,6 @@
 								<textbox id="cfgCompassOffset"
 									tooltip="+/- degrees offset" />
 							</row>
-<!--
-                     <row hflex="min">
-								<label value="Depth Unit" />
-								<textbox id="cfgDepthUnit"
-									tooltip="feet (f) meters (m) or fathoms (F)" />
-							</row>
--->
                      <row hflex="min">
 								<label value="Depth Unit" />
 								<combobox id="cfgDepthUnit"
@@ -87,6 +80,11 @@
 								<label value="Depth Offset" />
 								<textbox id="cfgDepthOffset"
 									tooltip="Transducer depth below water" />
+							</row>
+							<row hflex="min">
+								<label value="Alarm Depth" />
+								<textbox id="cfgAlarmDepth"
+									tooltip="Shows alarm if depth less than this value." />
 							</row>
 							<row>
 								<hbox>

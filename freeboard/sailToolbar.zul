@@ -40,6 +40,9 @@
                         tooltiptext="Chartplotter" href='./floating.zul' />
          <toolbarbutton mold="toggle" image="img/engine48x36.png"
                         tooltiptext="Engine" href='./engine.zul' />
+			<toolbarbutton tooltiptext="Config"
+				image="img/config43x38.png"
+				onClick='mainToolBar.query("include #configWindow").setVisible(!mainToolBar.query("include #configWindow").isVisible());' />
       </toolbar>
       <!-- Config -->
       <include src="./configWindow.zul" />           

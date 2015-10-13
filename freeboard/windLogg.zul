@@ -13,8 +13,8 @@
 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 	GNU General Public License for more details.
 
-	You should have received a copy of the GNU General Public License
-	along with FreeBoard.  If not, see <http://www.gnu.org/licenses/>.
+   You should have received a copy of the GNU General Public License
+   along with FreeBoard.  If not, see <http://www.gnu.org/licenses/>.
 -->
 <?page viewport="width=device-width, initial-scale=1.0, user-scalable=yes"?>
 <?page title="Freeboard"?>
@@ -43,113 +43,110 @@
 <?script src="./js/tween-min.js"?>
 <?script src="./js/steelseries.js"?>
 <zk>
-	<script type="text/javascript" src="./js/windLogg.js" />
-	<style>
-		#map { height: 100%; border: 1px solid #888; }
-		.hboxRemoveWhiteStrips td.z-hbox-sep { width: 0; padding: 0;}
-	</style>
+   <script type="text/javascript" src="./js/windLogg.js" />
+   <style>
+      #map { height: 100%; border: 1px solid #888; }
+      .hboxRemoveWhiteStrips td.z-hbox-sep { width: 0; padding: 0;}
+   </style>
 
-	<window id="mainWindow"
-			  xmlns:w="http://www.zkoss.org/2005/zk/client"
-			  apply="nz.co.fortytwo.freeboard.zk.EngineViewModel" vflex="true"
-			  style="margin-left:auto;">
-		<borderlayout>
-			<west border="none" width="50px">
-				<vbox height="100%">
-					<include src="./simpleToolbar.zul" />
-				</vbox>
+   <window id="mainWindow"
+           xmlns:w="http://www.zkoss.org/2005/zk/client"
+           apply="nz.co.fortytwo.freeboard.zk.EngineViewModel" vflex="true"
+           style="margin-left:auto;">
+      <borderlayout>
+         <west border="none" width="50px">
+            <vbox height="100%">
+               <include src="./simpleToolbar.zul" />
+            </vbox>
 
-			</west>
-			<center>
+         </west>
+         <center>
 
-				<div vflex="1" hflex="1"
-					  style="background-color: white;">
-					<label id="layerVisibility" value=""
-							 visible="false" />
+            <div vflex="1" hflex="1" style="background-color: white;">
+               <label id="layerVisibility" value="" visible="false" />
 
-					<div vflex="1" hflex="1">
-						<hlayout style="overflow: visible">
-							<vbox hflex="4" align="center"
-									style="overflow: visible">
+               <div vflex="1" hflex="1">
+                  <hlayout style="overflow: visible">
+                     <vbox hflex="4" align="center"
+                           style="overflow: visible">
 
-								<html style="overflow: visible">
-									<canvas id="canvasWindApp"
-											  style="overflow: visible" width="${mainWindow$composer.size}"
-											  height="${mainWindow$composer.size}">
-									</canvas>
-								</html>
-								<html>
-									<canvas id="canvasWindTrue"
-											  width="${mainWindow$composer.size*.75}"
-											  height="${mainWindow$composer.size*.75}">
-									</canvas>
-								</html>
-							</vbox>
-							<vbox hflex="4" align="center"
-									style="overflow: visible">
-								<html style="overflow: visible">
-									<canvas id="canvasWindDirApp"
-											  style="overflow: visible" width="${mainWindow$composer.size}"
-											  height="${mainWindow$composer.size}">
-									</canvas>
-								</html>
-								<html
-									style="margin-left:auto;margin-right:auto;" width="100%">
-									<canvas id="canvasWindDirTrue"
-											  width="${mainWindow$composer.size*.75}"
-											  height="${mainWindow$composer.size*.75}">
-										No canvas in your
-										browser...sorry...
-									</canvas>
-								</html>
-							</vbox>
-							<vbox hflex="4" style="overflow: visible"
-									align="center">
-								<html>
-									<canvas id="canvasLog"
-											  width="${mainWindow$composer.size}"
-											  height="${mainWindow$composer.size}" />
-								</html>
+                        <html style="overflow: visible">
+                           <canvas id="canvasWindApp"
+                                   style="overflow: visible" width="${mainWindow$composer.size}"
+                                   height="${mainWindow$composer.size}">
+                           </canvas>
+                        </html>
+                        <html>
+                           <canvas id="canvasWindTrue"
+                                   width="${mainWindow$composer.size*.75}"
+                                   height="${mainWindow$composer.size*.75}">
+                           </canvas>
+                        </html>
+                     </vbox>
+                     <vbox hflex="4" align="center" style="overflow: visible">
+                        <html style="overflow: visible">
+                           <canvas id="canvasWindDirApp"
+                                   style="overflow: visible" width="${mainWindow$composer.size}"
+                                   height="${mainWindow$composer.size}">
+                           </canvas>
+                        </html>
+                        <html
+                           style="margin-left:auto;margin-right:auto;" width="100%">
+                           <canvas id="canvasWindDirTrue"
+                                   width="${mainWindow$composer.size*.75}"
+                                   height="${mainWindow$composer.size*.75}">
+                              No canvas in your
+                              browser...sorry...
+                           </canvas>
+                        </html>
+                     </vbox>
+                     <vbox hflex="4" style="overflow: visible"
+                           align="center">
+                        <html>
+                           <canvas id="canvasLog"
+                                   width="${mainWindow$composer.size}"
+                                   height="${mainWindow$composer.size}" />
+                        </html>
 
-								<html>
-									<canvas id="canvasLon" width="245px"
-											  height="55px" />
-								</html>
-								<html>
-									<canvas id="canvasLat" width="245px"
-											  height="55px" />
-								</html>
+                        <html>
+                           <canvas id="canvasLon" width="245px"
+                                   height="55px" />
+                        </html>
+                        <html>
+                           <canvas id="canvasLat" width="245px"
+                                   height="55px" />
+                        </html>
 
-								<html>
-									<canvas id="" width="245px"
-											  height="55px" />
-								</html>
+                        <html>
+                           <canvas id="" width="245px"
+                                   height="55px" />
+                        </html>
 
-								<html>
-									<canvas id="depth" width="245px"
-											  height="55px" />
-								</html>
+                        <html>
+                           <canvas id="depth" width="245px"
+                                   height="55px" />
+                        </html>
 
-							</vbox>
+                     </vbox>
 
 
 
-						</hlayout>
+                  </hlayout>
 
-						<script type="text/javascript" defer="true">
-							initSocket(); initWind();
-						</script>
-					</div>
+                  <script type="text/javascript" defer="true">
+                     initSocket(); initWind();
+                  </script>
+               </div>
 
-				</div>
-			</center>
+            </div>
+         </center>
 
-		</borderlayout>
-	</window>
+      </borderlayout>
+   </window>
 
 
-	<popup id="helpPopup">
-		<html>
+   <popup id="helpPopup">
+      <html>
 
 
 
@@ -181,6 +178,6 @@
 
 
 
-		</html>
-	</popup>
+      </html>
+   </popup>
 </zk>

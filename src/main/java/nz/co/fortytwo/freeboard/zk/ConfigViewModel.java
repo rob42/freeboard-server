@@ -78,6 +78,9 @@ public class ConfigViewModel extends SelectorComposer<Window> {
 	@Wire("textbox#cfgDepthOffset")
 	private Textbox cfgDepthOffset; 
 	
+	@Wire("textbox#cfgAlarmDepth")
+	private Textbox cfgAlarmDepth; 
+	
 	@Wire("combobox#cfgDepthUnit")
 	private Combobox cfgDepthUnit; 
 	
@@ -274,7 +277,8 @@ public class ConfigViewModel extends SelectorComposer<Window> {
 			}else{
 				Messagebox.show("Wind offset must be numeric");
 			}
-			if(NumberUtils.isNumber(cfgDepthOffset.getValue())){
+
+         if(NumberUtils.isNumber(cfgDepthOffset.getValue())){
 				config.setProperty(Constants.DEPTH_ZERO_OFFSET, cfgDepthOffset.getValue());
 				Util.saveConfig();
 				//notify others
@@ -291,7 +295,16 @@ public class ConfigViewModel extends SelectorComposer<Window> {
 			}else{
 				Messagebox.show("Depth unit must be 'feet' 'Fathoms' or 'meters'");
 			}
-		} catch (Exception e) {
+
+         if(NumberUtils.isNumber(cfgAlarmDepth.getValue())){
+				config.setProperty(Constants.ALARM_DEPTH, cfgAlarmDepth.getValue());
+				Util.saveConfig();
+				//notify others
+//				producer.sendBody(Constants.DEPTH_ZERO_ADJUST_CMD+":"+cfgDepthOffset.getValue() +",");
+			}else{
+				Messagebox.show("Alarm depth must be numeric");
+			}
+      } catch (Exception e) {
 			logger.error(e.getMessage(),e);
 		} 
 		

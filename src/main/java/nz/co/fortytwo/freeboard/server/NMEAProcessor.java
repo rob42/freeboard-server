@@ -1,18 +1,18 @@
 /*
  * Copyright 2012,2013 Robert Huitema robert@42.co.nz
- *
+ * 
  * This file is part of FreeBoard. (http://www.42.co.nz/freeboard)
- *
+ * 
  * FreeBoard is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- *
+ * 
  * FreeBoard is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- *
+ * 
  * You should have received a copy of the GNU General Public License
  * along with FreeBoard. If not, see <http://www.gnu.org/licenses/>.
  */
@@ -31,14 +31,14 @@ import net.sf.marineapi.nmea.event.SentenceListener;
 import net.sf.marineapi.nmea.parser.BVEParser;
 import net.sf.marineapi.nmea.parser.CruzproXDRParser;
 import net.sf.marineapi.nmea.parser.DataNotAvailableException;
+import net.sf.marineapi.nmea.parser.ParseException;
 import net.sf.marineapi.nmea.parser.SentenceFactory;
 import net.sf.marineapi.nmea.sentence.BVESentence;
-import net.sf.marineapi.nmea.sentence.DBTSentence;
+import net.sf.marineapi.nmea.sentence.DepthSentence;
 import net.sf.marineapi.nmea.sentence.HeadingSentence;
 import net.sf.marineapi.nmea.sentence.MWVSentence;
 import net.sf.marineapi.nmea.sentence.PositionSentence;
 import net.sf.marineapi.nmea.sentence.RMCSentence;
-
 import net.sf.marineapi.nmea.sentence.Sentence;
 import net.sf.marineapi.nmea.sentence.SentenceId;
 import net.sf.marineapi.nmea.sentence.VHWSentence;
@@ -52,34 +52,30 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
 /**
- * Processes NMEA sentences in the body of a message, firing events to
- * interested listeners
- * <p/>
+ * Processes NMEA sentences in the body of a message, firing events to interested listeners
+ * 
  * @author robert
- * <p/>
+ * 
  */
 public class NMEAProcessor extends FreeboardProcessor implements Processor, FreeboardHandler {
 
 	private static Logger logger = Logger.getLogger(NMEAProcessor.class);
 	private static final String DISPATCH_ALL = "DISPATCH_ALL";
-
-	// enable line below to get random depth values for testing.
-	// See also line 83 and 333
-	//private RandomGaussian gaussian;
-
+	private boolean preferRMC;
 	// map of sentence listeners
 	private ConcurrentMap<String, List<SentenceListener>> listeners = new ConcurrentHashMap<String, List<SentenceListener>>();
 
 	public NMEAProcessor() {
+		try {
+			preferRMC=new Boolean(Util.getConfig(null).getProperty(Constants.PREFER_RMC, "true"));
+		} catch (Exception e) {
+			
+		}
 		//register BVE
 		SentenceFactory.getInstance().registerParser("BVE", BVEParser.class);
-		SentenceFactory.getInstance().registerParser("XDR", CruzproXDRParser.class);
-
-
+		SentenceFactory.getInstance().registerParser("XDR",CruzproXDRParser.class);
+		
 		setNmeaListeners();
-
-		// Enable the code below to generate Gausian distributed random depths
-		//gaussian = new RandomGaussian();
 	}
 
 	public void process(Exchange exchange) throws Exception {
@@ -98,14 +94,14 @@ public class NMEAProcessor extends FreeboardProcessor implements Processor, Free
 		String bodyStr = (String) map.get(Constants.NMEA);
 		if (StringUtils.isNotBlank(bodyStr)) {
 			try {
-				logger.debug("Processing NMEA:" + bodyStr);
+				logger.debug("Processing NMEA:"+bodyStr);
 				// dont need the NMEA now
 				map.remove(Constants.NMEA);
 				Sentence sentence = SentenceFactory.getInstance().createParser(bodyStr);
 				fireSentenceEvent(map, sentence);
 			} catch (Exception e) {
-				logger.debug(e.getMessage(), e);
-				logger.error(e.getMessage() + " : " + bodyStr);
+				logger.debug(e.getMessage(),e);
+				logger.error(e.getMessage()+" : "+bodyStr);
 			}
 		}
 		return map;
@@ -114,9 +110,9 @@ public class NMEAProcessor extends FreeboardProcessor implements Processor, Free
 	/**
 	 * Adds a {@link SentenceListener} that wants to receive all sentences read
 	 * by the reader.
-	 * <p/>
-	 * @param listener {@link SentenceListener} to be registered.
-	 * <p/>
+	 * 
+	 * @param listener
+	 *            {@link SentenceListener} to be registered.
 	 * @see net.sf.marineapi.nmea.event.SentenceListener
 	 */
 	public void addSentenceListener(SentenceListener listener) {
@@ -126,10 +122,11 @@ public class NMEAProcessor extends FreeboardProcessor implements Processor, Free
 	/**
 	 * Adds a {@link SentenceListener} that is interested in receiving only
 	 * sentences of certain type.
-	 * <p/>
-	 * @param sl SentenceListener to add
-	 * @param type Sentence type for which the listener is registered.
-	 * <p/>
+	 * 
+	 * @param sl
+	 *            SentenceListener to add
+	 * @param type
+	 *            Sentence type for which the listener is registered.
 	 * @see net.sf.marineapi.nmea.event.SentenceListener
 	 */
 	public void addSentenceListener(SentenceListener sl, SentenceId type) {
@@ -139,10 +136,11 @@ public class NMEAProcessor extends FreeboardProcessor implements Processor, Free
 	/**
 	 * Adds a {@link SentenceListener} that is interested in receiving only
 	 * sentences of certain type.
-	 * <p/>
-	 * @param sl SentenceListener to add
-	 * @param type Sentence type for which the listener is registered.
-	 * <p/>
+	 * 
+	 * @param sl
+	 *            SentenceListener to add
+	 * @param type
+	 *            Sentence type for which the listener is registered.
 	 * @see net.sf.marineapi.nmea.event.SentenceListener
 	 */
 	public void addSentenceListener(SentenceListener sl, String type) {
@@ -150,10 +148,11 @@ public class NMEAProcessor extends FreeboardProcessor implements Processor, Free
 	}
 
 	/**
-	 * Remove a listener from reader. When removed, listener will not receive any
-	 * events from the reader.
-	 * <p/>
-	 * @param sl {@link SentenceListener} to be removed.
+	 * Remove a listener from reader. When removed, listener will not receive
+	 * any events from the reader.
+	 * 
+	 * @param sl
+	 *            {@link SentenceListener} to be removed.
 	 */
 	public void removeSentenceListener(SentenceListener sl) {
 		for (List<SentenceListener> list : listeners.values()) {
@@ -165,14 +164,15 @@ public class NMEAProcessor extends FreeboardProcessor implements Processor, Free
 
 	/**
 	 * Dispatch data to all listeners.
-	 * <p/>
+	 * 
 	 * @param map
-	 * <p/>
-	 * @param sentence sentence string.
+	 * 
+	 * @param sentence
+	 *            sentence string.
 	 */
 	private void fireSentenceEvent(HashMap<String, Object> map, Sentence sentence) {
-		if (!sentence.isValid()) {
-			logger.warn("NMEA Sentence is invalid:" + sentence.toSentence());
+		if (!sentence.isValid()){
+			logger.warn("NMEA Sentence is invalid:"+sentence.toSentence());
 			return;
 		}
 		//TODO: Why am I creating all these lists?
@@ -191,7 +191,7 @@ public class NMEAProcessor extends FreeboardProcessor implements Processor, Free
 				SentenceEvent se = new SentenceEvent(map, sentence);
 				sl.sentenceRead(se);
 			} catch (Exception e) {
-				logger.error(e.getMessage(), e);
+				logger.error(e.getMessage(),e);
 			}
 		}
 
@@ -199,9 +199,11 @@ public class NMEAProcessor extends FreeboardProcessor implements Processor, Free
 
 	/**
 	 * Registers a SentenceListener to hash map with given key.
-	 * <p/>
-	 * @param type Sentence type to register for
-	 * @param sl SentenceListener to register
+	 * 
+	 * @param type
+	 *            Sentence type to register for
+	 * @param sl
+	 *            SentenceListener to register
 	 */
 	private void registerListener(String type, SentenceListener sl) {
 		if (listeners.containsKey(type)) {
@@ -215,17 +217,20 @@ public class NMEAProcessor extends FreeboardProcessor implements Processor, Free
 
 	/**
 	 * Adds NMEA sentence listeners to process NMEA to simple output
-	 * <p/>
+	 * 
 	 * @param processor
 	 */
 	private void setNmeaListeners() {
 
 		addSentenceListener(new SentenceListener() {
+
 			private boolean startLat = true;
 			private boolean startLon = true;
 			double previousLat = 0;
 			double previousLon = 0;
-			double previousSpeed = 0;
+			double gpsPreviousSpeed = 0;
+         double paddlePreviousSpeed=0;
+			
 			static final double ALPHA = 1 - 1.0 / 6;
 
 			public void sentenceRead(SentenceEvent evt) {
@@ -235,49 +240,69 @@ public class NMEAProcessor extends FreeboardProcessor implements Processor, Free
 				HashMap<String, Object> map = (HashMap<String, Object>) evt.getSource();
 				if (evt.getSentence() instanceof PositionSentence) {
 					PositionSentence sen = (PositionSentence) evt.getSentence();
-
-					if (startLat) {
-						previousLat = sen.getPosition().getLatitude();
-						startLat = false;
+					try{
+						if (startLat) {
+							previousLat = sen.getPosition().getLatitude();
+							startLat = false;
+						}
+						previousLat = Util.movingAverage(ALPHA, previousLat, sen.getPosition().getLatitude());
+						logger.debug("lat position:"+sen.getPosition().getLatitude()+", hemi="+sen.getPosition().getLatitudeHemisphere());
+	
+						map.put(Constants.LAT, previousLat);
+						
+						if (startLon) {
+							previousLon = sen.getPosition().getLongitude();
+							startLon = false;
+						}
+						previousLon = Util.movingAverage(ALPHA, previousLon, sen.getPosition().getLongitude());
+						map.put(Constants.LON, previousLon);
+					}catch(DataNotAvailableException p){
+						if(logger.isDebugEnabled())logger.debug(p);
 					}
-					previousLat = Util.movingAverage(ALPHA, previousLat, sen.getPosition().getLatitude());
-					logger.debug("lat position:" + sen.getPosition().getLatitude() + ", hemi=" + sen.getPosition().getLatitudeHemisphere());
-
-					map.put(Constants.LAT, previousLat);
-
-					if (startLon) {
-						previousLon = sen.getPosition().getLongitude();
-						startLon = false;
-					}
-					previousLon = Util.movingAverage(ALPHA, previousLon, sen.getPosition().getLongitude());
-					map.put(Constants.LON, previousLon);
 				}
 
 				if (evt.getSentence() instanceof HeadingSentence) {
 					HeadingSentence sen = (HeadingSentence) evt.getSentence();
-					if (sen.isTrue()) {
-						map.put(Constants.COURSE_OVER_GND, sen.getHeading());
-					} else {
-						map.put(Constants.MAG_HEADING, sen.getHeading());
+					try{
+						if (sen.isTrue()) {
+							map.put(Constants.COURSE_OVER_GND, sen.getHeading());
+						} else {
+							map.put(Constants.MAG_HEADING, sen.getHeading());
+						}
+					}catch(DataNotAvailableException p){
+						if(logger.isDebugEnabled())logger.debug(p);
 					}
 				}
 				if (evt.getSentence() instanceof RMCSentence) {
 					RMCSentence sen = (RMCSentence) evt.getSentence();
 					Util.checkTime(sen);
-
-					previousSpeed = Util.movingAverage(ALPHA, previousSpeed, sen.getSpeed());
-					map.put(Constants.COURSE_OVER_GND, sen.getCourse());
-//					System.out.println (sen.getCourse()+"\n");
-					map.put(Constants.SPEED_OVER_GND, previousSpeed);
+					//may conflict with the Heading sentences, producing COG 'wobble' if they dont agree.
+					if(preferRMC){
+						if(sen.getSpeed()>0.7d){
+							map.put(Constants.COURSE_OVER_GND, sen.getCourse());
+						}
+					}
+					gpsPreviousSpeed = Util.movingAverage(ALPHA, gpsPreviousSpeed, sen.getSpeed());
+					map.put(Constants.SPEED_OVER_GND, gpsPreviousSpeed);
 				}
 				if (evt.getSentence() instanceof VHWSentence) {
-					// ;
 					VHWSentence sen = (VHWSentence) evt.getSentence();
-					previousSpeed = Util.movingAverage(ALPHA, previousSpeed, sen.getSpeedKnots());
-					map.put(Constants.SPEED_OVER_GND, previousSpeed);
-
-					map.put(Constants.MAG_HEADING, sen.getMagneticHeading());
-					map.put(Constants.COURSE_OVER_GND, sen.getHeading());
+					try{
+						paddlePreviousSpeed = Util.movingAverage(ALPHA, paddlePreviousSpeed, sen.getSpeedKnots());
+						map.put(Constants.SPEED_OVER_WATER, paddlePreviousSpeed);
+					}catch(DataNotAvailableException p){
+						if(logger.isDebugEnabled())logger.debug(p);
+					}
+					try{
+						map.put(Constants.MAG_HEADING, sen.getMagneticHeading());
+					}catch(DataNotAvailableException p){
+						if(logger.isDebugEnabled())logger.debug(p);
+					}
+					try{
+						map.put(Constants.COURSE_OVER_GND, sen.getHeading());
+					}catch(DataNotAvailableException p){
+						if(logger.isDebugEnabled())logger.debug(p);
+					}
 
 				}
 
@@ -329,70 +354,47 @@ public class NMEAProcessor extends FreeboardProcessor implements Processor, Free
 					}
 
 				}
-				if (evt.getSentence() instanceof DBTSentence) {
-					DBTSentence sen = (DBTSentence) evt.getSentence();
-
-					//Remove comment below to get randomly distributed depts for tessting
-					//sen.setDepth(gaussian.getGaussian(2.5, 0.1));
-
-					String depthUnit = "M";
-					try {
-						depthUnit = Util.getConfig(null).getProperty(Constants.DEPTH_UNIT).trim();
-					} catch (Exception e){
-						logger.error(e.getMessage(), e);
-					}
-					try {
-						switch (depthUnit){
-						case "F":
-							map.put(Constants.DEPTH_BELOW_TRANSDUCER, sen.getDepth()/1.8288);
-							break;
-						case "M":
-							map.put(Constants.DEPTH_BELOW_TRANSDUCER, sen.getDepth());
-							break;
-						case "f":
-							map.put(Constants.DEPTH_BELOW_TRANSDUCER, sen.getDepth()/.3048);
-							break;
-					}
-					} catch (DataNotAvailableException dna){
-						// data not available because no transducer connected
-					}
+				if (evt.getSentence() instanceof DepthSentence) {
+					DepthSentence sen = (DepthSentence) evt.getSentence();
+					//in meters
+					map.put(Constants.DEPTH_BELOW_TRANSDUCER, sen.getDepth());
 				}
 				// Cruzpro YXXDR sentence
 				//from Cruzpro - The fields in the YXXDR sentence are always from the same "critical" functions, in order:
-				//RPM
-				//Battery #1 Volts
-				//Depth
-				//Oil Pressure
-				//Engine Temperature
+					//RPM
+					//Battery #1 Volts
+					//Depth
+					//Oil Pressure
+					//Engine Temperature
 				//freeboard.nmea.YXXDR.MaxVu110=RPM,EVV,DBT,EPP,ETT
 				if (evt.getSentence() instanceof CruzproXDRParser) {
 					CruzproXDRParser sen = (CruzproXDRParser) evt.getSentence();
-
-					logger.debug("XDR:" + sen.toString());
-					if (StringUtils.isNotBlank(sen.getDevice())) {
-						try {
-							String key = Util.getConfig(null).getProperty(Constants.NMEA_XDR + sen.getTalkerId() + Constants.XDR + sen.getDevice());
-							if (StringUtils.isNotBlank(key)) {
-								String[] keys = key.split(",");
-								List<Measurement> values = sen.getMeasurements();
-								if (values.size() == keys.length) {
-									//iterate through the values assigning to Freeboard keys
-									for (int x = 0; x < keys.length; x++) {
-										if (StringUtils.isNotBlank(keys[x]) && !Constants.XDR_SKIP.equals(keys[x])) {
-											logger.debug("XDR:" + keys[x] + ":" + values.get(x).getValue());
-											map.put(keys[x], values.get(x).getValue());
+						
+						logger.debug("XDR:"+sen.toString());
+						if(StringUtils.isNotBlank(sen.getDevice())){
+							try {
+								String key = Util.getConfig(null).getProperty(Constants.NMEA_XDR+sen.getTalkerId()+Constants.XDR+sen.getDevice());
+								if(StringUtils.isNotBlank(key)){
+									String[] keys = key.split(",");
+									List<Measurement> values = sen.getMeasurements();
+									if(values.size()==keys.length){
+										//iterate through the values assigning to Freeboard keys
+										for(int x=0;x<keys.length;x++){
+											if(StringUtils.isNotBlank(keys[x]) && !Constants.XDR_SKIP.equals(keys[x])){
+												logger.debug(  "XDR:"+keys[x]+":"+ values.get(x).getValue());
+												map.put(keys[x], values.get(x).getValue());
+											}
 										}
 									}
 								}
+							
+							} catch (Exception e) {
+								logger.error(e.getMessage(),e);
 							}
-
-						} catch (Exception e) {
-							logger.error(e.getMessage(), e);
 						}
 					}
-				}
-
-
+				
+				
 			}
 
 			public void readingStopped() {
@@ -405,4 +407,5 @@ public class NMEAProcessor extends FreeboardProcessor implements Processor, Free
 			}
 		});
 	}
+
 }
