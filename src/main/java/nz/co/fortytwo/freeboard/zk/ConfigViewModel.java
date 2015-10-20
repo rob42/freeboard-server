@@ -493,7 +493,11 @@ public class ConfigViewModel extends SelectorComposer<Window> {
 				}
          }
          
-			portsToScan.setValue(config.getProperty(Constants.SERIAL_PORTS));
+         
+         
+			cfgAlarmDepth.setValue(config.getProperty(Constants.ALARM_DEPTH));
+			cfgDepthOffset.setValue(config.getProperty(Constants.DEPTH_ZERO_OFFSET));
+         portsToScan.setValue(config.getProperty(Constants.SERIAL_PORTS));
 			cfgWindOffset.setValue(config.getProperty(Constants.WIND_ZERO_OFFSET));
 			String useChoice = config.getProperty(Constants.DNS_USE_CHOICE);
 			if(Constants.DNS_USE_BOAT.equals(useChoice)){

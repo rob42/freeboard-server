@@ -21,6 +21,7 @@ package nz.co.fortytwo.freeboard.server;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Properties;
 import java.util.Set;
 import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
@@ -50,362 +51,378 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
+import org.zkoss.zul.Messagebox;
 
 /**
- * Processes NMEA sentences in the body of a message, firing events to interested listeners
- * 
+ * Processes NMEA sentences in the body of a message, firing events to
+ * interested listeners
+ *
  * @author robert
- * 
+ *
  */
 public class NMEAProcessor extends FreeboardProcessor implements Processor, FreeboardHandler {
 
-	private static Logger logger = Logger.getLogger(NMEAProcessor.class);
-	private static final String DISPATCH_ALL = "DISPATCH_ALL";
-	private boolean preferRMC;
-	// map of sentence listeners
-	private ConcurrentMap<String, List<SentenceListener>> listeners = new ConcurrentHashMap<String, List<SentenceListener>>();
+   private static Logger logger = Logger.getLogger(NMEAProcessor.class);
+   private static final String DISPATCH_ALL = "DISPATCH_ALL";
+   private boolean preferRMC;
+   // map of sentence listeners
+   private ConcurrentMap<String, List<SentenceListener>> listeners = new ConcurrentHashMap<String, List<SentenceListener>>();
 
-	public NMEAProcessor() {
-		try {
-			preferRMC=new Boolean(Util.getConfig(null).getProperty(Constants.PREFER_RMC, "true"));
-		} catch (Exception e) {
-			
-		}
-		//register BVE
-		SentenceFactory.getInstance().registerParser("BVE", BVEParser.class);
-		SentenceFactory.getInstance().registerParser("XDR",CruzproXDRParser.class);
-		
-		setNmeaListeners();
-	}
+   public NMEAProcessor() {
+      try {
+         preferRMC = new Boolean(Util.getConfig(null).getProperty(Constants.PREFER_RMC, "true"));
+      } catch (Exception e) {
+      }
+      //register BVE
+      SentenceFactory.getInstance().registerParser("BVE", BVEParser.class);
+      SentenceFactory.getInstance().registerParser("XDR", CruzproXDRParser.class);
 
-	public void process(Exchange exchange) throws Exception {
-		if (exchange.getIn().getBody() == null) {
-			return;
-		}
-		@SuppressWarnings("unchecked")
-		HashMap<String, Object> map = exchange.getIn().getBody(HashMap.class);
-		map = handle(map);
-		exchange.getIn().setBody(map);
-	}
+      setNmeaListeners();
+   }
 
-	// @Override
-	public HashMap<String, Object> handle(HashMap<String, Object> map) {
-		// so we have a string
-		String bodyStr = (String) map.get(Constants.NMEA);
-		if (StringUtils.isNotBlank(bodyStr)) {
-			try {
-				logger.debug("Processing NMEA:"+bodyStr);
-				// dont need the NMEA now
-				map.remove(Constants.NMEA);
-				Sentence sentence = SentenceFactory.getInstance().createParser(bodyStr);
-				fireSentenceEvent(map, sentence);
-			} catch (Exception e) {
-				logger.debug(e.getMessage(),e);
-				logger.error(e.getMessage()+" : "+bodyStr);
-			}
-		}
-		return map;
-	}
+   public void process(Exchange exchange) throws Exception {
+      if (exchange.getIn().getBody() == null) {
+         return;
+      }
+      @SuppressWarnings("unchecked")
+      HashMap<String, Object> map = exchange.getIn().getBody(HashMap.class);
+      map = handle(map);
+      exchange.getIn().setBody(map);
+   }
 
-	/**
-	 * Adds a {@link SentenceListener} that wants to receive all sentences read
-	 * by the reader.
-	 * 
-	 * @param listener
-	 *            {@link SentenceListener} to be registered.
-	 * @see net.sf.marineapi.nmea.event.SentenceListener
-	 */
-	public void addSentenceListener(SentenceListener listener) {
-		registerListener(DISPATCH_ALL, listener);
-	}
+   // @Override
+   public HashMap<String, Object> handle(HashMap<String, Object> map) {
+      // so we have a string
+      String bodyStr = (String) map.get(Constants.NMEA);
+      if (StringUtils.isNotBlank(bodyStr)) {
+         try {
+            logger.debug("Processing NMEA:" + bodyStr);
+            // dont need the NMEA now
+            map.remove(Constants.NMEA);
+            Sentence sentence = SentenceFactory.getInstance().createParser(bodyStr);
+            fireSentenceEvent(map, sentence);
+         } catch (Exception e) {
+            logger.debug(e.getMessage(), e);
+            logger.error(e.getMessage() + " : " + bodyStr);
+         }
+      }
+      return map;
+   }
 
-	/**
-	 * Adds a {@link SentenceListener} that is interested in receiving only
-	 * sentences of certain type.
-	 * 
-	 * @param sl
-	 *            SentenceListener to add
-	 * @param type
-	 *            Sentence type for which the listener is registered.
-	 * @see net.sf.marineapi.nmea.event.SentenceListener
-	 */
-	public void addSentenceListener(SentenceListener sl, SentenceId type) {
-		registerListener(type.toString(), sl);
-	}
+   /**
+    * Adds a {@link SentenceListener} that wants to receive all sentences read
+    * by the reader.
+    *
+    * @param listener {@link SentenceListener} to be registered.
+    * @see net.sf.marineapi.nmea.event.SentenceListener
+    */
+   public void addSentenceListener(SentenceListener listener) {
+      registerListener(DISPATCH_ALL, listener);
+   }
 
-	/**
-	 * Adds a {@link SentenceListener} that is interested in receiving only
-	 * sentences of certain type.
-	 * 
-	 * @param sl
-	 *            SentenceListener to add
-	 * @param type
-	 *            Sentence type for which the listener is registered.
-	 * @see net.sf.marineapi.nmea.event.SentenceListener
-	 */
-	public void addSentenceListener(SentenceListener sl, String type) {
-		registerListener(type, sl);
-	}
+   /**
+    * Adds a {@link SentenceListener} that is interested in receiving only
+    * sentences of certain type.
+    *
+    * @param sl SentenceListener to add
+    * @param type Sentence type for which the listener is registered.
+    * @see net.sf.marineapi.nmea.event.SentenceListener
+    */
+   public void addSentenceListener(SentenceListener sl, SentenceId type) {
+      registerListener(type.toString(), sl);
+   }
 
-	/**
-	 * Remove a listener from reader. When removed, listener will not receive
-	 * any events from the reader.
-	 * 
-	 * @param sl
-	 *            {@link SentenceListener} to be removed.
-	 */
-	public void removeSentenceListener(SentenceListener sl) {
-		for (List<SentenceListener> list : listeners.values()) {
-			if (list.contains(sl)) {
-				list.remove(sl);
-			}
-		}
-	}
+   /**
+    * Adds a {@link SentenceListener} that is interested in receiving only
+    * sentences of certain type.
+    *
+    * @param sl SentenceListener to add
+    * @param type Sentence type for which the listener is registered.
+    * @see net.sf.marineapi.nmea.event.SentenceListener
+    */
+   public void addSentenceListener(SentenceListener sl, String type) {
+      registerListener(type, sl);
+   }
 
-	/**
-	 * Dispatch data to all listeners.
-	 * 
-	 * @param map
-	 * 
-	 * @param sentence
-	 *            sentence string.
-	 */
-	private void fireSentenceEvent(HashMap<String, Object> map, Sentence sentence) {
-		if (!sentence.isValid()){
-			logger.warn("NMEA Sentence is invalid:"+sentence.toSentence());
-			return;
-		}
-		//TODO: Why am I creating all these lists?
-		String type = sentence.getSentenceId();
-		Set<SentenceListener> list = new HashSet<SentenceListener>();
+   /**
+    * Remove a listener from reader. When removed, listener will not receive any
+    * events from the reader.
+    *
+    * @param sl {@link SentenceListener} to be removed.
+    */
+   public void removeSentenceListener(SentenceListener sl) {
+      for (List<SentenceListener> list : listeners.values()) {
+         if (list.contains(sl)) {
+            list.remove(sl);
+         }
+      }
+   }
 
-		if (listeners.containsKey(type)) {
-			list.addAll(listeners.get(type));
-		}
-		if (listeners.containsKey(DISPATCH_ALL)) {
-			list.addAll(listeners.get(DISPATCH_ALL));
-		}
+   /**
+    * Dispatch data to all listeners.
+    *
+    * @param map
+    *
+    * @param sentence sentence string.
+    */
+   private void fireSentenceEvent(HashMap<String, Object> map, Sentence sentence) {
+      if (!sentence.isValid()) {
+         logger.warn("NMEA Sentence is invalid:" + sentence.toSentence());
+         return;
+      }
+      //TODO: Why am I creating all these lists?
+      String type = sentence.getSentenceId();
+      Set<SentenceListener> list = new HashSet<SentenceListener>();
 
-		for (SentenceListener sl : list) {
-			try {
-				SentenceEvent se = new SentenceEvent(map, sentence);
-				sl.sentenceRead(se);
-			} catch (Exception e) {
-				logger.error(e.getMessage(),e);
-			}
-		}
+      if (listeners.containsKey(type)) {
+         list.addAll(listeners.get(type));
+      }
+      if (listeners.containsKey(DISPATCH_ALL)) {
+         list.addAll(listeners.get(DISPATCH_ALL));
+      }
 
-	}
+      for (SentenceListener sl : list) {
+         try {
+            SentenceEvent se = new SentenceEvent(map, sentence);
+            sl.sentenceRead(se);
+         } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+         }
+      }
 
-	/**
-	 * Registers a SentenceListener to hash map with given key.
-	 * 
-	 * @param type
-	 *            Sentence type to register for
-	 * @param sl
-	 *            SentenceListener to register
-	 */
-	private void registerListener(String type, SentenceListener sl) {
-		if (listeners.containsKey(type)) {
-			listeners.get(type).add(sl);
-		} else {
-			List<SentenceListener> list = new Vector<SentenceListener>();
-			list.add(sl);
-			listeners.put(type, list);
-		}
-	}
+   }
 
-	/**
-	 * Adds NMEA sentence listeners to process NMEA to simple output
-	 * 
-	 * @param processor
-	 */
-	private void setNmeaListeners() {
+   /**
+    * Registers a SentenceListener to hash map with given key.
+    *
+    * @param type Sentence type to register for
+    * @param sl SentenceListener to register
+    */
+   private void registerListener(String type, SentenceListener sl) {
+      if (listeners.containsKey(type)) {
+         listeners.get(type).add(sl);
+      } else {
+         List<SentenceListener> list = new Vector<SentenceListener>();
+         list.add(sl);
+         listeners.put(type, list);
+      }
+   }
 
-		addSentenceListener(new SentenceListener() {
+   /**
+    * Adds NMEA sentence listeners to process NMEA to simple output
+    *
+    * @param processor
+    */
+   private void setNmeaListeners() {
 
-			private boolean startLat = true;
-			private boolean startLon = true;
-			double previousLat = 0;
-			double previousLon = 0;
-			double gpsPreviousSpeed = 0;
-         double paddlePreviousSpeed=0;
-			
-			static final double ALPHA = 1 - 1.0 / 6;
+      addSentenceListener(new SentenceListener() {
+         private boolean startLat = true;
+         private boolean startLon = true;
+         double previousLat = 0;
+         double previousLon = 0;
+         double gpsPreviousSpeed = 0;
+         double paddlePreviousSpeed = 0;
+         static final double ALPHA = 1 - 1.0 / 6;
 
-			public void sentenceRead(SentenceEvent evt) {
-				// Exchange exchange = (Exchange) evt.getSource();
-				// StringBuilder body = new StringBuilder();
-				@SuppressWarnings("unchecked")
-				HashMap<String, Object> map = (HashMap<String, Object>) evt.getSource();
-				if (evt.getSentence() instanceof PositionSentence) {
-					PositionSentence sen = (PositionSentence) evt.getSentence();
-					try{
-						if (startLat) {
-							previousLat = sen.getPosition().getLatitude();
-							startLat = false;
-						}
-						previousLat = Util.movingAverage(ALPHA, previousLat, sen.getPosition().getLatitude());
-						logger.debug("lat position:"+sen.getPosition().getLatitude()+", hemi="+sen.getPosition().getLatitudeHemisphere());
-	
-						map.put(Constants.LAT, previousLat);
-						
-						if (startLon) {
-							previousLon = sen.getPosition().getLongitude();
-							startLon = false;
-						}
-						previousLon = Util.movingAverage(ALPHA, previousLon, sen.getPosition().getLongitude());
-						map.put(Constants.LON, previousLon);
-					}catch(DataNotAvailableException p){
-						if(logger.isDebugEnabled())logger.debug(p);
-					}
-				}
+         public void sentenceRead(SentenceEvent evt) {
+            // Exchange exchange = (Exchange) evt.getSource();
+            // StringBuilder body = new StringBuilder();
+            @SuppressWarnings("unchecked")
+            HashMap<String, Object> map = (HashMap<String, Object>) evt.getSource();
+            if (evt.getSentence() instanceof PositionSentence) {
+               PositionSentence sen = (PositionSentence) evt.getSentence();
+               try {
+                  if (startLat) {
+                     previousLat = sen.getPosition().getLatitude();
+                     startLat = false;
+                  }
+                  previousLat = Util.movingAverage(ALPHA, previousLat, sen.getPosition().getLatitude());
+                  logger.debug("lat position:" + sen.getPosition().getLatitude() + ", hemi=" + sen.getPosition().getLatitudeHemisphere());
 
-				if (evt.getSentence() instanceof HeadingSentence) {
-					HeadingSentence sen = (HeadingSentence) evt.getSentence();
-					try{
-						if (sen.isTrue()) {
-							map.put(Constants.COURSE_OVER_GND, sen.getHeading());
-						} else {
-							map.put(Constants.MAG_HEADING, sen.getHeading());
-						}
-					}catch(DataNotAvailableException p){
-						if(logger.isDebugEnabled())logger.debug(p);
-					}
-				}
-				if (evt.getSentence() instanceof RMCSentence) {
-					RMCSentence sen = (RMCSentence) evt.getSentence();
-					Util.checkTime(sen);
-					//may conflict with the Heading sentences, producing COG 'wobble' if they dont agree.
-					if(preferRMC){
-						if(sen.getSpeed()>0.7d){
-							map.put(Constants.COURSE_OVER_GND, sen.getCourse());
-						}
-					}
-					gpsPreviousSpeed = Util.movingAverage(ALPHA, gpsPreviousSpeed, sen.getSpeed());
-					map.put(Constants.SPEED_OVER_GND, gpsPreviousSpeed);
-				}
-				if (evt.getSentence() instanceof VHWSentence) {
-					VHWSentence sen = (VHWSentence) evt.getSentence();
-					try{
-						paddlePreviousSpeed = Util.movingAverage(ALPHA, paddlePreviousSpeed, sen.getSpeedKnots());
-						map.put(Constants.SPEED_OVER_WATER, paddlePreviousSpeed);
-					}catch(DataNotAvailableException p){
-						if(logger.isDebugEnabled())logger.debug(p);
-					}
-					try{
-						map.put(Constants.MAG_HEADING, sen.getMagneticHeading());
-					}catch(DataNotAvailableException p){
-						if(logger.isDebugEnabled())logger.debug(p);
-					}
-					try{
-						map.put(Constants.COURSE_OVER_GND, sen.getHeading());
-					}catch(DataNotAvailableException p){
-						if(logger.isDebugEnabled())logger.debug(p);
-					}
+                  map.put(Constants.LAT, previousLat);
 
-				}
+                  if (startLon) {
+                     previousLon = sen.getPosition().getLongitude();
+                     startLon = false;
+                  }
+                  previousLon = Util.movingAverage(ALPHA, previousLon, sen.getPosition().getLongitude());
+                  map.put(Constants.LON, previousLon);
+               } catch (DataNotAvailableException p) {
+                  if (logger.isDebugEnabled()) {
+                     logger.debug(p);
+                  }
+               }
+            }
 
-				// MWV wind
-				// Mega sends $IIMVW with 0-360d clockwise from bow, (relative to bow)
-				// Mega value is int+'.0'
-				if (evt.getSentence() instanceof MWVSentence) {
-					MWVSentence sen = (MWVSentence) evt.getSentence();
-					// relative to true north
-					// if (sen.isTrue()) {
-					// map.put( Constants.WDT,sen.getAngle());
-					// map.put( Constants.WST,sen.getSpeed());
-					// map.put( Constants.WSU,sen.getSpeedUnit());
-					//
-					// } else {
-					// relative to bow
-					double angle = sen.getAngle();
-					map.put(Constants.WIND_DIR_APPARENT, angle);
-					map.put(Constants.WIND_SPEED_APPARENT, sen.getSpeed());
-					map.put(Constants.WIND_SPEED_UNITS, sen.getSpeedUnit());
-					// }
-				}
-				// Cruzpro BVE sentence
-				if (evt.getSentence() instanceof BVESentence) {
-					BVESentence sen = (BVESentence) evt.getSentence();
-					if (sen.isFuelGuage()) {
-						map.put(Constants.FUEL_REMAINING, sen.getFuelRemaining());
-						map.put(Constants.FUEL_USE_RATE, sen.getFuelUseRateUnitsPerHour());
-						map.put(Constants.FUEL_USED, sen.getFuelUsedOnTrip());
-					}
-					if (sen.isEngineRpm()) {
-						map.put(Constants.ENGINE_RPM, sen.getEngineRpm());
-						map.put(Constants.ENGINE_HOURS, sen.getEngineHours());
-						map.put(Constants.ENGINE_MINUTES, sen.getEngineMinutes());
+            if (evt.getSentence() instanceof HeadingSentence) {
+               HeadingSentence sen = (HeadingSentence) evt.getSentence();
+               try {
+                  if (sen.isTrue()) {
+                     map.put(Constants.COURSE_OVER_GND, sen.getHeading());
+                  } else {
+                     map.put(Constants.MAG_HEADING, sen.getHeading());
+                  }
+               } catch (DataNotAvailableException p) {
+                  if (logger.isDebugEnabled()) {
+                     logger.debug(p);
+                  }
+               }
+            }
+            if (evt.getSentence() instanceof RMCSentence) {
+               RMCSentence sen = (RMCSentence) evt.getSentence();
+               Util.checkTime(sen);
+               //may conflict with the Heading sentences, producing COG 'wobble' if they dont agree.
+               if (preferRMC) {
+                  if (sen.getSpeed() > 0.7d) {
+                     map.put(Constants.COURSE_OVER_GND, sen.getCourse());
+                  }
+               }
+               gpsPreviousSpeed = Util.movingAverage(ALPHA, gpsPreviousSpeed, sen.getSpeed());
+               map.put(Constants.SPEED_OVER_GND, gpsPreviousSpeed);
+            }
+            if (evt.getSentence() instanceof VHWSentence) {
+               VHWSentence sen = (VHWSentence) evt.getSentence();
+               try {
+                  paddlePreviousSpeed = Util.movingAverage(ALPHA, paddlePreviousSpeed, sen.getSpeedKnots());
+                  map.put(Constants.SPEED_OVER_WATER, paddlePreviousSpeed);
+               } catch (DataNotAvailableException p) {
+                  if (logger.isDebugEnabled()) {
+                     logger.debug(p);
+                  }
+               }
+               try {
+                  map.put(Constants.MAG_HEADING, sen.getMagneticHeading());
+               } catch (DataNotAvailableException p) {
+                  if (logger.isDebugEnabled()) {
+                     logger.debug(p);
+                  }
+               }
+               try {
+                  map.put(Constants.COURSE_OVER_GND, sen.getHeading());
+               } catch (DataNotAvailableException p) {
+                  if (logger.isDebugEnabled()) {
+                     logger.debug(p);
+                  }
+               }
 
-					}
-					if (sen.isTempGuage()) {
-						map.put(Constants.ENGINE_TEMP, sen.getEngineTemp());
-						map.put(Constants.ENGINE_VOLTS, sen.getVoltage());
-						// map.put(Constants.ENGINE_TEMP_HIGH_ALARM, sen.getHighTempAlarmValue());
-						// map.put(Constants.ENGINE_TEMP_LOW_ALARM, sen.getLowTempAlarmValue());
+            }
 
-					}
-					if (sen.isPressureGuage()) {
-						map.put(Constants.ENGINE_OIL_PRESSURE, sen.getPressure());
-						// map.put(Constants.ENGINE_PRESSURE_HIGH_ALARM, sen.getHighPressureAlarmValue());
-						// map.put(Constants.ENGINE_PRESSURE_LOW_ALARM, sen.getLowPressureAlarmValue());
+            // MWV wind
+            // Mega sends $IIMVW with 0-360d clockwise from bow, (relative to bow)
+            // Mega value is int+'.0'
+            if (evt.getSentence() instanceof MWVSentence) {
+               MWVSentence sen = (MWVSentence) evt.getSentence();
+               // relative to true north
+               // if (sen.isTrue()) {
+               // map.put( Constants.WDT,sen.getAngle());
+               // map.put( Constants.WST,sen.getSpeed());
+               // map.put( Constants.WSU,sen.getSpeedUnit());
+               //
+               // } else {
+               // relative to bow
+               double angle = sen.getAngle();
+               map.put(Constants.WIND_DIR_APPARENT, angle);
+               map.put(Constants.WIND_SPEED_APPARENT, sen.getSpeed());
+               map.put(Constants.WIND_SPEED_UNITS, sen.getSpeedUnit());
+               // }
+            }
+            // Cruzpro BVE sentence
+            if (evt.getSentence() instanceof BVESentence) {
+               BVESentence sen = (BVESentence) evt.getSentence();
+               if (sen.isFuelGuage()) {
+                  map.put(Constants.FUEL_REMAINING, sen.getFuelRemaining());
+                  map.put(Constants.FUEL_USE_RATE, sen.getFuelUseRateUnitsPerHour());
+                  map.put(Constants.FUEL_USED, sen.getFuelUsedOnTrip());
+               }
+               if (sen.isEngineRpm()) {
+                  map.put(Constants.ENGINE_RPM, sen.getEngineRpm());
+                  map.put(Constants.ENGINE_HOURS, sen.getEngineHours());
+                  map.put(Constants.ENGINE_MINUTES, sen.getEngineMinutes());
 
-					}
+               }
+               if (sen.isTempGuage()) {
+                  map.put(Constants.ENGINE_TEMP, sen.getEngineTemp());
+                  map.put(Constants.ENGINE_VOLTS, sen.getVoltage());
+                  // map.put(Constants.ENGINE_TEMP_HIGH_ALARM, sen.getHighTempAlarmValue());
+                  // map.put(Constants.ENGINE_TEMP_LOW_ALARM, sen.getLowTempAlarmValue());
 
-				}
-				if (evt.getSentence() instanceof DepthSentence) {
-					DepthSentence sen = (DepthSentence) evt.getSentence();
-					//in meters
-					map.put(Constants.DEPTH_BELOW_TRANSDUCER, sen.getDepth());
-				}
-				// Cruzpro YXXDR sentence
-				//from Cruzpro - The fields in the YXXDR sentence are always from the same "critical" functions, in order:
-					//RPM
-					//Battery #1 Volts
-					//Depth
-					//Oil Pressure
-					//Engine Temperature
-				//freeboard.nmea.YXXDR.MaxVu110=RPM,EVV,DBT,EPP,ETT
-				if (evt.getSentence() instanceof CruzproXDRParser) {
-					CruzproXDRParser sen = (CruzproXDRParser) evt.getSentence();
-						
-						logger.debug("XDR:"+sen.toString());
-						if(StringUtils.isNotBlank(sen.getDevice())){
-							try {
-								String key = Util.getConfig(null).getProperty(Constants.NMEA_XDR+sen.getTalkerId()+Constants.XDR+sen.getDevice());
-								if(StringUtils.isNotBlank(key)){
-									String[] keys = key.split(",");
-									List<Measurement> values = sen.getMeasurements();
-									if(values.size()==keys.length){
-										//iterate through the values assigning to Freeboard keys
-										for(int x=0;x<keys.length;x++){
-											if(StringUtils.isNotBlank(keys[x]) && !Constants.XDR_SKIP.equals(keys[x])){
-												logger.debug(  "XDR:"+keys[x]+":"+ values.get(x).getValue());
-												map.put(keys[x], values.get(x).getValue());
-											}
-										}
-									}
-								}
-							
-							} catch (Exception e) {
-								logger.error(e.getMessage(),e);
-							}
-						}
-					}
-				
-				
-			}
+               }
+               if (sen.isPressureGuage()) {
+                  map.put(Constants.ENGINE_OIL_PRESSURE, sen.getPressure());
+                  // map.put(Constants.ENGINE_PRESSURE_HIGH_ALARM, sen.getHighPressureAlarmValue());
+                  // map.put(Constants.ENGINE_PRESSURE_LOW_ALARM, sen.getLowPressureAlarmValue());
 
-			public void readingStopped() {
-			}
+               }
 
-			public void readingStarted() {
-			}
+            }
+            Properties config = null;
+            try {
+               config = Util.getConfig(null);
+            } catch (Exception e) {
+               logger.error(e.getMessage(), e);
+               Messagebox.show("There has been a problem with loading the configuration:" + e.getMessage());
+            }
+            if (evt.getSentence() instanceof DepthSentence) {
+               DepthSentence sen = (DepthSentence) evt.getSentence();
+               //in meters
+               double unit;
+               if (config.getProperty(Constants.DEPTH_UNIT).equals("f")) {
+                  unit = 3.28;
+               } else if (config.getProperty(Constants.DEPTH_UNIT).equals("F")) {
+                  unit = 0.546807;
+               } else {
+                  unit = 1;
+               }
+               double offset = Double.parseDouble(config.getProperty(Constants.DEPTH_ZERO_OFFSET, "0"));
+               map.put(Constants.DEPTH_BELOW_TRANSDUCER, sen.getDepth()*unit+offset);
 
-			public void readingPaused() {
-			}
-		});
-	}
+            }
+            // Cruzpro YXXDR sentence
+            //from Cruzpro - The fields in the YXXDR sentence are always from the same "critical" functions, in order:
+            //RPM
+            //Battery #1 Volts
+            //Depth
+            //Oil Pressure
+            //Engine Temperature
+            //freeboard.nmea.YXXDR.MaxVu110=RPM,EVV,DBT,EPP,ETT
+            if (evt.getSentence() instanceof CruzproXDRParser) {
+               CruzproXDRParser sen = (CruzproXDRParser) evt.getSentence();
 
+               logger.debug("XDR:" + sen.toString());
+               if (StringUtils.isNotBlank(sen.getDevice())) {
+                  try {
+                     String key = Util.getConfig(null).getProperty(Constants.NMEA_XDR + sen.getTalkerId() + Constants.XDR + sen.getDevice());
+                     if (StringUtils.isNotBlank(key)) {
+                        String[] keys = key.split(",");
+                        List<Measurement> values = sen.getMeasurements();
+                        if (values.size() == keys.length) {
+                           //iterate through the values assigning to Freeboard keys
+                           for (int x = 0; x < keys.length; x++) {
+                              if (StringUtils.isNotBlank(keys[x]) && !Constants.XDR_SKIP.equals(keys[x])) {
+                                 logger.debug("XDR:" + keys[x] + ":" + values.get(x).getValue());
+                                 map.put(keys[x], values.get(x).getValue());
+                              }
+                           }
+                        }
+                     }
+
+                  } catch (Exception e) {
+                     logger.error(e.getMessage(), e);
+                  }
+               }
+            }
+
+
+         }
+
+         public void readingStopped() {
+         }
+
+         public void readingStarted() {
+         }
+
+         public void readingPaused() {
+         }
+      });
+   }
 }

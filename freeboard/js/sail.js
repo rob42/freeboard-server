@@ -115,7 +115,7 @@ function initSail() {
    // depth
 
    depthUnit = zk.Widget.$('$depthUnit').getValue();
-   var depthString = "Depth (" + depthUnit + " )";
+   var depthString = "Depth " + depthUnit ;
 
    lcdSailDepth = new steelseries.DisplaySingle('sailDepth', {
       // gaugeType : steelseries.GaugeType.TYPE4,

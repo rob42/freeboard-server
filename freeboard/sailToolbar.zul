@@ -30,7 +30,7 @@
    </style>
    <div id="mainToolBar">
       <!-- main menubar, left side -->
-      <toolbar id="menubar" orient="vertical" width="50px"
+      <toolbar id="menubar" orient="horizontal" height="50px"
                style="float:left; background:none;border:0 none;">
          <toolbarbutton id="help" image="img/help.png"
                         tooltiptext="Help" popup="helpPopup" />

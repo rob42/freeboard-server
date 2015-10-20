@@ -54,11 +54,11 @@
            apply="nz.co.fortytwo.freeboard.zk.EngineViewModel" vflex="true"
            style="margin-left:auto;">
       <borderlayout>
-         <west border="none" width="50px">
+         <north border="none" height="50px">
             <vbox  height="100%">
                <include src="./sailToolbar.zul" />
             </vbox>
-         </west>
+         </north>
          <center>
             <div vflex="1" hflex="1" style="background-color: white;">
                <label id="layerVisibility" value="" visible="false" />
@@ -92,13 +92,13 @@
                      </html>
                   </vbox>
                   <vbox vflex="1" hflex="1" pack="center" align="center">
-                     <html style="overflow: visible;" >
+                     <html style="overflow: visible;" hflex="1">
                         <canvas id="sailLog" >
                            No canvas in your
                            browser...sorry...
                         </canvas>
                      </html>
-                     <html >
+                     <html hflex="1">
                         <canvas id="sailSOG" >
                            No canvas in your
                            browser...sorry...
