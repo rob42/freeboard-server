@@ -150,6 +150,7 @@ public class Util {
 		props.setProperty(Constants.SERIAL_PORT_BAUD,"38400");
 		props.setProperty(Constants.DNS_USE_CHOICE,Constants.DNS_USE_BOAT);
 		props.setProperty(Constants.ENABLE_COMET,"false");
+		props.setProperty(Constants.PREFER_RMC,"true");
 	}
 	
 

@@ -108,6 +108,14 @@ public class ConfigViewModel extends SelectorComposer<Window> {
 	private Listbox selectedCharts;
 	private ListModelList<String> selectedChartsModel;
 	
+	@Wire ("radioGroup#useRmcGroup")
+	Radiogroup useRmcGroup;
+	
+	@Wire ("radio#useRmcRadio")
+	Radio useRmcRadio;
+	@Wire ("radio#useHHdgRadio")
+	Radio useHdgRadio;
+	
 	@Wire ("radioGroup#useHomeGroup")
 	Radiogroup useHomeGroup;
 	
@@ -268,6 +276,9 @@ public class ConfigViewModel extends SelectorComposer<Window> {
 			}else{
 				Messagebox.show("Wind offset must be numeric");
 			}
+			config.setProperty(Constants.PREFER_RMC, (String)useRmcGroup.getSelectedItem().getValue());
+			config.setProperty(Constants.DNS_USE_CHOICE, (String)useHomeGroup.getSelectedItem().getValue());
+			Util.saveConfig();
 		} catch (Exception e) {
 			logger.error(e.getMessage(),e);
 		} 
@@ -329,6 +340,7 @@ public class ConfigViewModel extends SelectorComposer<Window> {
 			}else{
 				Util.getConfig(null).setProperty(Constants.DNS_USE_CHOICE, Constants.DNS_USE_BOAT);
 			}
+			
 			saveLayers(useHomeChoice);
 		} catch (Exception e) {
 			logger.error(e.getMessage(),e);
@@ -445,6 +457,11 @@ public class ConfigViewModel extends SelectorComposer<Window> {
 				useHomeGroup.setSelectedItem(useBoatRadio);
 			}else{
 				useHomeGroup.setSelectedItem(useHomeRadio);
+			}
+			if(new Boolean(config.getProperty(Constants.PREFER_RMC))){
+				useRmcGroup.setSelectedItem(useRmcRadio);
+			}else{
+				useRmcGroup.setSelectedItem(useHdgRadio);
 			}
 		} catch (Exception e) {
 			logger.error(e.getMessage(),e);

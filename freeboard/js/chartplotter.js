@@ -449,6 +449,10 @@ function ChartPlotter() {
 					heading = navObj.MGH;
 					setPos = true;
 			}
+			if (navObj.COG) {
+				heading = navObj.COG - declination;
+				setPos = true;
+			}
 			if (navObj.SOG) {
 					speed = navObj.SOG;
 					setPos = true;

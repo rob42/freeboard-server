@@ -214,6 +214,7 @@ public class Constants {
 	
 	//debug flags
 	public static final String SEND_MESSAGE = "freeboard.debug.sendMessage";
+	public static final String PREFER_RMC = "freeboard.cog.prefer.rmc";
 	public Constants() {
 		// TODO Auto-generated constructor stub
 	}

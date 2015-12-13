@@ -67,6 +67,13 @@
 								<textbox id="cfgCompassOffset"
 									tooltip="+/- degrees offset" />
 							</row>
+							<row hflex="min">
+								<label value="Heading source" />
+								<radiogroup id="useRmcGroup" tooltiptext="Select RMC to show the heading from the GPS. It will be erratic at low speeds. Select HDG if you have an electronic compass for a more stable heading">
+									<radio id="useRmcRadio" label="RMC" value="true" />
+									<radio id="useHdgRadio" label="HDG" value="false" />
+								</radiogroup>
+							</row>
 							<row>
 								<hbox>
 									<button id="cfgSave" label="Save" height="38px" />

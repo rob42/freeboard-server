@@ -30,6 +30,7 @@ import net.sf.marineapi.nmea.event.SentenceEvent;
 import net.sf.marineapi.nmea.event.SentenceListener;
 import net.sf.marineapi.nmea.parser.BVEParser;
 import net.sf.marineapi.nmea.parser.CruzproXDRParser;
+import net.sf.marineapi.nmea.parser.ParseException;
 import net.sf.marineapi.nmea.parser.SentenceFactory;
 import net.sf.marineapi.nmea.sentence.BVESentence;
 import net.sf.marineapi.nmea.sentence.DepthSentence;
@@ -59,11 +60,16 @@ public class NMEAProcessor extends FreeboardProcessor implements Processor, Free
 
 	private static Logger logger = Logger.getLogger(NMEAProcessor.class);
 	private static final String DISPATCH_ALL = "DISPATCH_ALL";
-
+	private boolean preferRMC;
 	// map of sentence listeners
 	private ConcurrentMap<String, List<SentenceListener>> listeners = new ConcurrentHashMap<String, List<SentenceListener>>();
 
 	public NMEAProcessor() {
+		try {
+			preferRMC=new Boolean(Util.getConfig(null).getProperty(Constants.PREFER_RMC, "true"));
+		} catch (Exception e) {
+			
+		}
 		//register BVE
 		SentenceFactory.getInstance().registerParser("BVE", BVEParser.class);
 		SentenceFactory.getInstance().registerParser("XDR",CruzproXDRParser.class);
@@ -222,6 +228,7 @@ public class NMEAProcessor extends FreeboardProcessor implements Processor, Free
 			double previousLat = 0;
 			double previousLon = 0;
 			double previousSpeed = 0;
+			
 			static final double ALPHA = 1 - 1.0 / 6;
 
 			public void sentenceRead(SentenceEvent evt) {
@@ -231,47 +238,69 @@ public class NMEAProcessor extends FreeboardProcessor implements Processor, Free
 				HashMap<String, Object> map = (HashMap<String, Object>) evt.getSource();
 				if (evt.getSentence() instanceof PositionSentence) {
 					PositionSentence sen = (PositionSentence) evt.getSentence();
-
-					if (startLat) {
-						previousLat = sen.getPosition().getLatitude();
-						startLat = false;
+					try{
+						if (startLat) {
+							previousLat = sen.getPosition().getLatitude();
+							startLat = false;
+						}
+						previousLat = Util.movingAverage(ALPHA, previousLat, sen.getPosition().getLatitude());
+						logger.debug("lat position:"+sen.getPosition().getLatitude()+", hemi="+sen.getPosition().getLatitudeHemisphere());
+	
+						map.put(Constants.LAT, previousLat);
+						
+						if (startLon) {
+							previousLon = sen.getPosition().getLongitude();
+							startLon = false;
+						}
+						previousLon = Util.movingAverage(ALPHA, previousLon, sen.getPosition().getLongitude());
+						map.put(Constants.LON, previousLon);
+					}catch(ParseException p){
+						if(logger.isDebugEnabled())logger.debug(p);
 					}
-					previousLat = Util.movingAverage(ALPHA, previousLat, sen.getPosition().getLatitude());
-					logger.debug("lat position:"+sen.getPosition().getLatitude()+", hemi="+sen.getPosition().getLatitudeHemisphere());
-
-					map.put(Constants.LAT, previousLat);
-					
-					if (startLon) {
-						previousLon = sen.getPosition().getLongitude();
-						startLon = false;
-					}
-					previousLon = Util.movingAverage(ALPHA, previousLon, sen.getPosition().getLongitude());
-					map.put(Constants.LON, previousLon);
 				}
 
 				if (evt.getSentence() instanceof HeadingSentence) {
 					HeadingSentence sen = (HeadingSentence) evt.getSentence();
-					if (sen.isTrue()) {
-						map.put(Constants.COURSE_OVER_GND, sen.getHeading());
-					} else {
-						map.put(Constants.MAG_HEADING, sen.getHeading());
+					try{
+						if (sen.isTrue()) {
+							map.put(Constants.COURSE_OVER_GND, sen.getHeading());
+						} else {
+							map.put(Constants.MAG_HEADING, sen.getHeading());
+						}
+					}catch(ParseException p){
+						if(logger.isDebugEnabled())logger.debug(p);
 					}
 				}
 				if (evt.getSentence() instanceof RMCSentence) {
 					RMCSentence sen = (RMCSentence) evt.getSentence();
 					Util.checkTime(sen);
-
+					//may conflict with the Heading sentences, producing COG 'wobble' if they dont agree.
+					if(preferRMC){
+						if(sen.getSpeed()>0.7d){
+							map.put(Constants.COURSE_OVER_GND, sen.getCourse());
+						}
+					}
 					previousSpeed = Util.movingAverage(ALPHA, previousSpeed, sen.getSpeed());
 					map.put(Constants.SPEED_OVER_GND, previousSpeed);
 				}
 				if (evt.getSentence() instanceof VHWSentence) {
-					// ;
 					VHWSentence sen = (VHWSentence) evt.getSentence();
-					previousSpeed = Util.movingAverage(ALPHA, previousSpeed, sen.getSpeedKnots());
-					map.put(Constants.SPEED_OVER_GND, previousSpeed);
-
-					map.put(Constants.MAG_HEADING, sen.getMagneticHeading());
-					map.put(Constants.COURSE_OVER_GND, sen.getHeading());
+					try{
+						previousSpeed = Util.movingAverage(ALPHA, previousSpeed, sen.getSpeedKnots());
+						map.put(Constants.SPEED_OVER_GND, previousSpeed);
+					}catch(ParseException p){
+						if(logger.isDebugEnabled())logger.debug(p);
+					}
+					try{
+						map.put(Constants.MAG_HEADING, sen.getMagneticHeading());
+					}catch(ParseException p){
+						if(logger.isDebugEnabled())logger.debug(p);
+					}
+					try{
+						map.put(Constants.COURSE_OVER_GND, sen.getHeading());
+					}catch(ParseException p){
+						if(logger.isDebugEnabled())logger.debug(p);
+					}
 
 				}
 
