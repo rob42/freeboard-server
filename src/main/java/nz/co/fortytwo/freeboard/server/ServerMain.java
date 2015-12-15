@@ -20,12 +20,14 @@
 package nz.co.fortytwo.freeboard.server;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Properties;
 
 import nz.co.fortytwo.freeboard.server.util.Constants;
 import nz.co.fortytwo.freeboard.server.util.Util;
 
 import org.apache.camel.main.Main;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.eclipse.jetty.server.Connector;
@@ -52,6 +54,7 @@ public class ServerMain {
 	public ServerMain(String configDir) throws Exception {
 		
 		config=Util.getConfig(configDir);
+		
 		//make sure we have all the correct dirs and files now
 		ensureInstall();
 		
@@ -144,7 +147,7 @@ public class ServerMain {
 		System.exit(0);
 	}
 
-	private void ensureInstall() {
+	private void ensureInstall() throws IOException {
 
 		File rootDir = new File(".");
 		if(Util.cfg!=null){
@@ -155,10 +158,27 @@ public class ServerMain {
 		if(!logDir.exists()){
 			logDir.mkdirs();
 		}
+		//do we have a tracks dir?
+		File trackDir = new File(rootDir,config.getProperty(Constants.TRACKS_RESOURCE));
+		if(!trackDir.exists()){
+			trackDir.mkdirs();
+		}
 		//do we have a mapcache
 		File mapDir = new File(rootDir,config.getProperty(Constants.MAPCACHE_RESOURCE));
 		if(!mapDir.exists()){
 			mapDir.mkdirs();
+		}
+		//make a log4j.properties
+		File log4j= new File(Util.cfg,"log4j.properties");
+		if(!log4j.exists()){
+			File log4jSample= new File(Util.cfg,"log4j.properties.sample");
+			FileUtils.copyFile(log4jSample, log4j);
+		}
+		//make a log4j.properties
+		File layers= new File(config.getProperty(Constants.FREEBOARD_RESOURCE)+"js/layers.js");
+		if(!layers.exists()){
+			File layersSample= new File(config.getProperty(Constants.FREEBOARD_RESOURCE)+"js/layers.js.default");
+			FileUtils.copyFile(layersSample, layers);
 		}
 	}
 

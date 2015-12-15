@@ -103,6 +103,8 @@ public class Util {
 			
 			if(cfg.exists()){
 				props.load(new FileReader(cfg));
+			}else{
+				saveConfig();
 			}
 		}
 		return props;
