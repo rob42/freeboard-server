@@ -151,33 +151,38 @@ public class ServerMain {
 
 		File rootDir = new File(".");
 		if(Util.cfg!=null){
-			rootDir = Util.cfg.getParentFile();
+			rootDir = Util.cfg.getParentFile().getParentFile();
 		}
 		//do we have a log dir?
 		File logDir = new File(rootDir,"logs");
 		if(!logDir.exists()){
+			System.out.println("Making logDir at "+logDir.getAbsolutePath());
 			logDir.mkdirs();
 		}
 		//do we have a tracks dir?
 		File trackDir = new File(rootDir,config.getProperty(Constants.TRACKS_RESOURCE));
 		if(!trackDir.exists()){
+			System.out.println("Making trackDir at "+trackDir.getAbsolutePath());
 			trackDir.mkdirs();
 		}
 		//do we have a mapcache
 		File mapDir = new File(rootDir,config.getProperty(Constants.MAPCACHE_RESOURCE));
 		if(!mapDir.exists()){
+			System.out.println("Making mapCache at "+mapDir.getAbsolutePath());
 			mapDir.mkdirs();
 		}
 		//make a log4j.properties
-		File log4j= new File(Util.cfg,"log4j.properties");
+		File log4j= new File(Util.cfg.getParentFile(),"log4j.properties");
 		if(!log4j.exists()){
-			File log4jSample= new File(Util.cfg,"log4j.properties.sample");
+			System.out.println("Making log4j.properties at "+log4j.getAbsolutePath());
+			File log4jSample= new File(Util.cfg.getParentFile(),"log4j.properties.sample");
 			FileUtils.copyFile(log4jSample, log4j);
 		}
 		//make a log4j.properties
-		File layers= new File(config.getProperty(Constants.FREEBOARD_RESOURCE)+"js/layers.js");
+		File layers= new File(rootDir,config.getProperty(Constants.FREEBOARD_RESOURCE)+"js/layers.js");
 		if(!layers.exists()){
-			File layersSample= new File(config.getProperty(Constants.FREEBOARD_RESOURCE)+"js/layers.js.default");
+			System.out.println("Making layers.js at "+layers.getAbsolutePath());
+			File layersSample= new File(rootDir,config.getProperty(Constants.FREEBOARD_RESOURCE)+"js/layers.js.default");
 			FileUtils.copyFile(layersSample, layers);
 		}
 	}

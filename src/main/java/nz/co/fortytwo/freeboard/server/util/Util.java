@@ -72,6 +72,7 @@ public class Util {
 	public static Properties getConfig(String dir) throws FileNotFoundException, IOException{
 		if(props==null){
 			//we do a quick override so we get nice sorted output :-)
+			System.out.println("Creating config...");
 			props = new Properties() {
 			    /**
 				 * 
@@ -102,6 +103,7 @@ public class Util {
 			}
 			
 			if(cfg.exists()){
+				System.out.println("Loading config from "+cfg.getAbsolutePath());
 				props.load(new FileReader(cfg));
 			}else{
 				saveConfig();
@@ -115,7 +117,11 @@ public class Util {
 	 * @throws IOException
 	 */
 	public static void saveConfig() throws IOException{
-		if(props==null)return;
+		if(props==null){
+			System.out.println("Saving config but its null!");
+			return;
+		}
+		System.out.println("Saving config to "+cfg.getAbsolutePath());
 		props.store(new FileWriter(cfg), null);
 		
 	}
@@ -126,6 +132,7 @@ public class Util {
 	 * @param props
 	 */
 	public static void setDefaults(Properties props) {
+		System.out.println("Setting config defaults...");
 		//populate sensible defaults here
 		props.setProperty(Constants.FREEBOARD_URL,"/freeboard");
 		props.setProperty(Constants.FREEBOARD_RESOURCE,"freeboard/");
