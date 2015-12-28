@@ -67,7 +67,7 @@ public class ChartplotterViewModel extends SelectorComposer<Window>{
 	@Override
 	public void doAfterCompose(Window comp) throws Exception {
 		super.doAfterCompose(comp);
-		logger.debug("Init..");
+		if(logger.isDebugEnabled())logger.debug("Init..");
 		if(Util.getConfig(null).containsKey(Constants.CHART_LAT)){
 			lat=Util.getConfig(null).getProperty(Constants.CHART_LAT);
 		}
@@ -101,7 +101,7 @@ public class ChartplotterViewModel extends SelectorComposer<Window>{
 		   String name = (String)layer[0];
 		   name=name.replaceAll(" ", "+");
 		   Util.getConfig(null).setProperty(Constants.CHART_LAYER+name, String.valueOf(layer[1]));
-		   logger.debug("onLayerChange:"+name+"="+String.valueOf(layer[1]));
+		   if(logger.isDebugEnabled())logger.debug("onLayerChange:"+name+"="+String.valueOf(layer[1]));
 		   Util.saveConfig();
 		}catch(Exception e){
 			logger.error(e.getMessage(),e);
@@ -117,7 +117,7 @@ public class ChartplotterViewModel extends SelectorComposer<Window>{
 		try{
 		   Object[] latlonZoom = (Object[]) event.getData();
 		   //its an edit find by name
-		   logger.debug("Zoom/pan event (lat/lon/zoom):"+latlonZoom[0]+","+latlonZoom[1]+","+latlonZoom[2]);
+		   if(logger.isDebugEnabled())logger.debug("Zoom/pan event (lat/lon/zoom):"+latlonZoom[0]+","+latlonZoom[1]+","+latlonZoom[2]);
 		   
 		   lat= String.valueOf(latlonZoom[0]);
 		   lon= String.valueOf(latlonZoom[1]);

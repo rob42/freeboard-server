@@ -80,7 +80,7 @@ public class AutopilotViewModel extends SelectorComposer<Window>{
 	
 	public AutopilotViewModel() {
 		super();
-		logger.debug("Constructing..");
+		if(logger.isDebugEnabled())logger.debug("Constructing..");
 
 		producer = CamelContextFactory.getInstance().createProducerTemplate();
 		producer.setDefaultEndpointUri("seda:input");
@@ -90,14 +90,14 @@ public class AutopilotViewModel extends SelectorComposer<Window>{
 	@Override
 	public void doAfterCompose(Window comp) throws Exception {
 		super.doAfterCompose(comp);
-		logger.debug("Init..");
+		if(logger.isDebugEnabled())logger.debug("Init..");
 			if(Util.getConfig(null).containsKey(Constants.AUTOPILOT_X)){
 				autopilotWindow.setLeft(Util.getConfig(null).getProperty(Constants.AUTOPILOT_X));
 				autopilotWindow.setTop(Util.getConfig(null).getProperty(Constants.AUTOPILOT_Y));
-				logger.debug("  autopilot location set to "+autopilotWindow.getLeft()+", "+autopilotWindow.getTop());
+				if(logger.isDebugEnabled())logger.debug("  autopilot location set to "+autopilotWindow.getLeft()+", "+autopilotWindow.getTop());
 			}else{
 				autopilotWindow.setPosition("center,bottom");
-				logger.debug("  autopilot location set to default "+autopilotWindow.getPosition());
+				if(logger.isDebugEnabled())logger.debug("  autopilot location set to default "+autopilotWindow.getPosition());
 			}
 		apCompassOnOff.setChecked(APS.equals(Constants.AUTOPILOT_COMPASS)?true:false);
 		apWindOnOff.setChecked(APS.equals(Constants.AUTOPILOT_WIND)?true:false);
@@ -106,31 +106,31 @@ public class AutopilotViewModel extends SelectorComposer<Window>{
 	
 	@Listen("onClick = button#apPort1")
 	public void apPort1Click(MouseEvent event) {
-	    logger.debug(" apPort1 button event = "+event);
+		if(logger.isDebugEnabled())logger.debug(" apPort1 button event = "+event);
 	    producer.sendBody(Constants.UID+":"+Constants.MEGA+","+Constants.AUTOPILOT_ADJUST_CMD+":-1,");
 	}
 	
 	@Listen("onClick = button#apStbd1")
 	public void apStbd1Click(MouseEvent event) {
-	    logger.debug(" apStbd1 button event = "+event);
+		if(logger.isDebugEnabled())logger.debug(" apStbd1 button event = "+event);
 	    producer.sendBody(Constants.UID+":"+Constants.MEGA+","+Constants.AUTOPILOT_ADJUST_CMD+":1,");
 	}
 	
 	@Listen("onClick = button#apPort10")
 	public void apPort10Click(MouseEvent event) {
-	    logger.debug(" apPort10 button event = "+event);
+		if(logger.isDebugEnabled())logger.debug(" apPort10 button event = "+event);
 	    producer.sendBody(Constants.UID+":"+Constants.MEGA+","+Constants.AUTOPILOT_ADJUST_CMD+":-10,");
 	}
 	
 	@Listen("onClick = button#apStbd10")
 	public void apStbd10Click(MouseEvent event) {
-	    logger.debug(" apStbd10 button event = "+event);
+		if(logger.isDebugEnabled())logger.debug(" apStbd10 button event = "+event);
 	    producer.sendBody(Constants.UID+":"+Constants.MEGA+","+Constants.AUTOPILOT_ADJUST_CMD+":10,");
 	}
 	
 	@Listen("onCheck = toolbarbutton#apOnOff")
 	public void apOnOffCheck(CheckEvent event) {
-	    logger.debug(" apOnOff button event = "+event);
+		if(logger.isDebugEnabled())logger.debug(" apOnOff button event = "+event);
 	    if(event.isChecked()){
 	    	autopilotOn=true;
 	    }else{
@@ -153,13 +153,13 @@ public class AutopilotViewModel extends SelectorComposer<Window>{
 
 	@Listen("onCheck = toolbarbutton#apCompassOnOff")
 	public void apCompassOnOffCheck(CheckEvent event) {
-	    logger.debug(" apCompassOnOff button event = "+event);
+		if(logger.isDebugEnabled())logger.debug(" apCompassOnOff button event = "+event);
 	    toggleSource(event, true);
 	}
 	
 	@Listen("onCheck = toolbarbutton#apWindOnOff")
 	public void apWindOnOffCheck(CheckEvent event) {
-	    logger.debug(" apWindOnOff button event = "+event);
+		if(logger.isDebugEnabled())logger.debug(" apWindOnOff button event = "+event);
 	    toggleSource(event, false);
 	}
 	
@@ -192,7 +192,7 @@ public class AutopilotViewModel extends SelectorComposer<Window>{
 
 	@Listen("onMove = #autopilotWindow")
 	public void onMoveWindow(Event event) {
-		    logger.debug(" move event = "+((Window)event.getTarget()).getLeft()+", "+((Window)event.getTarget()).getTop());
+		if(logger.isDebugEnabled())logger.debug(" move event = "+((Window)event.getTarget()).getLeft()+", "+((Window)event.getTarget()).getTop());
 		    try {
 		    	Util.getConfig(null).setProperty(Constants.AUTOPILOT_X, ((Window)event.getTarget()).getLeft());
 		    	Util.getConfig(null).setProperty(Constants.AUTOPILOT_Y, ((Window)event.getTarget()).getTop());

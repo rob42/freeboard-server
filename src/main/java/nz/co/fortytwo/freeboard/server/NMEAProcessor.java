@@ -93,13 +93,13 @@ public class NMEAProcessor extends FreeboardProcessor implements Processor, Free
 		String bodyStr = (String) map.get(Constants.NMEA);
 		if (StringUtils.isNotBlank(bodyStr)) {
 			try {
-				logger.debug("Processing NMEA:"+bodyStr);
+				if(logger.isDebugEnabled())logger.debug("Processing NMEA:"+bodyStr);
 				// dont need the NMEA now
 				map.remove(Constants.NMEA);
 				Sentence sentence = SentenceFactory.getInstance().createParser(bodyStr);
 				fireSentenceEvent(map, sentence);
 			} catch (Exception e) {
-				logger.debug(e.getMessage(),e);
+				if(logger.isDebugEnabled())logger.debug(e.getMessage(),e);
 				logger.error(e.getMessage()+" : "+bodyStr);
 			}
 		}
@@ -244,7 +244,7 @@ public class NMEAProcessor extends FreeboardProcessor implements Processor, Free
 							startLat = false;
 						}
 						previousLat = Util.movingAverage(ALPHA, previousLat, sen.getPosition().getLatitude());
-						logger.debug("lat position:"+sen.getPosition().getLatitude()+", hemi="+sen.getPosition().getLatitudeHemisphere());
+						if(logger.isDebugEnabled())logger.debug("lat position:"+sen.getPosition().getLatitude()+", hemi="+sen.getPosition().getLatitudeHemisphere());
 	
 						map.put(Constants.LAT, previousLat);
 						
@@ -368,7 +368,7 @@ public class NMEAProcessor extends FreeboardProcessor implements Processor, Free
 				if (evt.getSentence() instanceof CruzproXDRParser) {
 					CruzproXDRParser sen = (CruzproXDRParser) evt.getSentence();
 						
-						logger.debug("XDR:"+sen.toString());
+					if(logger.isDebugEnabled())logger.debug("XDR:"+sen.toString());
 						if(StringUtils.isNotBlank(sen.getDevice())){
 							try {
 								String key = Util.getConfig(null).getProperty(Constants.NMEA_XDR+sen.getTalkerId()+Constants.XDR+sen.getDevice());
@@ -379,7 +379,7 @@ public class NMEAProcessor extends FreeboardProcessor implements Processor, Free
 										//iterate through the values assigning to Freeboard keys
 										for(int x=0;x<keys.length;x++){
 											if(StringUtils.isNotBlank(keys[x]) && !Constants.XDR_SKIP.equals(keys[x])){
-												logger.debug(  "XDR:"+keys[x]+":"+ values.get(x).getValue());
+												if(logger.isDebugEnabled())logger.debug(  "XDR:"+keys[x]+":"+ values.get(x).getValue());
 												map.put(keys[x], values.get(x).getValue());
 											}
 										}

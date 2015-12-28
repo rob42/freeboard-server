@@ -140,7 +140,7 @@ public class ConfigViewModel extends SelectorComposer<Window> {
 	@Override
 	public void doAfterCompose(Window comp) throws Exception {
 		super.doAfterCompose(comp);
-		logger.debug("Init..");
+		if(logger.isDebugEnabled())logger.debug("Init..");
 		
 		setConfigDefaults();
 		setAllChartLayers();
@@ -162,7 +162,7 @@ public class ConfigViewModel extends SelectorComposer<Window> {
 			pos1=layer.indexOf("'",pos);
 			String name = layer.substring(pos,pos1);
 			selectedListArray.add(name);
-			logger.debug("Found:"+name);
+			if(logger.isDebugEnabled())logger.debug("Found:"+name);
 			pos = layer.indexOf("L.tileLayer(",pos1+1);
 		}
 		
@@ -186,8 +186,8 @@ public class ConfigViewModel extends SelectorComposer<Window> {
 		//add the overlays
 		for(String chart: selectedChartsModel){
 			String snippet = allListMap.get(chart);
-			logger.debug("Processing :"+chart);
-			logger.debug(snippet);
+			if(logger.isDebugEnabled())logger.debug("Processing :"+chart);
+			if(logger.isDebugEnabled())logger.debug(snippet);
 			
 			String chartVar = snippet.substring(0,snippet.indexOf("="));
 			chartVar = chartVar.substring(chartVar.indexOf("var")+3).trim();
@@ -204,7 +204,7 @@ public class ConfigViewModel extends SelectorComposer<Window> {
 			layersStr=StringUtils.remove(layersStr, "{s}.");
 			layersStr=StringUtils.remove(layersStr, "subdomains: 'abcd',");
 		}
-		logger.debug(layersStr);
+		if(logger.isDebugEnabled())logger.debug(layersStr);
 		FileUtils.writeStringToFile(layersFile,layersStr );
 	}
 
@@ -238,7 +238,7 @@ public class ConfigViewModel extends SelectorComposer<Window> {
 					chart=chart.substring(0,chart.indexOf("."));
 					String name = getChartName(layer, chart);
 					allListMap.put(name, layer);
-					logger.debug("Found:"+name);
+					if(logger.isDebugEnabled())logger.debug("Found:"+name);
 				}else{
 					logger.warn(layerFile.getAbsolutePath()+" does not exist");
 				}
@@ -254,7 +254,7 @@ public class ConfigViewModel extends SelectorComposer<Window> {
 
 	@Listen("onClick = button#cfgSave")
 	public void cfgSaveClick(MouseEvent event) {
-		logger.debug(" cfgSave button event = " + event);
+		if(logger.isDebugEnabled())logger.debug(" cfgSave button event = " + event);
 		try {
 			Properties config = Util.getConfig(null);
 			if(isValidPort(portsToScan.getText())){
@@ -332,7 +332,7 @@ public class ConfigViewModel extends SelectorComposer<Window> {
 
 	@Listen("onClick = button#chartSave")
 	public void chartSaveClick(MouseEvent event) {
-		logger.debug(" chartSave button event = " + event);
+		if(logger.isDebugEnabled())logger.debug(" chartSave button event = " + event);
 		try {
 			boolean useHomeChoice = Boolean.valueOf( (String)useHomeGroup.getSelectedItem().getValue());
 			if(useHomeChoice){
@@ -350,7 +350,7 @@ public class ConfigViewModel extends SelectorComposer<Window> {
 	
 	@Listen("onClick = button#chartCancel")
 	public void chartCancelClick(MouseEvent event) {
-		logger.debug(" chartCancel button event = " + event);
+		if(logger.isDebugEnabled())logger.debug(" chartCancel button event = " + event);
 		try {
 			selectedListArray.clear();
 			setAllChartLayers();
@@ -364,20 +364,20 @@ public class ConfigViewModel extends SelectorComposer<Window> {
 
 	@Listen("onClick = button#cfgCancel")
 	public void cfgCancelClick(MouseEvent event) {
-		logger.debug(" cfgCancel button event = " + event);
+		if(logger.isDebugEnabled())logger.debug(" cfgCancel button event = " + event);
 		setConfigDefaults();
 	}
 	
 	@Listen("onClick = image#chooseAllBtn")
 	public void chooseAllBtnClick(MouseEvent event) {
-		logger.debug(" chooseAllBtn button event = " + event);
+		if(logger.isDebugEnabled())logger.debug(" chooseAllBtn button event = " + event);
 		//if its not null and we dont have it
 		selectedChartsModel.clear();
 		selectedChartsModel.addAll(allChartsModel.getInnerList());
 	}
 	@Listen("onClick = image#chooseBtn")
 	public void chooseBtnClick(MouseEvent event) {
-		logger.debug(" chooseBtn button event = " + event);
+		if(logger.isDebugEnabled())logger.debug(" chooseBtn button event = " + event);
 		//if its not null and we dont have it
 		if(allCharts.getSelectedItem()!=null && !selectedChartsModel.contains(allCharts.getSelectedItem().getLabel())){
 			selectedChartsModel.add(allCharts.getSelectedItem().getLabel());
@@ -385,7 +385,7 @@ public class ConfigViewModel extends SelectorComposer<Window> {
 	}
 	@Listen("onClick = image#removeBtn")
 	public void removeBtnClick(MouseEvent event) {
-		logger.debug(" removeBtn button event = " + event);
+		if(logger.isDebugEnabled())logger.debug(" removeBtn button event = " + event);
 		//drop it
 		if(selectedCharts.getSelectedItem()!=null){
 			selectedChartsModel.remove(selectedCharts.getSelectedIndex());
@@ -393,14 +393,14 @@ public class ConfigViewModel extends SelectorComposer<Window> {
 	}
 	@Listen("onClick = image#removeAllBtn")
 	public void removeAllBtnClick(MouseEvent event) {
-		logger.debug(" removeAllBtn button event = " + event);
+		if(logger.isDebugEnabled())logger.debug(" removeAllBtn button event = " + event);
 		//drop all
 		selectedChartsModel.clear();
 	}
 	
 	@Listen("onClick = image#topBtn")
 	public void topBtnClick(MouseEvent event) {
-		logger.debug(" topBtn button event = " + event);
+		if(logger.isDebugEnabled())logger.debug(" topBtn button event = " + event);
 		if(selectedCharts.getSelectedItem()!=null){
 			String item = selectedChartsModel.remove(selectedCharts.getSelectedIndex());
 			selectedChartsModel.add(0, item);
@@ -409,7 +409,7 @@ public class ConfigViewModel extends SelectorComposer<Window> {
 	
 	@Listen("onClick = image#upBtn")
 	public void upBtnClick(MouseEvent event) {
-		logger.debug(" upBtn button event = " + event);
+		if(logger.isDebugEnabled())logger.debug(" upBtn button event = " + event);
 		if(selectedCharts.getSelectedItem()!=null){
 			int pos = selectedCharts.getSelectedIndex();
 			//dont go past the top!
@@ -421,7 +421,7 @@ public class ConfigViewModel extends SelectorComposer<Window> {
 	
 	@Listen("onClick = image#downBtn")
 	public void downBtnClick(MouseEvent event) {
-		logger.debug(" downBtn button event = " + event);
+		if(logger.isDebugEnabled())logger.debug(" downBtn button event = " + event);
 		if(selectedCharts.getSelectedItem()!=null){
 			int pos = selectedCharts.getSelectedIndex();
 			//dont go past the bottom!
@@ -433,7 +433,7 @@ public class ConfigViewModel extends SelectorComposer<Window> {
 	
 	@Listen("onClick = image#bottomBtn")
 	public void bottomBtnClick(MouseEvent event) {
-		logger.debug(" bottomBtn button event = " + event);
+		if(logger.isDebugEnabled())logger.debug(" bottomBtn button event = " + event);
 		if(selectedCharts.getSelectedItem()!=null){
 			String item = selectedChartsModel.remove(selectedCharts.getSelectedIndex());
 			selectedChartsModel.add(item);

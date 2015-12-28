@@ -105,7 +105,7 @@ public class WaypointViewModel extends SelectorComposer<Window> {
 			producer = CamelContextFactory.getInstance().createProducerTemplate();
 			producer.setDefaultEndpointUri("seda:input");
 
-			logger.debug("Constructing..");
+			if(logger.isDebugEnabled())logger.debug("Constructing..");
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
 		}
@@ -114,7 +114,7 @@ public class WaypointViewModel extends SelectorComposer<Window> {
 	@Override
 	public void doAfterCompose(Window comp) throws Exception {
 		super.doAfterCompose(comp);
-		logger.debug("Init..");
+		if(logger.isDebugEnabled())logger.debug("Init..");
 		String gotoLat = Util.getConfig(null).getProperty(Constants.GOTO_LAT);
 		String gotoLon = Util.getConfig(null).getProperty(Constants.GOTO_LON);
 		String fromLat = Util.getConfig(null).getProperty(Constants.FROM_LAT);
@@ -128,7 +128,7 @@ public class WaypointViewModel extends SelectorComposer<Window> {
 
 	@Listen("onClick = button#ok")
 	public void wptSaveClick(MouseEvent event) {
-		logger.debug(" ok button event = " + event);
+		if(logger.isDebugEnabled())logger.debug(" ok button event = " + event);
 		// save it
 		try {
 			if (StringUtils.isBlank(nameBox.getValue())) {
@@ -174,7 +174,7 @@ public class WaypointViewModel extends SelectorComposer<Window> {
 			new GPXParser().writeGPX(gpx, gpxFile);
 
 		} catch (Exception e) {
-			logger.error(e.getMessage(), e);
+			if(logger.isDebugEnabled())logger.error(e.getMessage(), e);
 		}
 		wptWindow.setVisible(false);
 		producer.sendBody(Constants.WAYPOINT_CHANGE_EVENT + ":0,");
@@ -183,7 +183,7 @@ public class WaypointViewModel extends SelectorComposer<Window> {
 
 	@Listen("onClick = button#gotoWpt")
 	public void wptGotoWptClick(MouseEvent event) {
-		logger.debug(" gotoWpt button event = " + event);
+		if(logger.isDebugEnabled())logger.debug(" gotoWpt button event = " + event);
 		wptWindow.setVisible(false);
 		String fromLat = curLat.getValue();
 		String fromLon = curLon.getValue();
@@ -223,7 +223,7 @@ public class WaypointViewModel extends SelectorComposer<Window> {
 
 	@Listen("onClick = button#gotoCancel")
 	public void wptGotoCancelClick(MouseEvent event) {
-		logger.debug(" gotoCancel button event = " + event);
+		if(logger.isDebugEnabled())logger.debug(" gotoCancel button event = " + event);
 		wptWindow.setVisible(false);
 		gotoDestination(null, null, null, null);
 
@@ -232,13 +232,13 @@ public class WaypointViewModel extends SelectorComposer<Window> {
 	//
 	@Listen("onClick = button#cancel")
 	public void wptCancelClick(MouseEvent event) {
-		logger.debug(" cancel button event = " + event);
+		if(logger.isDebugEnabled())logger.debug(" cancel button event = " + event);
 		wptWindow.setVisible(false);
 	}
 
 	@Listen("onClick = button#delete")
 	public void wptDeleteClick(MouseEvent event) {
-		logger.debug(" delete button event = " + event);
+		if(logger.isDebugEnabled())logger.debug(" delete button event = " + event);
 		try {
 			GPX gpx = new GPXParser().parseGPX(gpxFile);
 			deleteWaypoint(gpx, nameBox.getName());
@@ -276,7 +276,7 @@ public class WaypointViewModel extends SelectorComposer<Window> {
 	public void onWaypointMove(Event event) {
 		try {
 			Object[] latlon = (Object[]) event.getData();
-			logger.debug("Moving waypoints:" + (latlon.length / 4));
+			if(logger.isDebugEnabled())logger.debug("Moving waypoints:" + (latlon.length / 4));
 			GPX gpx = new GPXParser().parseGPX(gpxFile);
 			// we have data in multiples of four
 			for (int x = 0; x < latlon.length; x = x + 4) {
@@ -284,7 +284,7 @@ public class WaypointViewModel extends SelectorComposer<Window> {
 				// its a move, find by lat/lon
 				double oldLat = (Double) latlon[x + 2];
 				double oldLon = (Double) latlon[x + 3];
-				logger.debug("Moving " + latlon[x + 2] + "," + latlon[x + 3] + " to " + latlon[x + 0] + "," + latlon[x + 1]);
+				if(logger.isDebugEnabled())logger.debug("Moving " + latlon[x + 2] + "," + latlon[x + 3] + " to " + latlon[x + 0] + "," + latlon[x + 1]);
 				Waypoint wp = gpx.getWaypointByLocation(oldLat, oldLon);
 				if (wp != null) {
 					// update
@@ -292,7 +292,7 @@ public class WaypointViewModel extends SelectorComposer<Window> {
 					wp.setLatitude((Double) latlon[x]);
 					wp.setLongitude((Double) latlon[x + 1]);
 					gpx.addWaypoint(wp);
-					logger.debug("Moved " + wp.getName());
+					if(logger.isDebugEnabled())logger.debug("Moved " + wp.getName());
 				}
 
 			}
@@ -365,7 +365,7 @@ public class WaypointViewModel extends SelectorComposer<Window> {
 			latBox.setValue(latitude);
 			BigDecimal longitude = BigDecimal.valueOf((Double) latlon[1]);
 			lonBox.setValue(longitude);
-			logger.debug("Waypoint Lat:" + latitude + ", Lon:" + longitude);
+			if(logger.isDebugEnabled())logger.debug("Waypoint Lat:" + latitude + ", Lon:" + longitude);
 
 			curLat.setValue(String.valueOf(latlon[2]));
 			curLon.setValue(String.valueOf(latlon[3]));

@@ -229,7 +229,7 @@ public class Util {
 				timeSet=true;
 				Date date = new Date();
 				if((date.getYear()+1900)==dayNow.getYear()){
-					logger.debug("Current date is " + date);
+					if(logger.isDebugEnabled())logger.debug("Current date is " + date);
 					return;
 				}
 				//so we need to set the date and time
@@ -240,10 +240,10 @@ public class Util {
 				String hh = pad(2,String.valueOf(timeNow.getHour()));
 				String mm = pad(2,String.valueOf(timeNow.getMinutes()));
 				String ss = pad(2,String.valueOf(timeNow.getSeconds()));
-				logger.debug("Setting current date to " + dayNow + " "+timeNow);
+				if(logger.isDebugEnabled())logger.debug("Setting current date to " + dayNow + " "+timeNow);
 				String cmd = "sudo date --utc " + MM+dd+hh+mm+yy+"."+ss;
 				Runtime.getRuntime().exec(cmd.split(" "));// MMddhhmm[[yy]yy]
-				logger.debug("Executed date setting command:"+cmd);
+				if(logger.isDebugEnabled())logger.debug("Executed date setting command:"+cmd);
 			} catch (Exception e) {
 				logger.error(e.getMessage(),e);
 			} 

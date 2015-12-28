@@ -69,7 +69,7 @@ public class AnchorViewModel extends SelectorComposer<Window>{
 	
 	public AnchorViewModel() {
 		super();
-		logger.debug("Constructing..");
+		if(logger.isDebugEnabled())logger.debug("Constructing..");
 
 		producer = CamelContextFactory.getInstance().createProducerTemplate();
 		producer.setDefaultEndpointUri("seda:input");
@@ -79,14 +79,14 @@ public class AnchorViewModel extends SelectorComposer<Window>{
 	@Override
 	public void doAfterCompose(Window comp) throws Exception {
 		super.doAfterCompose(comp);
-		logger.debug("Init..");
+		if(logger.isDebugEnabled())logger.debug("Init..");
 			if(Util.getConfig(null).containsKey(Constants.ANCHOR_X)){
 				anchorWindow.setLeft(Util.getConfig(null).getProperty(Constants.ANCHOR_X));
 				anchorWindow.setTop(Util.getConfig(null).getProperty(Constants.ANCHOR_Y));
-				logger.debug("  anchor location set to "+anchorWindow.getLeft()+", "+anchorWindow.getTop());
+				if(logger.isDebugEnabled())logger.debug("  anchor location set to "+anchorWindow.getLeft()+", "+anchorWindow.getTop());
 			}else{
 				anchorWindow.setPosition("right,bottom");
-				logger.debug("  anchor location set to default "+anchorWindow.getPosition());
+				if(logger.isDebugEnabled())logger.debug("  anchor location set to default "+anchorWindow.getPosition());
 			}
 		
 		setAnchorAlarmState();
@@ -94,27 +94,27 @@ public class AnchorViewModel extends SelectorComposer<Window>{
 	
 	@Listen("onClick = button#anchorRadiusUp1")
 	public void anchorRadiusUp1Click(MouseEvent event) {
-	    logger.debug(" anchorRadiusUp1 button event = "+event);
+		if(logger.isDebugEnabled())logger.debug(" anchorRadiusUp1 button event = "+event);
 	    producer.sendBody(Constants.UID+":"+Constants.MEGA+","+Constants.ANCHOR_ALARM_ADJUST_CMD+":1,");
 	}
 	@Listen("onClick = button#anchorRadiusDown1")
 	public void anchorRadiusDown1Click(MouseEvent event) {
-	    logger.debug(" anchorRadiusDown1 button event = "+event);
+		if(logger.isDebugEnabled())logger.debug(" anchorRadiusDown1 button event = "+event);
 	    producer.sendBody(Constants.UID+":"+Constants.MEGA+","+Constants.ANCHOR_ALARM_ADJUST_CMD+":-1,");
 	}
 	@Listen("onClick = button#anchorRadiusUp10")
 	public void anchorRadiusUp10Click(MouseEvent event) {
-	    logger.debug(" anchorRadiusUp10 button event = "+event);
+		if(logger.isDebugEnabled())logger.debug(" anchorRadiusUp10 button event = "+event);
 	    producer.sendBody(Constants.UID+":"+Constants.MEGA+","+Constants.ANCHOR_ALARM_ADJUST_CMD+":10,");
 	}
 	@Listen("onClick = button#anchorRadiusDown10")
 	public void anchorRadiusDown10Click(MouseEvent event) {
-	    logger.debug(" anchorRadiusDown10 button event = "+event);
+		if(logger.isDebugEnabled())logger.debug(" anchorRadiusDown10 button event = "+event);
 	    producer.sendBody(Constants.UID+":"+Constants.MEGA+","+Constants.ANCHOR_ALARM_ADJUST_CMD+":-10,");
 	}
 	@Listen("onCheck = toolbarbutton#anchorAlarmOnOff")
 	public void anchorAlarmOnOffCheck(CheckEvent event) {
-	    logger.debug(" anchorAlarmOnOff button event = "+event);
+		if(logger.isDebugEnabled())logger.debug(" anchorAlarmOnOff button event = "+event);
 	    if(event.isChecked()){
 	    	anchorAlarmOn=true;
 	    }else{
@@ -138,7 +138,7 @@ public class AnchorViewModel extends SelectorComposer<Window>{
 
 	@Listen("onMove = #anchorWindow")
 	public void onMoveWindow(Event event) {
-		    logger.debug(" move event = "+((Window)event.getTarget()).getLeft()+", "+((Window)event.getTarget()).getTop());
+		if(logger.isDebugEnabled())logger.debug(" move event = "+((Window)event.getTarget()).getLeft()+", "+((Window)event.getTarget()).getTop());
 		    try {
 		    	Util.getConfig(null).setProperty(Constants.ANCHOR_X, ((Window)event.getTarget()).getLeft());
 		    	Util.getConfig(null).setProperty(Constants.ANCHOR_Y, ((Window)event.getTarget()).getTop());

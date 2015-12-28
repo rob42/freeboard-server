@@ -80,7 +80,7 @@ public class DeclinationProcessor extends FreeboardProcessor implements Processo
 					* Magfield.SGMagVar(Magfield.deg_to_rad(lat), -1 * Magfield.deg_to_rad(lon), 0, Magfield.yymmdd_to_julian_days(13, 1, 1), 7, new double[6]);
 			declination = Magfield.rad_to_deg(declination) * -1;// declination is positive when true N is west of MagN, eg subtract the declination
 			declination = round(declination, 1);
-			logger.debug("Declination = " + declination);
+			if(logger.isDebugEnabled())logger.debug("Declination = " + declination);
 			calc = false;
 		}
 		if (map.containsKey(Constants.MAG_HEADING)) {

@@ -121,7 +121,7 @@ public class SerialPortReader implements Processor {
 			} catch (IOException e) {
 				running = false;
 				logger.error(portName+":"+ e.getMessage());
-				logger.debug(e.getMessage(),e);
+				if(logger.isDebugEnabled())logger.debug(e.getMessage(),e);
 			} catch (InterruptedException e) {
 				// do nothing
 			}
@@ -155,7 +155,7 @@ public class SerialPortReader implements Processor {
 		
 		//@Override
 		public void serialEvent(SerialPortEvent event) {
-			logger.trace("SerialEvent:"+event.getEventType());
+			if(logger.isTraceEnabled())logger.trace("SerialEvent:"+event.getEventType());
 			try{
 				if (event.getEventType() == SerialPortEvent.DATA_AVAILABLE) {
 					
@@ -177,22 +177,22 @@ public class SerialPortReader implements Processor {
 								
 							} catch (IOException e) {
 								logger.error(portName + ":"+e.getMessage());
-								logger.debug(e.getMessage(),e);
+								if(logger.isDebugEnabled())logger.debug(e.getMessage(),e);
 								return;
 							}
 							//we have a line ending in CR/LF
 							if (complete) {
 								String lineStr = line.toString().trim();
-								logger.debug(portName + ":Serial Received:" + lineStr);
+								if(logger.isDebugEnabled())logger.debug(portName + ":Serial Received:" + lineStr);
 								//its not empty!
 								if(lineStr.length()>0){
 									//map it if we havent already
 									if (!mapped && uid.matcher(lineStr).matches()) {
 										// add to map
-										logger.debug(portName + ":Serial Received:" + lineStr);
+										if(logger.isDebugEnabled())logger.debug(portName + ":Serial Received:" + lineStr);
 										String type = StringUtils.substringBetween(lineStr, Constants.UID + ":", ",");
 										if (type != null) {
-											logger.debug(portName + ":  device name:" + type);
+											if(logger.isDebugEnabled())logger.debug(portName + ":  device name:" + type);
 											deviceType = type.trim();
 											mapped = true;
 										}
@@ -200,7 +200,7 @@ public class SerialPortReader implements Processor {
 									if(sendMessage){
 										producer.sendBody(lineStr);
 									}else{
-										logger.debug("sendMessage false:"+lineStr);
+										if(logger.isDebugEnabled())logger.debug("sendMessage false:"+lineStr);
 									}
 								}
 								complete=false;
@@ -243,7 +243,7 @@ public class SerialPortReader implements Processor {
 				serialPort.removeEventListener();
 			} catch (Exception e) {
 				logger.error("Problem disconnecting port " + portName +", "+ e.getMessage());
-				logger.debug(e.getMessage(),e);
+				if(logger.isDebugEnabled())logger.debug(e.getMessage(),e);
 			}
 			running = false;
 		}
@@ -276,14 +276,14 @@ public class SerialPortReader implements Processor {
 	public void process(Exchange exchange) throws Exception {
 		// send to device
 		String message = exchange.getIn().getBody(String.class);
-		logger.debug(portName + ":msg received for device:" + message);
+		if(logger.isDebugEnabled())logger.debug(portName + ":msg received for device:" + message);
 		if (StringUtils.isNotBlank(message)) {
 			// check its valid for this device
 			if (running && deviceType == null || message.contains(Constants.UID + ":" + deviceType)) {
-				logger.debug(portName + ":wrote out to device:" + message);
+				if(logger.isDebugEnabled())logger.debug(portName + ":wrote out to device:" + message);
 				// queue them and write in background
 				if(!queue.offer(message)){
-					logger.debug("Output queue id ful for "+portName);
+					if(logger.isDebugEnabled())logger.debug("Output queue id ful for "+portName);
 				}
 			}
 		}
