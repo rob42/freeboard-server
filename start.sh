@@ -2,7 +2,7 @@
 #
 
 # start script for freeboard
-FREEBOARD_HOME=/home/pi/freeboard
+FREEBOARD_HOME=/home/pi/freeboard-server
 #FREEBOARD_HOME=.
 
 JAR=freeboard-server.jar
@@ -18,7 +18,6 @@ export LD_LIBRARY_PATH=$FREEBOARD_HOME/jna
 #NOTE: you may need to explicitly set your JAVA_HOME for your environment
 # Edit and uncomment a line like these  samples with your java path.
 #JAVA_HOME=/home/pi/jdk1.8.0
-#JAVA_HOME=/home/robert/java/jdk1.7.0_07
 #JAVA_HOME=/usr/lib/jvm/jdk-8-oracle-arm-vfp-hflt
 # and then uncomment this line
 #export JAVA_HOME
