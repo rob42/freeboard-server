@@ -221,7 +221,7 @@ function setLayerVisibility(){
  * Set the current position, moving vessel, bearing and track, and associated stuff
  * @param llat
  * @param llon
- * @param brng
+ * @param brng - true north
  * @param spd
  */
 function setPosition(llat, llon, brng, spd) {
@@ -446,11 +446,14 @@ function ChartPlotter() {
 					setPos = true;
 			}
 			if (navObj.MGH) {
-					heading = navObj.MGH;
+					heading = navObj.MGH - declination;
+					if(heading<0){
+						heading = heading +360;
+					}
 					setPos = true;
 			}
 			if (navObj.COG) {
-				heading = navObj.COG + declination;
+				heading = navObj.COG;
 				setPos = true;
 			}
 			if (navObj.SOG) {
@@ -493,7 +496,7 @@ function ChartPlotter() {
 			if (lat < 0.001 && lat > -0.001 && lon < 0.001 && lon > -0.001)
 				return;
 
-			setPosition(lat, lon, heading + declination, speed);
+			setPosition(lat, lon, heading, speed);
 			// setTrack(lat,lon);
 			moveToBoatPosition(lat, lon);
 		}
