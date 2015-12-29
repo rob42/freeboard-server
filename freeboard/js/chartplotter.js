@@ -450,7 +450,7 @@ function ChartPlotter() {
 					setPos = true;
 			}
 			if (navObj.COG) {
-				heading = navObj.COG - declination;
+				heading = navObj.COG + declination;
 				setPos = true;
 			}
 			if (navObj.SOG) {

@@ -82,7 +82,7 @@ function Logg () {
 				 }
 			if (navObj.COG) {
 				if(declination){
-				 lcdHeading.setValue(navObj.COG) - declination;
+				 lcdHeading.setValue(navObj.COG + declination);
 				}else{
 					lcdHeading.setValue(navObj.COG);
 				}
