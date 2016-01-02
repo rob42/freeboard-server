@@ -1,6 +1,6 @@
 /*
  * Copyright 2012,2013 Robert Huitema robert@42.co.nz
- * 
+ *
  * This file is part of FreeBoard. (http://www.42.co.nz/freeboard)
  *
  *  FreeBoard is free software: you can redistribute it and/or modify
@@ -76,10 +76,10 @@ function initCharts() {
 
 	//add local trackline
 	trackLine = L.polyline([], {color: 'red',smoothFactor: 0.001}).addTo(map);
-	
+
 	// Track
 	refreshTrack();
-	
+
 
 	// Initialize the draw control and pass it the FeatureGroup of editable
 	// layers
@@ -104,9 +104,9 @@ function initCharts() {
 		}
 	});
 	map.addControl(drawControl);
-	
+
 	L.control.mousePosition({position: 'bottomright'}).addTo(map);
-	
+
 	// ship
 	var myIcon = L.icon({
 		iconUrl : './js/img/ship_red.png',
@@ -124,7 +124,7 @@ function initCharts() {
 		dashArray : '5,5',
 	}).addTo(map);
 	layers.addOverlay(hdgLayer, "Heading");
-	
+
 	bearingLayer = L.polyline(
 			[ new L.LatLng(0.0, 0.0), new L.LatLng(0.0, 0.0) ], {
 				color : 'green',
@@ -133,7 +133,7 @@ function initCharts() {
 				fillOpacity : 1,
 			}).addTo(map);
 	layers.addOverlay(bearingLayer, "Bearing");
-	
+
 	// add waypoints
 	map.on('draw:created', function(e) {
 		var type = e.layerType, layer = e.layer;
@@ -163,11 +163,11 @@ function initCharts() {
 	//ais
 	aisGroup = new L.LayerGroup();
 	map.addLayer(aisGroup);
-	
+
 	map.on('zoomend', function(e) {
 		zAu.send(new zk.Event(zk.Widget.$("$this"), 'onChartChange', new Array(map.getCenter().lat,map.getCenter().lng, map.getZoom())));
 	});
-	
+
 	map.on('dragend', function(e) {
 		zAu.send(new zk.Event(zk.Widget.$("$this"), 'onChartChange', new Array(map.getCenter().lat,map.getCenter().lng, map.getZoom())));
 	});
@@ -188,7 +188,7 @@ function initCharts() {
 			}
 		});
 	});
-	
+
 	setLayerVisibility();
 }
 
@@ -211,7 +211,7 @@ function setLayerVisibility(){
 						}
 					}
 			});
-				
+
 		}
 	});
 }
@@ -245,7 +245,7 @@ function setPosition(llat, llon, brng, spd) {
 	// ref http://www.movable-type.co.uk/scripts/latlong.html
 	var start_point = new L.LatLng(llat, llon);
 	// //1852 meters in nautical mile
-	//    
+	//
 	var end_point = destVincenty(llat, llon, brng, spd * 1852);
 	var end_point2 = destVincenty(llat, llon, brng, 185200);
 	if(map.hasLayer(hdgLayer)){
@@ -304,7 +304,7 @@ function setGotoDestination(toLat, toLon, fromLat, fromLon) {
 	}
 }
 /*
- * Center the boat in the screen 
+ * Center the boat in the screen
  */
 function centerBoat() {
 	centerOnBoat = true;
@@ -331,7 +331,7 @@ function moveToBoatPosition(llat, llon) {
 	}
 }
 
- 
+
 
 /*
  * Reload the GPXTrack layer, then clear the Track layer to start again Called
@@ -352,7 +352,7 @@ function refreshTrack() {
 	trackLayer = new L.GPX(trkUrl, {
 		async : true
 	}).addTo(map);
-	
+
 	layers.addOverlay(trackLayer, "Track");
 }
 //
@@ -377,7 +377,7 @@ function refreshWaypoints() {
 	wgpxLayer = new L.GPX("../tracks/waypoints.gpx", {
 		async : true
 	}).addTo(map);
-	
+
 	layers.addOverlay(wgpxLayer, "Waypoints");
 }
 
@@ -399,7 +399,7 @@ function refreshAis(ais){
 			if(ais.received < now){
 				aisGroup.removeLayer(layer);
 			}
-		});	
+		});
 	if(found)return;
 	//new one here
 	var lat = ais.position.latitude;
@@ -460,15 +460,15 @@ function ChartPlotter() {
 					speed = navObj.SOG;
 					setPos = true;
 			}
-			if (navObj.MGD) {
-			declination = navObj.MGD;	
+			if (navObj.DEC) {
+				declination = navObj.DEC;	
 			}
 			if (navObj.WPC ) {
 				// we refresh the waypoint layer
 				refreshWaypoints();
 			}
 			if (navObj.WPG) {
-				
+
 				var coords = navObj.WPG;
 				// console.log(coords);
 				var coordsArray = coords.split('|');
@@ -489,7 +489,7 @@ function ChartPlotter() {
 				// we refresh the ais layer
 				refreshAis(navObj.AIS);
 			}
-		
+
 		if (setPos) {
 			//console.log("Chartplotter:setPos");
 			// avoid the 0,0 point
@@ -518,7 +518,7 @@ function posInit() {
  * ! JavaScript function to calculate the destination point given start point
  * latitude / longitude (numeric degrees), bearing (numeric degrees) and
  * distance (in m).
- * 
+ *
  * Original scripts by Chris Veness Taken from
  * http://movable-type.co.uk/scripts/latlong-vincenty-direct.html and optimized /
  * cleaned up by Mathias Bynens <http://mathiasbynens.be/> Based on the Vincenty

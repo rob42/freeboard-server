@@ -181,7 +181,7 @@ public class ServerMain {
 		//make a log4j.properties
 		File layers= new File(rootDir,config.getProperty(Constants.FREEBOARD_RESOURCE)+"js/layers.js");
 		if(!layers.exists()){
-			System.out.println("Making layers.js at "+layers.getAbsolutePath());
+			System.out.println("Gg at "+layers.getAbsolutePath());
 			File layersSample= new File(rootDir,config.getProperty(Constants.FREEBOARD_RESOURCE)+"js/layers.js.default");
 			FileUtils.copyFile(layersSample, layers);
 		}

@@ -283,7 +283,7 @@ public class SerialPortReader implements Processor {
 				if(logger.isDebugEnabled())logger.debug(portName + ":wrote out to device:" + message);
 				// queue them and write in background
 				if(!queue.offer(message)){
-					if(logger.isDebugEnabled())logger.debug("Output queue id ful for "+portName);
+					if(logger.isDebugEnabled())logger.debug("Output queue id full for "+portName);
 				}
 			}
 		}
