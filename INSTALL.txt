@@ -1,22 +1,22 @@
 Freeboard Notes
 
-This is the main freeboard server, which runs in java on the Raspberry Pi. The arduino based ArduIMU and FreeboardPLC connect to this via a (powered) USB hub. Using a decent powered hub is important - see the Raspberry Pi site.
+This is the main freeboard server, which runs in java on the Raspberry Pi. The arduino based ArduIMU and FreeboardPLC connect to this, often via a (powered) USB hub. Using a decent powered hub is important for early RPi's - see the Raspberry Pi site.
 
-This has been developed in Eclipse Juno, with maven3 and zk plugins (among others)
+This has been developed in Eclipse Kepler, with maven3 and zk plugins (among others)
 
-This project is still fairly new, so if you are developing, expect some pain getting it all setup/building/etc. Email me for help.
+If you are developing, expect some pain getting it all setup/building/etc. Email me for help.
 
 Hardware:
-	Raspberry Pi or Beaglebone black - see detailed install instructions in the docs directory. After install your hostname will be 'freeboard'.
+	Raspberry Pi(especially Pi2) or Beaglebone black. After install your hostname will be 'freeboard'.
 		
 	Arduino - Mega 1280 or Mega 2560 - load as per  freeboardPLC project
 		connect via USB
 
-	ArduIMU - load as per FreeBoard ArduIMU project
+	ArduIMU - load as per FreeBoard ArduIMU project, calibrate!!
 		connect via USB
 		
 	Misc NMEA devices
-		connect via USB. USE A POWERED HUB!! - you will suffer if you dont :-)
+		connect via Freeboard Interface board, or USB. USE A POWERED HUB!! - you will suffer if you dont :-)
 
 Baud rates for attached devices:
 	In conf/freeboard.cfg there is support for configuring baud rates per USB port. These entries control this

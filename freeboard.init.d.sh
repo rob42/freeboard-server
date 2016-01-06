@@ -18,7 +18,7 @@ PATH=/sbin:/usr/sbin:/bin:/usr/bin
 DESC="FreeBoard web based navigation"
 NAME=freeboard
 #DAEMON=/usr/sbin/$NAME
-DAEMON=/home/pi/freeboard/start.sh
+DAEMON=/home/pi/freeboard-server/start.sh
 EXTRA_ARGS="-c pi --background --make-pidfile"
 DAEMON_ARGS=""
 PIDFILE=/var/run/$NAME.pid
@@ -152,3 +152,4 @@ echo "Usage: $SCRIPTNAME
 exit 3
 ;;
 esac
+
