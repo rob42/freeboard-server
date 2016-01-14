@@ -4,7 +4,7 @@
 
 	<groupId>nz.co.fortytwo.freeboard</groupId>
 	<artifactId>freeboard-server</artifactId>
-	<version>0.5.20-SNAPSHOT</version>
+	<version>0.5.21-SNAPSHOT</version>
 	<name>Freeboard Server</name>
 
 	<description>Webserver and data server for FreeBoard</description>
@@ -12,7 +12,7 @@
 		<!-- <bundle.name>nsb-${project.version}</bundle.name> -->
 		<jetty.version>7.6.13.v20130916</jetty.version>
 		<camel.version>2.12.1</camel.version>
-		<zk.version>6.5.4</zk.version>
+		<zk.version>8.0.0</zk.version>
 		<jna.version>3.6.0-SNAPSHOT</jna.version>
 	</properties>
 	<licenses>
@@ -166,7 +166,17 @@
 			<artifactId>jsp-2.1-glassfish</artifactId>
 			<version>2.1.v20100127</version>
 		</dependency>
-		<!-- ZK -->
+		<!-- ZK 
+		<dependency>
+            <groupId>org.zkoss.zk</groupId>
+            <artifactId>zk</artifactId>
+            <version>${zk.version}</version>
+        </dependency>-->
+        <dependency>
+            <groupId>org.zkoss.common</groupId>
+            <artifactId>zweb</artifactId>
+            <version>${zk.version}</version>
+        </dependency>
 		<dependency>
 			<groupId>org.zkoss.zk</groupId>
 			<artifactId>zkbind</artifactId>
