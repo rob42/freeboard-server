@@ -186,6 +186,9 @@ public class ConfigViewModel extends SelectorComposer<Window> {
 		//add the overlays
 		for(String chart: selectedChartsModel){
 			String snippet = allListMap.get(chart);
+			if(StringUtils.isBlank(snippet)){
+				continue;
+			}
 			if(logger.isDebugEnabled())logger.debug("Processing :"+chart);
 			if(logger.isDebugEnabled())logger.debug(snippet);
 			
