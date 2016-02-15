@@ -104,8 +104,10 @@ public class ChartProcessor {
 			System.out.print("Chart tag:"+chartName+"\n");
 			System.out.print("Chart dir:"+dir.getPath()+"\n");
 		}
-		logger.debug("Chart tag:"+chartName);
-		logger.debug("Chart dir:"+dir.getPath());
+		if(logger.isDebugEnabled()){
+			logger.debug("Chart tag:"+chartName);
+			logger.debug("Chart dir:"+dir.getPath());
+		}
 		//start by running the gdal script
 		if(reTile){
 			executeGdal(chartFile, chartName,
@@ -146,8 +148,10 @@ public class ChartProcessor {
 			System.out.print("Chart tag:"+chartName+"\n");
 			System.out.print("Chart dir:"+dir.getPath()+"\n");
 		}
-		logger.debug("Chart tag:"+chartName);
-		logger.debug("Chart dir:"+dir.getPath());
+		if(logger.isDebugEnabled()){
+			logger.debug("Chart tag:"+chartName);
+			logger.debug("Chart dir:"+dir.getPath());
+		}
 		//start by running the gdal scripts
 		if(reTile){
 			executeGdal(chartFile, chartName, 
@@ -166,7 +170,7 @@ public class ChartProcessor {
 		int pos=header.indexOf("BSB/NA=")+7;
 		String desc = header.substring(pos,header.indexOf("\n",pos)).trim();
 		//if(desc.endsWith("\n"))desc=desc.substring(0,desc.length()-1);
-		logger.debug("Name:"+desc);
+		if(logger.isDebugEnabled())logger.debug("Name:"+desc);
 		//we cant have + or , or = in name, as its used in storing ChartplotterViewModel
 		//US50_2 BERING SEA CONTINUATION,NU=2401,RA=2746,3798,DU=254
 		desc=desc.replaceAll("\\+", " ");
@@ -190,7 +194,7 @@ public class ChartProcessor {
         if(manager){
 			System.out.print("Box:"+minx+","+miny+","+maxx+","+maxy+"\n");
 		}
-        logger.debug("Box:"+minx+","+miny+","+maxx+","+maxy);
+        if(logger.isDebugEnabled())logger.debug("Box:"+minx+","+miny+","+maxx+","+maxy);
 
         //we need TileSets, each tileset has an href, we need first and last for zooms
         @SuppressWarnings("unchecked")
@@ -205,7 +209,7 @@ public class ChartProcessor {
         if(manager){
 			System.out.print("Zoom:"+minZoom+"-"+maxZoom+"\n");
 		}
-        logger.debug("Zoom:"+minZoom+"-"+maxZoom);
+        if(logger.isDebugEnabled())logger.debug("Zoom:"+minZoom+"-"+maxZoom);
         
         String snippet = "\n\tvar "+chartName+" = L.tileLayer(\"http://{s}.{server}:8080/mapcache/"+chartName+"/{z}/{x}/{y}.png\", {\n"+
         			"\t\tserver: host,\n"+
@@ -220,7 +224,7 @@ public class ChartProcessor {
         if(manager){
 			System.out.print(snippet+"\n");
 		}
-        logger.debug(snippet);
+        if(logger.isDebugEnabled())logger.debug(snippet);
 		//add it to local freeboard.txt
         File layers = new File(dir,"freeboard.txt");
         FileUtils.writeStringToFile(layers, snippet);
@@ -314,7 +318,7 @@ public class ChartProcessor {
 		if(manager){
 			System.out.print("Process "+tileDir.getAbsolutePath());
 		}
-		logger.debug("Process "+tileDir.getAbsolutePath());
+		if(logger.isDebugEnabled())logger.debug("Process "+tileDir.getAbsolutePath());
 		for(File dir: tileDir.listFiles()){
 			if(dir.isDirectory()){
 				recurseDirs(dir);
@@ -339,7 +343,7 @@ public class ChartProcessor {
 		if(manager){
 			System.out.print("      Convert "+dir.getName()+"\n");
 		}
-		logger.debug("      Convert "+dir.getName());
+		if(logger.isDebugEnabled())logger.debug("      Convert "+dir.getName());
 		
 		BufferedImage img = ImageIO.read(dir);
 		ImageProducer ip = new FilteredImageSource(img.getSource(), filter);

@@ -27,6 +27,7 @@ import nz.co.fortytwo.freeboard.server.util.Util;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.log4j.Logger;
 
 
@@ -78,18 +79,18 @@ public class FreeboardProcessor {
 	 * @return
 	 */
 	public HashMap<String, Object> stringToHashMap(String msg){
-		logger.debug("Mesg to map:"+msg);
+		if(logger.isDebugEnabled())logger.debug("Mesg to map:"+msg);
 		HashMap<String, Object> map = new HashMap<String, Object>();
 		//AIS
 		//!AIVDM,1,1,,B,15MwkRUOidG?GElEa<iQk1JV06Jd,0*6D
 		if(msg.startsWith("$")){
-			logger.debug("Mesg to NMEA in map:"+msg);
+			if(logger.isDebugEnabled())logger.debug("Mesg to NMEA in map:"+msg);
 			map.put(Constants.NMEA, msg);
 		}else if(msg.startsWith("!AIVDM")){
-			logger.debug("Mesg to NMEA in map:"+msg);
+			if(logger.isDebugEnabled())logger.debug("Mesg to NMEA in map:"+msg);
 			map.put(Constants.AIS, msg);
 		}else{
-			logger.debug("Mesg split in map:"+msg);
+			if(logger.isDebugEnabled())logger.debug("Mesg split in map:"+msg);
 			String[] bodyArray = msg.split(",");
 			//reuse
 			String[] pair;
@@ -98,7 +99,7 @@ public class FreeboardProcessor {
 					pair=s.split(":");
 					if(pair==null || pair.length!=2)continue;
 					
-					if(StringUtils.isNumeric(pair[1])){
+					if(NumberUtils.isNumber(pair[1])){
 						Object val;
 						if(pair[1].indexOf(".")>0){
 							val=Double.valueOf(pair[1]);

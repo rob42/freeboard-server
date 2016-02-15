@@ -67,7 +67,14 @@
 								<textbox id="cfgCompassOffset"
 									tooltip="+/- degrees offset" />
 							</row>
-                     <row hflex="min">
+							<row hflex="min">
+								<label value="Heading source" />
+								<radiogroup id="useRmcGroup" tooltiptext="Select RMC to show the heading from the GPS. It will be erratic at low speeds. Select HDG if you have an electronic compass for a more stable heading">
+									<radio id="useRmcRadio" label="RMC" value="true" />
+									<radio id="useHdgRadio" label="HDG" value="false" />
+								</radiogroup>
+							</row>
+						        <row hflex="min">
 								<label value="Depth Unit" />
 								<combobox id="cfgDepthUnit"
 									tooltiptext="feet (f) meters (m) or fathoms (F)" >

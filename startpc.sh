@@ -27,7 +27,7 @@ if [ -n "$JAVA_HOME" ]; then
 fi
 
 EXT="-Djava.util.Arrays.useLegacyMergeSort=true"
-MEM="-Xmx24m -XX:PermSize=32m -XX:MaxPermSize=32m"
+MEM="-Xmx48m -XX:PermSize=32m -XX:MaxPermSize=32m"
 
 LOG4J=-Dlog4j.configuration=file://$FREEBOARD_HOME/conf/log4j.properties
 

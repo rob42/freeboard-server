@@ -228,7 +228,7 @@ function setLayerVisibility(){
  * Set the current position, moving vessel, bearing and track, and associated stuff
  * @param llat
  * @param llon
- * @param brng
+ * @param brng - true north
  * @param spd
  */
 function setPosition(llat, llon, brng, spd) {
@@ -452,16 +452,23 @@ function ChartPlotter() {
 					lon = navObj.LON;
 					setPos = true;
 			}
-			if (navObj.COG) {
-					heading = navObj.COG;
+			if (navObj.MGH) {
+					heading = navObj.MGH - declination;
+					if(heading<0){
+						heading = heading +360;
+					}
 					setPos = true;
+			}
+			if (navObj.COG) {
+				heading = navObj.COG;
+				setPos = true;
 			}
 			if (navObj.SOG) {
 					speed = navObj.SOG;
 					setPos = true;
 			}
-			if (navObj.MGD) {
-			declination = navObj.MGD;
+			if (navObj.DEC) {
+				declination = navObj.DEC;	
 			}
 			if (navObj.WPC ) {
 				// we refresh the waypoint layer
@@ -496,7 +503,7 @@ function ChartPlotter() {
 			if (lat < 0.001 && lat > -0.001 && lon < 0.001 && lon > -0.001)
 				return;
 
-			setPosition(lat, lon, heading + declination, speed);
+			setPosition(lat, lon, heading, speed);
 			// setTrack(lat,lon);
 			moveToBoatPosition(lat, lon);
 		}

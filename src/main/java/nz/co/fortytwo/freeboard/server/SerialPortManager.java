@@ -64,10 +64,10 @@ public class SerialPortManager implements Runnable, Processor {
 			List<SerialPortReader> tmpPortList = new ArrayList<SerialPortReader>();
 			for (SerialPortReader reader : serialPortList) {
 				if (!reader.isRunning()) {
-					logger.debug("Comm port " + reader.getPortName() + " finished and marked for removal");
+					if(logger.isDebugEnabled())logger.debug("Comm port " + reader.getPortName() + " finished and marked for removal");
 					tmpPortList.add(reader);
 				}
-				logger.debug("Comm port " + reader.getPortName() + " currently running");
+				if(logger.isDebugEnabled())logger.debug("Comm port " + reader.getPortName() + " currently running");
 			}
 			serialPortList.removeAll(tmpPortList);
 			
@@ -87,7 +87,7 @@ public class SerialPortManager implements Runnable, Processor {
 					if(!SystemUtils.IS_OS_WINDOWS){
 						File portFile = new File(port);
 						if (!portFile.exists()){
-							logger.debug("Comm port "+port+" doesnt exist");
+							if(logger.isDebugEnabled())logger.debug("Comm port "+port+" doesnt exist");
 							continue;
 						}
 					}
@@ -99,7 +99,7 @@ public class SerialPortManager implements Runnable, Processor {
 					}
 					// if its running, ignore
 					if (portOk){
-						logger.debug("Comm port " + port + " found already connected");
+						if(logger.isDebugEnabled())logger.debug("Comm port " + port + " found already connected");
 						continue;
 					}
 
@@ -108,16 +108,16 @@ public class SerialPortManager implements Runnable, Processor {
 					serial.setProducer(producer);
 					//default 38400, then freeboard.cfg default, then freeboard.cfg per port
 					String baudStr = Util.getConfig(null).getProperty(Constants.SERIAL_PORT_BAUD, "38400");
-					logger.debug("Comm port default found and connecting at "+baudStr+"...");
+					if(logger.isDebugEnabled())logger.debug("Comm port default found and connecting at "+baudStr+"...");
 					//get port name
 					String portName = port;
 					if(port.indexOf("/")>0){
 						portName=port.substring(port.lastIndexOf("/")+1);
 					}
 					baudStr = Util.getConfig(null).getProperty(Constants.SERIAL_PORT_BAUD+"."+portName, baudStr);
-					logger.debug("Comm port "+Constants.SERIAL_PORT_BAUD+"."+portName+" override="+Util.getConfig(null).getProperty(Constants.SERIAL_PORT_BAUD+"."+portName));
+					if(logger.isDebugEnabled())logger.debug("Comm port "+Constants.SERIAL_PORT_BAUD+"."+portName+" override="+Util.getConfig(null).getProperty(Constants.SERIAL_PORT_BAUD+"."+portName));
 					int baudRate = Integer.valueOf(baudStr);
-					logger.debug("Comm port " + port + " found and connecting at "+baudRate+"...");
+					if(logger.isDebugEnabled())logger.debug("Comm port " + port + " found and connecting at "+baudRate+"...");
 					serial.connect(port, baudRate);
 					logger.info("Comm port " + port + " found and connected");
 					serialPortList.add(serial);

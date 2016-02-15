@@ -76,7 +76,7 @@ public class AISProcessor extends FreeboardProcessor implements Processor, Freeb
 	public HashMap<String, Object> handle(HashMap<String, Object> map) {
 		
 			String bodyStr = (String) map.get(Constants.AIS);
-			logger.debug("Processing AIS:"+bodyStr);
+			if(logger.isDebugEnabled())logger.debug("Processing AIS:"+bodyStr);
 			if (StringUtils.isNotBlank(bodyStr)) {
 				try {
 					
@@ -86,7 +86,7 @@ public class AISProcessor extends FreeboardProcessor implements Processor, Freeb
 					if(packet!=null && packet.isValidMessage()){
 						//process message here
 						AisMessage message = packet.getAisMessage();
-						logger.debug("AisMessage:"+message.getClass()+":"+message.toString());
+						if(logger.isDebugEnabled())logger.debug("AisMessage:"+message.getClass()+":"+message.toString());
 						//1,2,3
 						if(message instanceof AisPositionMessage){
 							AisVesselInfo vInfo=new AisVesselInfo((AisPositionMessage) message);
@@ -105,7 +105,7 @@ public class AISProcessor extends FreeboardProcessor implements Processor, Freeb
 					
 					//fireSentenceEvent(map, sentence);
 				} catch (Exception e) {
-					logger.debug(e.getMessage(),e);
+					if(logger.isDebugEnabled())logger.debug(e.getMessage(),e);
 					logger.error(e.getMessage()+" : "+bodyStr);
 				}
 			}
@@ -126,10 +126,10 @@ public class AISProcessor extends FreeboardProcessor implements Processor, Freeb
      * @return
      */
     private AisPacket handleLine(String messageString) throws IOException {
-    	logger.debug("AIS Received : " + messageString);
+    	if(logger.isDebugEnabled())logger.debug("AIS Received : " + messageString);
         // Check for ABK
         if (Abk.isAbk(messageString)) {
-            	logger.debug("AIS Received ABK: " + messageString);
+        	if(logger.isDebugEnabled())logger.debug("AIS Received ABK: " + messageString);
             return null;
         }
 

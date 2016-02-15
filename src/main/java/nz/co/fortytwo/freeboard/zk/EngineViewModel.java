@@ -51,20 +51,20 @@ public class EngineViewModel extends SelectorComposer<Window>{
 
 	public EngineViewModel() {
 		super();
-		logger.debug("Constructing..");
+		if(logger.isDebugEnabled())logger.debug("Constructing..");
 	}
 
 	//@AfterCompose
 	public void init() {
-		logger.debug("Init..");
+		if(logger.isDebugEnabled())logger.debug("Init..");
 		//all hidden and in left corner
 		if(sess.hasAttribute("size")){
 			size=(Double) sess.getAttribute("sess");
-			logger.debug("Size recovered from sess.."+size);
+			if(logger.isDebugEnabled())logger.debug("Size recovered from sess.."+size);
 		}else{
 			sess.setAttribute("sess", size);
 		}
-		logger.debug("Size = "+size);
+		if(logger.isDebugEnabled())logger.debug("Size = "+size);
 		//logg.setFloatable(true);
 		//wind.setFloatable(true);
 		//chartplotter.setFloatable(true);
@@ -72,7 +72,7 @@ public class EngineViewModel extends SelectorComposer<Window>{
 
 	@Listen("onClick = button#apPort")
 	public void apPort(MouseEvent event) {
-	    logger.debug(" event = "+event);
+		if(logger.isDebugEnabled())logger.debug(" event = "+event);
 
 	}
 
@@ -81,7 +81,7 @@ public class EngineViewModel extends SelectorComposer<Window>{
 	public double getSize() {
 		if(sess.hasAttribute("size")){
 			size=(Double) sess.getAttribute("sess");
-			logger.debug("Size recovered from sess.."+size);
+			if(logger.isDebugEnabled())logger.debug("Size recovered from sess.."+size);
 		}
 		return size;
 	}

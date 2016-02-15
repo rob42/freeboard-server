@@ -87,7 +87,7 @@ public class ZipUtils {
 				 * add it to the zip file
 				 */
 
-				logger.debug("Adding file " + files[i].getName());
+				if(logger.isDebugEnabled())logger.debug("Adding file " + files[i].getName());
 
 				// create object of FileInputStream
 				FileInputStream fin = new FileInputStream(files[i]);

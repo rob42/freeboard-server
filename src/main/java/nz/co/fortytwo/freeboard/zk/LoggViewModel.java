@@ -64,21 +64,21 @@ public class LoggViewModel extends SelectorComposer<Window>{
 
 	public LoggViewModel() {
 		super();
-		logger.debug("Constructing..");
+		if(logger.isDebugEnabled())logger.debug("Constructing..");
 
 	}
 
 	@Override
 	public void doAfterCompose(Window comp) throws Exception {
 		super.doAfterCompose(comp);
-		logger.debug("Init..");
+		if(logger.isDebugEnabled())logger.debug("Init..");
 			if(Util.getConfig(null).containsKey(Constants.LOGG_X)){
 				logg.setLeft(Util.getConfig(null).getProperty(Constants.LOGG_X));
 				logg.setTop(Util.getConfig(null).getProperty(Constants.LOGG_Y));
-				logger.debug("  logg location set to "+logg.getLeft()+", "+logg.getTop());
+				if(logger.isDebugEnabled())logger.debug("  logg location set to "+logg.getLeft()+", "+logg.getTop());
 			}else{
 				logg.setPosition("left,center");
-				logger.debug("  logg location set to "+logg.getPosition());
+				if(logger.isDebugEnabled())logger.debug("  logg location set to "+logg.getPosition());
 			}
 			if(Util.getConfig(null).containsKey(Constants.LOGG_SCALE)){
 				scale = Double.valueOf(Util.getConfig(null).getProperty(Constants.LOGG_SCALE));
@@ -90,7 +90,7 @@ public class LoggViewModel extends SelectorComposer<Window>{
 
 	@Listen("onMove =  #logg")
 	public void onMoveWindow(Event event) {
-		    logger.debug(" move event = "+((Window)event.getTarget()).getLeft()+", "+((Window)event.getTarget()).getTop());
+		if(logger.isDebugEnabled())logger.debug(" move event = "+((Window)event.getTarget()).getLeft()+", "+((Window)event.getTarget()).getTop());
 		    try {
 		    	Util.getConfig(null).setProperty(Constants.LOGG_X, ((Window)event.getTarget()).getLeft());
 		    	Util.getConfig(null).setProperty(Constants.LOGG_Y, ((Window)event.getTarget()).getTop());
@@ -105,7 +105,7 @@ public class LoggViewModel extends SelectorComposer<Window>{
 
 	@Listen("onClick =  button#logShrink")
 	public void logShrinkClick(MouseEvent event) {
-		logger.debug(" shrink event = "+event);
+		if(logger.isDebugEnabled())logger.debug(" shrink event = "+event);
 		try {
 			scale = Util.updateScale(Constants.LOGG_SCALE, 0.8, scale);
 		} catch (Exception e) {
@@ -116,7 +116,7 @@ public class LoggViewModel extends SelectorComposer<Window>{
 
 	@Listen("onClick =   button#logGrow")
 	public void logGrowClick(MouseEvent event) {
-		logger.debug(" grow event = "+event);
+		if(logger.isDebugEnabled())logger.debug(" grow event = "+event);
 		try{
 			scale = Util.updateScale(Constants.LOGG_SCALE, 1.2, scale);
 		} catch (Exception e) {

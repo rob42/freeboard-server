@@ -72,6 +72,7 @@ public class Util {
 	public static Properties getConfig(String dir) throws FileNotFoundException, IOException{
 		if(props==null){
 			//we do a quick override so we get nice sorted output :-)
+			System.out.println("Creating config...");
 			props = new Properties() {
 			    /**
 				 *
@@ -102,7 +103,10 @@ public class Util {
 			}
 
 			if(cfg.exists()){
+				System.out.println("Loading config from "+cfg.getAbsolutePath());
 				props.load(new FileReader(cfg));
+			}else{
+				saveConfig();
 			}
 		}
 		return props;
@@ -113,7 +117,11 @@ public class Util {
 	 * @throws IOException
 	 */
 	public static void saveConfig() throws IOException{
-		if(props==null)return;
+		if(props==null){
+			System.out.println("Saving config but its null!");
+			return;
+		}
+		System.out.println("Saving config to "+cfg.getAbsolutePath());
 		props.store(new FileWriter(cfg), null);
 
 	}
@@ -124,6 +132,7 @@ public class Util {
 	 * @param props
 	 */
 	public static void setDefaults(Properties props) {
+		System.out.println("Setting config defaults...");
 		//populate sensible defaults here
 		props.setProperty(Constants.FREEBOARD_URL,"/freeboard");
 		props.setProperty(Constants.FREEBOARD_RESOURCE,"freeboard/");
@@ -152,6 +161,8 @@ public class Util {
 		props.setProperty(Constants.ENABLE_COMET,"false");
 		props.setProperty(Constants.DEPTH_SCALE, "0.15");
       props.setProperty(Constants.DEPTH_UNIT, "M");
+		props.setProperty(Constants.PREFER_RMC,"true");
+		//add default charts
 	}
 
 
@@ -220,7 +231,7 @@ public class Util {
 				timeSet=true;
 				Date date = new Date();
 				if((date.getYear()+1900)==dayNow.getYear()){
-					logger.debug("Current date is " + date);
+					if(logger.isDebugEnabled())logger.debug("Current date is " + date);
 					return;
 				}
 				//so we need to set the date and time
@@ -231,10 +242,10 @@ public class Util {
 				String hh = pad(2,String.valueOf(timeNow.getHour()));
 				String mm = pad(2,String.valueOf(timeNow.getMinutes()));
 				String ss = pad(2,String.valueOf(timeNow.getSeconds()));
-				logger.debug("Setting current date to " + dayNow + " "+timeNow);
+				if(logger.isDebugEnabled())logger.debug("Setting current date to " + dayNow + " "+timeNow);
 				String cmd = "sudo date --utc " + MM+dd+hh+mm+yy+"."+ss;
 				Runtime.getRuntime().exec(cmd.split(" "));// MMddhhmm[[yy]yy]
-				logger.debug("Executed date setting command:"+cmd);
+				if(logger.isDebugEnabled())logger.debug("Executed date setting command:"+cmd);
 			} catch (Exception e) {
 				logger.error(e.getMessage(),e);
 			}

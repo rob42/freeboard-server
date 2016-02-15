@@ -133,25 +133,25 @@ public class GPXParser {
 				}
 			}
 			NodeList nodes = firstChild.getChildNodes();
-			logger.debug("Found " +nodes.getLength()+ " child nodes. Start parsing ...");
+			if(logger.isDebugEnabled())logger.debug("Found " +nodes.getLength()+ " child nodes. Start parsing ...");
 			for(int idx = 0; idx < nodes.getLength(); idx++) {
 				Node currentNode = nodes.item(idx);
 				if(GPXConstants.WPT_NODE.equals(currentNode.getNodeName())) {
-					logger.debug("Found waypoint node. Start parsing...");
+					if(logger.isDebugEnabled())logger.debug("Found waypoint node. Start parsing...");
 					Waypoint w = parseWaypoint(currentNode);
 					if(w!= null) {
 						logger.info("Add waypoint to gpx data. [waypointName="+ w.getName() + "]");
 						gpx.addWaypoint(w);
 					}
 				} else if(GPXConstants.TRK_NODE.equals(currentNode.getNodeName())) {
-					logger.debug("Found track node. Start parsing...");
+					if(logger.isDebugEnabled())logger.debug("Found track node. Start parsing...");
 					Track trk = parseTrack(currentNode);
 					if(trk!= null) {
 						logger.info("Add track to gpx data. [trackName="+ trk.getName() + "]");
 						gpx.addTrack(trk);
 					}
 				} else if(GPXConstants.EXTENSIONS_NODE.equals(currentNode.getNodeName())) {
-					logger.debug("Found extensions node. Start parsing...");
+					if(logger.isDebugEnabled())logger.debug("Found extensions node. Start parsing...");
 					
 					Iterator<IExtensionParser> it = extensionParsers.iterator();
 					while(it.hasNext()) {
@@ -160,7 +160,7 @@ public class GPXParser {
 						gpx.addExtensionData(parser.getId(), data);
 					}
 				} else if(GPXConstants.RTE_NODE.equals(currentNode.getNodeName())) {
-					logger.debug("Found route node. Start parsing...");
+					if(logger.isDebugEnabled())logger.debug("Found route node. Start parsing...");
 					Route rte = parseRoute(currentNode);
 					if(rte!= null) {
 						logger.info("Add route to gpx data. [routeName="+ rte.getName() + "]");
@@ -221,62 +221,62 @@ public class GPXParser {
 			for(int idx = 0; idx < childNodes.getLength(); idx++) {
 				Node currentNode = childNodes.item(idx);
 				if(GPXConstants.ELE_NODE.equals(currentNode.getNodeName())) {
-					logger.debug("found ele node in waypoint data");
+					if(logger.isDebugEnabled())logger.debug("found ele node in waypoint data");
 					w.setElevation(getNodeValueAsDouble(currentNode));
 				} else if(GPXConstants.TIME_NODE.equals(currentNode.getNodeName())) {
-					logger.debug("found time node in waypoint data");
+					if(logger.isDebugEnabled())logger.debug("found time node in waypoint data");
 					w.setTime(getNodeValueAsDate(currentNode));
 				} else if(GPXConstants.NAME_NODE.equals(currentNode.getNodeName())) {
-					logger.debug("found name node in waypoint data");
+					if(logger.isDebugEnabled())logger.debug("found name node in waypoint data");
 					w.setName(getNodeValueAsString(currentNode));
 				} else if(GPXConstants.CMT_NODE.equals(currentNode.getNodeName())) {
-					logger.debug("found cmt node in waypoint data");
+					if(logger.isDebugEnabled())logger.debug("found cmt node in waypoint data");
 					w.setComment(getNodeValueAsString(currentNode));
 				} else if(GPXConstants.DESC_NODE.equals(currentNode.getNodeName())) {
-					logger.debug("found desc node in waypoint data");
+					if(logger.isDebugEnabled())logger.debug("found desc node in waypoint data");
 					w.setDescription(getNodeValueAsString(currentNode));
 				} else if(GPXConstants.SRC_NODE.equals(currentNode.getNodeName())) {
-					logger.debug("found src node in waypoint data");
+					if(logger.isDebugEnabled())logger.debug("found src node in waypoint data");
 					w.setSrc(getNodeValueAsString(currentNode));
 				} else if(GPXConstants.MAGVAR_NODE.equals(currentNode.getNodeName())) {
-					logger.debug("found magvar node in waypoint data");
+					if(logger.isDebugEnabled())logger.debug("found magvar node in waypoint data");
 					w.setMagneticDeclination(getNodeValueAsDouble(currentNode));
 				} else if(GPXConstants.GEOIDHEIGHT_NODE.equals(currentNode.getNodeName())) {
-					logger.debug("found geoidheight node in waypoint data");
+					if(logger.isDebugEnabled())logger.debug("found geoidheight node in waypoint data");
 					w.setGeoidHeight(getNodeValueAsDouble(currentNode));
 				} else if(GPXConstants.LINK_NODE.equals(currentNode.getNodeName())) {
-					logger.debug("found link node in waypoint data");
+					if(logger.isDebugEnabled())logger.debug("found link node in waypoint data");
 					//TODO: parse link
 					//w.setGeoidHeight(getNodeValueAsDouble(currentNode));
 				} else if(GPXConstants.SYM_NODE.equals(currentNode.getNodeName())) {
-					logger.debug("found sym node in waypoint data");
+					if(logger.isDebugEnabled())logger.debug("found sym node in waypoint data");
 					w.setSym(getNodeValueAsString(currentNode));
 				} else if(GPXConstants.FIX_NODE.equals(currentNode.getNodeName())) {
-					logger.debug("found fix node in waypoint data");
+					if(logger.isDebugEnabled())logger.debug("found fix node in waypoint data");
 					w.setFix(getNodeValueAsFixType(currentNode));
 				} else if(GPXConstants.TYPE_NODE.equals(currentNode.getNodeName())) {
-					logger.debug("found type node in waypoint data");
+					if(logger.isDebugEnabled())logger.debug("found type node in waypoint data");
 					w.setType(getNodeValueAsString(currentNode));
 				} else if(GPXConstants.SAT_NODE.equals(currentNode.getNodeName())) {
-					logger.debug("found sat node in waypoint data");
+					if(logger.isDebugEnabled())logger.debug("found sat node in waypoint data");
 					w.setSat(getNodeValueAsInteger(currentNode));
 				} else if(GPXConstants.HDOP_NODE.equals(currentNode.getNodeName())) {
-					logger.debug("found hdop node in waypoint data");
+					if(logger.isDebugEnabled())logger.debug("found hdop node in waypoint data");
 					w.setHdop(getNodeValueAsDouble(currentNode));
 				} else if(GPXConstants.VDOP_NODE.equals(currentNode.getNodeName())) {
-					logger.debug("found vdop node in waypoint data");
+					if(logger.isDebugEnabled())logger.debug("found vdop node in waypoint data");
 					w.setVdop(getNodeValueAsDouble(currentNode));
 				} else if(GPXConstants.PDOP_NODE.equals(currentNode.getNodeName())) {
-					logger.debug("found pdop node in waypoint data");
+					if(logger.isDebugEnabled())logger.debug("found pdop node in waypoint data");
 					w.setPdop(getNodeValueAsDouble(currentNode));
 				} else if(GPXConstants.AGEOFGPSDATA_NODE.equals(currentNode.getNodeName())) {
-					logger.debug("found ageofgpsdata node in waypoint data");
+					if(logger.isDebugEnabled())logger.debug("found ageofgpsdata node in waypoint data");
 					w.setAgeOfGPSData(getNodeValueAsDouble(currentNode));
 				} else if(GPXConstants.DGPSID_NODE.equals(currentNode.getNodeName())) {
-					logger.debug("found dgpsid node in waypoint data");
+					if(logger.isDebugEnabled())logger.debug("found dgpsid node in waypoint data");
 					w.setDgpsid(getNodeValueAsInteger(currentNode));
 				} else if(GPXConstants.EXTENSIONS_NODE.equals(currentNode.getNodeName())) {
-					logger.debug("found extensions node in waypoint data");
+					if(logger.isDebugEnabled())logger.debug("found extensions node in waypoint data");
 					Iterator<IExtensionParser> it = extensionParsers.iterator();
 					while(it.hasNext()) {
 						IExtensionParser parser = it.next();
@@ -286,7 +286,7 @@ public class GPXParser {
 				} 
 			}
 		} else {
-			logger.debug("no child nodes found in waypoint");
+			if(logger.isDebugEnabled())logger.debug("no child nodes found in waypoint");
 		}
 		
 		return w;
@@ -303,34 +303,34 @@ public class GPXParser {
 			for(int idx = 0; idx < nodes.getLength(); idx++) {
 				Node currentNode = nodes.item(idx);
 				if(GPXConstants.NAME_NODE.equals(currentNode.getNodeName())) {
-					logger.debug("node name found");
+					if(logger.isDebugEnabled())logger.debug("node name found");
 					trk.setName(getNodeValueAsString(currentNode));
 				} else if(GPXConstants.CMT_NODE.equals(currentNode.getNodeName())) {
-					logger.debug("node cmt found");
+					if(logger.isDebugEnabled())logger.debug("node cmt found");
 					trk.setComment(getNodeValueAsString(currentNode));
 				} else if(GPXConstants.DESC_NODE.equals(currentNode.getNodeName())) {
-					logger.debug("node desc found");
+					if(logger.isDebugEnabled())logger.debug("node desc found");
 					trk.setDescription(getNodeValueAsString(currentNode));
 				} else if(GPXConstants.SRC_NODE.equals(currentNode.getNodeName())) {
-					logger.debug("node src found");
+					if(logger.isDebugEnabled())logger.debug("node src found");
 					trk.setSrc(getNodeValueAsString(currentNode));
 				} else if(GPXConstants.LINK_NODE.equals(currentNode.getNodeName())) {
-					logger.debug("node link found");
+					if(logger.isDebugEnabled())logger.debug("node link found");
 					//TODO: parse link
 					//trk.setLink(getNodeValueAsLink(currentNode));
 				} else if(GPXConstants.NUMBER_NODE.equals(currentNode.getNodeName())) {
-					logger.debug("node number found");
+					if(logger.isDebugEnabled())logger.debug("node number found");
 					trk.setNumber(getNodeValueAsInteger(currentNode));
 				} else if(GPXConstants.TYPE_NODE.equals(currentNode.getNodeName())) {
-					logger.debug("node type found");
+					if(logger.isDebugEnabled())logger.debug("node type found");
 					trk.setType(getNodeValueAsString(currentNode));
 				} else if(GPXConstants.TRKSEG_NODE.equals(currentNode.getNodeName())) {
-					logger.debug("node trkseg found");
+					if(logger.isDebugEnabled())logger.debug("node trkseg found");
 					trk.setTrackPoints(parseTrackSeg(currentNode));
 				} else if(GPXConstants.EXTENSIONS_NODE.equals(currentNode.getNodeName())) {
 					Iterator<IExtensionParser> it = extensionParsers.iterator();
 					while(it.hasNext()) {
-						logger.debug("node extensions found");
+						if(logger.isDebugEnabled())logger.debug("node extensions found");
 						while(it.hasNext()) {
 							IExtensionParser parser = it.next();
 							Object data = parser.parseTrackExtension(currentNode);
@@ -356,29 +356,29 @@ public class GPXParser {
 			for(int idx = 0; idx < nodes.getLength(); idx++) {
 				Node currentNode = nodes.item(idx);
 				if(GPXConstants.NAME_NODE.equals(currentNode.getNodeName())) {
-					logger.debug("node name found");
+					if(logger.isDebugEnabled())logger.debug("node name found");
 					rte.setName(getNodeValueAsString(currentNode));
 				} else if(GPXConstants.CMT_NODE.equals(currentNode.getNodeName())) {
-					logger.debug("node cmt found");
+					if(logger.isDebugEnabled())logger.debug("node cmt found");
 					rte.setComment(getNodeValueAsString(currentNode));
 				} else if(GPXConstants.DESC_NODE.equals(currentNode.getNodeName())) {
-					logger.debug("node desc found");
+					if(logger.isDebugEnabled())logger.debug("node desc found");
 					rte.setDescription(getNodeValueAsString(currentNode));
 				} else if(GPXConstants.SRC_NODE.equals(currentNode.getNodeName())) {
-					logger.debug("node src found");
+					if(logger.isDebugEnabled())logger.debug("node src found");
 					rte.setSrc(getNodeValueAsString(currentNode));
 				} else if(GPXConstants.LINK_NODE.equals(currentNode.getNodeName())) {
-					logger.debug("node link found");
+					if(logger.isDebugEnabled())logger.debug("node link found");
 					//TODO: parse link
 					//rte.setLink(getNodeValueAsLink(currentNode));
 				} else if(GPXConstants.NUMBER_NODE.equals(currentNode.getNodeName())) {
-					logger.debug("node number found");
+					if(logger.isDebugEnabled())logger.debug("node number found");
 					rte.setNumber(getNodeValueAsInteger(currentNode));
 				} else if(GPXConstants.TYPE_NODE.equals(currentNode.getNodeName())) {
-					logger.debug("node type found");
+					if(logger.isDebugEnabled())logger.debug("node type found");
 					rte.setType(getNodeValueAsString(currentNode));
 				} else if(GPXConstants.RTEPT_NODE.equals(currentNode.getNodeName())) {
-					logger.debug("node rtept found");
+					if(logger.isDebugEnabled())logger.debug("node rtept found");
 					Waypoint wp = parseWaypoint(currentNode);
 					if(wp!=null) {
 						rte.addRoutePoint(wp);
@@ -386,7 +386,7 @@ public class GPXParser {
 				} else if(GPXConstants.EXTENSIONS_NODE.equals(currentNode.getNodeName())) {
 					Iterator<IExtensionParser> it = extensionParsers.iterator();
 					while(it.hasNext()) {
-						logger.debug("node extensions found");
+						if(logger.isDebugEnabled())logger.debug("node extensions found");
 						while(it.hasNext()) {
 							IExtensionParser parser = it.next();
 							Object data = parser.parseRouteExtension(currentNode);
@@ -412,13 +412,13 @@ public class GPXParser {
 			for(int idx = 0; idx < nodes.getLength(); idx++) {
 				Node currentNode = nodes.item(idx);
 				if(GPXConstants.TRKPT_NODE.equals(currentNode.getNodeName())) {
-					logger.debug("node name found");
+					if(logger.isDebugEnabled())logger.debug("node name found");
 					Waypoint wp = parseWaypoint(currentNode);
 					if(wp!=null) {
 						trkpts.add(wp);
 					}
 				} else if(GPXConstants.EXTENSIONS_NODE.equals(currentNode.getNodeName())) {
-					logger.debug("node extensions found");
+					if(logger.isDebugEnabled())logger.debug("node extensions found");
 					/*
 					Iterator<IExtensionParser> it = extensionParsers.iterator();
 					while(it.hasNext()) {

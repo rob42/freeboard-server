@@ -73,7 +73,7 @@ public class WindViewModel extends SelectorComposer<Window>{
 	
 	public WindViewModel() {
 		super();
-		logger.debug("Constructing..");
+		if(logger.isDebugEnabled())logger.debug("Constructing..");
 		producer = CamelContextFactory.getInstance().createProducerTemplate();
 		producer.setDefaultEndpointUri("seda:input");
 		
@@ -82,16 +82,16 @@ public class WindViewModel extends SelectorComposer<Window>{
 	@Override
 	public void doAfterCompose(Window comp) throws Exception {
 		super.doAfterCompose(comp);
-		logger.debug("Init..");
+		if(logger.isDebugEnabled())logger.debug("Init..");
 			if(Util.getConfig(null).containsKey(Constants.WIND_X)){
 				wind.setLeft(Util.getConfig(null).getProperty(Constants.WIND_X));
 				wind.setTop(Util.getConfig(null).getProperty(Constants.WIND_Y));
-				logger.debug("  wind location set to "+wind.getLeft()+", "+wind.getTop());
+				if(logger.isDebugEnabled())logger.debug("  wind location set to "+wind.getLeft()+", "+wind.getTop());
 			}else{
 				//top="10px" left="50px"
 				wind.setTop("10px");
 				wind.setLeft("50px");
-				logger.debug("  wind location set to "+wind.getPosition());
+				if(logger.isDebugEnabled())logger.debug("  wind location set to "+wind.getPosition());
 			}
 			if(Util.getConfig(null).containsKey(Constants.WIND_SCALE)){
 				scale = Double.valueOf(Util.getConfig(null).getProperty(Constants.WIND_SCALE));
@@ -103,7 +103,7 @@ public class WindViewModel extends SelectorComposer<Window>{
 	
 	@Listen("onMove = #wind")
 	public void onMoveWindow(Event event) {
-		    logger.debug(" move event = "+((Window)event.getTarget()).getLeft()+", "+((Window)event.getTarget()).getTop());
+		if(logger.isDebugEnabled())logger.debug(" move event = "+((Window)event.getTarget()).getLeft()+", "+((Window)event.getTarget()).getTop());
 		    try {
 		    	Util.getConfig(null).setProperty(Constants.WIND_X, ((Window)event.getTarget()).getLeft());
 		    	Util.getConfig(null).setProperty(Constants.WIND_Y, ((Window)event.getTarget()).getTop());
@@ -118,7 +118,7 @@ public class WindViewModel extends SelectorComposer<Window>{
 
 	@Listen("onClick = button#windShrink")
 	public void windShrinkClick(MouseEvent event) {
-		logger.debug(" shrink event = "+event);
+		if(logger.isDebugEnabled())logger.debug(" shrink event = "+event);
 		try {
 			scale = Util.updateScale(Constants.WIND_SCALE, 0.8, scale);
 		} catch (Exception e) {
@@ -129,7 +129,7 @@ public class WindViewModel extends SelectorComposer<Window>{
 
 	@Listen("onClick = button#windGrow")
 	public void windGrowClick(MouseEvent event) {
-		logger.debug(" grow event = "+event);
+		if(logger.isDebugEnabled())logger.debug(" grow event = "+event);
 		try{
 			scale = Util.updateScale(Constants.WIND_SCALE, 1.2, scale);
 		} catch (Exception e) {
