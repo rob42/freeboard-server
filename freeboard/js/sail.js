@@ -75,7 +75,11 @@ function initSail() {
    // Define some sections for gauges
    // Initialzing gauges
    //get the smallest distance
-   var vpSize = Math.min(window.innerHeight, window.innerWidth);
+   // The SailToolbar is located at the top of the window and is 50 px high
+   var vpSize = Math.min(window.innerHeight-50, window.innerWidth);
+   var vpHeight = window.innerHeight-50;
+   var vpWidth = window.innerWidth;
+   console.log(vpSize, vpHeight, vpWidth)
 
    // Depth 
    //if we cant do canvas, skip out here!
@@ -96,10 +100,11 @@ function initSail() {
 
    // wind dir apparent
 
+   vpSize = Math.min(window.innerWidth*.30, (window.innerHeight-50)*.75);
    radialWindDirApp = new steelseries.WindDirection('sailWindDir', {
       // size : document.getElementById('canvasWindDirApp').width,
       titleString: "WIND          APP",
-      size: vpSize * .5,
+      size: vpSize,
       lcdVisible: true,
       lcdColor: steelseries.LcdColor.BEIGE,
       pointSymbolsVisible: false,
@@ -117,38 +122,26 @@ function initSail() {
    depthUnit = zk.Widget.$('$depthUnit').getValue();
    var depthString = "Depth " + depthUnit ;
 
+   console.log(vpWidth);
    lcdSailDepth = new steelseries.DisplaySingle('sailDepth', {
-      // gaugeType : steelseries.GaugeType.TYPE4,
-      //width : document.getElementById('canvasLog').width,
-      //height : document.getElementById('canvasLog').height,
-      //width : vpSize*.4,
-      height: vpSize * .35,
+      height: vpHeight * .25,
+      width: vpWidth* .30,
       lcdDecimals: 1,
       lcdColor: steelseries.LcdColor.BEIGE,
       headerString: depthString,
       headerStringVisible: true,
-//		detailString : "Avg: ",
-//		detailStringVisible : true,
       unitString: depthUnit,
       unitStringVisible: false
    });
 
    // log
-   lcdSOW = new steelseries.DisplayMulti('sailLog', {
-      // gaugeType : steelseries.GaugeType.TYPE4,
-      //width : document.getElementById('canvasLog').width,
-      //height : document.getElementById('canvasLog').height,
-      //width : vpSize*0.5,
-      height: vpSize * .35,
+   lcdSOW = new steelseries.DisplaySingle('sailLog', {
+      height: vpHeight * .25,
+      width: vpWidth*.30,
       lcdDecimals: 1,
       lcdColor: steelseries.LcdColor.BEIGE,
       headerString: "SOW Knots  ",
       headerStringVisible: true,
-      detailString: "Avg: ",
-      detailStringVisible: true
-              // unitString:"Knts",
-              // unitStringVisible: true
-
    });
 
    // wind app
@@ -156,7 +149,8 @@ function initSail() {
    lcdWindApp = new steelseries.DisplayMulti('sailWind', {
       // width : document.getElementById('canvasWindApp').width,
       // : document.getElementById('canvasWindApp').height,
-      height: vpSize * 0.2,
+      height: vpHeight * .25,
+      width: vpWidth*.30,
       lcdDecimals: 1,
       lcdColor: steelseries.LcdColor.BEIGE,
       headerString: "Knots(A)",
@@ -166,11 +160,9 @@ function initSail() {
    });
 
    // GPS SOG
-   lcdSOG = new steelseries.DisplayMulti('sailSOG', {
-      //width : document.getElementById('canvasHeading').width,
-      //height : document.getElementById('canvasHeading').height,
-      //width : 0.5,
-      height: vpSize * 0.2,
+   lcdSOG = new steelseries.DisplaySingle('sailSOG', {
+      height: vpHeight * .25,
+      width: vpWidth*.30,
       lcdDecimals: 1,
       lcdColor: steelseries.LcdColor.BEIGE,
       headerString: "SOG Knots",
