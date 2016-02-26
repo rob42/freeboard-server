@@ -181,6 +181,7 @@ public class Constants {
 	public static final String DEPTH_ZERO_OFFSET = "freeboard.depth.offset";
 	public static final String DEPTH_UNIT = "freeboard.depth.unit";
 	public static final String ALARM_DEPTH = "freeboard.alarm.depth";
+	public static final String SPARKLINE_PTS = "freeboard.sparkline.points";
 
 	// gui constants
 	public static final String LOGG_X = "freeboard.logg.x";

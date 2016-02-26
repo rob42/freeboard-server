@@ -67,6 +67,10 @@ public class NMEAProcessor extends FreeboardProcessor implements Processor, Free
 	private boolean preferRMC;
    // map of sentence listeners
    private ConcurrentMap<String, List<SentenceListener>> listeners = new ConcurrentHashMap<String, List<SentenceListener>>();
+	
+// enable line below to get random depth values for testing.
+// See also line 83 and 333
+    private RandomGaussian gaussian;
 
    public NMEAProcessor() {
       try {
@@ -79,6 +83,10 @@ public class NMEAProcessor extends FreeboardProcessor implements Processor, Free
       SentenceFactory.getInstance().registerParser("XDR", CruzproXDRParser.class);
 
       setNmeaListeners();
+      
+    // Enable the code below to generate Gausian distributed random depths
+       gaussian = new RandomGaussian();
+    
    }
 
 
@@ -101,6 +109,9 @@ public class NMEAProcessor extends FreeboardProcessor implements Processor, Free
 				if(logger.isDebugEnabled())logger.debug("Processing NMEA:"+bodyStr);
             // dont need the NMEA now
             map.remove(Constants.NMEA);
+            if (bodyStr.contains("GPGGA")){
+                bodyStr = new String("$SDDBT,8.1,f,2.4,M,1.3,F*0B");
+            }
             Sentence sentence = SentenceFactory.getInstance().createParser(bodyStr);
             fireSentenceEvent(map, sentence);
          } catch (Exception e) {
@@ -230,7 +241,9 @@ public class NMEAProcessor extends FreeboardProcessor implements Processor, Free
             // Exchange exchange = (Exchange) evt.getSource();
             // StringBuilder body = new StringBuilder();
             @SuppressWarnings("unchecked")
-            HashMap<String, Object> map = (HashMap<String, Object>) evt.getSource();
+            Sentence currentSentence;
+                    
+                    HashMap<String, Object> map = (HashMap<String, Object>) evt.getSource();
             if (evt.getSentence() instanceof PositionSentence) {
                PositionSentence sen = (PositionSentence) evt.getSentence();
                try {
@@ -368,6 +381,10 @@ public class NMEAProcessor extends FreeboardProcessor implements Processor, Free
             }
             if (evt.getSentence() instanceof DepthSentence) {
                DepthSentence sen = (DepthSentence) evt.getSentence();
+               
+            //Remove comment below to get randomly distributed depts for tessting
+            sen.setDepth(gaussian.getGaussian(2.5, 1.0));
+            
                //in meters
                double unit;
                if (config.getProperty(Constants.DEPTH_UNIT).equals("f")) {

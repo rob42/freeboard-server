@@ -49,6 +49,7 @@ public class SailViewModel extends SelectorComposer<Window>{
 	private double size = 400;
 
 
+
 	public SailViewModel() {
 		super();
 		logger.debug("Constructing..");

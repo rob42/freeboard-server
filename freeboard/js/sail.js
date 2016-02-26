@@ -33,13 +33,11 @@
  public static final String ENGINE_OIL_PRESSURE = "EPP";
  public static final String DEPTH_BELOW_TRANSDUCER = "DBT";
  */
-var avgArrayA = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
-   0.0, 0.0, 0.0];
-var avgPosA = 0;
-var avgArrayT = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
-   0.0, 0.0, 0.0];
-var avgPosT = 0;
 
+var depthArraySize;
+var depthArray = [];
+while(depthArraySize--) depthArray.push(6);
+   
 function Sail() {
    this.onmessage = function(navObj) {
 
@@ -50,6 +48,24 @@ function Sail() {
       //depth
       if (navObj.DBT) {
          lcdSailDepth.setValue(navObj.DBT);
+             console.log(navObj.DBT+"\n"+depthArray);
+             depthArray.shift();
+             console.log(depthArray);
+             if (navObj.DBT < 0.01) {
+                 depthArray.push(0.01);
+             } else {
+                 depthArray.push(navObj.DBT);
+             }
+             console.log(depthArray);
+             //aDepth =  zk.Widget.$('$alarmDepth').getValue();
+             anAlarm = zk.Widget.$('$alarmDepth').getValue();
+             sPoints = zk.Widget.$('$sparkPts').getValue();
+            if (navObj.DBT < anAlarm){
+                lcdSailDepth.setLcdColor(steelseries.LcdColor.RED);
+            } else {
+                lcdSailDepth.setLcdColor(steelseries.LcdColor.BEIGE);
+            }
+            sparkline('spacer',depthArray, true, 'rgba(0,0,255,.5)', 'line');
       }
       //speed
       if (navObj.SOG) {
@@ -79,7 +95,6 @@ function initSail() {
    var vpSize = Math.min(window.innerHeight-50, window.innerWidth);
    var vpHeight = window.innerHeight-50;
    var vpWidth = window.innerWidth;
-   console.log(vpSize, vpHeight, vpWidth)
 
    // Depth 
    //if we cant do canvas, skip out here!
@@ -121,8 +136,11 @@ function initSail() {
 
    depthUnit = zk.Widget.$('$depthUnit').getValue();
    var depthString = "Depth " + depthUnit ;
+   
+    // init Sparkline array
+    depthArraySize = zk.Widget.$('$sparkPts').getValue();
+    while(depthArraySize--) depthArray.push(6);
 
-   console.log(vpWidth);
    lcdSailDepth = new steelseries.DisplaySingle('sailDepth', {
       height: vpHeight * .25,
       width: vpWidth* .30,
@@ -133,6 +151,9 @@ function initSail() {
       unitString: depthUnit,
       unitStringVisible: false
    });
+   
+   // Set width of spacer canvas
+   $("#spacer").width(vpWidth*0.3);
 
    // log
    lcdSOW = new steelseries.DisplaySingle('sailLog', {
@@ -170,8 +191,10 @@ function initSail() {
       detailString: "Ave: ",
       detailStringVisible: true
    });
+   
+//             sparkline('spacer',depthArray, true, 'rgba(0,0,255,.5)', 'line');
 
-   // make a web socket
+// make a web socket
 
    addSocketListener(new Sail());
 }

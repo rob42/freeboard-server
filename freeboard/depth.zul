@@ -48,6 +48,8 @@
                     <hlayout valign="middle">
                             <label id="depthScale" value="0.0" visible="false"/>
                             <label id="depthUnit" value="M" visible="false"/>
+                            <label id="alarmDepth" value="6" visible="false"/>
+                            <label id="sparkPts" value="100" visible="false"/>
                             <button id="depthShrink" tooltiptext="Shrink the panel"
                                     image="./js/img/zoom-minus-mini.png" w:onClick="resizeDepth(-0.2)" />
                             <button id="depthGrow" tooltiptext="Grow the panel"

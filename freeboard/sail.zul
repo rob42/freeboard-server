@@ -42,6 +42,9 @@
 <?script src="./js/layers.js" ?>
 <?script src="./js/tween-min.js"?>
 <?script src="./js/steelseries.js"?>
+
+<?script src="./js/sparkline.js"?>
+
 <zk>
    <script type="text/javascript" src="./js/sail.js" />
    <style>
@@ -51,7 +54,7 @@
 
    <window id="mainWindow"
            xmlns:w="http://www.zkoss.org/2005/zk/client"
-           apply="nz.co.fortytwo.freeboard.zk.EngineViewModel" vflex="true"
+           apply="nz.co.fortytwo.freeboard.zk.SailViewModel" vflex="true"
            style="margin-left:auto;">
       <borderlayout>
          <north border="none" height="50px">
@@ -71,11 +74,11 @@
                         </canvas>
                         </html >
                         <html >
-                        <canvas id="spacer" >
+                        <canvas id="spacer" style="border:1px solid #000000;">
                            No canvas in your
                            browser...sorry...
                         </canvas>
-                     </html>
+                        </html>
                   </vbox >
                   <vbox vflex="1" hflex="1" pack="center" align="center">
                      <html style="overflow: visible;" hflex="1" >
@@ -113,15 +116,11 @@
          </center>
 
       </borderlayout>
+
+
    </window>
-
-
    <popup id="helpPopup">
       <html>
-
-
-
-
 			<![CDATA[ <h2>Freeboard Help</H2> <p>To resize the
 			instruments use the + and - buttons within the
 			instruments</p> <p>To move the instruments click-drag the
@@ -131,10 +130,6 @@
 			direction</p> <p>Use the blue + and - buttons in top left to
 			zoom, or use mouse wheel</p> <p>The blue + tab at the top
 			right to manage chart visibility</p> ]]>
-
-
-
-
       </html>
    </popup>
 </zk>
