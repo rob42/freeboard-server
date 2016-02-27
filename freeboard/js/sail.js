@@ -16,27 +16,12 @@
  *  You should have received a copy of the GNU General Public License
  *  along with FreeBoard.  If not, see <http://www.gnu.org/licenses/>.
  */
-//var  radialWindTrue, radialWindDirTrue
 
-
-/*
- * // Fuel gauge constants
- public static final String FUEL_REMAINING = "FFV";
- public static final String FUEL_USED = "FFU";
- public static final String FUEL_USE_RATE = "FFR";
- 
- public static final String ENGINE_RPM = "RPM";
- public static final String ENGINE_HOURS = "EHH";
- public static final String ENGINE_MINUTES = "EMM";
- public static final String ENGINE_TEMP = "ETT";
- public static final String ENGINE_VOLTS = "EVV";
- public static final String ENGINE_OIL_PRESSURE = "EPP";
- public static final String DEPTH_BELOW_TRANSDUCER = "DBT";
- */
 
 var depthArraySize;
 var depthArray = [];
-while(depthArraySize--) depthArray.push(6);
+var anAlarm;
+
    
 function Sail() {
    this.onmessage = function(navObj) {
@@ -51,13 +36,7 @@ function Sail() {
              console.log(navObj.DBT+"\n"+depthArray);
              depthArray.shift();
              console.log(depthArray);
-             if (navObj.DBT < 0.01) {
-                 depthArray.push(0.01);
-             } else {
-                 depthArray.push(navObj.DBT);
-             }
-             console.log(depthArray);
-             //aDepth =  zk.Widget.$('$alarmDepth').getValue();
+             depthArray.push(navObj.DBT);
              anAlarm = zk.Widget.$('$alarmDepth').getValue();
              sPoints = zk.Widget.$('$sparkPts').getValue();
             if (navObj.DBT < anAlarm){
@@ -65,7 +44,9 @@ function Sail() {
             } else {
                 lcdSailDepth.setLcdColor(steelseries.LcdColor.BEIGE);
             }
-            sparkline('spacer',depthArray, true, 'rgba(0,0,255,.5)', 'line');
+
+        $('.dynamicsparkline').sparkline(depthArray,options);
+
       }
       //speed
       if (navObj.SOG) {
@@ -112,7 +93,6 @@ function initSail() {
 
    // Initialzing gauges
 
-
    // wind dir apparent
 
    vpSize = Math.min(window.innerWidth*.30, (window.innerHeight-50)*.75);
@@ -152,10 +132,15 @@ function initSail() {
       unitStringVisible: false
    });
    
-   // Set width of spacer canvas
-   $("#spacer").width(vpWidth*0.3);
+   // Set width of spring div
+   $("#spring").width(vpWidth*0.3);
+   $("#spring").height(vpHeight*.10);
+   wid = Math.round(vpWidth*0.3)+"px";
+   ht = Math.round(vpHeight*.10)+"px";
 
-   // log
+   options = {width: wid, height: ht, maxSpotColor:'', minSpotColor:''};
+
+    // log
    lcdSOW = new steelseries.DisplaySingle('sailLog', {
       height: vpHeight * .25,
       width: vpWidth*.30,
@@ -192,8 +177,6 @@ function initSail() {
       detailStringVisible: true
    });
    
-//             sparkline('spacer',depthArray, true, 'rgba(0,0,255,.5)', 'line');
-
 // make a web socket
 
    addSocketListener(new Sail());

@@ -110,6 +110,7 @@ public class NMEAProcessor extends FreeboardProcessor implements Processor, Free
             // dont need the NMEA now
             map.remove(Constants.NMEA);
             if (bodyStr.contains("GPGGA")){
+                System.out.println("GPGGA + "+bodyStr);
                 bodyStr = new String("$SDDBT,8.1,f,2.4,M,1.3,F*0B");
             }
             Sentence sentence = SentenceFactory.getInstance().createParser(bodyStr);

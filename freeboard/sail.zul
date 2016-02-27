@@ -43,7 +43,12 @@
 <?script src="./js/tween-min.js"?>
 <?script src="./js/steelseries.js"?>
 
+<!--
 <?script src="./js/sparkline.js"?>
+-->
+<?script type="text/javascript" src="./js/jquery-1.8.3.js"?>
+<?script type="text/javascript" src="./js/jquery.sparkline.js"?>
+
 
 <zk>
    <script type="text/javascript" src="./js/sail.js" />
@@ -74,10 +79,7 @@
                         </canvas>
                         </html >
                         <html >
-                        <canvas id="spacer" style="border:1px solid #000000;">
-                           No canvas in your
-                           browser...sorry...
-                        </canvas>
+                        <div id="spring" style="border:1px solid #000000;" class="dynamicsparkline"></div>
                         </html>
                   </vbox >
                   <vbox vflex="1" hflex="1" pack="center" align="center">

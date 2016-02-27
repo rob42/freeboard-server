@@ -51,8 +51,12 @@ public class Constants {
 	/** Speed over ground */
 	public static final String SPEED_OVER_GND = "SOG";
    
-   /** Speed over water **/
+        /** Speed over water **/
 	public static final String SPEED_OVER_WATER = "SOW";
+        
+        /** Trip start UTC  **/
+        public static final String TRIP_START_TIME = "TIMSTART";
+        public static final String TRIP_DISTANCE = "TRIP_DIST";
    
 	/** GPS fix true/false */
 	public static final String GPS_FIX = "FIX";
