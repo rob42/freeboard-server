@@ -76,7 +76,8 @@ function initSail() {
    var vpSize = Math.min(window.innerHeight-50, window.innerWidth);
    var vpHeight = window.innerHeight-50;
    var vpWidth = window.innerWidth;
-
+//   vpHeight = 0.75*vpHeight;
+   
    // Depth 
    //if we cant do canvas, skip out here!
    if (!window.CanvasRenderingContext2D)
