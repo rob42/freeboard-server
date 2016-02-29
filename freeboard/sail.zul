@@ -99,32 +99,62 @@
                             </html>
                         </vbox>
                         
-                        <vbox vflex="1" hflex="1" pack="center" align="center">
-                            <html style="overflow: visible;" hflex="1">
-                                <canvas id="sailLog" >
-                                    No canvas in your
-                                    browser...sorry...
-                                </canvas>
-                            </html>
-                            <html style="overflow: visible;" hflex="1">
-                                <canvas id="sailSOG">
-                                    No canvas in your
-                                    browser...sorry...
-                                </canvas>
-                            </html>
-                            <div id="test">
-                                <hbox hflex="1" vflex="1" pack="center" align="start" >
-                                    <html >
-                                        <canvas id="summary" >
+
+                        <vlayout vflex="1" hflex="1">
+                           
+                            <div id="test1" hflex="1" vflex="1">
+                                <vlayout hflex="1" vflex="1">
+                                    <html style="overflow: visible;">
+                                        <canvas id="sailLog" >
                                             No canvas in your
                                             browser...sorry...
                                         </canvas>
                                     </html>
-                                    <button id="selector" label="Left" image="/widgets/input/button/img/ArrowLeft-16x16.png"
-                                            hoverImage="/widgets/input/button/img/ArrowLeftGreen-16x16.png" width="125px" />
-                                </hbox> 
-                            </div>                        
-                        </vbox>
+                                    <html style="overflow: visible;">
+                                        <canvas id="sailSOG">
+                                            No canvas in your
+                                            browser...sorry...
+                                        </canvas>
+                                    </html>
+                                </vlayout>
+                            </div>
+                            
+                            <div id="test2" hflex="1" vflex="1">
+                                <vlayout hflex="1" vflex="1">
+                                    <div hflex="1" vflex="2">
+                                        <hlayout hflex="1" vflex="1" >
+                                            <html style="overflow: visible;">
+                                                <canvas id="summary1">
+                                                    No canvas in your
+                                                    browser...sorry...
+                                                </canvas>
+                                            </html>
+                                            <html style="overflow: visible;">
+                                                <canvas id="summary2" >
+                                                    No canvas in your
+                                                    browser...sorry...
+                                                </canvas>
+                                            </html>
+                                            <!--                                    <button id="selector" label="Left" image="/widgets/input/button/img/ArrowLeft-16x16.png"
+                                            hoverImage="/widgets/input/button/img/ArrowLeftGreen-16x16.png" width="125px" />-->
+                                        </hlayout> 
+                                    </div>
+                            
+                                    <div hflex="1" vflex="5">
+                                        <hlayout hflex="1" vflex="1">
+                                            <html style="overflow: visible;">
+                                                <canvas id="summary3" >
+                                                    No canvas in your
+                                                    browser...sorry...
+                                                </canvas>
+                                            </html>
+                                        </hlayout>
+                                    </div> 
+                                </vlayout> 
+                            </div>
+                                                 
+                        </vlayout>
+
                     </hbox>
                     <script type="text/javascript" defer="true">
                         initSail();

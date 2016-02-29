@@ -140,7 +140,7 @@ function initSail() {
 
    options = {width: wid, height: ht, maxSpotColor:'', minSpotColor:''};
    
-   $("#selector").height(vpHeight*.10);
+//   $("#selector").height(vpHeight*.10);
 
     // log
    lcdSOW = new steelseries.DisplaySingle('sailLog', {
@@ -177,7 +177,25 @@ function initSail() {
       headerStringVisible: true,
    });
    
-    lcdSummary = new steelseries.DisplaySingle('summary', {
+    lcdSummary1 = new steelseries.DisplaySingle('summary1', {
+      height: vpHeight * .25/2,
+      width: vpWidth*.30/2,
+      lcdDecimals: 1,
+      lcdColor: steelseries.LcdColor.BEIGE,
+      headerString: "Average Speed",
+      headerStringVisible: true,
+   });
+
+    lcdSummary2 = new steelseries.DisplaySingle('summary2', {
+      height: vpHeight * .25/2,
+      width: vpWidth*.30/2,
+      lcdDecimals: 1,
+      lcdColor: steelseries.LcdColor.BEIGE,
+      headerString: "Average Speed",
+      headerStringVisible: true,
+   });
+
+    lcdSummary3 = new steelseries.DisplaySingle('summary3', {
       height: vpHeight * .25/2,
       width: vpWidth*.30/2,
       lcdDecimals: 1,
@@ -186,10 +204,12 @@ function initSail() {
       headerStringVisible: true,
    });
    
-    jq('$selector').height(vpHeight*.25/2);
+//    jq('$selector').height(vpHeight*.25/2);
+//    console.log((document.getElementById('test1')).style.height);
     console.log("vpHeight*.25/2 = " + vpHeight*.25/2);
-    console.log("div ht = "+jq('$test').height());
-    console.log("button ht = "+jq('$selector').height());
+//    console.log("test1 ht = "+jq('$test1').height());
+    console.log("test2 ht = "+jq('$test2').height());
+//    console.log("button ht = "+jq('$selector').height());
 
    
    
