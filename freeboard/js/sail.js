@@ -139,6 +139,8 @@ function initSail() {
    ht = Math.round(vpHeight*.10)+"px";
 
    options = {width: wid, height: ht, maxSpotColor:'', minSpotColor:''};
+   
+   $("#selector").height(vpHeight*.10);
 
     // log
    lcdSOW = new steelseries.DisplaySingle('sailLog', {
@@ -173,9 +175,23 @@ function initSail() {
       lcdColor: steelseries.LcdColor.BEIGE,
       headerString: "SOG Knots",
       headerStringVisible: true,
-      detailString: "Ave: ",
-      detailStringVisible: true
    });
+   
+    lcdSummary = new steelseries.DisplaySingle('summary', {
+      height: vpHeight * .25/2,
+      width: vpWidth*.30/2,
+      lcdDecimals: 1,
+      lcdColor: steelseries.LcdColor.BEIGE,
+      headerString: "Average Speed",
+      headerStringVisible: true,
+   });
+   
+    jq('$selector').height(vpHeight*.25/2);
+    console.log("vpHeight*.25/2 = " + vpHeight*.25/2);
+    console.log("div ht = "+jq('$test').height());
+    console.log("button ht = "+jq('$selector').height());
+
+   
    
 // make a web socket
 

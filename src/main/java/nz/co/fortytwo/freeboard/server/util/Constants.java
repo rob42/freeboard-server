@@ -55,7 +55,8 @@ public class Constants {
 	public static final String SPEED_OVER_WATER = "SOW";
         
         /** Trip start UTC  **/
-        public static final String TRIP_START_TIME = "TIMSTART";
+        public static final String TRIP_START_TIME = "TIM_START";
+        /** Trip odometer **/
         public static final String TRIP_DISTANCE = "TRIP_DIST";
    
 	/** GPS fix true/false */
