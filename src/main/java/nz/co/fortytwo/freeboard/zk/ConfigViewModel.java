@@ -87,6 +87,12 @@ public class ConfigViewModel extends SelectorComposer<Window> {
     @Wire("combobox#cfgDepthUnit")
     private Combobox cfgDepthUnit;
 
+    @Wire("combobox#cfgSOGUnit")
+    private Combobox cfgSOGUnit;
+
+    @Wire("combobox#cfgSOWUnit")
+    private Combobox cfgSOWUnit;
+
     @Wire("textbox#portsToScan")
     private Textbox portsToScan;
 
@@ -311,30 +317,21 @@ public class ConfigViewModel extends SelectorComposer<Window> {
 
             if (NumberUtils.isNumber(cfgDepthOffset.getValue())) {
                 config.setProperty(Constants.DEPTH_ZERO_OFFSET, cfgDepthOffset.getValue());
-                config.setProperty(Constants.PREFER_RMC, (String) useRmcGroup.getSelectedItem().getValue());
-                config.setProperty(Constants.DNS_USE_CHOICE, (String) useHomeGroup.getSelectedItem().getValue());
-                Util.saveConfig();
-                Util.saveConfig();
-                //notify others
                 producer.sendBody(Constants.DEPTH_ZERO_ADJUST_CMD + ":" + cfgDepthOffset.getValue() + ",");
             } else {
                 Messagebox.show("Depth offset must be numeric");
             }
-            String temp = cfgDepthUnit.getSelectedItem().getValue();
-            if (isValidDepthUnit(temp)) {
-                config.setProperty(Constants.DEPTH_UNIT, (String) (cfgDepthUnit.getSelectedItem().getValue()));
-                Util.saveConfig();
-                //notify others
-//				producer.sendBody(Constants.DEPTH_UNIT+":"+cfgDepthUnit.getValue() +",");
-            } else {
-                Messagebox.show("Depth unit must be 'feet' 'Fathoms' or 'meters'");
-            }
+            config.setProperty(Constants.PREFER_RMC, (String) useRmcGroup.getSelectedItem().getValue());
+            config.setProperty(Constants.DNS_USE_CHOICE, (String) useHomeGroup.getSelectedItem().getValue());
+            config.setProperty(Constants.SOG_UNIT, (String) (cfgSOGUnit.getSelectedItem().getValue()));
+            config.setProperty(Constants.SOW_UNIT, (String) (cfgSOWUnit.getSelectedItem().getValue()));
+            config.setProperty(Constants.DEPTH_UNIT, (String) (cfgDepthUnit.getSelectedItem().getValue()));
+            Util.saveConfig();
 
             if (NumberUtils.isNumber(cfgAlarmDepth.getValue())) {
                 config.setProperty(Constants.ALARM_DEPTH, cfgAlarmDepth.getValue());
                 Util.saveConfig();
-                //notify others
-//				producer.sendBody(Constants.DEPTH_ZERO_ADJUST_CMD+":"+cfgDepthOffset.getValue() +",");
+
             } else {
                 Messagebox.show("Alarm depth must be numeric");
             }
@@ -569,6 +566,16 @@ public class ConfigViewModel extends SelectorComposer<Window> {
                 }
             }
 
+            for (Comboitem item : cfgSOGUnit.getItems()) {
+                if (config.getProperty(Constants.SOG_UNIT).equals(item.getValue())) {
+                    cfgSOGUnit.setSelectedItem(item);
+                }
+            }
+            for (Comboitem item : cfgSOWUnit.getItems()) {
+                if (config.getProperty(Constants.SOW_UNIT).equals(item.getValue())) {
+                    cfgSOWUnit.setSelectedItem(item);
+                }
+            }
             for (Comboitem item : cfgDepthUnit.getItems()) {
                 if (config.getProperty(Constants.DEPTH_UNIT).equals(item.getValue())) {
                     cfgDepthUnit.setSelectedItem(item);

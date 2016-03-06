@@ -50,14 +50,17 @@ public class Constants {
 
 	/** Speed over ground */
 	public static final String SPEED_OVER_GND = "SOG";
+//        public static final String SPEED_OVER_GND_UNIT = "SOGU";
    
         /** Speed over water **/
 	public static final String SPEED_OVER_WATER = "SOW";
+//        public static final String SPEED_OVER_WATER_UNIT = "SOWU";
         
         /** Trip start UTC  **/
-        public static final String TRIP_START_TIME = "TIM_START";
+//        public static final String TRIP_START_TIME = "TIME_START";
+//        public static final String TRIP_START_DATE = "DATE_START";
         /** Trip odometer **/
-        public static final String TRIP_DISTANCE = "TRIP_DIST";
+//        public static final String TRIP_DISTANCE = "TRIP_DIST";
    
 	/** GPS fix true/false */
 	public static final String GPS_FIX = "FIX";
@@ -185,7 +188,13 @@ public class Constants {
 	public static final String WIND_ZERO_OFFSET = "freeboard.wind.offset";
 	public static final String DEPTH_ZERO_OFFSET = "freeboard.depth.offset";
 	public static final String DEPTH_UNIT = "freeboard.depth.unit";
+	public static final String SOG_UNIT = "freeboard.sog.unit";
+	public static final String SOW_UNIT = "freeboard.sow.unit";
 	public static final String ALARM_DEPTH = "freeboard.alarm.depth";
+	public static final String TRIP_DISTANCE = "freeboard.trip.distance";
+	public static final String TRIP_START_DATE = "freeboard.trip.start.date";
+	public static final String TRIP_START_TIME = "freeboard.trip.start.time";
+        
 	public static final String SPARKLINE_PTS = "freeboard.sparkline.points";
 
 	// gui constants

@@ -21,43 +21,101 @@
 var depthArraySize;
 var depthArray = [];
 var anAlarm;
+var selectorNdx = 0;//colours
+var gaugeLcdColor = steelseries.LcdColor.BEIGE;
+//TILTED_BLACK
+var gaugePointerType = steelseries.PointerType.TYPE4;
+var gaugeBackgroundColor = steelseries.BackgroundColor.CARBON;
+var gaugeFrameDesign = steelseries.FrameDesign.BLACK_METAL;
+var vpSize;
+var vpHeight;
+var vpWidth;
+var sogUnit;
+var sowUnit;
+var depthUnit;
 
-   
+
 function Sail() {
-   this.onmessage = function(navObj) {
+    this.onmessage = function (navObj) {
 
-      //avoid commands
-      if (!navObj)
-         return true;
+        //avoid commands
+        if (!navObj)
+            return true;
 
-      //depth
-      if (navObj.DBT) {
-         lcdSailDepth.setValue(navObj.DBT);
-             console.log(navObj.DBT+"\n"+depthArray);
-             depthArray.shift();
-             console.log(depthArray);
-             depthArray.push(navObj.DBT);
-             anAlarm = zk.Widget.$('$alarmDepth').getValue();
-             sPoints = zk.Widget.$('$sparkPts').getValue();
-            if (navObj.DBT < anAlarm){
+        //depth
+        if (navObj.DBT) {
+            unitTemp = zk.Widget.$('$cfgDepthUnit').getValue();
+            if (unitTemp !== depthUnit) {
+                headerString = "Depth " + unitTemp;
+                depthUnit = unitTemp;
+                lcdSailDepth = new steelseries.DisplaySingle('sailDepth', {
+                    height: vpHeight * .25,
+                    width: vpWidth * .30,
+                    lcdDecimals: 1,
+                    lcdColor: steelseries.LcdColor.BEIGE,
+                    headerString: headerString,
+                    headerStringVisible: true,
+                    unitString: depthUnit,
+                    unitStringVisible: false
+                });
+            }
+            lcdSailDepth.setValue(navObj.DBT);
+//            console.log(navObj.DBT + "\n" + depthArray);
+            depthArray.shift();
+//            console.log(depthArray);
+            depthArray.push(navObj.DBT);
+            anAlarm = zk.Widget.$('$alarmDepth').getValue();
+            sPoints = zk.Widget.$('$sparkPts').getValue();
+            if (navObj.DBT < anAlarm) {
                 lcdSailDepth.setLcdColor(steelseries.LcdColor.RED);
             } else {
                 lcdSailDepth.setLcdColor(steelseries.LcdColor.BEIGE);
             }
+            $('.dynamicsparkline').sparkline(depthArray, options);
+        }
 
-        $('.dynamicsparkline').sparkline(depthArray,options);
+        //SOG
+        if (navObj.SOG) {
+//            console.log("navObj.SOG = " + navObj.SOG.toString());
+            unitTemp = zk.Widget.$('$cfgSOGUnit').getValue();
+            if (unitTemp !== sogUnit) {
+//                console.log("unitTemp, sogUnit = " + unitTemp + " " + sogUnit);
+                headerString = "SOG " + unitTemp;
+                sogUnit = unitTemp;
+                lcdSOG = new steelseries.DisplaySingle('sailSOG', {
+                    height: vpHeight * .25,
+                    width: vpWidth * .30,
+                    lcdDecimals: 3,
+                    lcdColor: steelseries.LcdColor.BEIGE,
+                    headerString: headerString,
+                    headerStringVisible: true,
+                });
+            }
+//            console.log("SOG= " + navObj.SOG);
+            lcdSOG.setValue(navObj.SOG);
+        }
 
-      }
-      //speed
-      if (navObj.SOG) {
-         lcdSOG.setValue(navObj.SOG);
-      }
-      if (navObj.SOW) {
-         lcdSOW.setValue(navObj.SOW);
-      }
-   };
-
+        //SOW
+        if (navObj.SOW) {
+            unitTemp = zk.Widget.$('$cfgSOWUnit').getValue();
+            if (unitTemp !== sowUnit) {
+                headerString = "SOW " + unitTemp;
+                sowUnit = unitTemp;
+                lcdSOW = new steelseries.DisplaySingle('sailLog', {
+                    height: vpHeight * .25,
+                    width: vpWidth * .30,
+                    lcdDecimals: 3,
+                    lcdColor: steelseries.LcdColor.BEIGE,
+                    headerString: headerString,
+                    headerStringVisible: true,
+                });
+            }
+            lcdSOW.setValue(navObj.SOW);
+        }
+    };
 }
+
+
 
 //setup gauge scales here
 
@@ -69,152 +127,185 @@ var gaugeBackgroundColor = steelseries.BackgroundColor.CARBON;
 var gaugeFrameDesign = steelseries.FrameDesign.BLACK_METAL;
 
 function initSail() {
-   // Define some sections for gauges
-   // Initialzing gauges
-   //get the smallest distance
-   // The SailToolbar is located at the top of the window and is 50 px high
-   var vpSize = Math.min(window.innerHeight-50, window.innerWidth);
-   var vpHeight = window.innerHeight-50;
-   var vpWidth = window.innerWidth;
-//   vpHeight = 0.75*vpHeight;
-   
-   // Depth 
-   //if we cant do canvas, skip out here!
-   if (!window.CanvasRenderingContext2D)
-      return;
-   // 
-   // Initialzing displays
-   var tackAngle = 45;
-   var areasCloseHaul = [
-      steelseries.Section((0 - tackAngle), 0, 'rgba(0, 0, 220, 0.3)'),
-      steelseries.Section(0, tackAngle, 'rgba(0, 0, 220, 0.3)')];
-   var areasCloseHaulTrue = [
-      steelseries.Section((360 - tackAngle), 0, 'rgba(0, 0, 220, 0.3)'),
-      steelseries.Section(0, tackAngle, 'rgba(0, 0, 220, 0.3)')];
+    // Define some sections for gauges
+    // Initialzing gauges
+    //get the smallest distance
+    // The SailToolbar is located at the top of the window and is 50 px high
+    vpSize = Math.min(window.innerHeight - 50, window.innerWidth);
+    vpHeight = window.innerHeight - 50;
+    vpWidth = window.innerWidth;
 
-   // Initialzing gauges
+    // Depth 
+    //if we cant do canvas, skip out here!
+    if (!window.CanvasRenderingContext2D)
+        return;
+    // 
+    // Initialzing displays
+    var tackAngle = 45;
+    var areasCloseHaul = [
+        steelseries.Section((0 - tackAngle), 0, 'rgba(0, 0, 220, 0.3)'),
+        steelseries.Section(0, tackAngle, 'rgba(0, 0, 220, 0.3)')];
+    var areasCloseHaulTrue = [
+        steelseries.Section((360 - tackAngle), 0, 'rgba(0, 0, 220, 0.3)'),
+        steelseries.Section(0, tackAngle, 'rgba(0, 0, 220, 0.3)')];
+    
+    // Initialzing gauges
+    // wind dir apparent
 
-   // wind dir apparent
-
-   vpSize = Math.min(window.innerWidth*.30, (window.innerHeight-50)*.75);
-   radialWindDirApp = new steelseries.WindDirection('sailWindDir', {
-      // size : document.getElementById('canvasWindDirApp').width,
-      titleString: "WIND          APP",
-      size: vpSize,
-      lcdVisible: true,
-      lcdColor: steelseries.LcdColor.BEIGE,
-      pointSymbolsVisible: false,
-      degreeScaleHalf: true,
-      section: areasCloseHaul,
-      area: areasCloseHaul,
-      pointerTypeLatest: steelseries.PointerType.TYPE2,
-      pointerTypeAverage: steelseries.PointerType.TYPE1,
-      backgroundColor: steelseries.BackgroundColor.BROWN,
-   });
+    vpSize = Math.min(window.innerWidth * .30, (window.innerHeight - 50) * .75);
+    radialWindDirApp = new steelseries.WindDirection('sailWindDir', {
+        // size : document.getElementById('canvasWindDirApp').width,
+        titleString: "WIND          APP",
+        size: vpSize,
+        lcdVisible: true,
+        lcdColor: steelseries.LcdColor.BEIGE,
+        pointSymbolsVisible: false,
+        degreeScaleHalf: true,
+        section: areasCloseHaul,
+        area: areasCloseHaul,
+        pointerTypeLatest: steelseries.PointerType.TYPE2,
+        pointerTypeAverage: steelseries.PointerType.TYPE1,
+        backgroundColor: steelseries.BackgroundColor.BROWN,
+    });
 
 
-   // depth
-
-   depthUnit = zk.Widget.$('$depthUnit').getValue();
-   var depthString = "Depth " + depthUnit ;
-   
+    // depth
     // init Sparkline array
     depthArraySize = zk.Widget.$('$sparkPts').getValue();
-    while(depthArraySize--) depthArray.push(6);
+    while (depthArraySize--)
+        depthArray.push(6);
 
-   lcdSailDepth = new steelseries.DisplaySingle('sailDepth', {
-      height: vpHeight * .25,
-      width: vpWidth* .30,
-      lcdDecimals: 1,
-      lcdColor: steelseries.LcdColor.BEIGE,
-      headerString: depthString,
-      headerStringVisible: true,
-      unitString: depthUnit,
-      unitStringVisible: false
-   });
-   
-   // Set width of spring div
-   $("#spring").width(vpWidth*0.3);
-   $("#spring").height(vpHeight*.10);
-   wid = Math.round(vpWidth*0.3)+"px";
-   ht = Math.round(vpHeight*.10)+"px";
+    depthUnit = zk.Widget.$('$depthUnit').getValue();
+    headerString = "Depth " + depthUnit;
+    lcdSailDepth = new steelseries.DisplaySingle('sailDepth', {
+        height: vpHeight * .25,
+        width: vpWidth * .30,
+        lcdDecimals: 1,
+        lcdColor: steelseries.LcdColor.BEIGE,
+        headerString: headerString,
+        headerStringVisible: true,
+        unitString: depthUnit,
+        unitStringVisible: false
+    });
 
-   options = {width: wid, height: ht, maxSpotColor:'', minSpotColor:''};
-   
+    // Set width of spring div
+    $("#spring").width(vpWidth * 0.3);
+    $("#spring").height(vpHeight * .10);
+    wid = Math.round(vpWidth * 0.3) + "px";
+    ht = Math.round(vpHeight * .10) + "px";
+
+    options = {width: wid, height: ht, maxSpotColor: '', minSpotColor: ''};
+
 //   $("#selector").height(vpHeight*.10);
 
     // log
-   lcdSOW = new steelseries.DisplaySingle('sailLog', {
-      height: vpHeight * .25,
-      width: vpWidth*.30,
-      lcdDecimals: 1,
-      lcdColor: steelseries.LcdColor.BEIGE,
-      headerString: "SOW Knots  ",
-      headerStringVisible: true,
-   });
+    sowUnit = zk.Widget.$('$cfgSOWUnit').getValue();
+    headerString = "SOW " + sowUnit;
+    lcdSOW = new steelseries.DisplaySingle('sailLog', {
+        height: vpHeight * .25,
+        width: vpWidth * .30,
+        lcdDecimals: 1,
+        lcdColor: steelseries.LcdColor.BEIGE,
+        headerString: headerString,
+        headerStringVisible: true,
+    });
 
-   // wind app
+    // wind app
 
-   lcdWindApp = new steelseries.DisplayMulti('sailWind', {
-      // width : document.getElementById('canvasWindApp').width,
-      // : document.getElementById('canvasWindApp').height,
-      height: vpHeight * .25,
-      width: vpWidth*.30,
-      lcdDecimals: 1,
-      lcdColor: steelseries.LcdColor.BEIGE,
-      headerString: "Knots(A)",
-      headerStringVisible: true,
-      detailString: "Avg: ",
-      detailStringVisible: true,
-   });
+    lcdWindApp = new steelseries.DisplayMulti('sailWind', {
+        // width : document.getElementById('canvasWindApp').width,
+        // : document.getElementById('canvasWindApp').height,
+        height: vpHeight * .25,
+        width: vpWidth * .30,
+        lcdDecimals: 1,
+        lcdColor: steelseries.LcdColor.BEIGE,
+        headerString: "Knots(A)",
+        headerStringVisible: true,
+        detailString: "Avg: ",
+        detailStringVisible: true,
+    });
 
-   // GPS SOG
-   lcdSOG = new steelseries.DisplaySingle('sailSOG', {
-      height: vpHeight * .25,
-      width: vpWidth*.30,
-      lcdDecimals: 1,
-      lcdColor: steelseries.LcdColor.BEIGE,
-      headerString: "SOG Knots",
-      headerStringVisible: true,
-   });
-   
-    lcdSummary1 = new steelseries.DisplaySingle('summary1', {
-      height: vpHeight * .25/2,
-      width: vpWidth*.30/2,
-      lcdDecimals: 1,
-      lcdColor: steelseries.LcdColor.BEIGE,
-      headerString: "Average Speed",
-      headerStringVisible: true,
-   });
+    // GPS SOG
+    sogUnit = zk.Widget.$('$cfgSOGUnit').getValue();
+    headerString = "SOG " + sogUnit;
+    lcdSOG = new steelseries.DisplaySingle('sailSOG', {
+        height: vpHeight * .25,
+        width: vpWidth * .30,
+        lcdDecimals: 3,
+        lcdColor: steelseries.LcdColor.BEIGE,
+        headerString: headerString,
+        headerStringVisible: true,
+    });
 
-    lcdSummary2 = new steelseries.DisplaySingle('summary2', {
-      height: vpHeight * .25/2,
-      width: vpWidth*.30/2,
-      lcdDecimals: 1,
-      lcdColor: steelseries.LcdColor.BEIGE,
-      headerString: "Average Speed",
-      headerStringVisible: true,
-   });
 
-    lcdSummary3 = new steelseries.DisplaySingle('summary3', {
-      height: vpHeight * .25/2,
-      width: vpWidth*.30/2,
-      lcdDecimals: 1,
-      lcdColor: steelseries.LcdColor.BEIGE,
-      headerString: "Average Speed",
-      headerStringVisible: true,
-   });
-   
-//    jq('$selector').height(vpHeight*.25/2);
+    lcdSummary = new steelseries.DisplaySingle('summary', {
+        height: vpHeight * .25 / 2,
+        width: vpWidth * .30 / 2,
+        lcdDecimals: 1,
+        lcdColor: steelseries.LcdColor.BEIGE,
+        headerString: "Distance",
+        headerStringVisible: true,
+    });
+
+    jq('$Selector').height(vpHeight * .25 / 2);
+    jq('$Selector').width(vpWidth * .30 / 2);
+
 //    console.log((document.getElementById('test1')).style.height);
-    console.log("vpHeight*.25/2 = " + vpHeight*.25/2);
-//    console.log("test1 ht = "+jq('$test1').height());
-    console.log("test2 ht = "+jq('$test2').height());
-//    console.log("button ht = "+jq('$selector').height());
+//    console.log("vpHeight*.25/2 = " + vpHeight * .25 / 2);
+//    console.log("Selector ht = " + jq('$Selector').height());
+//    console.log("test2 ht = " + jq('$test2').height());
 
-   
-   
 // make a web socket
 
-   addSocketListener(new Sail());
+    addSocketListener(new Sail());
 }
+
+function selectorButton() {
+//    console.log("gotIt");
+    selectorNdx++;
+    if (selectorNdx >= 3) {
+        selectorNdx = 0;
+    }
+    switch (selectorNdx) {
+        case 0 :
+            headerString = "Distance n.m.";
+            lcdSummary = new steelseries.DisplaySingle('summary', {
+                height: vpHeight * .25 / 2,
+                width: vpWidth * .30 / 2,
+                lcdDecimals: 1,
+                lcdColor: steelseries.LcdColor.BEIGE,
+                headerString: headerString,
+                headerStringVisible: true,
+            });
+            break;
+        case 1:
+            headerString = "Elapsed Time";
+            lcdSummary = new steelseries.DisplaySingle('summary', {
+                height: vpHeight * .25 / 2,
+                width: vpWidth * .30 / 2,
+                lcdDecimals: 1,
+                lcdColor: steelseries.LcdColor.BEIGE,
+                headerString: headerString,
+                headerStringVisible: true,
+            });
+            break;
+        case 2:
+            headerString = "Average Speed";
+            lcdSummary = new steelseries.DisplaySingle('summary', {
+                height: vpHeight * .25 / 2,
+                width: vpWidth * .30 / 2,
+                lcdDecimals: 1,
+                lcdColor: steelseries.LcdColor.BEIGE,
+                headerString: "Average Speed",
+                headerStringVisible: true,
+            });
+            break;
+    }
+}
+;
+
+function resetButton() {
+    console.log("got reset");
+}
+;
+

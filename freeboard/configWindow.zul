@@ -83,6 +83,24 @@
 									<comboitem label="Fathoms" value="F"/>
 									</combobox>
 							</row>
+						        <row hflex="min">
+								<label value="Speed Over Ground Unit" />
+								<combobox id="cfgSOGUnit"
+									tooltiptext= "km/hr, Mi/hr, Kt">
+									<comboitem label="km/hr" value="km/hr"/>
+									<comboitem label="mi/hr" value="mi/hr"/>
+									<comboitem label="Kt" value="Kt"/>
+									</combobox>
+							</row>
+						        <row hflex="min">
+								<label value="Speed Over Water Unit"/>
+								<combobox id="cfgSOWUnit"
+									tooltiptext= "km/hr, Mi/hr, Kt">
+									<comboitem label="km/hr" value="km/hr"/>
+									<comboitem label="Mi/hr" value="Mi/hr"/>
+									<comboitem label="Kt" value="Kt"/>
+									</combobox>
+							</row>
 							<row hflex="min">
 								<label value="Depth Offset" />
 								<textbox id="cfgDepthOffset"

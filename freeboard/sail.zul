@@ -102,7 +102,7 @@
 
                         <vbox vflex="1" hflex="1" pack="center" align="center" style="margin-left:auto; margin-right:auto; text-align:center oveflow:visible">
                            
-                            <div id="test1" hflex="1" vflex="5">
+                            <div id="test1" hflex="1" vflex="3">
                                 <vbox hflex="1" vflex="1" pack="center" align="center">
                                     <html style="overflow: visible;">                                       
                                         <canvas id="sailLog" >
@@ -124,24 +124,19 @@
                                     <div hflex="1" vflex="1">
                                         <hbox hflex="1" vflex="1" pack="center" align="center">
                                             <html style="overflow: visible;">
-                                                <canvas id="summary1">
+                                                <canvas id="summary">
                                                     No canvas in your
                                                     browser...sorry...
                                                 </canvas>
                                             </html>
-                                            <html style="overflow: visible;">
-                                                <canvas id="summary2" >
-                                                    No canvas in your
-                                                    browser...sorry...
-                                                </canvas>
-                                            </html>
-                                            <!--                                    <button id="selector" label="Left" image="/widgets/input/button/img/ArrowLeft-16x16.png"
-                                            hoverImage="/widgets/input/button/img/ArrowLeftGreen-16x16.png" width="125px" />-->
+                                                <button id="Selector" label="Select" image="img/Rollover50x50.png" tooltiptext="Select" 
+                                                    mold="trendy" style="padding:2px; font-size:16px; font-weight: bold;"
+                                                    w:onClick="selectorButton()"/>
                                         </hbox> 
                                     </div>
                                 </vbox>
                             </div>
-                            
+                            <!--
                             <div hflex="1" vflex="1">
                                 <hbox hflex="1" vflex="1" pack="center" align="center">
                                     <html style="overflow: visible;">
@@ -152,7 +147,7 @@
                                     </html>
                                 </hbox>
                             </div> 
-                            
+                            -->
                         </vbox> 
                     </hbox>
                     
