@@ -30,7 +30,8 @@
 		 top="10px" left="50px"  mode="overlapped" visible="false" minimizable="true" >
 		 
 		<style>
-			.z-panel-body, .z-window-modal-cnt-noborder, .z-window-highlighted-cnt-noborder, .z-window-embedded-cnt-noborder, .z-window-overlapped-cnt-noborder, .z-window-popup-cnt-noborder
+			.z-window-content, .z-panel-body, .z-window-modal-cnt-noborder, .z-window-highlighted-cnt-noborder, 
+			.z-window-embedded-cnt-noborder, .z-window-overlapped-cnt-noborder, .z-window-popup-cnt-noborder
 			.z-window-embedded, .z-window-modal, .z-window-overlapped, .z-window-popup, .z-window-highlighted {
 				    overflow: visible;
 				}
