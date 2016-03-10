@@ -225,8 +225,6 @@ public class Constants {
 	public static final String DNS_USE_HOME = "home";
 	public static final String NMEA_XDR = "freeboard.nmea.";
 	public static final String XDR =  "XDR.";
-   
-   public static final String PREFER_RMC = "freeboard.prefer.rmc";
 
 	//debug flags
 	public static final String SEND_MESSAGE = "freeboard.debug.sendMessage";

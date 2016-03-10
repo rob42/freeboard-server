@@ -29,7 +29,6 @@
 	<div height="380px">
 
 		<window id="depth"
-			<<<<<<< HEAD
 			apply="nz.co.fortytwo.freeboard.zk.DepthViewModel"
 			height="30px" width="100px" title="Depth" mode="overlapped"
 			visible="false" minimizable="true" >
