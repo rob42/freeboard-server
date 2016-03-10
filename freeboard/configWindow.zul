@@ -67,6 +67,7 @@
 								<textbox id="cfgCompassOffset"
 									tooltip="+/- degrees offset" />
 							</row>
+
 							<row hflex="min">
 
 								<label value="Heading source" />
@@ -75,14 +76,26 @@
 									<radio id="useHdgRadio" label="HDG" value="false" />
 								</radiogroup>
 
+							</row>
+                     		<row hflex="min">
+
 								<label value="Depth Unit" />
-								<textbox id="cfgDepthUnit"
-									tooltip="feet (f) meters (m) or fathoms (F)" />
+								<combobox id="cfgDepthUnit"
+									tooltiptext="feet (f) meters (m) or fathoms (F)" >
+									<comboitem label="feet" value="f"/>
+									<comboitem label="meters" value="m"/>
+									<comboitem label="Fathoms" value="F"/>
+									</combobox>
 							</row>
 							<row hflex="min">
 								<label value="Depth Offset" />
 								<textbox id="cfgDepthOffset"
 									tooltip="Transducer depth below water" />
+							</row>
+							<row hflex="min">
+								<label value="Alarm Depth" />
+								<textbox id="cfgAlarmDepth"
+									tooltip="Shows alarm if depth less than this value." />
 							</row>
 							<row>
 								<hbox>

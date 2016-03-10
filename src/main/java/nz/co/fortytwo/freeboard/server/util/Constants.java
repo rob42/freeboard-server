@@ -50,6 +50,10 @@ public class Constants {
 
 	/** Speed over ground */
 	public static final String SPEED_OVER_GND = "SOG";
+   
+   /** Speed over water **/
+	public static final String SPEED_OVER_WATER = "SOW";
+   
 	/** GPS fix true/false */
 	public static final String GPS_FIX = "FIX";
 	/** satellites */
@@ -176,6 +180,7 @@ public class Constants {
 	public static final String WIND_ZERO_OFFSET = "freeboard.wind.offset";
 	public static final String DEPTH_ZERO_OFFSET = "freeboard.depth.offset";
 	public static final String DEPTH_UNIT = "freeboard.depth.unit";
+	public static final String ALARM_DEPTH = "freeboard.alarm.depth";
 
 	// gui constants
 	public static final String LOGG_X = "freeboard.logg.x";
@@ -220,6 +225,8 @@ public class Constants {
 	public static final String DNS_USE_HOME = "home";
 	public static final String NMEA_XDR = "freeboard.nmea.";
 	public static final String XDR =  "XDR.";
+   
+   public static final String PREFER_RMC = "freeboard.prefer.rmc";
 
 	//debug flags
 	public static final String SEND_MESSAGE = "freeboard.debug.sendMessage";

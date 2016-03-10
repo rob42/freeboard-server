@@ -32,11 +32,9 @@ import net.sf.marineapi.nmea.event.SentenceListener;
 import net.sf.marineapi.nmea.parser.BVEParser;
 import net.sf.marineapi.nmea.parser.CruzproXDRParser;
 import net.sf.marineapi.nmea.parser.DataNotAvailableException;
-import net.sf.marineapi.nmea.parser.ParseException;
 import net.sf.marineapi.nmea.parser.SentenceFactory;
 import net.sf.marineapi.nmea.sentence.BVESentence;
 import net.sf.marineapi.nmea.sentence.DBTSentence;
-import net.sf.marineapi.nmea.sentence.DepthSentence;
 import net.sf.marineapi.nmea.sentence.HeadingSentence;
 import net.sf.marineapi.nmea.sentence.MWVSentence;
 import net.sf.marineapi.nmea.sentence.PositionSentence;
@@ -52,6 +50,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
+
 
 /**
  * Processes NMEA sentences in the body of a message, firing events to interested listeners
@@ -224,8 +223,8 @@ public class NMEAProcessor extends FreeboardProcessor implements Processor, Free
 			private boolean startLon = true;
 			double previousLat = 0;
 			double previousLon = 0;
-			double previousSpeed = 0;
-			
+         double gpsPreviousSpeed = 0;
+         double paddlePreviousSpeed = 0;
 			static final double ALPHA = 1 - 1.0 / 6;
 
 			public void sentenceRead(SentenceEvent evt) {
@@ -251,8 +250,10 @@ public class NMEAProcessor extends FreeboardProcessor implements Processor, Free
 						}
 						previousLon = Util.movingAverage(ALPHA, previousLon, sen.getPosition().getLongitude());
 						map.put(Constants.LON, previousLon);
-					}catch(ParseException p){
-						if(logger.isDebugEnabled())logger.debug(p);
+               } catch (DataNotAvailableException p) {
+                  if (logger.isDebugEnabled()) {
+                     logger.debug(p);
+                  }
 					}
 				}
 
@@ -264,8 +265,10 @@ public class NMEAProcessor extends FreeboardProcessor implements Processor, Free
 						} else {
 							map.put(Constants.MAG_HEADING, sen.getHeading());
 						}
-					}catch(ParseException p){
-						if(logger.isDebugEnabled())logger.debug(p);
+               } catch (DataNotAvailableException p) {
+                  if (logger.isDebugEnabled()) {
+                     logger.debug(p);
+                  }
 					}
 				}
 				if (evt.getSentence() instanceof RMCSentence) {
@@ -277,27 +280,33 @@ public class NMEAProcessor extends FreeboardProcessor implements Processor, Free
 							map.put(Constants.COURSE_OVER_GND, sen.getCourse());
 						}
 					}
-					previousSpeed = Util.movingAverage(ALPHA, previousSpeed, sen.getSpeed());
-					map.put(Constants.SPEED_OVER_GND, previousSpeed);
+               gpsPreviousSpeed = Util.movingAverage(ALPHA, gpsPreviousSpeed, sen.getSpeed());
+               map.put(Constants.SPEED_OVER_GND, gpsPreviousSpeed);
 				}
 				if (evt.getSentence() instanceof VHWSentence) {
 					VHWSentence sen = (VHWSentence) evt.getSentence();
 					try{
-						previousSpeed = Util.movingAverage(ALPHA, previousSpeed, sen.getSpeedKnots());
-						map.put(Constants.SPEED_OVER_GND, previousSpeed);
-					}catch(ParseException p){
-						if(logger.isDebugEnabled())logger.debug(p);
+                  paddlePreviousSpeed = Util.movingAverage(ALPHA, paddlePreviousSpeed, sen.getSpeedKnots());
+                  map.put(Constants.SPEED_OVER_WATER, paddlePreviousSpeed);
+               } catch (DataNotAvailableException p) {
+                  if (logger.isDebugEnabled()) {
+                     logger.debug(p);
+                  }
 					}
 					try{
 						map.put(Constants.MAG_HEADING, sen.getMagneticHeading());
-					}catch(ParseException p){
-						if(logger.isDebugEnabled())logger.debug(p);
+               } catch (DataNotAvailableException p) {
+                  if (logger.isDebugEnabled()) {
+                     logger.debug(p);
+                  }
 					}
 					try{
 						map.put(Constants.COURSE_OVER_GND, sen.getHeading());
-					}catch(ParseException p){
-						if(logger.isDebugEnabled())logger.debug(p);
+               } catch (DataNotAvailableException p) {
+                  if (logger.isDebugEnabled()) {
+                     logger.debug(p);
 					}
+               }
 
 				}
 
@@ -425,5 +434,6 @@ public class NMEAProcessor extends FreeboardProcessor implements Processor, Free
 			}
 		});
 	}
+
 
 }

@@ -5,7 +5,7 @@
 	<groupId>nz.co.fortytwo.freeboard</groupId>
 	<artifactId>freeboard-server</artifactId>
 
-	<version>0.5.22-SNAPSHOT</version>
+	<version>0.5.59-SNAPSHOT</version>
 
 	<name>Freeboard Server</name>
 
@@ -93,7 +93,7 @@
 		<dependency>
 			<groupId>com.sparetimelabs</groupId>
 			<artifactId>purejavacomm</artifactId>
-			<version>0.0.21</version>
+			<version>0.0.17</version>
 		</dependency>
 
 		<!-- Camel -->

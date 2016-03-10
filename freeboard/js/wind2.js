@@ -48,7 +48,6 @@ function resizeWind(amount) {
 }
 function Wind2() {
 	this.onmessage = function(navObj) {
-
 		// avoid commands
 		if (!navObj)
 			return true;
