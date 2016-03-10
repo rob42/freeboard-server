@@ -1,6 +1,6 @@
 /*
  * Copyright 2012,2013 Robert Huitema robert@42.co.nz
- * 
+ *
  * This file is part of FreeBoard. (http://www.42.co.nz/freeboard)
  *
  *  FreeBoard is free software: you can redistribute it and/or modify
@@ -36,7 +36,7 @@
 
 function Engine () {
 	this.onmessage = function (navObj) {
-		
+
 			//avoid commands
 			if (!navObj)
 				return true;
@@ -45,8 +45,8 @@ function Engine () {
 					radialFuel.setValue(navObj.FFV);
 			}
 			//depth
-			if (navObj.DPT) {
-					linearDepth.setValue(navObj.DPT);
+			if (navObj.DBT) {
+					linearDepth.setValue(navObj.DBT);
 			}
 			//speed
 			if (navObj.SOG) {
@@ -68,15 +68,15 @@ function Engine () {
 			if (navObj.EPP) {
 					radialOil.setValue(navObj.EPP);
 			}
-			
+
 			//trim
 			if (navObj.EDT) {
 					radialTrim.setValue(navObj.EDT);
 			}
-			
-		
+
+
 	};
-	
+
 }
 
 //setup gauge scales here
@@ -110,12 +110,12 @@ function initEngine() {
 	// Define some sections for gauges
 
 	var redLine = [ steelseries.Section(redLineRpm, maxRpm, 'rgba(220, 0, 0, 0.3)')];
-	
+
 	// Initialzing gauges
 	//get the smallest distance
 	var vpSize=Math.min(window.innerHeight,window.innerWidth);
 	//engine rpm
-	radialEngineRpm = new steelseries.Radial('canvasEngineRpm', {
+	 radialEngineRpm = new steelseries.Radial('canvasEngineRpm', {
 		gaugeType : steelseries.GaugeType.TYPE4,
 		//size : document.getElementById('canvasEngineRpm').width,
 		size: vpSize*.6,
@@ -130,13 +130,13 @@ function initEngine() {
 		lcdColor: gaugeLcdColor,
 		pointerType : gaugePointerType,
 		backgroundColor: gaugeBackgroundColor,
-		frameDesign: gaugeFrameDesign,
+		//frameDesign: gaugeFrameDesign
 	});
-	
+
 	// Depth dir
-	linearDepth = new steelseries.Linear('canvasDepth', {
-		//size : document.getElementById('canvasDepth').width,
-		width: vpSize*.3,
+	linearDepth = new steelseries.Linear('canvasLinearDepth', {
+		//size : document.getElementById('canvasLinearDepth').width,
+	width: vpSize*.3,
 		height: vpSize*.6,
 		titleString : "Depth",
 		maxValue : 60,
@@ -145,7 +145,7 @@ function initEngine() {
 		//pointerTypeLatest : gaugePointerType,
 		//pointerTypeAverage : steelseries.PointerType.TYPE1,
 		backgroundColor: gaugeBackgroundColor,
-		frameDesign: gaugeFrameDesign,
+		//frameDesign: gaugeFrameDesign,
 	});
 	// wind dir
 	radialBoatSpeed = new steelseries.Radial('canvasBoatSpeed', {
@@ -158,16 +158,16 @@ function initEngine() {
 		pointerType: gaugePointerType,
 		//pointerTypeAverage : steelseries.PointerType.TYPE1,
 		backgroundColor: gaugeBackgroundColor,
-		frameDesign: gaugeFrameDesign,
+		//frameDesign: gaugeFrameDesign,
 	});
-	
+
 	// oil
 	var oilSections = [ steelseries.Section(0, minOilPsi, 'rgba(0, 0, 220, 0.3)'),
 		     			steelseries.Section(minOilPsi, maxOilPsi, 'rgba(0, 220, 0, 0.3)'),
 		     			steelseries.Section(maxOilPsi, oilPsiFullScale, 'rgba(220,0, 0, 0.3)') ];
 	radialOil = new steelseries.RadialVertical('canvasOil', {
 		gaugeType : steelseries.GaugeType.TYPE4,
-		size : vpSize/7,
+		size : vpSize*.3,
 		maxValue : oilPsiFullScale,
 		//threshold : OilPsi,
 		section : oilSections,
@@ -177,17 +177,17 @@ function initEngine() {
 		lcdColor: gaugeLcdColor,
 		pointerType : gaugePointerType,
 		backgroundColor: gaugeBackgroundColor,
-		frameDesign: gaugeFrameDesign,
+		//frameDesign: gaugeFrameDesign,
 	});
 
-	
+
 	// temp
 	var tempSections = [ steelseries.Section(0, minTemp, 'rgba(0, 0, 220, 0.3)'),
 		     			steelseries.Section(minTemp, maxTemp, 'rgba(0, 220, 0, 0.3)'),
 		     			steelseries.Section(maxTemp, tempFullScale, 'rgba(220,0, 0, 0.3)') ];
 	radialTemp = new steelseries.RadialVertical('canvasTemp', {
 		gaugeType : steelseries.GaugeType.TYPE4,
-		size : vpSize/7,
+		size : vpSize*.3,
 		maxValue : tempFullScale,
 		//threshold : 300,
 		section : tempSections,
@@ -197,17 +197,17 @@ function initEngine() {
 		lcdColor: gaugeLcdColor,
 		pointerType : gaugePointerType,
 		backgroundColor: gaugeBackgroundColor,
-		frameDesign: gaugeFrameDesign,
+		//frameDesign: gaugeFrameDesign,
 	});
-	
-	
+
+
 	// volts
 	var voltsSections = [ steelseries.Section(voltsMinScale, minVolts, 'rgba(0, 0, 220, 0.3)'),
 		steelseries.Section(minVolts, maxVolts, 'rgba(0, 220, 0, 0.3)'),
 			steelseries.Section(maxVolts, voltsFullScale, 'rgba(220,0, 0, 0.3)') ];
 	radialVolts = new steelseries.RadialVertical('canvasVolts', {
 		gaugeType : steelseries.GaugeType.TYPE4,
-		size : vpSize/7,
+		size : vpSize*.3,
 		minValue : voltsMinScale,
 		maxValue : voltsFullScale,
 		//threshold : 13.0,
@@ -218,13 +218,13 @@ function initEngine() {
 		lcdColor: gaugeLcdColor,
 		pointerType : gaugePointerType,
 		backgroundColor: gaugeBackgroundColor,
-		frameDesign: gaugeFrameDesign,
+		//frameDesign: gaugeFrameDesign,
 	});
-	
+
 	// wind true
 	radialTrim = new steelseries.RadialVertical('canvasTrim', {
 		gaugeType : steelseries.GaugeType.TYPE4,
-		size : vpSize/7,
+		size : vpSize*.3,
 		minValue : 0,
 		maxValue : 1000,
 		//threshold : 300,
@@ -236,15 +236,15 @@ function initEngine() {
 		lcdColor: gaugeLcdColor,
 		pointerType : gaugePointerType,
 		backgroundColor: gaugeBackgroundColor,
-		frameDesign: gaugeFrameDesign,
+		//frameDesign: gaugeFrameDesign,
 	});
 	// Fuel true
-	
+
 	var fuelSections = [ steelseries.Section(0, minFuel, 'rgba(220, 0, 0, 0.3)'),
 	     			steelseries.Section(minFuel, maxFuel, 'rgba(0, 220, 0, 0.3)') ];
 	radialFuel = new steelseries.RadialVertical('canvasFuel', {
 		gaugeType : steelseries.GaugeType.TYPE4,
-		size : vpSize/7,
+		size : vpSize*.3,
 		minValue : 0,
 		maxValue : maxFuel,
 		//threshold : 300,
@@ -255,9 +255,9 @@ function initEngine() {
 		lcdColor: gaugeLcdColor,
 		pointerType : gaugePointerType,
 		backgroundColor: gaugeBackgroundColor,
-		frameDesign: gaugeFrameDesign,
+		//frameDesign: gaugeFrameDesign,
 	});
 	// make a web socket
-	
+
 	addSocketListener(new Engine());
 }

@@ -1,18 +1,18 @@
-<!--
+<!-- 
 	Copyright 2012,2013 Robert Huitema robert@42.co.nz
-
+	
 	This file is part of FreeBoard. (http://www.42.co.nz/freeboard)
-
+	
 	FreeBoard is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
 	the Free Software Foundation, either version 3 of the License, or
 	(at your option) any later version.
-
+	
 	FreeBoard is distributed in the hope that it will be useful,
 	but WITHOUT ANY WARRANTY; without even the implied warranty of
 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 	GNU General Public License for more details.
-
+	
 	You should have received a copy of the GNU General Public License
 	along with FreeBoard.  If not, see <http://www.gnu.org/licenses/>.
 -->
@@ -43,11 +43,10 @@
 <?script src="./js/tween-min.js"?>
 <?script src="./js/steelseries.js"?>
 <zk>
-	<script type="text/javascript" src="./js/engine.js" />
+	<script type="text/javascript" src="./js/windLogg.js" />
 	<style>
 		#map { height: 100%; border: 1px solid #888; }
 		.hboxRemoveWhiteStrips td.z-hbox-sep { width: 0; padding: 0;}
-
 	</style>
 
 	<window id="mainWindow"
@@ -55,10 +54,9 @@
 		apply="nz.co.fortytwo.freeboard.zk.EngineViewModel" vflex="true"
 		style="margin-left:auto;">
 		<borderlayout>
-
 			<west border="none" width="50px">
-				<vbox  height="100%">
-					<include src="./mainToolbar.zul" />
+				<vbox height="100%">
+					<include src="./simpleToolbar.zul" />
 				</vbox>
 
 			</west>
@@ -69,43 +67,68 @@
 					<label id="layerVisibility" value=""
 						visible="false" />
 
-					<div vflex="1" hflex="1" style="background-color: none;">
-						<vlayout vflex="1" hflex="1">
-							<hlayout vflex="2" hflex="1"
-								style="margin-left:auto; margin-right:auto; text-align:center;overflow: visible;">
+					<div vflex="1" hflex="1">
+						<hlayout style="overflow: visible">
+							<vbox hflex="4" align="center"
+								style="overflow: visible">
 
-								<html style="overflow: visible;" >
-									<canvas id="canvasEngineRpm" >
-										No canvas in your
-										browser...sorry...
-									</canvas>
-									<canvas id="canvasLinearDepth" >
-										No canvas in your
-										browser...sorry...
-									</canvas>
-
-									<canvas id="canvasBoatSpeed" >
-										No canvas in your
-										browser...sorry...
-									</canvas>
-
-								</html>
-							</hlayout>
-							<hlayout vflex="1" hflex="1"
-								style="margin-left:auto; margin-right:auto; text-align:center; overflow: visible;">
 								<html style="overflow: visible">
-									<canvas id="canvasOil" />
-									<canvas id="canvasTemp" />
-									<canvas id="canvasTrim" />
-									<canvas id="canvasVolts" />
-									<canvas id="canvasFuel" />
+									<canvas id="canvasWindApp"
+										style="overflow: visible" width="${mainWindow$composer.size*.75}"
+										height="${mainWindow$composer.size*.75}">
+									</canvas>
 								</html>
-							</hlayout>
-						</vlayout>
+								<html>
+									<canvas id="canvasWindTrue"
+										width="${mainWindow$composer.size*.75}"
+										height="${mainWindow$composer.size*.75}">
+									</canvas>
+								</html>
+							</vbox>
+							<vbox hflex="4" align="center"
+								style="overflow: visible">
+								<html style="overflow: visible">
+									<canvas id="canvasWindDirApp"
+										style="overflow: visible" width="${mainWindow$composer.size}"
+										height="${mainWindow$composer.size}">
+									</canvas>
+								</html>
+								<html
+									style="margin-left:auto;margin-right:auto;" width="100%">
+									<canvas id="canvasWindDirTrue"
+										width="${mainWindow$composer.size*.75}"
+										height="${mainWindow$composer.size*.75}">
+										No canvas in your
+										browser...sorry...
+									</canvas>
+								</html>
+							</vbox>
+							<vbox hflex="4" style="overflow: visible"
+								align="center">
+								<html>
+									<canvas id="canvasLog"
+										width="${mainWindow$composer.size}"
+										height="${mainWindow$composer.size}" />
+								</html>
+
+								<html>
+									<canvas id="canvasLon" width="125px"
+										height="25px" />
+								</html>
+								<html>
+									<canvas id="canvasLat" width="125px"
+										height="25px" />
+								</html>
+
+
+							</vbox>
+
+
+
+						</hlayout>
 
 						<script type="text/javascript" defer="true">
-							initEngine();
-
+							initSocket(); initWind();
 						</script>
 					</div>
 
@@ -122,6 +145,13 @@
 
 
 
+
+
+
+
+
+
+			
 			<![CDATA[ <h2>Freeboard Help</H2> <p>To resize the
 			instruments use the + and - buttons within the
 			instruments</p> <p>To move the instruments click-drag the
@@ -131,10 +161,17 @@
 			direction</p> <p>Use the blue + and - buttons in top left to
 			zoom, or use mouse wheel</p> <p>The blue + tab at the top
 			right to manage chart visibility</p> ]]>
-
-
-
-
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+		
 		</html>
 	</popup>
 </zk>

@@ -1,3 +1,4 @@
+
 /*
  * Copyright 2012,2013 Robert Huitema robert@42.co.nz
  * 
@@ -30,9 +31,11 @@ import net.sf.marineapi.nmea.event.SentenceEvent;
 import net.sf.marineapi.nmea.event.SentenceListener;
 import net.sf.marineapi.nmea.parser.BVEParser;
 import net.sf.marineapi.nmea.parser.CruzproXDRParser;
+import net.sf.marineapi.nmea.parser.DataNotAvailableException;
 import net.sf.marineapi.nmea.parser.ParseException;
 import net.sf.marineapi.nmea.parser.SentenceFactory;
 import net.sf.marineapi.nmea.sentence.BVESentence;
+import net.sf.marineapi.nmea.sentence.DBTSentence;
 import net.sf.marineapi.nmea.sentence.DepthSentence;
 import net.sf.marineapi.nmea.sentence.HeadingSentence;
 import net.sf.marineapi.nmea.sentence.MWVSentence;
@@ -109,9 +112,9 @@ public class NMEAProcessor extends FreeboardProcessor implements Processor, Free
 	/**
 	 * Adds a {@link SentenceListener} that wants to receive all sentences read
 	 * by the reader.
-	 * 
-	 * @param listener
-	 *            {@link SentenceListener} to be registered.
+	 * <p/>
+	 * @param listener {@link SentenceListener} to be registered.
+	 * <p/>
 	 * @see net.sf.marineapi.nmea.event.SentenceListener
 	 */
 	public void addSentenceListener(SentenceListener listener) {
@@ -121,11 +124,10 @@ public class NMEAProcessor extends FreeboardProcessor implements Processor, Free
 	/**
 	 * Adds a {@link SentenceListener} that is interested in receiving only
 	 * sentences of certain type.
-	 * 
-	 * @param sl
-	 *            SentenceListener to add
-	 * @param type
-	 *            Sentence type for which the listener is registered.
+	 * <p/>
+	 * @param sl SentenceListener to add
+	 * @param type Sentence type for which the listener is registered.
+	 * <p/>
 	 * @see net.sf.marineapi.nmea.event.SentenceListener
 	 */
 	public void addSentenceListener(SentenceListener sl, SentenceId type) {
@@ -135,11 +137,10 @@ public class NMEAProcessor extends FreeboardProcessor implements Processor, Free
 	/**
 	 * Adds a {@link SentenceListener} that is interested in receiving only
 	 * sentences of certain type.
-	 * 
-	 * @param sl
-	 *            SentenceListener to add
-	 * @param type
-	 *            Sentence type for which the listener is registered.
+	 * <p/>
+	 * @param sl SentenceListener to add
+	 * @param type Sentence type for which the listener is registered.
+	 * <p/>
 	 * @see net.sf.marineapi.nmea.event.SentenceListener
 	 */
 	public void addSentenceListener(SentenceListener sl, String type) {
@@ -147,11 +148,10 @@ public class NMEAProcessor extends FreeboardProcessor implements Processor, Free
 	}
 
 	/**
-	 * Remove a listener from reader. When removed, listener will not receive
-	 * any events from the reader.
-	 * 
-	 * @param sl
-	 *            {@link SentenceListener} to be removed.
+	 * Remove a listener from reader. When removed, listener will not receive any
+	 * events from the reader.
+	 * <p/>
+	 * @param sl {@link SentenceListener} to be removed.
 	 */
 	public void removeSentenceListener(SentenceListener sl) {
 		for (List<SentenceListener> list : listeners.values()) {
@@ -163,11 +163,10 @@ public class NMEAProcessor extends FreeboardProcessor implements Processor, Free
 
 	/**
 	 * Dispatch data to all listeners.
-	 * 
+	 * <p/>
 	 * @param map
-	 * 
-	 * @param sentence
-	 *            sentence string.
+	 * <p/>
+	 * @param sentence sentence string.
 	 */
 	private void fireSentenceEvent(HashMap<String, Object> map, Sentence sentence) {
 		if (!sentence.isValid()){
@@ -198,11 +197,9 @@ public class NMEAProcessor extends FreeboardProcessor implements Processor, Free
 
 	/**
 	 * Registers a SentenceListener to hash map with given key.
-	 * 
-	 * @param type
-	 *            Sentence type to register for
-	 * @param sl
-	 *            SentenceListener to register
+	 * <p/>
+	 * @param type Sentence type to register for
+	 * @param sl SentenceListener to register
 	 */
 	private void registerListener(String type, SentenceListener sl) {
 		if (listeners.containsKey(type)) {
@@ -216,7 +213,7 @@ public class NMEAProcessor extends FreeboardProcessor implements Processor, Free
 
 	/**
 	 * Adds NMEA sentence listeners to process NMEA to simple output
-	 * 
+	 * <p/>
 	 * @param processor
 	 */
 	private void setNmeaListeners() {
@@ -352,10 +349,33 @@ public class NMEAProcessor extends FreeboardProcessor implements Processor, Free
 					}
 
 				}
-				if (evt.getSentence() instanceof DepthSentence) {
-					DepthSentence sen = (DepthSentence) evt.getSentence();
-					//in meters
+				if (evt.getSentence() instanceof DBTSentence) {
+					DBTSentence sen = (DBTSentence) evt.getSentence();
+
+					//Remove comment below to get randomly distributed depts for tessting
+					//sen.setDepth(gaussian.getGaussian(2.5, 0.1));
+
+					String depthUnit = "M";
+					try {
+						depthUnit = Util.getConfig(null).getProperty(Constants.DEPTH_UNIT).trim();
+					} catch (Exception e){
+						logger.error(e.getMessage(), e);
+					}
+					try {
+						switch (depthUnit){
+						case "F":
+							map.put(Constants.DEPTH_BELOW_TRANSDUCER, sen.getDepth()/1.8288);
+							break;
+						case "M":
 					map.put(Constants.DEPTH_BELOW_TRANSDUCER, sen.getDepth());
+							break;
+						case "f":
+							map.put(Constants.DEPTH_BELOW_TRANSDUCER, sen.getDepth()/.3048);
+							break;
+				}
+					} catch (DataNotAvailableException dna){
+						// data not available because no transducer connected
+					}
 				}
 				// Cruzpro YXXDR sentence
 				//from Cruzpro - The fields in the YXXDR sentence are always from the same "critical" functions, in order:

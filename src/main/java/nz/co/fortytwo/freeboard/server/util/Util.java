@@ -1,6 +1,6 @@
 /*
  * Copyright 2012,2013 Robert Huitema robert@42.co.nz
- * 
+ *
  * This file is part of FreeBoard. (http://www.42.co.nz/freeboard)
  *
  *  FreeBoard is free software: you can redistribute it and/or modify
@@ -44,7 +44,7 @@ import org.apache.log4j.Logger;
  *
  */
 public class Util {
-	
+
 	private static Logger logger = Logger.getLogger(Util.class);
 	private static Properties props;
 	public static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd_hh:mm:ss");
@@ -63,7 +63,7 @@ public class Util {
 
 	/**
 	 * Load the config from the named dir, or if the named dir is null, from the default location
-	 * The config is cached, subsequent calls get the same object 
+	 * The config is cached, subsequent calls get the same object
 	 * @param dir
 	 * @return
 	 * @throws FileNotFoundException
@@ -75,7 +75,7 @@ public class Util {
 			System.out.println("Creating config...");
 			props = new Properties() {
 			    /**
-				 * 
+				 *
 				 */
 				private static final long serialVersionUID = 1L;
 
@@ -101,7 +101,7 @@ public class Util {
 				//use the default config
 				cfg = new File(props.getProperty(Constants.CFG_DIR)+props.getProperty(Constants.CFG_FILE));
 			}
-			
+
 			if(cfg.exists()){
 				System.out.println("Loading config from "+cfg.getAbsolutePath());
 				props.load(new FileReader(cfg));
@@ -111,7 +111,7 @@ public class Util {
 		}
 		return props;
 	}
-	
+
 	/**
 	 * Save the current config to disk.
 	 * @throws IOException
@@ -123,12 +123,12 @@ public class Util {
 		}
 		System.out.println("Saving config to "+cfg.getAbsolutePath());
 		props.store(new FileWriter(cfg), null);
-		
+
 	}
 
 	/**
 	 * Config defaults
-	 * 
+	 *
 	 * @param props
 	 */
 	public static void setDefaults(Properties props) {
@@ -159,10 +159,15 @@ public class Util {
 		props.setProperty(Constants.SERIAL_PORT_BAUD,"38400");
 		props.setProperty(Constants.DNS_USE_CHOICE,Constants.DNS_USE_BOAT);
 		props.setProperty(Constants.ENABLE_COMET,"false");
+
 		props.setProperty(Constants.PREFER_RMC,"true");
 		//add default charts
+
+		props.setProperty(Constants.DEPTH_SCALE, "0.15");
+      props.setProperty(Constants.DEPTH_UNIT, "M");
+
 	}
-	
+
 
 	/**
 	 * Round to specified decimals
@@ -175,36 +180,36 @@ public class Util {
 		long iVal = Math.round (val*scale);
 		return iVal/scale;
 	}
-	
+
 	/**
 	 * Updates and saves the scaling values for instruments
 	 * @param scaleKey
 	 * @param amount
 	 * @param scaleValue
 	 * @return
-	 * @throws IOException 
-	 * @throws FileNotFoundException 
+	 * @throws IOException
+	 * @throws FileNotFoundException
 	 */
 	public static double updateScale(String scaleKey, double amount, double scaleValue) throws FileNotFoundException, IOException {
 			scaleValue = scaleValue*amount;
 			scaleValue= Util.round(scaleValue, 2);
 			//logger.debug(" scale now = "+scale);
-			
+
 			//write out to config
 			Util.getConfig(null).setProperty(scaleKey, String.valueOf(scaleValue));
 			Util.saveConfig();
-			
+
 		return scaleValue;
 	}
 
 	/**
 	 * Checks if a usb drive is inserted, and returns the root dir.
 	 * Returns null if its not there
-	 * 
+	 *
 	 * @param file
 	 * @return
-	 * @throws IOException 
-	 * @throws FileNotFoundException 
+	 * @throws IOException
+	 * @throws FileNotFoundException
 	 */
 	public static File getUSBFile() throws FileNotFoundException, IOException {
 		File usbDrive = new File(Util.getConfig(null).getProperty(Constants.USBDRIVE));
@@ -246,8 +251,8 @@ public class Util {
 				if(logger.isDebugEnabled())logger.debug("Executed date setting command:"+cmd);
 			} catch (Exception e) {
 				logger.error(e.getMessage(),e);
-			} 
-			
+			}
+
 		}
 
 	/**
@@ -262,7 +267,7 @@ public class Util {
 		}
 		return value;
 	}
-	
-	
-	
+
+
+
 }

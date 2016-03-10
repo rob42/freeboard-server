@@ -1,6 +1,6 @@
 /*
  * Copyright 2012,2013 Robert Huitema robert@42.co.nz
- * 
+ *
  * This file is part of FreeBoard. (http://www.42.co.nz/freeboard)
  *
  *  FreeBoard is free software: you can redistribute it and/or modify
@@ -31,22 +31,24 @@ import org.zkoss.zul.Window;
 public class EngineViewModel extends SelectorComposer<Window>{
 
 	private static Logger logger = Logger.getLogger(EngineViewModel.class);
-    
+
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 1L;
-	
+
 	@WireVariable
     private Session sess;
-	
+
 	@Wire ("#logg")
 	private Panel logg;
 	@Wire("#wind")
 	private Panel wind;
+	@Wire("#depth")
+	private Panel depth;
 	private double size = 400;
-	
-	
+
+
 	public EngineViewModel() {
 		super();
 		if(logger.isDebugEnabled())logger.debug("Constructing..");
@@ -67,15 +69,14 @@ public class EngineViewModel extends SelectorComposer<Window>{
 		//wind.setFloatable(true);
 		//chartplotter.setFloatable(true);
 	}
-	
+
 	@Listen("onClick = button#apPort")
 	public void apPort(MouseEvent event) {
 		if(logger.isDebugEnabled())logger.debug(" event = "+event);
-	    
 	}
-	
-	
-	
+
+
+
 	public double getSize() {
 		if(sess.hasAttribute("size")){
 			size=(Double) sess.getAttribute("sess");
@@ -83,8 +84,8 @@ public class EngineViewModel extends SelectorComposer<Window>{
 		}
 		return size;
 	}
-	
-	
+
+
 	public void setSize(double size) {
 		this.size = size;
 		sess.setAttribute("sess", size);

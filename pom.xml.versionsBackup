@@ -4,9 +4,7 @@
 
 	<groupId>nz.co.fortytwo.freeboard</groupId>
 	<artifactId>freeboard-server</artifactId>
-
-	<version>0.5.21-SNAPSHOT</version>
-
+	<version>0.5.44-SNAPSHOT</version>
 	<name>Freeboard Server</name>
 
 	<description>Webserver and data server for FreeBoard</description>
@@ -14,7 +12,7 @@
 		<!-- <bundle.name>nsb-${project.version}</bundle.name> -->
 		<jetty.version>7.6.13.v20130916</jetty.version>
 		<camel.version>2.12.1</camel.version>
-		<zk.version>8.0.0</zk.version>
+		<zk.version>6.5.2</zk.version>
 		<jna.version>3.6.0-SNAPSHOT</jna.version>
 	 <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
@@ -169,17 +167,7 @@
 			<artifactId>jsp-2.1-glassfish</artifactId>
 			<version>2.1.v20100127</version>
 		</dependency>
-		<!-- ZK 
-		<dependency>
-            <groupId>org.zkoss.zk</groupId>
-            <artifactId>zk</artifactId>
-            <version>${zk.version}</version>
-        </dependency>-->
-        <dependency>
-            <groupId>org.zkoss.common</groupId>
-            <artifactId>zweb</artifactId>
-            <version>${zk.version}</version>
-        </dependency>
+		<!-- ZK -->
 		<dependency>
 			<groupId>org.zkoss.zk</groupId>
 			<artifactId>zkbind</artifactId>
@@ -339,23 +327,17 @@
 							<goal>single</goal>
 						</goals>
 					</execution>
-					
-				</executions>
-			</plugin>
-			<plugin>
-				<artifactId>maven-antrun-plugin</artifactId>
-				<version>1.8</version>
-				<executions>
 					<execution>
-						<id>copy</id>
+						<id>make-assembly-zip</id>
 						<phase>package</phase>
 						<configuration>
-							<target>
-								<copy file="${project.build.directory}/freeboard-server-${project.version}-jar-with-dependencies.jar" tofile="${project.build.directory}/freeboard-server.jar" />
-							</target>
+							<descriptors>
+								<!-- make installation zip -->
+								<descriptor>src/main/release/assembly.xml</descriptor>
+							</descriptors>
 						</configuration>
 						<goals>
-							<goal>run</goal>
+							<goal>single</goal>
 						</goals>
 					</execution>
 				</executions>
@@ -369,7 +351,7 @@
 						<id>update-pom-versions</id>
 						<goals>
 							<goal>increment</goal>
-							<!-- <goal>commit</goal> -->
+<!-- 							<goal>commit</goal> -->
 						</goals>
 						<phase>install</phase>
 						<configuration>

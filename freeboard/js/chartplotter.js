@@ -50,7 +50,14 @@ function initCharts() {
 	var firstLat = zk.Widget.$("$firstLat").getValue();
 	var firstLon = zk.Widget.$("$firstLon").getValue();
 	var firstZoom = zk.Widget.$("$firstZoom").getValue();
-	//console.log(firstLat+","+firstLon+","+firstZoom);
+	console.log(firstLat+","+firstLon+","+firstZoom);
+/*
+	console.log("Set LatLon to Neusse River");
+	firstLat = 35.077796;
+	firstLon=-77.00753;
+	firstZoom=11;
+	console.log(firstLat+","+firstLon+","+firstZoom);
+*/
 	map = L.map('map', {
 		//attributionControl: false,
 	}).setView(new L.LatLng(firstLat,firstLon),firstZoom,true);
@@ -460,8 +467,13 @@ function ChartPlotter() {
 					speed = navObj.SOG;
 					setPos = true;
 			}
+
 			if (navObj.DEC) {
 				declination = navObj.DEC;	
+			}
+
+			if (navObj.MGD) {
+			declination = navObj.MGD;
 			}
 			if (navObj.WPC ) {
 				// we refresh the waypoint layer

@@ -68,6 +68,7 @@ public class CommandProcessor extends FreeboardProcessor implements Processor, F
 		msgs.add(Constants.ANCHOR_ALARM_RADIUS_CMD);
 		// wind
 		msgs.add(Constants.WIND_ZERO_ADJUST_CMD);
+		msgs.add(Constants.DEPTH_ZERO_ADJUST_CMD);
 		msgs.add(Constants.WIND_ALARM_KNOTS_CMD);
 		msgs.add(Constants.WIND_SPEED_ALARM_STATE_CMD);
 

@@ -1,6 +1,6 @@
 /*
  * Copyright 2012,2013 Robert Huitema robert@42.co.nz
- * 
+ *
  * This file is part of FreeBoard. (http://www.42.co.nz/freeboard)
  *
  *  FreeBoard is free software: you can redistribute it and/or modify
@@ -39,33 +39,34 @@ import org.zkoss.zul.Window;
 public class LoggViewModel extends SelectorComposer<Window>{
 
 	private static Logger logger = Logger.getLogger(LoggViewModel.class);
-    
+
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 1L;
-	
+
 	@WireVariable
     private Session sess;
-	
+
 	@Wire ("#logg")
 	Window logg;
-	
+
 	@Wire ("#logScale")
 	Label logScale;
 
 	@Wire ("button#logShrink")
 	Button logShrink;
-	
+
 	@Wire ("button#logGrow")
 	Button logGrow;
 
 	private double scale=0.7;
-	
+
 	public LoggViewModel() {
 		super();
+
 		if(logger.isDebugEnabled())logger.debug("Constructing..");
-		
+
 	}
 
 	@Override
@@ -85,9 +86,9 @@ public class LoggViewModel extends SelectorComposer<Window>{
 			}
 			logScale.setValue(String.valueOf(scale));
 			//resize
-			
+
 	}
-	
+
 	@Listen("onMove =  #logg")
 	public void onMoveWindow(Event event) {
 		if(logger.isDebugEnabled())logger.debug(" move event = "+((Window)event.getTarget()).getLeft()+", "+((Window)event.getTarget()).getTop());
@@ -100,7 +101,7 @@ public class LoggViewModel extends SelectorComposer<Window>{
 			} catch (IOException e) {
 				logger.error(e);
 			}
-	    
+
 	}
 
 	@Listen("onClick =  button#logShrink")
@@ -110,7 +111,7 @@ public class LoggViewModel extends SelectorComposer<Window>{
 			scale = Util.updateScale(Constants.LOGG_SCALE, 0.8, scale);
 		} catch (Exception e) {
 			logger.error(e);
-		} 
+		}
 		logScale.setValue(String.valueOf(scale));
 	}
 
@@ -121,12 +122,12 @@ public class LoggViewModel extends SelectorComposer<Window>{
 			scale = Util.updateScale(Constants.LOGG_SCALE, 1.2, scale);
 		} catch (Exception e) {
 			logger.error(e);
-		} 
+		}
 		logScale.setValue(String.valueOf(scale));
 	}
 
-	
 
-	
+
+
 
 }

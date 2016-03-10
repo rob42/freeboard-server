@@ -1,3 +1,4 @@
+
 /*
  * Copyright 2012,2013 Robert Huitema robert@42.co.nz
  * 
@@ -88,10 +89,7 @@ function Logg () {
 				}
 
 			}
-			if (navObj.MGH) {
-					lcdHeading.setValue(navObj.MGH);
-				
-			}
+			
 			if (navObj.YAW) {
 				var c = navObj.YAW;
 				if($.isNumeric(c)){
@@ -183,3 +181,4 @@ function initLogg() {
 
 	addSocketListener(new Logg());
 }
+
