@@ -18,6 +18,13 @@
  */
 package nz.co.fortytwo.freeboard.zk;
 
+import java.io.IOException;
+import java.util.Properties;
+import java.util.logging.Level;
+import nz.co.fortytwo.freeboard.server.util.Constants;
+import nz.co.fortytwo.freeboard.server.util.Util;
+import nz.co.fortytwo.freeboard.server.NMEAProcessor;
+
 import org.apache.log4j.Logger;
 import org.zkoss.zk.ui.Session;
 import org.zkoss.zk.ui.event.MouseEvent;
@@ -26,9 +33,11 @@ import org.zkoss.zk.ui.select.annotation.Listen;
 import org.zkoss.zk.ui.select.annotation.Wire;
 import org.zkoss.zk.ui.select.annotation.WireVariable;
 import org.zkoss.zul.Button;
+import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Panel;
 import org.zkoss.zul.Window;
 import org.zkoss.zul.Toolbarbutton;
+
 
 public class SailViewModel extends SelectorComposer<Window> {
 
@@ -38,6 +47,7 @@ public class SailViewModel extends SelectorComposer<Window> {
      *
      */
     private static final long serialVersionUID = 1L;
+    private Properties config;
 
     @WireVariable
     private Session sess;
@@ -79,6 +89,7 @@ public class SailViewModel extends SelectorComposer<Window> {
     @Listen("onClick= #resetLog")
     public void resetLog(MouseEvent event) {
         System.out.println("Got resetLog click");
+        NMEAProcessor.resetTripLog = true;
     }
 
     public double getSize() {

@@ -39,7 +39,7 @@
                            tooltiptext="Chartplotter" href='./floating.zul' />
             <toolbarbutton mold="toggle" image="img/engine48x36.png"
                            tooltiptext="Engine" href='./engine.zul' />
-            <toolbarbutton id="resetLog" image="img/Reset54x47.png"
+            <toolbarbutton id="resetLog" image="img/BlackReset.png"
                            tooltiptext="ResetLog" />
             <toolbarbutton tooltiptext="Config"
                            image="img/config43x38.png"

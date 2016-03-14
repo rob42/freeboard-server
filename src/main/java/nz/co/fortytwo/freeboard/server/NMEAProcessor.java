@@ -19,13 +19,16 @@
 package nz.co.fortytwo.freeboard.server;
 
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
+import java.util.TimeZone;
 import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -70,6 +73,8 @@ public class NMEAProcessor extends FreeboardProcessor implements Processor, Free
     private static Logger logger = Logger.getLogger(NMEAProcessor.class);
     private static final String DISPATCH_ALL = "DISPATCH_ALL";
     private boolean preferRMC;
+    public static boolean resetTripLog = false;
+    
     // map of sentence listeners
     private ConcurrentMap<String, List<SentenceListener>> listeners = new ConcurrentHashMap<String, List<SentenceListener>>();
 
@@ -243,45 +248,57 @@ public class NMEAProcessor extends FreeboardProcessor implements Processor, Free
         addSentenceListener(new SentenceListener() {
             private boolean startLat = true;
             private boolean startLon = true;
-            private boolean startTime = true;
+            private boolean startTrip = true;
+            private long startMillis;
+            private long nowMillis;
+            private long previousMillis;
+            private Date utcNowDate;
+            private long tripElapsedTime;
+            private long timeDiff; // time between successive GPS readings
+
             double previousLat = 0;
             double previousLon = 0;
             double gpsPreviousSpeed = 0;
             double paddlePreviousSpeed = 0;
-            double dist;
+            double tripDistance;
             static final double ALPHA = 1 - 1.0 / 6;
             double convert; // RMC gives speed in Kt
-
+            DateFormat rmcFormat = new SimpleDateFormat("ddMMyy");
+            
             public void sentenceRead(SentenceEvent evt) {
                 // Exchange exchange = (Exchange) evt.getSource();
                 // StringBuilder body = new StringBuilder();
                 @SuppressWarnings("unchecked")
 
-                HashMap<String, Object> map = (HashMap<String, Object>) evt.getSource();
                 Properties config = null;
+                
                 try {
                     config = Util.getConfig(null);
                 } catch (Exception e) {
                     logger.error(e.getMessage(), e);
                     Messagebox.show("There has been a problem with loading the configuration:" + e.getMessage());
                 }
+                if (resetTripLog){
+                    startTrip = true;
+                    config.setProperty(Constants.TRIP_ELAPSED_TIME, "0");
+                    config.setProperty(Constants.TRIP_DISTANCE, "0"); 
+                    tripDistance = 0.;
+                    tripElapsedTime = 0;
+                    resetTripLog = false;
+                }
+                HashMap<String, Object> map = (HashMap<String, Object>) evt.getSource();
                 if (evt.getSentence() instanceof PositionSentence) {
                     PositionSentence sen = (PositionSentence) evt.getSentence();
                     try {
                         if (startLat) {
                             previousLat = sen.getPosition().getLatitude();
                             startLat = false;
-                            try {
-                                dist = Double.parseDouble(Util.getConfig(null).getProperty(Constants.TRIP_DISTANCE, "0."));
-                            } catch (IOException ex) {
-                                java.util.logging.Logger.getLogger(NMEAProcessor.class.getName()).log(Level.SEVERE, null, ex);
-                            }
+                            tripDistance = Double.parseDouble(config.getProperty(Constants.TRIP_DISTANCE, "0."));
                         }
                         double lat1 = previousLat;
                         previousLat = Util.movingAverage(ALPHA, previousLat, sen.getPosition().getLatitude());
                         if (logger.isDebugEnabled()) {
                             logger.debug("lat position:" + sen.getPosition().getLatitude() + ", hemi=" + sen.getPosition().getLatitudeHemisphere());
-//                            System.out.println ("lat position:" + sen.getPosition().getLatitude() + ", hemi=" + sen.getPosition().getLatitudeHemisphere());
                         }
                         map.put(Constants.LAT, previousLat);
                         if (startLon) {
@@ -291,38 +308,73 @@ public class NMEAProcessor extends FreeboardProcessor implements Processor, Free
                         double lon1 = previousLon;
                         previousLon = Util.movingAverage(ALPHA, previousLon, sen.getPosition().getLongitude());
                         map.put(Constants.LON, previousLon);
-                        dist += distance(previousLat, lat1, previousLon, lon1);
-                        //map.put(Constants.TRIP_DISTANCE, dist);
-                        System.out.println("Distance = " + dist);
+//                        double deltaDist = distance(previousLat, lat1, previousLon, lon1);
+//                        dist+=deltaDist;
+//                        System.out.println("deltaDist, speed = " + deltaDist+" "+ "," + ((RMCSentence)sen).getSpeed());
+//                        map.put(Constants.DISTANCE_TRAVELED, dist);
+//                        config.setProperty(Constants.TRIP_DISTANCE, String.format("%4.2f", dist));
                     } catch (DataNotAvailableException p) {
                         if (logger.isDebugEnabled()) {
                             logger.debug(p);
                         }
                     }
-//                    if ((evt.getSentence() instanceof DateSentence) && (evt.getSentence() instanceof TimeSentence)) {
-//                        DateSentence dSen = (DateSentence) evt.getSentence();
-//                        TimeSentence tSen = (TimeSentence) evt.getSentence();
-//                        try {
-//                            // Get START_DATE/START_TIME from config or assign it from Date/Time sentences
-//                            String utcDate = Util.getConfig(null).getProperty(Constants.TRIP_START_DATE, dSen.getDate().toISO8601());
-//                            String utcTime = Util.getConfig(null).getProperty(Constants.TRIP_START_TIME, tSen.getTime().toISO8601());
-//                            GregorianCalendar startDate = new GregorianCalendar(Integer.parseInt(utcDate.substring(0, 2)),
-//                                    Integer.parseInt(utcDate.substring(2, 4)),
-//                                    Integer.parseInt(utcDate.substring(4, 6)),
-//                                    Integer.parseInt(utcTime.substring(0, 2)),
-//                                    Integer.parseInt(utcTime.substring(2, 4)),
-//                                    Integer.parseInt(utcTime.substring(4, 6)));
-//                            GregorianCalendar now = new GregorianCalendar(Integer.parseInt(dSen.getDate().toISO8601().substring(0, 2)),
-//                                    Integer.parseInt(dSen.getDate().toISO8601().substring(2, 4)),
-//                                    Integer.parseInt(dSen.getDate().toISO8601().substring(4, 6)),
-//                                    Integer.parseInt(tSen.getTime().toISO8601().substring(0, 2)),
-//                                    Integer.parseInt(tSen.getTime().toISO8601().substring(0, 2)),
-//                                    Integer.parseInt(tSen.getTime().toISO8601().substring(0, 2)));
-//                            long timeDiff = now.getTimeInMillis() - startDate.getTimeInMillis();
-//                        } catch (IOException ex) {
-//                            java.util.logging.Logger.getLogger(NMEAProcessor.class.getName()).log(Level.SEVERE, null, ex);
-//                        }
-//                    }
+                    if ((evt.getSentence() instanceof DateSentence) && (evt.getSentence() instanceof TimeSentence)) {
+                        DateSentence dSen = (DateSentence) evt.getSentence();
+                        TimeSentence tSen = (TimeSentence) evt.getSentence();
+
+                        // Get ELAP_TIME from config or assign it from Date/Time sentences
+                        try {
+                            utcNowDate = rmcFormat.parse(dSen.getDate().toString());
+                            nowMillis = utcNowDate.getTime() + tSen.getTime().getMilliseconds();
+                        } catch (ParseException ex) {
+                            java.util.logging.Logger.getLogger(NMEAProcessor.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+
+                        String tempString;
+                        // if elapsedTime == 0, we have just started and need to get elapsedTime from freeboard.cfg 
+                        if (startTrip) {
+                            // if the property does not exist in freeboard.cfg, we need to initialize
+                            startTrip = false;
+                            tempString = (config.getProperty(Constants.TRIP_ELAPSED_TIME));
+                            if (tempString == null) {
+                                tempString = "0";
+                                previousMillis = nowMillis;
+                                tripElapsedTime = 0;
+                            } else {
+                                previousMillis = nowMillis;
+                                tripElapsedTime = Long.parseLong(tempString);
+                            }
+                        }
+                        timeDiff = nowMillis - previousMillis;
+                        tripElapsedTime += timeDiff;
+                        config.setProperty(Constants.TRIP_ELAPSED_TIME, tripElapsedTime + "");
+                        map.put(Constants.TRIP_TIME, tripElapsedTime);
+                        previousMillis = nowMillis;
+                        String unit = config.getProperty(Constants.SOG_UNIT);
+
+                        switch (unit) {
+                            case "km/hr": {
+                                convert = 1.852;
+                                break;
+                            }
+                            case "mi/hr": {
+                                convert = 1.1450779448;
+                                break;
+                            }
+                            case "Kt": {
+                                convert = 1.;
+                                break;
+                            }
+                        }
+                        map.put(Constants.TRIP_AVERAGE_SPEED, tripDistance * convert * Constants.MS_PER_HR / tripElapsedTime);
+//                        System.out.println("tripDistance, tripElapsedTime = "+tripDistance + " "+ tripElapsedTime);
+                        String hhmmss = convertSecondsToHMmSs(timeDiff / 1000);
+                    }
+                    try {
+                        Util.saveConfig();
+                    } catch (IOException ex) {
+                        java.util.logging.Logger.getLogger(NMEAProcessor.class.getName()).log(Level.SEVERE, null, ex);
+                    }
                 }
 
                 if (evt.getSentence() instanceof HeadingSentence) {
@@ -339,6 +391,7 @@ public class NMEAProcessor extends FreeboardProcessor implements Processor, Free
                         }
                     }
                 }
+
                 if (evt.getSentence() instanceof RMCSentence) {
                     RMCSentence sen = (RMCSentence) evt.getSentence();
                     Util.checkTime(sen);
@@ -348,6 +401,7 @@ public class NMEAProcessor extends FreeboardProcessor implements Processor, Free
                             map.put(Constants.COURSE_OVER_GND, sen.getCourse());
                         }
                     }
+//                    System.out.println(String.format("Speed gpsPreviousSpeed, sen.getSpeed = %2.2f %2.2f", gpsPreviousSpeed, sen.getSpeed()));
                     gpsPreviousSpeed = Util.movingAverage(ALPHA, gpsPreviousSpeed, sen.getSpeed());
                     String unit = config.getProperty(Constants.SOG_UNIT);
                     switch (unit) {
@@ -364,8 +418,16 @@ public class NMEAProcessor extends FreeboardProcessor implements Processor, Free
                             break;
                         }
                     }
+                    //gpsPreviousSpeed = 1.0;
                     map.put(Constants.SPEED_OVER_GND, gpsPreviousSpeed * convert);
+//                    double deltaDist = sen.getSpeed()*timeDiff/Constants.MS_PER_HR;
+                    double deltaDist = gpsPreviousSpeed*timeDiff/Constants.MS_PER_HR;
+                    tripDistance += deltaDist;
+                    map.put(Constants.DISTANCE_TRAVELED, tripDistance);
+                    String mapString = String.format("%010.6f", tripDistance);
+                    config.setProperty(Constants.TRIP_DISTANCE, mapString);
                 }
+
                 if (evt.getSentence() instanceof VHWSentence) {
                     VHWSentence sen = (VHWSentence) evt.getSentence();
                     try {
@@ -415,6 +477,7 @@ public class NMEAProcessor extends FreeboardProcessor implements Processor, Free
                     // }
                 }
                 // Cruzpro BVE sentence
+
                 if (evt.getSentence() instanceof BVESentence) {
                     BVESentence sen = (BVESentence) evt.getSentence();
                     if (sen.isFuelGuage()) {
@@ -443,13 +506,7 @@ public class NMEAProcessor extends FreeboardProcessor implements Processor, Free
                     }
 
                 }
-//                Properties config = null;
-//                try {
-//                    config = Util.getConfig(null);
-//                } catch (Exception e) {
-//                    logger.error(e.getMessage(), e);
-//                    Messagebox.show("There has been a problem with loading the configuration:" + e.getMessage());
-//                }
+
                 if (evt.getSentence() instanceof DepthSentence) {
                     DepthSentence sen = (DepthSentence) evt.getSentence();
 
@@ -476,6 +533,7 @@ public class NMEAProcessor extends FreeboardProcessor implements Processor, Free
                 //Oil Pressure
                 //Engine Temperature
                 //freeboard.nmea.YXXDR.MaxVu110=RPM,EVV,DBT,EPP,ETT
+
                 if (evt.getSentence() instanceof CruzproXDRParser) {
                     CruzproXDRParser sen = (CruzproXDRParser) evt.getSentence();
 
@@ -484,7 +542,7 @@ public class NMEAProcessor extends FreeboardProcessor implements Processor, Free
                     }
                     if (StringUtils.isNotBlank(sen.getDevice())) {
                         try {
-                            String key = Util.getConfig(null).getProperty(Constants.NMEA_XDR + sen.getTalkerId() + Constants.XDR + sen.getDevice());
+                            String key = config.getProperty(Constants.NMEA_XDR + sen.getTalkerId() + Constants.XDR + sen.getDevice());
                             if (StringUtils.isNotBlank(key)) {
                                 String[] keys = key.split(",");
                                 List<Measurement> values = sen.getMeasurements();
@@ -517,17 +575,28 @@ public class NMEAProcessor extends FreeboardProcessor implements Processor, Free
 
             public void readingPaused() {
             }
-        });
+        }
+        );
     }
 
     private double distance(double lat2, double lat1, double lon2, double lon1) {
 
-        double R = 6373; //radius of Earth in km
+        double R = 6378.100; //radius of Earth in km
 
-        double dlon = lon2 - lon1;
-        double dlat = lat2 - lat1;
-        double a = Math.pow((Math.sin(dlat / 2)), 2) + Math.cos(lat1) * Math.cos(lat2) * Math.pow((Math.sin(dlon / 2)), 2);
-        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-        return R * c;
+        double dlon = Math.PI*(lon2 - lon1)/360.;
+        double dlat = Math.PI*(lat2 - lat1)/360.;
+//        double a = Math.pow((Math.sin(dlat / 2)), 2)
+//                + Math.cos(lat1) * Math.cos(lat2) * Math.pow((Math.sin(dlon / 2)), 2);
+//        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+////        System.out.println("a,c = "+a + " " + c);
+//        return R * c;
+         return R*Math.sqrt(Math.pow(Math.sin(dlon),2)+Math.pow(Math.sin(dlat),2));
+    }
+
+    public static String convertSecondsToHMmSs(long seconds) {
+        long s = seconds % 60;
+        long m = (seconds / 60) % 60;
+        long h = (seconds / (60 * 60)) % 24;
+        return String.format("%d:%02d:%02d", h, m, s);
     }
 }

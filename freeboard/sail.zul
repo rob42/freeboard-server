@@ -80,7 +80,8 @@
                                 </canvas>
                             </html >
                             <html >
-                                <div id="spring" style="border:1px solid #000000;" class="dynamicsparkline"></div>
+                                <div id="spring" class="dynamicsparkline"></div>
+<!--                                <div id="spring" style="border:1px solid #000000;" class="dynamicsparkline"></div> -->
                             </html>
                         </vbox >
                         
@@ -122,9 +123,9 @@
                             <div id="test2" hflex="1" vflex="1">
                                 <vbox hflex="1" vflex="1" pack="center" align="center">
                                     <div hflex="1" vflex="1">
-                                        <hbox hflex="1" vflex="1" pack="center" align="center">
+                                        <hbox hflex="1" vflex="1" pack="center" align="start">
                                             <html style="overflow: visible;">
-                                                <canvas id="summary">
+                                                <canvas id="tripSummary">
                                                     No canvas in your
                                                     browser...sorry...
                                                 </canvas>
