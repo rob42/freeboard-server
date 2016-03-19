@@ -322,7 +322,7 @@ public class ConfigViewModel extends SelectorComposer<Window> {
                 Messagebox.show("Depth offset must be numeric");
             }
             config.setProperty(Constants.PREFER_RMC, (String) useRmcGroup.getSelectedItem().getValue());
-            config.setProperty(Constants.DNS_USE_CHOICE, (String) useHomeGroup.getSelectedItem().getValue());
+//            config.setProperty(Constants.DNS_USE_CHOICE, (String) useHomeGroup.getSelectedItem().getValue());
             config.setProperty(Constants.SOG_UNIT, (String) (cfgSOGUnit.getSelectedItem().getValue()));
             config.setProperty(Constants.SOW_UNIT, (String) (cfgSOWUnit.getSelectedItem().getValue()));
             config.setProperty(Constants.DEPTH_UNIT, (String) (cfgDepthUnit.getSelectedItem().getValue()));

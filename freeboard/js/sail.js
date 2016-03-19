@@ -56,7 +56,7 @@ function Sail() {
                 lcdSailDepth = new steelseries.DisplaySingle('sailDepth', {
                     height: vpHeight * .25,
                     width: vpWidth * .30,
-                    lcdDecimals: 1,
+                    lcdDecimals: 2,
                     lcdColor: steelseries.LcdColor.BEIGE,
                     headerString: headerString,
                     headerStringVisible: true,
@@ -91,7 +91,7 @@ function Sail() {
                 lcdSOG = new steelseries.DisplaySingle('sailSOG', {
                     height: vpHeight * .25,
                     width: vpWidth * .30,
-                    lcdDecimals: 1,
+                    lcdDecimals: 2,
                     lcdColor: steelseries.LcdColor.BEIGE,
                     headerString: headerString,
                     headerStringVisible: true,
@@ -111,7 +111,7 @@ function Sail() {
                 lcdSOW = new steelseries.DisplaySingle('sailLog', {
                     height: vpHeight * .25,
                     width: vpWidth * .30,
-                    lcdDecimals: 1,
+                    lcdDecimals: 2,
                     lcdColor: steelseries.LcdColor.BEIGE,
                     headerString: headerString,
                     headerStringVisible: true,
@@ -201,7 +201,7 @@ function initSail() {
     lcdSailDepth = new steelseries.DisplaySingle('sailDepth', {
         height: vpHeight * .25,
         width: vpWidth * .30,
-        lcdDecimals: 1,
+        lcdDecimals: 2,
         lcdColor: steelseries.LcdColor.BEIGE,
         headerString: headerString,
         headerStringVisible: true,
@@ -211,15 +211,23 @@ function initSail() {
 
     // Set width of spring div
     $("#spring").width(vpWidth * 0.3);
-    $("#spring").height(vpHeight * .10);
+    $("#spring").height(vpHeight * .20);
     wid = Math.round(vpWidth * 0.3) + "px";
-    ht = Math.round(vpHeight * .10) + "px";
+    ht = Math.round(vpHeight * .30) + "px";
 
+    anAlarm = zk.Widget.$('$alarmDepth').getValue();
     options = {
         width: wid,
         height: ht,
         maxSpotColor: '',
-        minSpotColor: ''
+        minSpotColor: '',
+        fillColor: '#cdf',
+//        fillColor: '',
+        chartRangeMin: '0',
+        normalRangeMin: '0',
+        normalRangeMax: anAlarm,
+        drawNormalOnTop: 'true',
+        normalRangeColor: 'rgba(255, 0, 0, .20)'
     };
 
     //   $("#selector").height(vpHeight*.10);
@@ -230,7 +238,7 @@ function initSail() {
     lcdSOW = new steelseries.DisplaySingle('sailLog', {
         height: vpHeight * .25,
         width: vpWidth * .30,
-        lcdDecimals: 1,
+        lcdDecimals: 2,
         lcdColor: steelseries.LcdColor.BEIGE,
         headerString: headerString,
         headerStringVisible: true,
@@ -256,7 +264,7 @@ function initSail() {
     lcdSOG = new steelseries.DisplaySingle('sailSOG', {
         height: vpHeight * .25,
         width: vpWidth * .30,
-        lcdDecimals: 1,
+        lcdDecimals: 2,
         lcdColor: steelseries.LcdColor.BEIGE,
         headerString: headerString,
         headerStringVisible: true,
@@ -269,7 +277,7 @@ function initSail() {
     lcdSummary = new steelseries.DisplaySingle('tripSummary', {
         height: vpHeight * .25 / 2,
         width: vpWidth * .30 / 2,
-        lcdDecimals: 1,
+        lcdDecimals: 2,
         lcdColor: steelseries.LcdColor.BEIGE,
         headerString: "Distance " + distUnit,
         headerStringVisible: true,
@@ -296,7 +304,7 @@ function selectorButton() {
         lcdSummary = new steelseries.DisplaySingle('tripSummary', {
             height: vpHeight * .25 / 2,
             width: vpWidth * .30 / 2,
-            lcdDecimals: 1,
+            lcdDecimals: 2,
             lcdColor: steelseries.LcdColor.BEIGE,
             headerString: "Distance "+distUnit,
             headerStringVisible: true,
@@ -307,7 +315,7 @@ function selectorButton() {
         lcdSummary = new steelseries.DisplaySingle('tripSummary', {
             height: vpHeight * .25 / 2,
             width: vpWidth * .30 / 2,
-            lcdDecimals: 1,
+            lcdDecimals: 2,
 //            valuesNumeric: false,
             lcdColor: steelseries.LcdColor.BEIGE,
             headerString: headerString,
@@ -315,11 +323,11 @@ function selectorButton() {
         });
         break;
     case 2:
-        headerString = "Average Speed " + sogUnit;
+        headerString = "Ave. Spd. " + sogUnit;
         lcdSummary = new steelseries.DisplaySingle('tripSummary', {
             height: vpHeight * .25 / 2,
             width: vpWidth * .30 / 2,
-            lcdDecimals: 1,
+            lcdDecimals: 2,
             lcdColor: steelseries.LcdColor.BEIGE,
             headerString: headerString,
             headerStringVisible: true,

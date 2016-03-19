@@ -120,12 +120,8 @@ public class NMEAProcessor extends FreeboardProcessor implements Processor, Free
                 }
                 // dont need the NMEA now
                 map.remove(Constants.NMEA);
-                if (bodyStr.contains("GPGGA")) {
-//                    System.out.println("GPGGA + " + bodyStr);
-                    bodyStr = new String("$SDDBT,8.1,f,2.4,M,1.3,F*0B");
-                }
-//                if (bodyStr.contains("GPRMC")) {
-//                    System.out.println("GPRMC + " + bodyStr);
+//                if (bodyStr.contains("GPGGA")) {
+//                    bodyStr = new String("$SDDBT,8.1,f,2.4,M,1.3,F*0B");
 //                }
                 Sentence sentence = SentenceFactory.getInstance().createParser(bodyStr);
                 fireSentenceEvent(map, sentence);
@@ -511,7 +507,7 @@ public class NMEAProcessor extends FreeboardProcessor implements Processor, Free
                     DepthSentence sen = (DepthSentence) evt.getSentence();
 
                     //Remove comment below to get randomly distributed depts for tessting
-                    sen.setDepth(gaussian.getGaussian(2.5, 1.0));
+//                    sen.setDepth(gaussian.getGaussian(2.5, 1.0));
 
                     //in meters
                     double unit;
