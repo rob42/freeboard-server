@@ -4,7 +4,9 @@
 
 	<groupId>nz.co.fortytwo.freeboard</groupId>
 	<artifactId>freeboard-server</artifactId>
-	<version>0.5.101-SNAPSHOT</version>
+
+	<version>0.5.62-SNAPSHOT</version>
+
 	<name>Freeboard Server</name>
 
 	<description>Webserver and data server for FreeBoard</description>

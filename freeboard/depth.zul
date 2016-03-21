@@ -1,21 +1,21 @@
 <!--
-  Copyright 2012,2013 Robert Huitema robert@42.co.nz
-
-  This file is part of FreeBoard. (http://www.42.co.nz/freeboard)
-
-  FreeBoard is free software: you can redistribute it and/or modify
-  it under the terms of the GNU General Public License as published by
-  the Free Software Foundation, either version 3 of the License, or
-  (at your option) any later version.
-
-  FreeBoard is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  GNU General Public License for more details.
-
-  You should have received a copy of the GNU General Public License
-  along with FreeBoard.  If not, see <http://www.gnu.org/licenses/>.
- -->
+	Copyright 2012,2013 Robert Huitema robert@42.co.nz
+	
+	This file is part of FreeBoard. (http://www.42.co.nz/freeboard)
+	
+	FreeBoard is free software: you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation, either version 3 of the License, or
+	(at your option) any later version.
+	
+	FreeBoard is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
+	
+	You should have received a copy of the GNU General Public License
+	along with FreeBoard.  If not, see <http://www.gnu.org/licenses/>.
+-->
 
 <?page viewport="width=device-width, initial-scale=1.0, user-scalable=yes"?>
 <?page title="new page title" contentType="text/html;charset=UTF-8"?>
@@ -23,42 +23,51 @@
 <?script src="./js/tween-min.js"?>
 <?script src="./js/steelseries.js"?>
 <?script src="./js/websocket.js"?>
-<zk xmlns:w="http://www.zkoss.org/2005/zk/client"> 
-<script type="text/javascript" src="./js/depth.js" />
-    <style>
-            .sysWin .z-window-overlapped-cnt
-    </style>
-<div height="380px">
+<zk xmlns:w="http://www.zkoss.org/2005/zk/client">
+	<script type="text/javascript" src="./js/depth.js" />
+	<style>.sysWin .z-window-overlapped-cnt</style>
+	<div height="380px">
 
-<window id="depth"
-		apply="nz.co.fortytwo.freeboard.zk.DepthViewModel" 
-		height="30px" width="100px" title="Depth" sclass="sysWin"
-		mode="overlapped" visible="false" minimizable="true" >
-		<style>.z-panel-body { overflow: visible; }"</style>
-                <style>
-			.z-panel-body, .z-window-modal-cnt-noborder, .z-window-highlighted-cnt-noborder, .z-window-embedded-cnt-noborder, .z-window-overlapped-cnt-noborder, .z-window-popup-cnt-noborder
-			.z-window-embedded, .z-window-modal, .z-window-overlapped, .z-window-popup, .z-window-highlighted {
-				    overflow: visible;
-				}
-		</style>
-                <vlayout style="overflow: visible">
-                    <html>
-                            <canvas id="canvasDepth" width="375px" height="240px" />
-                    </html>
-                    <hlayout valign="middle">
-                            <label id="depthScale" value="0.0" visible="false"/>
-                            <label id="depthUnit" value="M" visible="false"/>
+		<window id="depth"
+			apply="nz.co.fortytwo.freeboard.zk.DepthViewModel"
+			height="30px" width="100px" title="Depth" mode="overlapped"
+			visible="false" minimizable="true" >
+
+			<style>
+				.z-window-content,.z-panel-body,
+				.z-window-modal-cnt-noborder,
+				.z-window-highlighted-cnt-noborder,
+				.z-window-embedded-cnt-noborder,
+				.z-window-overlapped-cnt-noborder,
+				.z-window-popup-cnt-noborder .z-window-embedded,
+				.z-window-modal, .z-window-overlapped, .z-window-popup,
+				.z-window-highlighted { overflow: visible; }
+			</style>
+
+			<vlayout style="overflow: visible">
+				<html style="overflow: visible">
+					<canvas id="canvasDepth" width="375px"
+						height="240px" />
+				</html>
+				<hlayout valign="middle" style="overflow: visible">
+					<label id="depthScale" value="0.0" visible="false" />
+					<label id="depthUnit" value="M" visible="false" />
                             <label id="alarmDepth" value="6" visible="false"/>
                             <label id="sparkPts" value="100" visible="false"/>
-                            <button id="depthShrink" tooltiptext="Shrink the panel"
-                                    image="./js/img/zoom-minus-mini.png" w:onClick="resizeDepth(-0.2)" />
-                            <button id="depthGrow" tooltiptext="Grow the panel"
-                                    image="./js/img/zoom-plus-mini.png" w:onClick="resizeDepth(0.2)" />
-                    </hlayout>
-                </vlayout>
-</window>
-</div>
+					<button id="depthShrink"
+						tooltiptext="Shrink the panel"
+						image="./js/img/zoom-minus-mini.png"
+						w:onClick="resizeDepth(-0.2)" />
+					<button id="depthGrow" tooltiptext="Grow the panel"
+						image="./js/img/zoom-plus-mini.png" w:onClick="resizeDepth(0.2)" />
+				</hlayout>
+			</vlayout>
 
-	    <script type="text/javascript" defer="true">initSocket(); initDepth();</script>
+		</window>
+	</div>
+
+	<script type="text/javascript" defer="true">
+		initSocket(); initDepth();
+	</script>
 
 </zk>

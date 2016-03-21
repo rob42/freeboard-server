@@ -22,7 +22,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Properties;
 import java.util.TreeMap;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import nz.co.fortytwo.freeboard.server.CamelContextFactory;
@@ -61,7 +60,8 @@ public class ConfigViewModel extends SelectorComposer<Window> {
      *
      */
     private static final long serialVersionUID = 1L;
-    private Pattern portNamesRegexLinux = Pattern.compile("(/dev/ttyUSB|/dev/ttyACM|/dev/ttyAMA|/dev/cu)[0-9]{1,3}");
+    private Pattern portNamesRegexLinux = Pattern
+            .compile("(/dev/ttyUSB|/dev/ttyACM|/dev/ttyAMA|/dev/cu)[0-9]{1,3}");
     private Pattern portNamesRegexWindows = Pattern.compile("COM[0-9]{1,2}");
 
     @WireVariable
@@ -170,9 +170,11 @@ public class ConfigViewModel extends SelectorComposer<Window> {
     }
 
     private void setSelectedChartLayers() throws Exception {
-        File layersFile = new File(Util.getConfig(null).getProperty(Constants.FREEBOARD_RESOURCE) + "/js/layers.js");
+        File layersFile = new File(Util.getConfig(null).getProperty(
+                Constants.FREEBOARD_RESOURCE)
+                + "/js/layers.js");
         String layer = FileUtils.readFileToString(layersFile);
-        //get all the layers in the file
+        // get all the layers in the file
         int pos = layer.indexOf("L.tileLayer(");
         int pos1 = 0;
         while (pos > -1) {
@@ -191,20 +193,22 @@ public class ConfigViewModel extends SelectorComposer<Window> {
 
     private void saveLayers(boolean useHomeChoice) throws Exception {
 
-        File layersFile = new File(Util.getConfig(null).getProperty(Constants.FREEBOARD_RESOURCE) + "/js/layers.js");
+        File layersFile = new File(Util.getConfig(null).getProperty(
+                Constants.FREEBOARD_RESOURCE)
+                + "/js/layers.js");
         StringBuffer layers = new StringBuffer();
         layers.append("function addLayers(map) {\n\tvar host = window.location.hostname;\n");
         for (String chart : selectedChartsModel) {
             layers.append(allListMap.get(chart));
             layers.append("\n");
         }
-        //layers.append("}\n");
-        //now add the layers data
+        // layers.append("}\n");
+        // now add the layers data
         layers.append("\tbaseLayers = {\n"
                 + "\t\t\"World\": WORLD,\n"
                 + "\t};\n"
                 + "\toverlays = {\n");
-        //add the overlays
+        // add the overlays
         for (String chart : selectedChartsModel) {
             String snippet = allListMap.get(chart);
             if (StringUtils.isBlank(snippet)) {
@@ -227,7 +231,7 @@ public class ConfigViewModel extends SelectorComposer<Window> {
         layers.append("\t};\n");
         String layersStr = layers.toString();
         if (useHomeChoice) {
-            //we parse out all refs to the subdomains
+            // we parse out all refs to the subdomains
             // remove {s}.
             layersStr = StringUtils.remove(layersStr, "{s}.");
             layersStr = StringUtils.remove(layersStr, "subdomains: 'abcd',");
@@ -255,9 +259,10 @@ public class ConfigViewModel extends SelectorComposer<Window> {
     }
 
     private void setAllChartLayers() throws Exception {
-        File layersDir = new File(Util.getConfig(null).getProperty(Constants.MAPCACHE_RESOURCE));
+        File layersDir = new File(Util.getConfig(null).getProperty(
+                Constants.MAPCACHE_RESOURCE));
         for (File layerDir : layersDir.listFiles()) {
-            //avoid files starting with dot (.)
+            // avoid files starting with dot (.)
             if (layerDir.getName().startsWith(".")) {
                 continue;
             }
@@ -296,28 +301,43 @@ public class ConfigViewModel extends SelectorComposer<Window> {
         try {
             Properties config = Util.getConfig(null);
             if (isValidPort(portsToScan.getText())) {
-                config.setProperty(Constants.SERIAL_PORTS, portsToScan.getValue());
+                config.setProperty(Constants.SERIAL_PORTS,
+                        portsToScan.getValue());
             } else {
-                Messagebox.show("Device ports to scan is invalid. In Linux (pi) '/dev/ttyUSB0,/dev/ttyUSB1,etc', in MS Windows 'COM1,COM2,COM3,etc'");
+                Messagebox
+                        .show("Device ports to scan is invalid. In Linux (pi) '/dev/ttyUSB0,/dev/ttyUSB1,etc', in MS Windows 'COM1,COM2,COM3,etc'");
             }
             if (isValidBaudRate(portBaudRate.getValue())) {
-                config.setProperty(Constants.SERIAL_PORT_BAUD, portBaudRate.getValue());
+                config.setProperty(Constants.SERIAL_PORT_BAUD,
+                        portBaudRate.getValue());
                 Util.saveConfig();
             } else {
-                Messagebox.show("Device baud rate (speed) must be one of 4800,9600,19200,38400,57600");
+                Messagebox
+                        .show("Device baud rate (speed) must be one of 4800,9600,19200,38400,57600");
             }
             if (NumberUtils.isNumber(cfgWindOffset.getValue())) {
-                config.setProperty(Constants.WIND_ZERO_OFFSET, cfgWindOffset.getValue());
+                config.setProperty(Constants.WIND_ZERO_OFFSET,
+                        cfgWindOffset.getValue());
                 Util.saveConfig();
-                //notify others
-                producer.sendBody(Constants.WIND_ZERO_ADJUST_CMD + ":" + cfgWindOffset.getValue() + ",");
+                // notify others
+                producer.sendBody(Constants.WIND_ZERO_ADJUST_CMD + ":"
+                        + cfgWindOffset.getValue() + ",");
             } else {
                 Messagebox.show("Wind offset must be numeric");
             }
 
+            config.setProperty(Constants.PREFER_RMC, (String) useRmcGroup
+                    .getSelectedItem().getValue());
+            config.setProperty(Constants.DNS_USE_CHOICE, (String) useHomeGroup
+                    .getSelectedItem().getValue());
+
             if (NumberUtils.isNumber(cfgDepthOffset.getValue())) {
-                config.setProperty(Constants.DEPTH_ZERO_OFFSET, cfgDepthOffset.getValue());
-                producer.sendBody(Constants.DEPTH_ZERO_ADJUST_CMD + ":" + cfgDepthOffset.getValue() + ",");
+
+                config.setProperty(Constants.DEPTH_ZERO_OFFSET,
+                        cfgDepthOffset.getValue());
+                // notify others
+                producer.sendBody(Constants.DEPTH_ZERO_ADJUST_CMD + ":"
+                        + cfgDepthOffset.getValue() + ",");
             } else {
                 Messagebox.show("Depth offset must be numeric");
             }
@@ -329,7 +349,8 @@ public class ConfigViewModel extends SelectorComposer<Window> {
             Util.saveConfig();
 
             if (NumberUtils.isNumber(cfgAlarmDepth.getValue())) {
-                config.setProperty(Constants.ALARM_DEPTH, cfgAlarmDepth.getValue());
+                config.setProperty(Constants.ALARM_DEPTH,
+                        cfgAlarmDepth.getValue());
                 Util.saveConfig();
 
             } else {
@@ -339,8 +360,7 @@ public class ConfigViewModel extends SelectorComposer<Window> {
             if (NumberUtils.isNumber(cfgSparklinePts.getValue())) {
                 config.setProperty(Constants.SPARKLINE_PTS, cfgSparklinePts.getValue());
                 Util.saveConfig();
-                //notify others
-//				producer.sendBody(Constants.DEPTH_ZERO_ADJUST_CMD+":"+cfgDepthOffset.getValue() +",");
+
             } else {
                 Messagebox.show("Sparkline points must be numeric");
             }
@@ -356,36 +376,36 @@ public class ConfigViewModel extends SelectorComposer<Window> {
         }
         String[] ports = text.trim().split(",");
         boolean ok = false;
-        //linux (and OSX?)
+        // linux (and OSX?)
         if (SystemUtils.IS_OS_LINUX || SystemUtils.IS_OS_MAC_OSX) {
-            //each will be /dev/tty* or /dev/cu*
+            // each will be /dev/tty* or /dev/cu*
             for (String port : ports) {
                 if (StringUtils.isBlank(port)) {
                     continue;
                 }
                 if (portNamesRegexLinux.matcher(port.trim()).matches()) {
-                    //must be at least one good
+                    // must be at least one good
                     ok = true;
                 } else {
-                    //doesnt match, its bad so outa here.
+                    // doesnt match, its bad so outa here.
                     return false;
                 }
 
             }
         }
 
-        //windows
+        // windows
         if (SystemUtils.IS_OS_WINDOWS) {
-            //each will be COM*
+            // each will be COM*
             for (String port : ports) {
                 if (StringUtils.isBlank(port)) {
                     continue;
                 }
                 if (portNamesRegexWindows.matcher(port.trim()).matches()) {
-                    //must be at least one good
+                    // must be at least one good
                     ok = true;
                 } else {
-                    //doesnt match, its bad so outa here.
+                    // doesnt match, its bad so outa here.
                     return false;
                 }
 
@@ -425,11 +445,14 @@ public class ConfigViewModel extends SelectorComposer<Window> {
             logger.debug(" chartSave button event = " + event);
         }
         try {
-            boolean useHomeChoice = Boolean.valueOf((String) useHomeGroup.getSelectedItem().getValue());
+            boolean useHomeChoice = Boolean.valueOf((String) useHomeGroup
+                    .getSelectedItem().getValue());
             if (useHomeChoice) {
-                Util.getConfig(null).setProperty(Constants.DNS_USE_CHOICE, Constants.DNS_USE_HOME);
+                Util.getConfig(null).setProperty(Constants.DNS_USE_CHOICE,
+                        Constants.DNS_USE_HOME);
             } else {
-                Util.getConfig(null).setProperty(Constants.DNS_USE_CHOICE, Constants.DNS_USE_BOAT);
+                Util.getConfig(null).setProperty(Constants.DNS_USE_CHOICE,
+                        Constants.DNS_USE_BOAT);
             }
 
             saveLayers(useHomeChoice);
@@ -466,7 +489,7 @@ public class ConfigViewModel extends SelectorComposer<Window> {
         if (logger.isDebugEnabled()) {
             logger.debug(" chooseAllBtn button event = " + event);
         }
-        //if its not null and we dont have it
+        // if its not null and we dont have it
         selectedChartsModel.clear();
         selectedChartsModel.addAll(allChartsModel.getInnerList());
     }
@@ -476,8 +499,10 @@ public class ConfigViewModel extends SelectorComposer<Window> {
         if (logger.isDebugEnabled()) {
             logger.debug(" chooseBtn button event = " + event);
         }
-        //if its not null and we dont have it
-        if (allCharts.getSelectedItem() != null && !selectedChartsModel.contains(allCharts.getSelectedItem().getLabel())) {
+        // if its not null and we dont have it
+        if (allCharts.getSelectedItem() != null
+                && !selectedChartsModel.contains(allCharts.getSelectedItem()
+                        .getLabel())) {
             selectedChartsModel.add(allCharts.getSelectedItem().getLabel());
         }
     }
@@ -487,7 +512,7 @@ public class ConfigViewModel extends SelectorComposer<Window> {
         if (logger.isDebugEnabled()) {
             logger.debug(" removeBtn button event = " + event);
         }
-        //drop it
+        // drop it
         if (selectedCharts.getSelectedItem() != null) {
             selectedChartsModel.remove(selectedCharts.getSelectedIndex());
         }
@@ -498,7 +523,7 @@ public class ConfigViewModel extends SelectorComposer<Window> {
         if (logger.isDebugEnabled()) {
             logger.debug(" removeAllBtn button event = " + event);
         }
-        //drop all
+        // drop all
         selectedChartsModel.clear();
     }
 
@@ -508,7 +533,8 @@ public class ConfigViewModel extends SelectorComposer<Window> {
             logger.debug(" topBtn button event = " + event);
         }
         if (selectedCharts.getSelectedItem() != null) {
-            String item = selectedChartsModel.remove(selectedCharts.getSelectedIndex());
+            String item = selectedChartsModel.remove(selectedCharts
+                    .getSelectedIndex());
             selectedChartsModel.add(0, item);
         }
     }
@@ -520,12 +546,12 @@ public class ConfigViewModel extends SelectorComposer<Window> {
         }
         if (selectedCharts.getSelectedItem() != null) {
             int pos = selectedCharts.getSelectedIndex();
-            //dont go past the top!
+            // dont go past the top!
             if (pos == 0) {
                 return;
             }
             String item = selectedChartsModel.remove(selectedCharts.getSelectedIndex());
-            selectedChartsModel.add(pos - 1, item);
+			selectedChartsModel.add(pos - 1, item);
         }
     }
 
@@ -536,12 +562,12 @@ public class ConfigViewModel extends SelectorComposer<Window> {
         }
         if (selectedCharts.getSelectedItem() != null) {
             int pos = selectedCharts.getSelectedIndex();
-            //dont go past the bottom!
+            // dont go past the bottom!
             if (pos == selectedChartsModel.size() - 1) {
                 return;
             }
             String item = selectedChartsModel.remove(selectedCharts.getSelectedIndex());
-            selectedChartsModel.add(pos + 1, item);
+			selectedChartsModel.add(pos + 1, item);
         }
     }
 
@@ -551,7 +577,8 @@ public class ConfigViewModel extends SelectorComposer<Window> {
             logger.debug(" bottomBtn button event = " + event);
         }
         if (selectedCharts.getSelectedItem() != null) {
-            String item = selectedChartsModel.remove(selectedCharts.getSelectedIndex());
+            String item = selectedChartsModel.remove(selectedCharts
+                    .getSelectedIndex());
             selectedChartsModel.add(item);
         }
     }
@@ -561,7 +588,8 @@ public class ConfigViewModel extends SelectorComposer<Window> {
             Properties config = Util.getConfig(null);
 
             for (Comboitem item : portBaudRate.getItems()) {
-                if (config.getProperty(Constants.SERIAL_PORT_BAUD).equals(item.getValue())) {
+                if (config.getProperty(Constants.SERIAL_PORT_BAUD).equals(
+                        item.getValue())) {
                     portBaudRate.setSelectedItem(item);
                 }
             }
@@ -577,7 +605,8 @@ public class ConfigViewModel extends SelectorComposer<Window> {
                 }
             }
             for (Comboitem item : cfgDepthUnit.getItems()) {
-                if (config.getProperty(Constants.DEPTH_UNIT).equals(item.getValue())) {
+                if (config.getProperty(Constants.DEPTH_UNIT).equals(
+                        item.getValue())) {
                     cfgDepthUnit.setSelectedItem(item);
                 }
             }
@@ -600,7 +629,9 @@ public class ConfigViewModel extends SelectorComposer<Window> {
             }
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
-            Messagebox.show("There has been a problem with loading the configuration:" + e.getMessage());
+            Messagebox
+                    .show("There has been a problem with loading the configuration:"
+                            + e.getMessage());
         }
     }
 

@@ -73,7 +73,6 @@ public class EngineViewModel extends SelectorComposer<Window>{
 	@Listen("onClick = button#apPort")
 	public void apPort(MouseEvent event) {
 		if(logger.isDebugEnabled())logger.debug(" event = "+event);
-
 	}
 
 

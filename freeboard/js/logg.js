@@ -21,7 +21,7 @@
 function resizeLog(amount){
 	if(amount==null){
 		amount = zk.Widget.$('$logScale').getValue();
-	}else{
+				}else{
 		amount=1+(1*amount);
 	}
 	if(amount==0.0)return;
@@ -86,14 +86,6 @@ function Logg () {
 				}else{
 					lcdHeading.setValue(navObj.COG);
 				}
-
-			}
-			if (navObj.MGH) {
-					lcdHeading.setValue(navObj.MGH);
-
-			}
-			if (navObj.COG) {
-					lcdHeading.setValue(navObj.COG);
 
 			}
 			if (navObj.YAW) {

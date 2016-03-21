@@ -50,6 +50,7 @@ sudo apt-get install wpasupplicant usbutils wireless-tools iw hostapd
 
 ###################
 
+
 #we need the logs directory
 echo "Make sure we have a logs dir.."
 mkdir logs
@@ -66,13 +67,15 @@ sudo chown root:root /etc/init.d/freeboard
 sudo update-rc.d freeboard defaults
 
 # stop the apache server, its in the way
-echo "Remove apache and udhcpd, they are in the way.."
+
+
 sudo update-rc.d -f apache2 remove
 sudo update-rc.d -f udhcpd remove
 
 ##################
 #Optional: if you are having problems exit here
-echo "Setup wireless networking..."
+
+
 #/etc/network/interfaces
 if ! grep -Fq "#Run as wireless access point" /etc/network/interfaces 
 then
@@ -108,7 +111,7 @@ sudo sh -c 'echo "" >> /etc/dnsmasq.conf'
 
 ##################
 #set up wifi
-echo "Setup as a wifi access point..."
+
 sudo mkdir /etc/hostapd
 sudo mv /etc/hostapd/hostapd.conf /etc/hostapd/hostapd.conf.bak
 
@@ -132,5 +135,4 @@ sudo sh -c 'echo "auth_algs=3" >> /etc/hostapd/hostapd.conf'
 sudo sh -c 'echo "wmm_enabled=1" >> /etc/hostapd/hostapd.conf'
 
 #/etc/default/hostapd
-sudo sh -c 'echo "DAEMON_CONF=\"/etc/hostapd/hostapd.conf\"" > /etc/default/hostapd'
-echo "All done"
+
