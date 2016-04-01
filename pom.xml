@@ -5,7 +5,7 @@
 	<groupId>nz.co.fortytwo.freeboard</groupId>
 	<artifactId>freeboard-server</artifactId>
 
-	<version>0.5.62-SNAPSHOT</version>
+	<version>0.5.64-SNAPSHOT</version>
 
 	<name>Freeboard Server</name>
 
