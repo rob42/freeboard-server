@@ -110,7 +110,10 @@ function Logg () {
 function initLogg() {
 	//if we cant do canvas, skip out here!
 	if(!window.CanvasRenderingContext2D)return;
-	// Initialzing lcds
+	
+        // Setting declination to 0 to avoid  "Uncaught reference" or "undefined" for declination
+        var declination = 0.;
+        //// Initialzing lcds
 	// log
 	lcdLat = new steelseries.DisplaySingle('canvasLat', {
 		// gaugeType : steelseries.GaugeType.TYPE4,

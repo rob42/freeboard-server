@@ -22,6 +22,10 @@ var depthArraySize;
 var depthArray = [];
 var anAlarm;
 var selectorNdx = 0;
+var tripElapsedTime;
+var tripDistance;
+var tripAverageSpeed;
+
 
 //colours
 var gaugeLcdColor = steelseries.LcdColor.BEIGE;
@@ -56,7 +60,7 @@ function Sail() {
                 lcdSailDepth = new steelseries.DisplaySingle('sailDepth', {
                     height: vpHeight * .25,
                     width: vpWidth * .30,
-                    lcdDecimals: 2,
+                    lcdDecimals: 1,
                     lcdColor: steelseries.LcdColor.BEIGE,
                     headerString: headerString,
                     headerStringVisible: true,
@@ -91,7 +95,7 @@ function Sail() {
                 lcdSOG = new steelseries.DisplaySingle('sailSOG', {
                     height: vpHeight * .25,
                     width: vpWidth * .30,
-                    lcdDecimals: 2,
+                    lcdDecimals: 1,
                     lcdColor: steelseries.LcdColor.BEIGE,
                     headerString: headerString,
                     headerStringVisible: true,
@@ -111,7 +115,7 @@ function Sail() {
                 lcdSOW = new steelseries.DisplaySingle('sailLog', {
                     height: vpHeight * .25,
                     width: vpWidth * .30,
-                    lcdDecimals: 2,
+                    lcdDecimals: 1,
                     lcdColor: steelseries.LcdColor.BEIGE,
                     headerString: headerString,
                     headerStringVisible: true,
@@ -122,18 +126,21 @@ function Sail() {
         
         if (navObj.TET){
             if (selectorNdx == 1){
-                lcdSummary.setValue(navObj.TET/MILLISPERHR);
+                tripElapsedTime = navObj.TET;
+                lcdSummary.setValue(tripElapsedTime/MILLISPERHR);
             }
         }
         
         if (navObj.DST){
             if (selectorNdx == 0){
-                lcdSummary.setValue(navObj.DST);
+                tripDistance = navObj.DST;
+                lcdSummary.setValue(tripDistance);
             }
         }
         if (navObj.TAS){
             if (selectorNdx == 2){
-                lcdSummary.setValue(navObj.TAS);
+                tripAverageSpeed = navObj.TAS;
+                lcdSummary.setValue(tripAverageSpeed);
             }
         }
     };
@@ -201,7 +208,7 @@ function initSail() {
     lcdSailDepth = new steelseries.DisplaySingle('sailDepth', {
         height: vpHeight * .25,
         width: vpWidth * .30,
-        lcdDecimals: 2,
+        lcdDecimals: 1,
         lcdColor: steelseries.LcdColor.BEIGE,
         headerString: headerString,
         headerStringVisible: true,
@@ -223,8 +230,8 @@ function initSail() {
         minSpotColor: '',
         fillColor: '#cdf',
 //        fillColor: '',
-        chartRangeMin: '0',
-        normalRangeMin: '0',
+        chartRangeMin: '3',
+        normalRangeMin: '3',
         normalRangeMax: anAlarm,
         drawNormalOnTop: 'true',
         normalRangeColor: 'rgba(255, 0, 0, .20)'
@@ -238,7 +245,7 @@ function initSail() {
     lcdSOW = new steelseries.DisplaySingle('sailLog', {
         height: vpHeight * .25,
         width: vpWidth * .30,
-        lcdDecimals: 2,
+        lcdDecimals: 1,
         lcdColor: steelseries.LcdColor.BEIGE,
         headerString: headerString,
         headerStringVisible: true,
@@ -264,7 +271,7 @@ function initSail() {
     lcdSOG = new steelseries.DisplaySingle('sailSOG', {
         height: vpHeight * .25,
         width: vpWidth * .30,
-        lcdDecimals: 2,
+        lcdDecimals: 1,
         lcdColor: steelseries.LcdColor.BEIGE,
         headerString: headerString,
         headerStringVisible: true,
@@ -277,7 +284,7 @@ function initSail() {
     lcdSummary = new steelseries.DisplaySingle('tripSummary', {
         height: vpHeight * .25 / 2,
         width: vpWidth * .30 / 2,
-        lcdDecimals: 2,
+        lcdDecimals: 1,
         lcdColor: steelseries.LcdColor.BEIGE,
         headerString: "Distance " + distUnit,
         headerStringVisible: true,
@@ -304,34 +311,37 @@ function selectorButton() {
         lcdSummary = new steelseries.DisplaySingle('tripSummary', {
             height: vpHeight * .25 / 2,
             width: vpWidth * .30 / 2,
-            lcdDecimals: 2,
+            lcdDecimals: 1,
             lcdColor: steelseries.LcdColor.BEIGE,
             headerString: "Distance "+distUnit,
             headerStringVisible: true,
         });
+        lcdSummary.setValue(tripDistance);
         break;
     case 1:
         headerString = "Elapsed Time hr";
         lcdSummary = new steelseries.DisplaySingle('tripSummary', {
             height: vpHeight * .25 / 2,
             width: vpWidth * .30 / 2,
-            lcdDecimals: 2,
+            lcdDecimals: 1,
 //            valuesNumeric: false,
             lcdColor: steelseries.LcdColor.BEIGE,
             headerString: headerString,
             headerStringVisible: true,
         });
+        lcdSummary.setValue(tripElapsedTime/MILLISPERHR);
         break;
     case 2:
         headerString = "Ave. Spd. " + sogUnit;
         lcdSummary = new steelseries.DisplaySingle('tripSummary', {
             height: vpHeight * .25 / 2,
             width: vpWidth * .30 / 2,
-            lcdDecimals: 2,
+            lcdDecimals: 1,
             lcdColor: steelseries.LcdColor.BEIGE,
             headerString: headerString,
             headerStringVisible: true,
         });
+        lcdSummary.setValue(tripAverageSpeed);
         break;
     }
 }
