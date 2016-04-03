@@ -65,6 +65,9 @@ public class DepthViewModel extends SelectorComposer<Window>{
 	@Wire ("#sparkPts")
 	Label sparkPts;
 
+	@Wire ("#sparkMin")
+	Label sparkMin;
+
 	@Wire ("button#depthShrink")
 	Button depthShrink;
 
@@ -102,6 +105,7 @@ public class DepthViewModel extends SelectorComposer<Window>{
 			depthUnit.setValue(Util.getConfig(null).getProperty(Constants.DEPTH_UNIT));
                         alarmDepth.setValue(Util.getConfig(null).getProperty(Constants.ALARM_DEPTH));
                         sparkPts.setValue(Util.getConfig(null).getProperty(Constants.SPARKLINE_PTS));
+                        sparkMin.setValue(Util.getConfig(null).getProperty(Constants.SPARKLINE_MIN));
 			//adjust wind zero point here
 			producer.sendBody(Constants.UID+":"+Constants.MEGA+","+Constants.DEPTH_ZERO_ADJUST_CMD+":"+Util.getConfig(null).getProperty(Constants.DEPTH_ZERO_OFFSET)+",");
 

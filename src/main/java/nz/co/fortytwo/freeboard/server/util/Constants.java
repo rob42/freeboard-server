@@ -197,8 +197,8 @@ public class Constants {
 	public static final String ALARM_DEPTH = "freeboard.alarm.depth";
 	public static final String TRIP_DISTANCE = "freeboard.trip.distance";
 	public static final String TRIP_ELAPSED_TIME = "freeboard.trip.elapsed.time";
-        
 	public static final String SPARKLINE_PTS = "freeboard.sparkline.points";
+	public static final String SPARKLINE_MIN = "freeboard.sparkline.minimum";
 
 	// gui constants
 	public static final String LOGG_X = "freeboard.logg.x";

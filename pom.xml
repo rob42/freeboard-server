@@ -5,7 +5,7 @@
 	<groupId>nz.co.fortytwo.freeboard</groupId>
 	<artifactId>freeboard-server</artifactId>
 
-	<version>0.5.64-SNAPSHOT</version>
+	<version>0.5.70-SNAPSHOT</version>
 
 	<name>Freeboard Server</name>
 
@@ -288,7 +288,8 @@
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>exec-maven-plugin</artifactId>
-				<configuration>
+                                <version>2.2</version>
+                                    <configuration>
 					<mainClass>nz.co.fortytwo.freeboard.server.ServerMain</mainClass>
 					<includePluginDependencies>false</includePluginDependencies>
 				</configuration>
@@ -296,6 +297,7 @@
 			<plugin>
 			<groupId>org.mortbay.jetty</groupId>
 				<artifactId>jetty-maven-plugin</artifactId>
+                                <version>8.1.6</version>
 			</plugin>
 			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>

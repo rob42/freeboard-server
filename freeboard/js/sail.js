@@ -75,6 +75,7 @@ function Sail() {
             depthArray.push(navObj.DBT);
             anAlarm = zk.Widget.$('$alarmDepth').getValue();
             sPoints = zk.Widget.$('$sparkPts').getValue();
+            sparkMin = zk.Widget.$('$sparkMin').getValue();
             if (navObj.DBT < anAlarm) {
                 lcdSailDepth.setLcdColor(steelseries.LcdColor.RED);
             } else {
@@ -230,8 +231,8 @@ function initSail() {
         minSpotColor: '',
         fillColor: '#cdf',
 //        fillColor: '',
-        chartRangeMin: '3',
-        normalRangeMin: '3',
+        chartRangeMin: sparkMin,
+        normalRangeMin: sparkMin,
         normalRangeMax: anAlarm,
         drawNormalOnTop: 'true',
         normalRangeColor: 'rgba(255, 0, 0, .20)'

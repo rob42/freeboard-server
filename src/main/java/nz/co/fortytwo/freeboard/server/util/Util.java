@@ -153,6 +153,13 @@ public class Util {
 		props.setProperty(Constants.WAYPOINTS_RESOURCE,"./tracks");
 		props.setProperty(Constants.WAYPOINT_CURRENT,"waypoints.gpx");
 		props.setProperty(Constants.SERIAL_PORTS,"/dev/ttyUSB0,/dev/ttyUSB1,/dev/ttyUSB2,/dev/ttyACM0,/dev/ttyACM1,/dev/ttyACM2");
+		props.setProperty(Constants.DEPTH_SCALE, "0.15");
+                props.setProperty(Constants.DEPTH_UNIT, "f");
+                props.setProperty(Constants.DEPTH_ZERO_OFFSET, "1.5");
+                props.setProperty(Constants.SOG_UNIT, "mi/hr");
+                props.setProperty(Constants.SOW_UNIT, "Kt");
+                props.setProperty(Constants.ALARM_DEPTH, "6");
+                props.setProperty(Constants.SPARKLINE_PTS, "200");
 		if(SystemUtils.IS_OS_WINDOWS){
 			props.setProperty(Constants.SERIAL_PORTS,"COM1,COM2,COM3,COM4");
 		}
@@ -163,8 +170,6 @@ public class Util {
 		props.setProperty(Constants.PREFER_RMC,"true");
 		//add default charts
 
-		props.setProperty(Constants.DEPTH_SCALE, "0.15");
-      props.setProperty(Constants.DEPTH_UNIT, "M");
 
 	}
 

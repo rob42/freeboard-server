@@ -116,6 +116,11 @@
 								<textbox id="cfgSparklinePts"
 									tooltip="Number of depth values in the Sparkline plot." />
 							</row>
+							<row hflex="min">
+								<label value="Sparkline Minimum" />
+								<textbox id="cfgSparklineMin"
+									tooltip="Minimum depth for the Sparkline plot." />
+							</row>
 							<row>
 								<hbox>
 									<button id="cfgSave" label="Save" height="38px" />

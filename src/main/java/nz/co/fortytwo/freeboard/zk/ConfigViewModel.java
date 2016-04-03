@@ -84,6 +84,9 @@ public class ConfigViewModel extends SelectorComposer<Window> {
     @Wire("textbox#cfgSparklinePts")
     private Textbox cfgSparklinePts;
 
+    @Wire("textbox#cfgSparklineMin")
+    private Textbox cfgSparklineMin;
+
     @Wire("combobox#cfgDepthUnit")
     private Combobox cfgDepthUnit;
 
@@ -360,9 +363,14 @@ public class ConfigViewModel extends SelectorComposer<Window> {
             if (NumberUtils.isNumber(cfgSparklinePts.getValue())) {
                 config.setProperty(Constants.SPARKLINE_PTS, cfgSparklinePts.getValue());
                 Util.saveConfig();
-
             } else {
                 Messagebox.show("Sparkline points must be numeric");
+            }
+            if (NumberUtils.isNumber(cfgSparklineMin.getValue())) {
+                config.setProperty(Constants.SPARKLINE_MIN, cfgSparklineMin.getValue());
+                Util.saveConfig();
+            } else {
+                Messagebox.show("Sparkline minimum must be numeric");
             }
         } catch (Exception e) {
             logger.error(e.getMessage(), e);

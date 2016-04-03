@@ -1,5 +1,5 @@
 # This file should be placed in /boot/config.txt
-# to enable the proper HDMI signals for the touchpad display
+# to enable the proper HDMI signals for the Adafruit 5"and 7"800 x 480 touchpad display
 #
 # For more options and information see
 # http://www.raspberrypi.org/documentation/configuration/config-txt.md
