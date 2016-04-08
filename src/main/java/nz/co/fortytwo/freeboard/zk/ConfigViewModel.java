@@ -346,7 +346,7 @@ public class ConfigViewModel extends SelectorComposer<Window> {
             }
             config.setProperty(Constants.PREFER_RMC, (String) useRmcGroup.getSelectedItem().getValue());
 //            config.setProperty(Constants.DNS_USE_CHOICE, (String) useHomeGroup.getSelectedItem().getValue());
-            config.setProperty(Constants.SOG_UNIT, (String) (cfgSOGUnit.getSelectedItem().getValue()));
+                config.setProperty(Constants.SOG_UNIT, (String) (cfgSOGUnit.getSelectedItem().getValue()));
             config.setProperty(Constants.SOW_UNIT, (String) (cfgSOWUnit.getSelectedItem().getValue()));
             config.setProperty(Constants.DEPTH_UNIT, (String) (cfgDepthUnit.getSelectedItem().getValue()));
             Util.saveConfig();
@@ -622,6 +622,7 @@ public class ConfigViewModel extends SelectorComposer<Window> {
             cfgAlarmDepth.setValue(config.getProperty(Constants.ALARM_DEPTH));
             cfgDepthOffset.setValue(config.getProperty(Constants.DEPTH_ZERO_OFFSET));
             cfgSparklinePts.setValue(config.getProperty(Constants.SPARKLINE_PTS));
+            cfgSparklineMin.setValue(config.getProperty(Constants.SPARKLINE_MIN));
             portsToScan.setValue(config.getProperty(Constants.SERIAL_PORTS));
             cfgWindOffset.setValue(config.getProperty(Constants.WIND_ZERO_OFFSET));
             String useChoice = config.getProperty(Constants.DNS_USE_CHOICE);

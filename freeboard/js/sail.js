@@ -25,6 +25,7 @@ var selectorNdx = 0;
 var tripElapsedTime;
 var tripDistance;
 var tripAverageSpeed;
+var conv;
 
 
 //colours
@@ -89,7 +90,6 @@ function Sail() {
             //            console.log("navObj.SOG = " + navObj.SOG.toString());
             unitTemp = zk.Widget.$('$cfgSOGUnit').getValue();
             if (unitTemp !== sogUnit) {
-                //                console.log("unitTemp, sogUnit = " + unitTemp + " " + sogUnit);
                 headerString = "SOG " + unitTemp;
                 sogUnit = unitTemp;
                 console.log("SOG DisplaySingle");
@@ -103,7 +103,7 @@ function Sail() {
                 });
             }
             //            console.log("SOG= " + navObj.SOG);
-            lcdSOG.setValue(navObj.SOG);
+            lcdSOG.setValue(distanceUnit(sogUnit)*navObj.SOG);
         }
 
         //SOW
@@ -122,7 +122,7 @@ function Sail() {
                     headerStringVisible: true,
                 });
             }
-            lcdSOW.setValue(navObj.SOW);
+            lcdSOW.setValue(distanceUnit(sowUnit)*navObj.SOW);
         }
         
         if (navObj.TET){
@@ -135,13 +135,13 @@ function Sail() {
         if (navObj.DST){
             if (selectorNdx == 0){
                 tripDistance = navObj.DST;
-                lcdSummary.setValue(tripDistance);
+                lcdSummary.setValue(tripDistance*distanceUnit(sogUnit));
             }
         }
         if (navObj.TAS){
             if (selectorNdx == 2){
                 tripAverageSpeed = navObj.TAS;
-                lcdSummary.setValue(tripAverageSpeed);
+                lcdSummary.setValue(tripAverageSpeed*distanceUnit(sogUnit));
             }
         }
     };
@@ -231,8 +231,8 @@ function initSail() {
         minSpotColor: '',
         fillColor: '#cdf',
 //        fillColor: '',
-        chartRangeMin: sparkMin,
-        normalRangeMin: sparkMin,
+        chartRangeMin: zk.Widget.$('$sparkMin').getValue(),
+        normalRangeMin: zk.Widget.$('$sparkMin').getValue(),
         normalRangeMax: anAlarm,
         drawNormalOnTop: 'true',
         normalRangeColor: 'rgba(255, 0, 0, .20)'
@@ -347,24 +347,29 @@ function selectorButton() {
     }
 }
 
-function distanceUnit() {
-    switch (sogUnit) {
+function distanceUnit(unit) {
+    var convert;
+    switch (unit) {
     case "Kt":
         {
             distUnit = "n.m.";
+            convert = 1.0;
             break;
         }
     case "km/hr":
         {
             distUnit = "km";
+            convert = 1.852;
             break;
         }
     case "mi/hr":
         {
             distUnit = "mi";
+            convert = 1.1450779448;
             break;
         }
     }
+    return convert;
 }
 
 // This doesn't work - why???

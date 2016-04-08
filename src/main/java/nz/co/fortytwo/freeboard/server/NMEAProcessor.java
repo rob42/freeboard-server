@@ -260,8 +260,7 @@ public class NMEAProcessor extends FreeboardProcessor implements Processor, Free
             double gpsPreviousSpeed = 0;
             double paddlePreviousSpeed = 0;
             double tripDistance;
-			static final double ALPHA = 1 - 1.0 / 6;
-            double convert; // RMC gives speed in Kt
+            static final double ALPHA = 1 - 1.0 / 6;
             DateFormat rmcFormat = new SimpleDateFormat("ddMMyy");
             
 			public void sentenceRead(SentenceEvent evt) {
@@ -350,23 +349,10 @@ public class NMEAProcessor extends FreeboardProcessor implements Processor, Free
                         config.setProperty(Constants.TRIP_ELAPSED_TIME, tripElapsedTime + "");
                         map.put(Constants.TRIP_TIME, tripElapsedTime);
                         previousMillis = nowMillis;
-                        String unit = config.getProperty(Constants.SOG_UNIT);
-
-                        switch (unit) {
-                            case "km/hr": {
-                                convert = 1.852;
-                                break;
-                            }
-                            case "mi/hr": {
-                                convert = 1.1450779448;
-                                break;
-                            }
-                            case "Kt": {
-                                convert = 1.;
-                                break;
-                            }
-                        }
-                        map.put(Constants.TRIP_AVERAGE_SPEED, tripDistance * convert * Constants.MS_PER_HR / tripElapsedTime);
+                        
+                        // handle all distances and speeds in GPS units (knots)
+      
+                        map.put(Constants.TRIP_AVERAGE_SPEED, tripDistance * Constants.MS_PER_HR / tripElapsedTime);
 //                        System.out.println("tripDistance, tripElapsedTime = "+tripDistance + " "+ tripElapsedTime);
                         String hhmmss = convertSecondsToHMmSs(timeDiff / 1000);
                     }
@@ -402,24 +388,26 @@ public class NMEAProcessor extends FreeboardProcessor implements Processor, Free
 						}
 					}
 //                    System.out.println(String.format("Speed gpsPreviousSpeed, sen.getSpeed = %2.2f %2.2f", gpsPreviousSpeed, sen.getSpeed()));
-                    gpsPreviousSpeed = Util.movingAverage(ALPHA, gpsPreviousSpeed, sen.getSpeed());
-                    String unit = config.getProperty(Constants.SOG_UNIT);
-                    switch (unit) {
-                        case "km/hr": {
-                            convert = 1.852;
-                            break;
-                        }
-                        case "mi/hr": {
-                            convert = 1.1450779448;
-                            break;
-                        }
-                        case "Kt": {
-                            convert = 1.;
-                            break;
-                        }
-                    }
+
+                      // handle soeed and distance in GPS units (knots)
+                      gpsPreviousSpeed = Util.movingAverage(ALPHA, gpsPreviousSpeed, sen.getSpeed());
+//                    String unit = config.getProperty(Constants.SOG_UNIT);
+//                    switch (unit) {
+//                        case "km/hr": {
+//                            convert = 1.852;
+//                            break;
+//                        }
+//                        case "mi/hr": {
+//                            convert = 1.1450779448;
+//                            break;
+//                        }
+//                        case "Kt": {
+//                            convert = 1.;
+//                            break;
+//                        }
+//                    }
                     //gpsPreviousSpeed = 1.0;
-                    map.put(Constants.SPEED_OVER_GND, gpsPreviousSpeed * convert);
+                    map.put(Constants.SPEED_OVER_GND, gpsPreviousSpeed);
 //                    double deltaDist = sen.getSpeed()*timeDiff/Constants.MS_PER_HR;
                     double deltaDist = gpsPreviousSpeed*timeDiff/Constants.MS_PER_HR;
                     tripDistance += deltaDist;

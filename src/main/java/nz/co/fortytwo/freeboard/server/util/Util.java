@@ -160,6 +160,7 @@ public class Util {
                 props.setProperty(Constants.SOW_UNIT, "Kt");
                 props.setProperty(Constants.ALARM_DEPTH, "6");
                 props.setProperty(Constants.SPARKLINE_PTS, "200");
+                props.setProperty(Constants.SPARKLINE_MIN, "3");
 		if(SystemUtils.IS_OS_WINDOWS){
 			props.setProperty(Constants.SERIAL_PORTS,"COM1,COM2,COM3,COM4");
 		}
