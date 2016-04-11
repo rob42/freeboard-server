@@ -102,8 +102,10 @@ function Sail() {
                     headerStringVisible: true,
                 });
             }
-            //            console.log("SOG= " + navObj.SOG);
-            lcdSOG.setValue(distanceUnit(sogUnit)*navObj.SOG);
+            console.log("SOG= " + navObj.SOG);
+            temp = distanceUnit(sogUnit)*navObj.SOG;
+            lcdSOG.setValue(temp);
+            console.log("AdjSOG= " + temp);
         }
 
         //SOW
@@ -126,23 +128,25 @@ function Sail() {
         }
         
         if (navObj.TET){
+            tripElapsedTime = navObj.TET;
             if (selectorNdx == 1){
-                tripElapsedTime = navObj.TET;
                 lcdSummary.setValue(tripElapsedTime/MILLISPERHR);
             }
         }
         
         if (navObj.DST){
+            tripDistance = navObj.DST;
             if (selectorNdx == 0){
-                tripDistance = navObj.DST;
                 lcdSummary.setValue(tripDistance*distanceUnit(sogUnit));
             }
+            console.log("Disy= " + navObj.DST);
+            console.log("AdjDST= " + distanceUnit(sogUnit)*navObj.DST);
         }
         if (navObj.TAS){
+            tripAverageSpeed = navObj.TAS;
             if (selectorNdx == 2){
-                tripAverageSpeed = navObj.TAS;
                 lcdSummary.setValue(tripAverageSpeed*distanceUnit(sogUnit));
-            }
+            }tripAverageSpeed
         }
     };
 }
@@ -278,7 +282,7 @@ function initSail() {
         headerStringVisible: true,
     });
 
-    distanceUnit();
+    distanceUnit(sogUnit);
     console.log("init sogUnit = " + sogUnit);
     console.log("init distUnit = " + distUnit);
 
@@ -306,7 +310,7 @@ function selectorButton() {
     if (selectorNdx >= 3) {
         selectorNdx = 0;
     }
-    distanceUnit();
+    distanceUnit(sogUnit);
     switch (selectorNdx) {
     case 0:
         lcdSummary = new steelseries.DisplaySingle('tripSummary', {
@@ -342,7 +346,7 @@ function selectorButton() {
             headerString: headerString,
             headerStringVisible: true,
         });
-        lcdSummary.setValue(tripAverageSpeed);
+        lcdSummary.setValue(tripAverageSpeed*distanceUnit(sogUnit));
         break;
     }
 }

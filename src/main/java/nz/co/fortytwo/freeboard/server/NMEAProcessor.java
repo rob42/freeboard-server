@@ -61,192 +61,190 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.zkoss.zul.Messagebox;
 
-
 /**
- * Processes NMEA sentences in the body of a message, firing events to interested listeners
- * 
+ * Processes NMEA sentences in the body of a message, firing events to
+ * interested listeners
+ *
  * @author robert
- * 
+ *
  */
 public class NMEAProcessor extends FreeboardProcessor implements Processor, FreeboardHandler {
 
-	private static Logger logger = Logger.getLogger(NMEAProcessor.class);
-	private static final String DISPATCH_ALL = "DISPATCH_ALL";
-	private boolean preferRMC;
+    private static Logger logger = Logger.getLogger(NMEAProcessor.class);
+    private static final String DISPATCH_ALL = "DISPATCH_ALL";
+    private boolean preferRMC;
     public static boolean resetTripLog = false;
-    
-	// map of sentence listeners
-	private ConcurrentMap<String, List<SentenceListener>> listeners = new ConcurrentHashMap<String, List<SentenceListener>>();
+
+    // map of sentence listeners
+    private ConcurrentMap<String, List<SentenceListener>> listeners = new ConcurrentHashMap<String, List<SentenceListener>>();
 
 // enable line below to get random depth values for testing.
 // See also line 83 and 333
 //    private RandomGaussian gaussian;
+    public NMEAProcessor() {
+        try {
+            preferRMC = new Boolean(Util.getConfig(null).getProperty(Constants.PREFER_RMC, "true"));
+        } catch (Exception e) {
 
-	public NMEAProcessor() {
-		try {
-			preferRMC=new Boolean(Util.getConfig(null).getProperty(Constants.PREFER_RMC, "true"));
-		} catch (Exception e) {
-			
-		}
+        }
 
-		//register BVE
-		SentenceFactory.getInstance().registerParser("BVE", BVEParser.class);
-		SentenceFactory.getInstance().registerParser("XDR",CruzproXDRParser.class);
-		
-		setNmeaListeners();
+        //register BVE
+        SentenceFactory.getInstance().registerParser("BVE", BVEParser.class);
+        SentenceFactory.getInstance().registerParser("XDR", CruzproXDRParser.class);
+
+        setNmeaListeners();
 
         // Enable the code below to generate Gausian distributed random depths
-       //gaussian = new RandomGaussian();
+        //gaussian = new RandomGaussian();
+    }
 
-	}
+    public void process(Exchange exchange) throws Exception {
+        if (exchange.getIn().getBody() == null) {
+            return;
+        }
+        @SuppressWarnings("unchecked")
+        HashMap<String, Object> map = exchange.getIn().getBody(HashMap.class);
+        map = handle(map);
+        exchange.getIn().setBody(map);
+    }
 
-	public void process(Exchange exchange) throws Exception {
-		if (exchange.getIn().getBody() == null) {
-			return;
-		}
-		@SuppressWarnings("unchecked")
-		HashMap<String, Object> map = exchange.getIn().getBody(HashMap.class);
-		map = handle(map);
-		exchange.getIn().setBody(map);
-	}
-
-	// @Override
-	public HashMap<String, Object> handle(HashMap<String, Object> map) {
-		// so we have a string
-		String bodyStr = (String) map.get(Constants.NMEA);
-		if (StringUtils.isNotBlank(bodyStr)) {
-			try {
+    // @Override
+    public HashMap<String, Object> handle(HashMap<String, Object> map) {
+        // so we have a string
+        String bodyStr = (String) map.get(Constants.NMEA);
+        if (StringUtils.isNotBlank(bodyStr)) {
+            try {
                 if (logger.isDebugEnabled()) {
                     logger.debug("Processing NMEA:" + bodyStr);
                 }
-				// dont need the NMEA now
-				map.remove(Constants.NMEA);
+                // dont need the NMEA now
+                map.remove(Constants.NMEA);
 
-				Sentence sentence = SentenceFactory.getInstance().createParser(bodyStr);
-				fireSentenceEvent(map, sentence);
-			} catch (Exception e) {
+                Sentence sentence = SentenceFactory.getInstance().createParser(bodyStr);
+                fireSentenceEvent(map, sentence);
+            } catch (Exception e) {
                 if (logger.isDebugEnabled()) {
                     logger.debug(e.getMessage(), e);
                 }
-				logger.error(e.getMessage()+" : "+bodyStr);
-			}
-		}
-		return map;
-	}
+                logger.error(e.getMessage() + " : " + bodyStr);
+            }
+        }
+        return map;
+    }
 
-	/**
-	 * Adds a {@link SentenceListener} that wants to receive all sentences read
-	 * by the reader.
-	 * <p/>
-	 * @param listener {@link SentenceListener} to be registered.
-	 * <p/>
-	 * @see net.sf.marineapi.nmea.event.SentenceListener
-	 */
-	public void addSentenceListener(SentenceListener listener) {
-		registerListener(DISPATCH_ALL, listener);
-	}
+    /**
+     * Adds a {@link SentenceListener} that wants to receive all sentences read
+     * by the reader.
+     * <p/>
+     * @param listener {@link SentenceListener} to be registered.
+     * <p/>
+     * @see net.sf.marineapi.nmea.event.SentenceListener
+     */
+    public void addSentenceListener(SentenceListener listener) {
+        registerListener(DISPATCH_ALL, listener);
+    }
 
-	/**
-	 * Adds a {@link SentenceListener} that is interested in receiving only
-	 * sentences of certain type.
-	 * <p/>
-	 * @param sl SentenceListener to add
-	 * @param type Sentence type for which the listener is registered.
-	 * <p/>
-	 * @see net.sf.marineapi.nmea.event.SentenceListener
-	 */
-	public void addSentenceListener(SentenceListener sl, SentenceId type) {
-		registerListener(type.toString(), sl);
-	}
+    /**
+     * Adds a {@link SentenceListener} that is interested in receiving only
+     * sentences of certain type.
+     * <p/>
+     * @param sl SentenceListener to add
+     * @param type Sentence type for which the listener is registered.
+     * <p/>
+     * @see net.sf.marineapi.nmea.event.SentenceListener
+     */
+    public void addSentenceListener(SentenceListener sl, SentenceId type) {
+        registerListener(type.toString(), sl);
+    }
 
-	/**
-	 * Adds a {@link SentenceListener} that is interested in receiving only
-	 * sentences of certain type.
-	 * <p/>
-	 * @param sl SentenceListener to add
-	 * @param type Sentence type for which the listener is registered.
-	 * <p/>
-	 * @see net.sf.marineapi.nmea.event.SentenceListener
-	 */
-	public void addSentenceListener(SentenceListener sl, String type) {
-		registerListener(type, sl);
-	}
+    /**
+     * Adds a {@link SentenceListener} that is interested in receiving only
+     * sentences of certain type.
+     * <p/>
+     * @param sl SentenceListener to add
+     * @param type Sentence type for which the listener is registered.
+     * <p/>
+     * @see net.sf.marineapi.nmea.event.SentenceListener
+     */
+    public void addSentenceListener(SentenceListener sl, String type) {
+        registerListener(type, sl);
+    }
 
-	/**
-	 * Remove a listener from reader. When removed, listener will not receive any
-	 * events from the reader.
-	 * <p/>
-	 * @param sl {@link SentenceListener} to be removed.
-	 */
-	public void removeSentenceListener(SentenceListener sl) {
-		for (List<SentenceListener> list : listeners.values()) {
-			if (list.contains(sl)) {
-				list.remove(sl);
-			}
-		}
-	}
+    /**
+     * Remove a listener from reader. When removed, listener will not receive
+     * any events from the reader.
+     * <p/>
+     * @param sl {@link SentenceListener} to be removed.
+     */
+    public void removeSentenceListener(SentenceListener sl) {
+        for (List<SentenceListener> list : listeners.values()) {
+            if (list.contains(sl)) {
+                list.remove(sl);
+            }
+        }
+    }
 
-	/**
-	 * Dispatch data to all listeners.
-	 * <p/>
-	 * @param map
-	 * <p/>
-	 * @param sentence sentence string.
-	 */
-	private void fireSentenceEvent(HashMap<String, Object> map, Sentence sentence) {
-		if (!sentence.isValid()){
-			logger.warn("NMEA Sentence is invalid:"+sentence.toSentence());
-			return;
-		}
-		//TODO: Why am I creating all these lists?
-		String type = sentence.getSentenceId();
-		Set<SentenceListener> list = new HashSet<SentenceListener>();
+    /**
+     * Dispatch data to all listeners.
+     * <p/>
+     * @param map
+     * <p/>
+     * @param sentence sentence string.
+     */
+    private void fireSentenceEvent(HashMap<String, Object> map, Sentence sentence) {
+        if (!sentence.isValid()) {
+            logger.warn("NMEA Sentence is invalid:" + sentence.toSentence());
+            return;
+        }
+        //TODO: Why am I creating all these lists?
+        String type = sentence.getSentenceId();
+        Set<SentenceListener> list = new HashSet<SentenceListener>();
 
-		if (listeners.containsKey(type)) {
-			list.addAll(listeners.get(type));
-		}
-		if (listeners.containsKey(DISPATCH_ALL)) {
-			list.addAll(listeners.get(DISPATCH_ALL));
-		}
+        if (listeners.containsKey(type)) {
+            list.addAll(listeners.get(type));
+        }
+        if (listeners.containsKey(DISPATCH_ALL)) {
+            list.addAll(listeners.get(DISPATCH_ALL));
+        }
 
-		for (SentenceListener sl : list) {
-			try {
-				SentenceEvent se = new SentenceEvent(map, sentence);
-				sl.sentenceRead(se);
-			} catch (Exception e) {
-				logger.error(e.getMessage(),e);
-			}
-		}
+        for (SentenceListener sl : list) {
+            try {
+                SentenceEvent se = new SentenceEvent(map, sentence);
+                sl.sentenceRead(se);
+            } catch (Exception e) {
+                logger.error(e.getMessage(), e);
+            }
+        }
 
-	}
+    }
 
-	/**
-	 * Registers a SentenceListener to hash map with given key.
-	 * <p/>
-	 * @param type Sentence type to register for
-	 * @param sl SentenceListener to register
-	 */
-	private void registerListener(String type, SentenceListener sl) {
-		if (listeners.containsKey(type)) {
-			listeners.get(type).add(sl);
-		} else {
-			List<SentenceListener> list = new Vector<SentenceListener>();
-			list.add(sl);
-			listeners.put(type, list);
-		}
-	}
+    /**
+     * Registers a SentenceListener to hash map with given key.
+     * <p/>
+     * @param type Sentence type to register for
+     * @param sl SentenceListener to register
+     */
+    private void registerListener(String type, SentenceListener sl) {
+        if (listeners.containsKey(type)) {
+            listeners.get(type).add(sl);
+        } else {
+            List<SentenceListener> list = new Vector<SentenceListener>();
+            list.add(sl);
+            listeners.put(type, list);
+        }
+    }
 
-	/**
-	 * Adds NMEA sentence listeners to process NMEA to simple output
-	 * <p/>
-	 * @param processor
-	 */
-	private void setNmeaListeners() {
+    /**
+     * Adds NMEA sentence listeners to process NMEA to simple output
+     * <p/>
+     * @param processor
+     */
+    private void setNmeaListeners() {
 
-		addSentenceListener(new SentenceListener() {
+        addSentenceListener(new SentenceListener() {
 
-			private boolean startLat = true;
-			private boolean startLon = true;
+            private boolean startLat = true;
+            private boolean startLon = true;
             private boolean startTrip = true;
             private long startMillis;
             private long nowMillis;
@@ -255,58 +253,58 @@ public class NMEAProcessor extends FreeboardProcessor implements Processor, Free
             private long tripElapsedTime;
             private long timeDiff; // time between successive GPS readings
 
-			double previousLat = 0;
-			double previousLon = 0;
+            double previousLat = 0;
+            double previousLon = 0;
             double gpsPreviousSpeed = 0;
             double paddlePreviousSpeed = 0;
             double tripDistance;
             static final double ALPHA = 1 - 1.0 / 6;
             DateFormat rmcFormat = new SimpleDateFormat("ddMMyy");
-            
-			public void sentenceRead(SentenceEvent evt) {
-				// Exchange exchange = (Exchange) evt.getSource();
-				// StringBuilder body = new StringBuilder();
-				@SuppressWarnings("unchecked")
+
+            public void sentenceRead(SentenceEvent evt) {
+                // Exchange exchange = (Exchange) evt.getSource();
+                // StringBuilder body = new StringBuilder();
+                @SuppressWarnings("unchecked")
 
                 Properties config = null;
-                
+
                 try {
                     config = Util.getConfig(null);
                 } catch (Exception e) {
                     logger.error(e.getMessage(), e);
                     Messagebox.show("There has been a problem with loading the configuration:" + e.getMessage());
                 }
-                if (resetTripLog){
+                if (resetTripLog) {
                     startTrip = true;
                     config.setProperty(Constants.TRIP_ELAPSED_TIME, "0");
-                    config.setProperty(Constants.TRIP_DISTANCE, "0"); 
+                    config.setProperty(Constants.TRIP_DISTANCE, "0");
                     tripDistance = 0.;
                     tripElapsedTime = 0;
                     resetTripLog = false;
                 }
-				HashMap<String, Object> map = (HashMap<String, Object>) evt.getSource();
-				if (evt.getSentence() instanceof PositionSentence) {
-					PositionSentence sen = (PositionSentence) evt.getSentence();
-					try{
-						if (startLat) {
-							previousLat = sen.getPosition().getLatitude();
-							startLat = false;
+                HashMap<String, Object> map = (HashMap<String, Object>) evt.getSource();
+                if (evt.getSentence() instanceof PositionSentence) {
+                    PositionSentence sen = (PositionSentence) evt.getSentence();
+                    try {
+                        if (startLat) {
+                            previousLat = sen.getPosition().getLatitude();
+                            startLat = false;
                             tripDistance = Double.parseDouble(config.getProperty(Constants.TRIP_DISTANCE, "0."));
-						}
+                        }
                         double lat1 = previousLat;
-						previousLat = Util.movingAverage(ALPHA, previousLat, sen.getPosition().getLatitude());
+                        previousLat = Util.movingAverage(ALPHA, previousLat, sen.getPosition().getLatitude());
                         if (logger.isDebugEnabled()) {
                             logger.debug("lat position:" + sen.getPosition().getLatitude() + ", hemi=" + sen.getPosition().getLatitudeHemisphere());
                         }
-						map.put(Constants.LAT, previousLat);
-						
-						if (startLon) {
-							previousLon = sen.getPosition().getLongitude();
-							startLon = false;
-						}
+                        map.put(Constants.LAT, previousLat);
+
+                        if (startLon) {
+                            previousLon = sen.getPosition().getLongitude();
+                            startLon = false;
+                        }
                         double lon1 = previousLon;
-						previousLon = Util.movingAverage(ALPHA, previousLon, sen.getPosition().getLongitude());
-						map.put(Constants.LON, previousLon);
+                        previousLon = Util.movingAverage(ALPHA, previousLon, sen.getPosition().getLongitude());
+                        map.put(Constants.LON, previousLon);
 //                        double deltaDist = distance(previousLat, lat1, previousLon, lon1);
 //                        dist+=deltaDist;
 //                        System.out.println("deltaDist, speed = " + deltaDist+" "+ "," + ((RMCSentence)sen).getSpeed());
@@ -316,7 +314,7 @@ public class NMEAProcessor extends FreeboardProcessor implements Processor, Free
                         if (logger.isDebugEnabled()) {
                             logger.debug(p);
                         }
-					}
+                    }
                     if ((evt.getSentence() instanceof DateSentence) && (evt.getSentence() instanceof TimeSentence)) {
                         DateSentence dSen = (DateSentence) evt.getSentence();
                         TimeSentence tSen = (TimeSentence) evt.getSentence();
@@ -349,9 +347,8 @@ public class NMEAProcessor extends FreeboardProcessor implements Processor, Free
                         config.setProperty(Constants.TRIP_ELAPSED_TIME, tripElapsedTime + "");
                         map.put(Constants.TRIP_TIME, tripElapsedTime);
                         previousMillis = nowMillis;
-                        
+
                         // handle all distances and speeds in GPS units (knots)
-      
                         map.put(Constants.TRIP_AVERAGE_SPEED, tripDistance * Constants.MS_PER_HR / tripElapsedTime);
 //                        System.out.println("tripDistance, tripElapsedTime = "+tripDistance + " "+ tripElapsedTime);
                         String hhmmss = convertSecondsToHMmSs(timeDiff / 1000);
@@ -361,36 +358,36 @@ public class NMEAProcessor extends FreeboardProcessor implements Processor, Free
                     } catch (IOException ex) {
                         java.util.logging.Logger.getLogger(NMEAProcessor.class.getName()).log(Level.SEVERE, null, ex);
                     }
-				}
+                }
 
-				if (evt.getSentence() instanceof HeadingSentence) {
-					HeadingSentence sen = (HeadingSentence) evt.getSentence();
-					try{
-						if (sen.isTrue()) {
-							map.put(Constants.COURSE_OVER_GND, sen.getHeading());
-						} else {
-							map.put(Constants.MAG_HEADING, sen.getHeading());
-						}
+                if (evt.getSentence() instanceof HeadingSentence) {
+                    HeadingSentence sen = (HeadingSentence) evt.getSentence();
+                    try {
+                        if (sen.isTrue()) {
+                            map.put(Constants.COURSE_OVER_GND, sen.getHeading());
+                        } else {
+                            map.put(Constants.MAG_HEADING, sen.getHeading());
+                        }
                     } catch (DataNotAvailableException p) {
                         if (logger.isDebugEnabled()) {
                             logger.debug(p);
                         }
-					}
-				}
+                    }
+                }
 
-				if (evt.getSentence() instanceof RMCSentence) {
-					RMCSentence sen = (RMCSentence) evt.getSentence();
-					Util.checkTime(sen);
-					//may conflict with the Heading sentences, producing COG 'wobble' if they dont agree.
-					if(preferRMC){
-						if(sen.getSpeed()>0.7d){
-							map.put(Constants.COURSE_OVER_GND, sen.getCourse());
-						}
-					}
+                if (evt.getSentence() instanceof RMCSentence) {
+                    RMCSentence sen = (RMCSentence) evt.getSentence();
+                    Util.checkTime(sen);
+                    //may conflict with the Heading sentences, producing COG 'wobble' if they dont agree.
+                    if (preferRMC) {
+                        if (sen.getSpeed() > 0.7d) {
+                            map.put(Constants.COURSE_OVER_GND, sen.getCourse());
+                        }
+                    }
 //                    System.out.println(String.format("Speed gpsPreviousSpeed, sen.getSpeed = %2.2f %2.2f", gpsPreviousSpeed, sen.getSpeed()));
 
-                      // handle soeed and distance in GPS units (knots)
-                      gpsPreviousSpeed = Util.movingAverage(ALPHA, gpsPreviousSpeed, sen.getSpeed());
+                    // handle soeed and distance in GPS units (knots)
+                    gpsPreviousSpeed = Util.movingAverage(ALPHA, gpsPreviousSpeed, sen.getSpeed());
 //                    String unit = config.getProperty(Constants.SOG_UNIT);
 //                    switch (unit) {
 //                        case "km/hr": {
@@ -409,16 +406,16 @@ public class NMEAProcessor extends FreeboardProcessor implements Processor, Free
                     //gpsPreviousSpeed = 1.0;
                     map.put(Constants.SPEED_OVER_GND, gpsPreviousSpeed);
 //                    double deltaDist = sen.getSpeed()*timeDiff/Constants.MS_PER_HR;
-                    double deltaDist = gpsPreviousSpeed*timeDiff/Constants.MS_PER_HR;
+                    double deltaDist = gpsPreviousSpeed * timeDiff / Constants.MS_PER_HR;
                     tripDistance += deltaDist;
                     map.put(Constants.DISTANCE_TRAVELED, tripDistance);
                     String mapString = String.format("%010.6f", tripDistance);
                     config.setProperty(Constants.TRIP_DISTANCE, mapString);
-				}
+                }
 
-				if (evt.getSentence() instanceof VHWSentence) {
-					VHWSentence sen = (VHWSentence) evt.getSentence();
-					try{
+                if (evt.getSentence() instanceof VHWSentence) {
+                    VHWSentence sen = (VHWSentence) evt.getSentence();
+                    try {
                         paddlePreviousSpeed = Util.movingAverage(ALPHA, paddlePreviousSpeed, sen.getSpeedKnots());
                         map.put(Constants.SPEED_OVER_WATER, paddlePreviousSpeed);
 //						previousSpeed = Util.movingAverage(ALPHA, previousSpeed, sen.getSpeedKnots());
@@ -427,80 +424,79 @@ public class NMEAProcessor extends FreeboardProcessor implements Processor, Free
                         if (logger.isDebugEnabled()) {
                             logger.debug(p);
                         }
-					}
-					try{
-						map.put(Constants.MAG_HEADING, sen.getMagneticHeading());
+                    }
+                    try {
+                        map.put(Constants.MAG_HEADING, sen.getMagneticHeading());
                     } catch (DataNotAvailableException p) {
                         if (logger.isDebugEnabled()) {
                             logger.debug(p);
                         }
-					}
-					try{
-						map.put(Constants.COURSE_OVER_GND, sen.getHeading());
+                    }
+                    try {
+                        map.put(Constants.COURSE_OVER_GND, sen.getHeading());
                     } catch (DataNotAvailableException p) {
                         if (logger.isDebugEnabled()) {
                             logger.debug(p);
-					}
+                        }
                     }
 
-				}
+                }
 
-				// MWV wind
-				// Mega sends $IIMVW with 0-360d clockwise from bow, (relative to bow)
-				// Mega value is int+'.0'
-				if (evt.getSentence() instanceof MWVSentence) {
-					MWVSentence sen = (MWVSentence) evt.getSentence();
-					// relative to true north
-					// if (sen.isTrue()) {
-					// map.put( Constants.WDT,sen.getAngle());
-					// map.put( Constants.WST,sen.getSpeed());
-					// map.put( Constants.WSU,sen.getSpeedUnit());
-					//
-					// } else {
-					// relative to bow
-					double angle = sen.getAngle();
-					map.put(Constants.WIND_DIR_APPARENT, angle);
-					map.put(Constants.WIND_SPEED_APPARENT, sen.getSpeed());
-					map.put(Constants.WIND_SPEED_UNITS, sen.getSpeedUnit());
-					// }
-				}
-				// Cruzpro BVE sentence
+                // MWV wind
+                // Mega sends $IIMVW with 0-360d clockwise from bow, (relative to bow)
+                // Mega value is int+'.0'
+                if (evt.getSentence() instanceof MWVSentence) {
+                    MWVSentence sen = (MWVSentence) evt.getSentence();
+                    // relative to true north
+                    // if (sen.isTrue()) {
+                    // map.put( Constants.WDT,sen.getAngle());
+                    // map.put( Constants.WST,sen.getSpeed());
+                    // map.put( Constants.WSU,sen.getSpeedUnit());
+                    //
+                    // } else {
+                    // relative to bow
+                    double angle = sen.getAngle();
+                    map.put(Constants.WIND_DIR_APPARENT, angle);
+                    map.put(Constants.WIND_SPEED_APPARENT, sen.getSpeed());
+                    map.put(Constants.WIND_SPEED_UNITS, sen.getSpeedUnit());
+                    // }
+                }
+                // Cruzpro BVE sentence
 
-				if (evt.getSentence() instanceof BVESentence) {
-					BVESentence sen = (BVESentence) evt.getSentence();
-					if (sen.isFuelGuage()) {
-						map.put(Constants.FUEL_REMAINING, sen.getFuelRemaining());
-						map.put(Constants.FUEL_USE_RATE, sen.getFuelUseRateUnitsPerHour());
-						map.put(Constants.FUEL_USED, sen.getFuelUsedOnTrip());
-					}
-					if (sen.isEngineRpm()) {
-						map.put(Constants.ENGINE_RPM, sen.getEngineRpm());
-						map.put(Constants.ENGINE_HOURS, sen.getEngineHours());
-						map.put(Constants.ENGINE_MINUTES, sen.getEngineMinutes());
+                if (evt.getSentence() instanceof BVESentence) {
+                    BVESentence sen = (BVESentence) evt.getSentence();
+                    if (sen.isFuelGuage()) {
+                        map.put(Constants.FUEL_REMAINING, sen.getFuelRemaining());
+                        map.put(Constants.FUEL_USE_RATE, sen.getFuelUseRateUnitsPerHour());
+                        map.put(Constants.FUEL_USED, sen.getFuelUsedOnTrip());
+                    }
+                    if (sen.isEngineRpm()) {
+                        map.put(Constants.ENGINE_RPM, sen.getEngineRpm());
+                        map.put(Constants.ENGINE_HOURS, sen.getEngineHours());
+                        map.put(Constants.ENGINE_MINUTES, sen.getEngineMinutes());
 
-					}
-					if (sen.isTempGuage()) {
-						map.put(Constants.ENGINE_TEMP, sen.getEngineTemp());
-						map.put(Constants.ENGINE_VOLTS, sen.getVoltage());
-						// map.put(Constants.ENGINE_TEMP_HIGH_ALARM, sen.getHighTempAlarmValue());
-						// map.put(Constants.ENGINE_TEMP_LOW_ALARM, sen.getLowTempAlarmValue());
+                    }
+                    if (sen.isTempGuage()) {
+                        map.put(Constants.ENGINE_TEMP, sen.getEngineTemp());
+                        map.put(Constants.ENGINE_VOLTS, sen.getVoltage());
+                        // map.put(Constants.ENGINE_TEMP_HIGH_ALARM, sen.getHighTempAlarmValue());
+                        // map.put(Constants.ENGINE_TEMP_LOW_ALARM, sen.getLowTempAlarmValue());
 
-					}
-					if (sen.isPressureGuage()) {
-						map.put(Constants.ENGINE_OIL_PRESSURE, sen.getPressure());
-						// map.put(Constants.ENGINE_PRESSURE_HIGH_ALARM, sen.getHighPressureAlarmValue());
-						// map.put(Constants.ENGINE_PRESSURE_LOW_ALARM, sen.getLowPressureAlarmValue());
+                    }
+                    if (sen.isPressureGuage()) {
+                        map.put(Constants.ENGINE_OIL_PRESSURE, sen.getPressure());
+                        // map.put(Constants.ENGINE_PRESSURE_HIGH_ALARM, sen.getHighPressureAlarmValue());
+                        // map.put(Constants.ENGINE_PRESSURE_LOW_ALARM, sen.getLowPressureAlarmValue());
 
-					}
+                    }
 
-				}
+                }
 
                 if (evt.getSentence() instanceof DepthSentence) {
                     DepthSentence sen = (DepthSentence) evt.getSentence();
 
                     //Remove comment below to get randomly distributed depts for tessting
 //                    sen.setDepth(gaussian.getGaussian(2.5, 1.0));
-
                     //in meters
                     double unit;
                     if (config.getProperty(Constants.DEPTH_UNIT).equals("f")) {
@@ -551,13 +547,16 @@ public class NMEAProcessor extends FreeboardProcessor implements Processor, Free
                     }
                 }
             }
+
             public void readingStopped() {
             }
+
             public void readingStarted() {
             }
+
             public void readingPaused() {
             }
-						// data not available because no transducer connected
+            // data not available because no transducer connected
         }
         );
     }
@@ -566,14 +565,14 @@ public class NMEAProcessor extends FreeboardProcessor implements Processor, Free
 
         double R = 6378.100; //radius of Earth in km
 
-        double dlon = Math.PI*(lon2 - lon1)/360.;
-        double dlat = Math.PI*(lat2 - lat1)/360.;
+        double dlon = Math.PI * (lon2 - lon1) / 360.;
+        double dlat = Math.PI * (lat2 - lat1) / 360.;
 //        double a = Math.pow((Math.sin(dlat / 2)), 2)
 //                + Math.cos(lat1) * Math.cos(lat2) * Math.pow((Math.sin(dlon / 2)), 2);
 //        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 ////        System.out.println("a,c = "+a + " " + c);
 //        return R * c;
-         return R*Math.sqrt(Math.pow(Math.sin(dlon),2)+Math.pow(Math.sin(dlat),2));
+        return R * Math.sqrt(Math.pow(Math.sin(dlon), 2) + Math.pow(Math.sin(dlat), 2));
     }
 
     public static String convertSecondsToHMmSs(long seconds) {
