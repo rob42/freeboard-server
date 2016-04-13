@@ -535,8 +535,8 @@ function posInit() {
  * Original scripts by Chris Veness Taken from
  * http://movable-type.co.uk/scripts/latlong-vincenty-direct.html and optimized /
  * cleaned up by Mathias Bynens <http://mathiasbynens.be/> Based on the Vincenty
- * direct formula by T. Vincenty, ‚ÄúDirect and Inverse Solutions of Geodesics on
- * the Ellipsoid with application of nested equations‚Äù, Survey Review, vol XXII
+ * direct formula by T. Vincenty, °»Direct and Inverse Solutions of Geodesics on
+ * the Ellipsoid with application of nested equations°…, Survey Review, vol XXII
  * no 176, 1975 <http://www.ngs.noaa.gov/PUBS_LIB/inverse.pdf>
  */
 function toRad(n) {

@@ -67,24 +67,38 @@
 								<textbox id="cfgCompassOffset"
 									tooltip="+/- degrees offset" />
 							</row>
-
 							<row hflex="min">
-
 								<label value="Heading source" />
 								<radiogroup id="useRmcGroup" tooltiptext="Select RMC to show the heading from the GPS. It will be erratic at low speeds. Select HDG if you have an electronic compass for a more stable heading">
 									<radio id="useRmcRadio" label="RMC" value="true" />
 									<radio id="useHdgRadio" label="HDG" value="false" />
 								</radiogroup>
-
 							</row>
-                     		<row hflex="min">
-
+						        <row hflex="min">
 								<label value="Depth Unit" />
 								<combobox id="cfgDepthUnit"
 									tooltiptext="feet (f) meters (m) or fathoms (F)" >
 									<comboitem label="feet" value="f"/>
 									<comboitem label="meters" value="m"/>
 									<comboitem label="Fathoms" value="F"/>
+									</combobox>
+							</row>
+						        <row hflex="min">
+								<label value="Speed Over Ground Unit" />
+								<combobox id="cfgSOGUnit"
+									tooltiptext= "km/hr, Mi/hr, Kt">
+									<comboitem label="km/hr" value="km/hr"/>
+									<comboitem label="mi/hr" value="mi/hr"/>
+									<comboitem label="Kt" value="Kt"/>
+									</combobox>
+							</row>
+						        <row hflex="min">
+								<label value="Speed Over Water Unit"/>
+								<combobox id="cfgSOWUnit"
+									tooltiptext= "km/hr, Mi/hr, Kt">
+									<comboitem label="km/hr" value="km/hr"/>
+									<comboitem label="Mi/hr" value="Mi/hr"/>
+									<comboitem label="Kt" value="Kt"/>
 									</combobox>
 							</row>
 							<row hflex="min">
@@ -96,6 +110,16 @@
 								<label value="Alarm Depth" />
 								<textbox id="cfgAlarmDepth"
 									tooltip="Shows alarm if depth less than this value." />
+							</row>
+							<row hflex="min">
+								<label value="Sparkline Points" />
+								<textbox id="cfgSparklinePts"
+									tooltip="Number of depth values in the Sparkline plot." />
+							</row>
+							<row hflex="min">
+								<label value="Sparkline Minimum" />
+								<textbox id="cfgSparklineMin"
+									tooltip="Minimum depth for the Sparkline plot." />
 							</row>
 							<row>
 								<hbox>
