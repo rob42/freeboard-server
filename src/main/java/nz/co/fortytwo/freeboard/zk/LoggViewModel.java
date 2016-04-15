@@ -64,7 +64,6 @@ public class LoggViewModel extends SelectorComposer<Window>{
 
 	public LoggViewModel() {
 		super();
-
 		if(logger.isDebugEnabled())logger.debug("Constructing..");
 
 	}

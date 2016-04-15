@@ -23,34 +23,35 @@
 <?script src="./js/steelseries.js"?>
 <?script src="./js/websocket.js"?>
 <zk xmlns:w="http://www.zkoss.org/2005/zk/client">
-   <style>
-      .z-panel-body { overflow: visible; } .z-menu-body
-      .z-menu-inner-m div {
-      background-image:url('js/img/btn-arrow.gif')}
-   </style>
-   <div id="mainToolBar">
-      <!-- main menubar, left side -->
-      <toolbar id="menubar" orient="horizontal" height="50px"
-               style="float:left; background:none;border:0 none;">
-         <toolbarbutton id="help" image="img/help.png"
-                        tooltiptext="Help" popup="helpPopup" />
-         <toolbarbutton image="img/back43x38.png" tooltiptext="Home"
-                        href='./index.zul' />
-         <toolbarbutton image="img/chart43x38.png"
-                        tooltiptext="Chartplotter" href='./floating.zul' />
-         <toolbarbutton mold="toggle" image="img/engine48x36.png"
-                        tooltiptext="Engine" href='./engine.zul' />
-			<toolbarbutton tooltiptext="Config"
-				image="img/config43x38.png"
-				onClick='mainToolBar.query("include #configWindow").setVisible(!mainToolBar.query("include #configWindow").isVisible());' />
-      </toolbar>
-      <!-- Config -->
-      <include src="./configWindow.zul" />           
-		<!-- wind -->
-		<include src="./wind2.zul" />
-		<!-- logg -->
-		<include src="./logg.zul" />
-		<!-- depth -->
-		<include src="./depth.zul" />
-   </div>
+    <style>
+        .z-panel-body { overflow: visible; } .z-menu-body
+        .z-menu-inner-m div {
+        background-image:url('js/img/btn-arrow.gif')}
+    </style>
+    <div id="mainToolBar" apply="nz.co.fortytwo.freeboard.zk.SailViewModel">
+        <toolbar id="menubar" orient="horizontal" height="50px"
+                 style="float:left; background:none;border:0 none;">
+            <toolbarbutton id="help" image="img/help.png"
+                           tooltiptext="Help" popup="helpPopup" />
+            <toolbarbutton image="img/back43x38.png" tooltiptext="Home"
+                           href='./index.zul' />
+            <toolbarbutton image="img/chart43x38.png"
+                           tooltiptext="Chartplotter" href='./floating.zul' />
+            <toolbarbutton mold="toggle" image="img/engine48x36.png"
+                           tooltiptext="Engine" href='./engine.zul' />
+            <toolbarbutton id="resetLog" image="img/BlackReset.png"
+                           tooltiptext="ResetLog" />
+            <toolbarbutton tooltiptext="Config"
+                           image="img/config43x38.png"
+                           onClick='mainToolBar.query("include #configWindow").setVisible(!mainToolBar.query("include #configWindow").isVisible());' />
+        </toolbar>
+        <!-- Config -->
+        <include src="./configWindow.zul" />           
+        <!-- wind -->
+        <include src="./wind2.zul" />
+        <!-- logg -->
+        <include src="./logg.zul" />
+        <!-- depth -->
+        <include src="./depth.zul" />
+    </div>
 </zk>
