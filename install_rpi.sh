@@ -50,6 +50,7 @@ sudo apt-get install wpasupplicant usbutils wireless-tools iw hostapd
 
 ###################
 
+
 #we need the logs directory
 echo "Make sure we have a logs dir.."
 mkdir logs
