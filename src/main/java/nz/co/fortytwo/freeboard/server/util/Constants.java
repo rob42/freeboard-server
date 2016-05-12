@@ -21,7 +21,10 @@ package nz.co.fortytwo.freeboard.server.util;
 public class Constants {
 	/** version */
 	public static final String VER = "VER";
-	/** Roll degrees */
+	/** millis per hr */
+        public static final double MS_PER_HR = 3600000.;
+        
+        /** Roll degrees */
 	public static final String ROLL = "RLL";
 	/** Pitch degrees */
 	public static final String PITCH = "PCH";
@@ -51,8 +54,17 @@ public class Constants {
 	/** Speed over ground */
 	public static final String SPEED_OVER_GND = "SOG";
    
-   /** Speed over water **/
+        /** Speed over water **/
 	public static final String SPEED_OVER_WATER = "SOW";
+        
+        /** Distance between GPS readings **/
+        public static final String DISTANCE_TRAVELED = "DST";
+        
+        /** Trip average speed **/
+        public static final String TRIP_AVERAGE_SPEED = "TAS";
+        
+        /** Trip Elapsed Time **/
+        public static final String TRIP_TIME = "TET";
    
 	/** GPS fix true/false */
 	public static final String GPS_FIX = "FIX";
@@ -180,7 +192,13 @@ public class Constants {
 	public static final String WIND_ZERO_OFFSET = "freeboard.wind.offset";
 	public static final String DEPTH_ZERO_OFFSET = "freeboard.depth.offset";
 	public static final String DEPTH_UNIT = "freeboard.depth.unit";
+	public static final String SOG_UNIT = "freeboard.sog.unit";
+	public static final String SOW_UNIT = "freeboard.sow.unit";
 	public static final String ALARM_DEPTH = "freeboard.alarm.depth";
+	public static final String TRIP_DISTANCE = "freeboard.trip.distance";
+	public static final String TRIP_ELAPSED_TIME = "freeboard.trip.elapsed.time";
+	public static final String SPARKLINE_PTS = "freeboard.sparkline.points";
+	public static final String SPARKLINE_MIN = "freeboard.sparkline.minimum";
 
 	// gui constants
 	public static final String LOGG_X = "freeboard.logg.x";

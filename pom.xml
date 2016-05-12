@@ -5,7 +5,7 @@
 	<groupId>nz.co.fortytwo.freeboard</groupId>
 	<artifactId>freeboard-server</artifactId>
 
-	<version>0.5.60-SNAPSHOT</version>
+	<version>0.5.73-SNAPSHOT</version>
 
 	<name>Freeboard Server</name>
 
@@ -16,7 +16,6 @@
 		<camel.version>2.12.1</camel.version>
 		<zk.version>8.0.0</zk.version>
 		<jna.version>3.6.0-SNAPSHOT</jna.version>
-	 <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 	<licenses>
 		<license>
@@ -93,7 +92,7 @@
 		<dependency>
 			<groupId>com.sparetimelabs</groupId>
 			<artifactId>purejavacomm</artifactId>
-			<version>0.0.17</version>
+			<version>0.0.21</version>
 		</dependency>
 
 		<!-- Camel -->
@@ -201,12 +200,6 @@
 			<version>${zk.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>org.zkoss.common</groupId>
-			<artifactId>zweb</artifactId>
-			<version>${zk.version}</version>
-		</dependency>
-
-		<dependency>
 			<groupId>commons-codec</groupId>
 			<artifactId>commons-codec</artifactId>
 			<version>1.5</version>
@@ -295,8 +288,8 @@
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>exec-maven-plugin</artifactId>
-                                <version>1.4.0</version>
-				<configuration>
+                                <version>2.2</version>
+                                    <configuration>
 					<mainClass>nz.co.fortytwo.freeboard.server.ServerMain</mainClass>
 					<includePluginDependencies>false</includePluginDependencies>
 				</configuration>
@@ -304,7 +297,7 @@
 			<plugin>
 			<groupId>org.mortbay.jetty</groupId>
 				<artifactId>jetty-maven-plugin</artifactId>
-                                <version>8.1.16.v20140903</version>
+                                <version>8.1.6</version>
 			</plugin>
 			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>
@@ -312,7 +305,6 @@
 				<configuration>
 					<source>1.7</source>
 					<target>1.7</target>
-				 <encoding>${project.build.sourceEncoding}</encoding>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -378,14 +370,7 @@
 					</execution>
 				</executions>
 			</plugin>
-		 <plugin>
-		  <groupId>org.apache.maven.plugins</groupId>
-		  <artifactId>maven-resources-plugin</artifactId>
-		  <version>2.4.3</version>
-		  <configuration>
-		   <encoding>${project.build.sourceEncoding}</encoding>
-		  </configuration>
-		 </plugin>
+
 		</plugins>
 
 	</build>

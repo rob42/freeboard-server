@@ -52,6 +52,9 @@
 				<hlayout valign="middle" style="overflow: visible">
 					<label id="depthScale" value="0.0" visible="false" />
 					<label id="depthUnit" value="M" visible="false" />
+                            <label id="alarmDepth" value="6" visible="false"/>
+                            <label id="sparkPts" value="100" visible="false"/>
+                            <label id="sparkMin" value="0" visible="false"/>
 					<button id="depthShrink"
 						tooltiptext="Shrink the panel"
 						image="./js/img/zoom-minus-mini.png"

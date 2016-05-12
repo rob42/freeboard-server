@@ -42,86 +42,126 @@
 <?script src="./js/layers.js" ?>
 <?script src="./js/tween-min.js"?>
 <?script src="./js/steelseries.js"?>
+
+<!--
+<?script src="./js/sparkline.js"?>
+-->
+<?script type="text/javascript" src="./js/jquery-1.8.3.js"?>
+<?script type="text/javascript" src="./js/jquery.sparkline.js"?>
+
+
 <zk>
-   <script type="text/javascript" src="./js/sail.js" />
-   <style>
-      #map { height: 100%; border: 1px solid #888; }
-      .hboxRemoveWhiteStrips td.z-hbox-sep { width: 0; padding: 0;}
-   </style>
+    <script type="text/javascript" src="./js/sail.js" />
+    <style>
+        #map { height: 100%; border: 1px solid #888; }
+        .hboxRemoveWhiteStrips td.z-hbox-sep { width: 0; padding: 0;}
+    </style>
 
-   <window id="mainWindow"
-           xmlns:w="http://www.zkoss.org/2005/zk/client"
-           apply="nz.co.fortytwo.freeboard.zk.EngineViewModel" vflex="true"
-           style="margin-left:auto;">
-      <borderlayout>
-         <north border="none" height="50px">
-            <vbox  height="100%">
-               <include src="./sailToolbar.zul" />
-            </vbox>
-         </north>
-         <center>
-            <div vflex="1" hflex="1" style="background-color: white;">
-               <label id="layerVisibility" value="" visible="false" />
-               <hbox vflex="1" hflex="1" pack="center" align="center">
-                  <vbox vflex="1" hflex="1" pack="center" align="center">
-                     <html style="overflow: visible;" >
-                        <canvas id="sailDepth" >
-                           No canvas in your
-                           browser...sorry...
-                        </canvas>
-                        </html >
-                        <html >
-                        <canvas id="spacer" >
-                           No canvas in your
-                           browser...sorry...
-                        </canvas>
-                     </html>
-                  </vbox >
-                  <vbox vflex="1" hflex="1" pack="center" align="center">
-                     <html style="overflow: visible;" hflex="1" >
-                        <canvas id="sailWindDir" >
-                           No canvas in your
-                           browser...sorry...
-                        </canvas>
-                     </html>
-                     <html  hflex="1">
-                        <canvas id="sailWind" >
-                           No canvas in your
-                           browser...sorry...
-                        </canvas>
-                     </html>
-                  </vbox>
-                  <vbox vflex="1" hflex="1" pack="center" align="center">
-                     <html style="overflow: visible;" hflex="1">
-                        <canvas id="sailLog" >
-                           No canvas in your
-                           browser...sorry...
-                        </canvas>
-                     </html>
-                     <html hflex="1">
-                        <canvas id="sailSOG" >
-                           No canvas in your
-                           browser...sorry...
-                        </canvas>
-                     </html>
-                  </vbox>
-               </hbox>
-               <script type="text/javascript" defer="true">
-                  initSail();
-               </script>
-            </div>
-         </center>
+    <window id="mainWindow"
+            xmlns:w="http://www.zkoss.org/2005/zk/client"
+            apply="nz.co.fortytwo.freeboard.zk.SailViewModel" vflex="true"
+            style="margin-left:auto;">
+        <borderlayout>
+            <north border="none" height="50px">
+                <hbox  height="100%">
+                    <include src="./sailToolbar.zul" />
+                </hbox>
+            </north>
+            <center>
+                <div vflex="1" hflex="1" style="background-color: white;">
+                    <label id="layerVisibility" value="" visible="false" />
+                    <hbox vflex="1" hflex="1" pack="center" align="center">
+                        
+                        <vbox vflex="1" hflex="1" pack="center" align="center">
+                            <html style="overflow: visible;" >
+                                <canvas id="sailDepth" >
+                                    No canvas in your
+                                    browser...sorry...
+                                </canvas>
+                            </html >
+                            <html >
+                                <div id="spring" class="dynamicsparkline"></div>
+<!--                                <div id="spring" style="border:1px solid #000000;" class="dynamicsparkline"></div> -->
+                            </html>
+                        </vbox >
+                        
+                        <vbox vflex="1" hflex="1" pack="center" align="center">
+                            <html style="overflow: visible;" hflex="1" >
+                                <canvas id="sailWindDir" >
+                                    No canvas in your
+                                    browser...sorry...
+                                </canvas>
+                            </html>
+                            <html  hflex="1">
+                                <canvas id="sailWind" >
+                                    No canvas in your
+                                    browser...sorry...
+                                </canvas>
+                            </html>
+                        </vbox>
+                        
 
-      </borderlayout>
-   </window>
+                        <vbox vflex="1" hflex="1" pack="center" align="center" style="margin-left:auto; margin-right:auto; text-align:center oveflow:visible">
+                           
+                            <div id="test1" hflex="1" vflex="3">
+                                <vbox hflex="1" vflex="1" pack="center" align="center">
+                                    <html style="overflow: visible;">                                       
+                                        <canvas id="sailLog" >
+                                            No canvas in your
+                                            browser...sorry...
+                                        </canvas>
+                                    </html>
+                                    <html style="overflow: visible;">
+                                        <canvas id="sailSOG">
+                                            No canvas in your
+                                            browser...sorry...
+                                        </canvas>
+                                    </html>
+                                </vbox>
+                            </div>
+                            
+                            <div id="test2" hflex="1" vflex="1">
+                                <vbox hflex="1" vflex="1" pack="center" align="center">
+                                    <div hflex="1" vflex="1">
+                                        <hbox hflex="1" vflex="1" pack="center" align="start">
+                                            <html style="overflow: visible;">
+                                                <canvas id="tripSummary">
+                                                    No canvas in your
+                                                    browser...sorry...
+                                                </canvas>
+                                            </html>
+                                                <button id="Selector" label="Select" image="img/Rollover50x50.png" tooltiptext="Select" 
+                                                    mold="trendy" style="padding:2px; font-size:16px; font-weight: bold;"
+                                                    w:onClick="selectorButton()"/>
+                                        </hbox> 
+                                    </div>
+                                </vbox>
+                            </div>
+                            <!--
+                            <div hflex="1" vflex="1">
+                                <hbox hflex="1" vflex="1" pack="center" align="center">
+                                    <html style="overflow: visible;">
+                                        <canvas id="summary3" >
+                                            No canvas in your
+                                            browser...sorry...
+                                        </canvas>
+                                    </html>
+                                </hbox>
+                            </div> 
+                            -->
+                        </vbox> 
+                    </hbox>
+                    
+                    <script type="text/javascript" defer="true">
+                        initSail();
+                    </script>
+                </div>
+            </center>
 
-
-   <popup id="helpPopup">
-      <html>
-
-
-
-
+        </borderlayout>
+    </window>
+    <popup id="helpPopup">
+        <html>
 			<![CDATA[ <h2>Freeboard Help</H2> <p>To resize the
 			instruments use the + and - buttons within the
 			instruments</p> <p>To move the instruments click-drag the
@@ -131,10 +171,6 @@
 			direction</p> <p>Use the blue + and - buttons in top left to
 			zoom, or use mouse wheel</p> <p>The blue + tab at the top
 			right to manage chart visibility</p> ]]>
-
-
-
-
-      </html>
-   </popup>
+        </html>
+    </popup>
 </zk>
