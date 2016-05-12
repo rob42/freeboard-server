@@ -27,7 +27,6 @@ var tripDistance;
 var tripAverageSpeed;
 var conv;
 
-
 //colours
 var gaugeLcdColor = steelseries.LcdColor.BEIGE;
 //TILTED_BLACK
@@ -73,10 +72,16 @@ function Sail() {
             //            console.log(navObj.DBT + "\n" + depthArray);
             depthArray.shift();
             //            console.log(depthArray);
-            depthArray.push(navObj.DBT);
             anAlarm = zk.Widget.$('$alarmDepth').getValue();
             sPoints = zk.Widget.$('$sparkPts').getValue();
             sparkMin = zk.Widget.$('$sparkMin').getValue();
+            
+            // clip the sparkline values so that the scaling does not get screwed up by values < sparkMin
+            if (navObj.DBT < sparkMin) {
+                depthArray.push(sparkMin);
+            } else {
+                depthArray.push(navObj.DBT);
+            }
             if (navObj.DBT < anAlarm) {
                 lcdSailDepth.setLcdColor(steelseries.LcdColor.RED);
             } else {
