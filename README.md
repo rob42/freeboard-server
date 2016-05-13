@@ -74,3 +74,35 @@ The three lines starting with allow-hotplug must be commented out as shown.
 Reboot the Rpi, freeboard should be running at http://[IP_ADDRESS]:8080/freeboard, where [IP_ADDRESS] is the Rpis ip address or hostname.
 
 See http://www.42.co.nz/freeboard for more.
+
+Updating
+--------
+
+Login as you did before, (the pi or pc needs to be connected to the internet)
+
+cd freeboard-server
+
+make a note of your current version in case you want to revert
+
+git reflog
+
+You will see something like :
+
+pi@mot:~/freeboard-server$ git reflog
+6a096cd HEAD@{0}: commit: Fix merge, disable defunct autoincrement plugin
+9b2f926 HEAD@{1}: 9b2f9267ad6f827c268e17ecc156b987fec96fab: updating HEAD
+etc
+
+Write down the first ref key (6a096cd).
+
+git pull
+
+This should bring in any updates, but not affect your settings. Dont worry if bad stuff happens, git can roll back and forwards!
+To revert use :
+
+git reset --hard 6a096cd
+
+You did write down the ref key didnt you :-)
+
+
+

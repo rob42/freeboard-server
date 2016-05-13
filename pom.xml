@@ -12,10 +12,10 @@
 	<description>Webserver and data server for FreeBoard</description>
 	<properties>
 		<!-- <bundle.name>nsb-${project.version}</bundle.name> -->
-		<jetty.version>7.6.13.v20130916</jetty.version>
-		<camel.version>2.12.1</camel.version>
-		<zk.version>8.0.0</zk.version>
-		<jna.version>3.6.0-SNAPSHOT</jna.version>
+		<jetty.version>8.1.17.v20150415</jetty.version>
+		<camel.version>2.16.3</camel.version>
+		<zk.version>8.0.1.1</zk.version>
+		<jna.version>4.2.2</jna.version>
 	</properties>
 	<licenses>
 		<license>
@@ -47,11 +47,11 @@
 	</issueManagement>
 
 	<repositories>
-		<repository>
-			<id>java.net jni</id>
-			<name>java.nt JNI Snapshot Repository</name>
-			<url>https://maven.java.net/content/repositories/snapshots/</url>
-		</repository>
+<!-- 		<repository> -->
+<!-- 			<id>java.net jni</id> -->
+<!-- 			<name>java.nt JNI Snapshot Repository</name> -->
+<!-- 			<url>https://maven.java.net/content/repositories/snapshots/</url> -->
+<!-- 		</repository> -->
 		<repository>
 			<id>ZK CE</id>
 			<name>ZK CE Repository</name>
@@ -70,14 +70,14 @@
 
 	</repositories>
 	<pluginRepositories>
-		<pluginRepository>
-			<id>autoincrement-versions-maven-plugin</id>
-			<name>autoincrement-versions-maven-plugin</name>
-			<url>http://autoincrement-versions-maven-plugin.googlecode.com/svn/repo</url>
-			<snapshots>
-				<enabled>true</enabled>
-			</snapshots>
-		</pluginRepository>
+<!-- 		<pluginRepository> -->
+<!-- 			<id>autoincrement-versions-maven-plugin</id> -->
+<!-- 			<name>autoincrement-versions-maven-plugin</name> -->
+<!-- 			<url>http://autoincrement-versions-maven-plugin.googlecode.com/svn/repo</url> -->
+<!-- 			<snapshots> -->
+<!-- 				<enabled>true</enabled> -->
+<!-- 			</snapshots> -->
+<!-- 		</pluginRepository> -->
 	</pluginRepositories>
 	<dependencies>
 		<!-- serial comms -->
@@ -92,7 +92,7 @@
 		<dependency>
 			<groupId>com.sparetimelabs</groupId>
 			<artifactId>purejavacomm</artifactId>
-			<version>0.0.21</version>
+			<version>1.0.0</version>
 		</dependency>
 
 		<!-- Camel -->
