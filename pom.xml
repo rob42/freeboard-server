@@ -13,7 +13,7 @@
 	<properties>
 		<!-- <bundle.name>nsb-${project.version}</bundle.name> -->
 		<jetty.version>8.1.17.v20150415</jetty.version>
-		<camel.version>2.16.3</camel.version>
+		<camel.version>2.12.1</camel.version>
 		<zk.version>8.0.1.1</zk.version>
 		<jna.version>4.2.2</jna.version>
 	</properties>

@@ -62,7 +62,7 @@ function initWebSocket(){
 			};
 			this._ws.onmessage = function(m) {
 				//for debug
-				console.log(m.data);
+				//console.log(JSON.stringify(m.data));
 				var mObj = $.parseJSON(m.data);
 				
 				//TODO: Note memory leak in native websockets code  - https://code.google.com/p/chromium/issues/detail?id=146304

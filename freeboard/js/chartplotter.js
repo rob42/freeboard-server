@@ -22,6 +22,8 @@
 var map;
 var shipMarker;
 var hdgLayer;
+var windAppLayer;
+var windTrueLayer;
 var bearingLayer;
 var trackLayer;
 var wgpxLayer;
@@ -43,7 +45,10 @@ var speed = 0.0;
 var declination = 0.0;
 var trackCount = 0;
 var moveCount = 0;
-
+var windSpdApparent=0;
+var windSpdTrue=0;
+var windDirApparent=0;
+var windDirTrue=0;
 var ONE_KNOT_LAT=(1000 / 40075017) * 360;
 
 function initCharts() {
@@ -132,6 +137,19 @@ function initCharts() {
 		dashArray : '5,5',
 	}).addTo(map);
 	layers.addOverlay(hdgLayer, "Heading");
+	
+	windAppLayer = L.polyline([ new L.LatLng(0.0, 0.0), new L.LatLng(0.0, 0.0) ], {
+		color : 'blue',
+		weight : 1,
+		dashArray : '5,5',
+	}).addTo(map);
+	layers.addOverlay(windAppLayer, "Wind Apparent");
+	windTrueLayer = L.polyline([ new L.LatLng(0.0, 0.0), new L.LatLng(0.0, 0.0) ], {
+		color : 'red',
+		weight : 1,
+		dashArray : '5,5',
+	}).addTo(map);
+	layers.addOverlay(windTrueLayer, "Wind True");
 
 	bearingLayer = L.polyline(
 			[ new L.LatLng(0.0, 0.0), new L.LatLng(0.0, 0.0) ], {
@@ -264,6 +282,32 @@ function setPosition(llat, llon, brng, spd) {
 	}
 	// add to tracks
 	trackLine.addLatLng(new L.LatLng(llat, llon));
+}
+
+/**
+ * Set the current wind arrows, true and apparent, and associated stuff
+ * @param llat
+ * @param llon
+ * @param appBrng - wind apparent 
+ * @param appSpd - wind speed
+ */
+function setWind(llat, llon, appBrng, appSpd, trueBrng, trueSpd) {
+	//console.log("Chartplotter:setwind:to lat:"+appBrng +":"+appSpd);
+	
+	// ref http://www.movable-type.co.uk/scripts/latlong.html
+	var start_point = new L.LatLng(llat, llon);
+	// //1852 meters in nautical mile
+	//
+	var end_point = destVincenty(llat, llon, appBrng, appSpd * 1852);
+	var end_point2 = destVincenty(llat, llon, trueBrng, trueSpd * 1852);
+	
+	if(map.hasLayer(windAppLayer)){
+		windAppLayer.setLatLngs([ start_point, end_point ]);
+	}
+	if(map.hasLayer(windTrueLayer)){
+		windTrueLayer.setLatLngs([ start_point, end_point2 ]);
+	}
+	
 }
 
 /**
@@ -440,7 +484,7 @@ function refreshAis(ais){
 //
 function ChartPlotter() {
 	this.onmessage = function(navObj) {
-		//console.log("Chartplotter:"+mArray);
+		//console.log("Chartplotter:"+JSON.stringify(navObj));
 		var setPos = false;
 		if (!navObj)
 			return true;
@@ -448,61 +492,85 @@ function ChartPlotter() {
 		if (navObj.LAT) {
 					lat = navObj.LAT;
 					setPos = true;
-			}
-			if (navObj.LON) {
-					lon = navObj.LON;
-					setPos = true;
-			}
-			if (navObj.MGH) {
-					heading = navObj.MGH - declination;
-					if(heading<0){
-						heading = heading +360;
-					}
-					setPos = true;
-			}
-			if (navObj.COG) {
-				heading = navObj.COG;
+		}
+		if (navObj.LON) {
+				lon = navObj.LON;
 				setPos = true;
-			}
-			if (navObj.SOG) {
-					speed = navObj.SOG;
-					setPos = true;
-			}
-
-			if (navObj.DEC) {
-				declination = navObj.DEC;	
-			}
-
-			if (navObj.MGD) {
-			declination = navObj.MGD;
-			}
-			if (navObj.WPC ) {
-				// we refresh the waypoint layer
-				refreshWaypoints();
-			}
-			if (navObj.WPG) {
-
-				var coords = navObj.WPG;
-				// console.log(coords);
-				var coordsArray = coords.split('|');
-				// console.log(coordsArray);
-				// we refresh the goto layer
-				if (coordsArray.length == 4) {
-					// console.log("Setting goto =
-					// "+coordsArray[0]+","+coordsArray[1]);
-					setGotoDestination(parseFloat(coordsArray[0]),
-							parseFloat(coordsArray[1]),
-							parseFloat(coordsArray[2]),
-							parseFloat(coordsArray[3]));
-				} else {
-					setGotoDestination(null, null, null, null);
+		}
+		if (navObj.MGH) {
+				heading = navObj.MGH - declination;
+				if(heading<0){
+					heading = heading +360;
 				}
+				setPos = true;
+		}
+		if (navObj.COG) {
+			heading = navObj.COG;
+			setPos = true;
+		}
+		if (navObj.SOG) {
+				speed = navObj.SOG;
+				setPos = true;
+		}
+
+		if (navObj.DEC) {
+			declination = navObj.DEC;	
+		}
+
+		if (navObj.MGD) {
+		declination = navObj.MGD;
+		}
+		if (navObj.WPC ) {
+			// we refresh the waypoint layer
+			refreshWaypoints();
+		}
+		if (navObj.WPG) {
+
+			var coords = navObj.WPG;
+			// console.log(coords);
+			var coordsArray = coords.split('|');
+			// console.log(coordsArray);
+			// we refresh the goto layer
+			if (coordsArray.length == 4) {
+				// console.log("Setting goto =
+				// "+coordsArray[0]+","+coordsArray[1]);
+				setGotoDestination(parseFloat(coordsArray[0]),
+						parseFloat(coordsArray[1]),
+						parseFloat(coordsArray[2]),
+						parseFloat(coordsArray[3]));
+			} else {
+				setGotoDestination(null, null, null, null);
 			}
-			if (navObj.AIS ) {
-				// we refresh the ais layer
-				refreshAis(navObj.AIS);
+		}
+		if (navObj.AIS ) {
+			// we refresh the ais layer
+			refreshAis(navObj.AIS);
+		}
+		//wind layers
+		if (navObj.WSA) {
+			windSpdApparent= navObj.WSA;
+		}
+		if (navObj.WST) {
+			windSpdTrue =navObj.WST;
+		}
+		if (navObj.WDA) {
+			var c = navObj.WDA;
+			// -180 <> 180
+			if (c > 180) {
+				windDirApparent = -(360 - c);
+			} else {
+				windDirApparent=c;
 			}
 
+		}
+		if (navObj.WDT) {
+			var c = navObj.WDT;
+			if (c > 0.0 || c < 360.0){
+				windDirTrue=c;
+			}else{
+				windDirTrue=0.0;
+			}
+		}
 		if (setPos) {
 			//console.log("Chartplotter:setPos");
 			// avoid the 0,0 point
@@ -510,6 +578,7 @@ function ChartPlotter() {
 				return;
 
 			setPosition(lat, lon, heading, speed);
+			setWind(lat, lon, windDirApparent, windSpdApparent, windDirTrue, windSpdTrue);
 			// setTrack(lat,lon);
 			moveToBoatPosition(lat, lon);
 		}
@@ -535,8 +604,8 @@ function posInit() {
  * Original scripts by Chris Veness Taken from
  * http://movable-type.co.uk/scripts/latlong-vincenty-direct.html and optimized /
  * cleaned up by Mathias Bynens <http://mathiasbynens.be/> Based on the Vincenty
- * direct formula by T. Vincenty, ¡ÈDirect and Inverse Solutions of Geodesics on
- * the Ellipsoid with application of nested equations¡É, Survey Review, vol XXII
+ * direct formula by T. Vincenty, ï¿½ï¿½Direct and Inverse Solutions of Geodesics on
+ * the Ellipsoid with application of nested equationsï¿½ï¿½, Survey Review, vol XXII
  * no 176, 1975 <http://www.ngs.noaa.gov/PUBS_LIB/inverse.pdf>
  */
 function toRad(n) {
