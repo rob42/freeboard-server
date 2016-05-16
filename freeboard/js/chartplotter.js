@@ -69,7 +69,8 @@ function initCharts() {
 	}).setView(new L.LatLng(firstLat,firstLon),firstZoom,true);
 
 	addLayers(map);
-
+	
+	
 	var zoomControl = new L.Control.Zoom({
 		position : 'topright',
 	});
@@ -160,6 +161,8 @@ function initCharts() {
 			}).addTo(map);
 	layers.addOverlay(bearingLayer, "Bearing");
 
+	
+	
 	// add waypoints
 	map.on('draw:created', function(e) {
 		var type = e.layerType, layer = e.layer;
@@ -215,7 +218,9 @@ function initCharts() {
 		});
 	});
 
+	
 	setLayerVisibility();
+	
 }
 
 
