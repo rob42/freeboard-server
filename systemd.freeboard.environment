@@ -1,0 +1,13 @@
+# Settings for the freeboard server
+#
+# NOTE: This is not a bash snippet, this is a systemd EnvironmentFile(1)
+#
+# 1: https://www.freedesktop.org/software/systemd/man/systemd.exec.html#EnvironmentFile=
+#
+
+
+JAR=target/freeboard-server.jar
+
+JAVA_OPTS=-Djava.util.Arrays.useLegacyMergeSort=true \
+          -Dlog4j.configuration=file:///home/pi/freeboard-server/conf/log4j.properties \
+          -Xmx48m
