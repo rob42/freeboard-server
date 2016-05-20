@@ -36,6 +36,19 @@
      * You may choose to setup the *Boat Mode* captive WiFi network right off the bat, if you like. You'll still be able to access the device over the wired network as well.
  * reboot
 
+### Reporting problems with the setup script
+
+Report errors, bugs, or feature requests in
+[GitHub Issues for Freeboard Server](https://github.com/rob42/freeboard-server/issues)
+
+Information to include in your issue:
+
+* record the output of the script (Ideally attached as a .txt file, or
+copy and pasted into the issue.)
+
+* What hardware platform? (raspberry Pi Version, Model, and Revision.
+Ex, Pi3 Model B)
+
 ## Playing with it
 
 This device is a server, and only has the text based interface for interaction.
