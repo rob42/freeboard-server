@@ -25,8 +25,6 @@ This is the main server for the Freeboard server project.
 Install
 -------
 
-For latest Rasbian Jessie see README_install_Pi.txt. - Thanks to Phil, who is much better at scripts then me!!
-
 For a PC:
 
 Select a suitable root directory, with no spaces in the path! eg /home/robert or C:\boat
@@ -37,45 +35,13 @@ git clone --depth=1 https://github.com/rob42/freeboard-server.git
 cd freeboard-server
 ./startpc.sh (or startpc.bat on windows)
 ```
-For a Raspberry Pi:
 
-Log in as pi
-In the home directory (/home/pi), as pi user (not sudo)
-```
-git clone --depth=1 https://github.com/rob42/freeboard-server.git
-cd freeboard-server
-./install_rpi.sh
+For a Raspberry Pi (running Raspbian Jessie):
 
-After the install concludes, examine the file /etc/network/intefraces (sudo nano /etc/network/interfaces).
-My file is shown below:
-
-...
-
-auto lo
-
-iface lo inet loopback
-iface eth0 inet dhcp
-
-#allow-hotplug wlan0
-#iface wlan0 inet manual
-#wpa-roam /etc/wpa_supplicant/wpa_supplicant.conf
-iface default inet dhcp
-
-#Run as wireless access point
-auto wlan0
-iface wlan0 inet static
-    address 192.168.0.1
-    netmask 255.255.255.0
-    gateway 192.168.0.1
-
-...
-
-The three lines starting with allow-hotplug must be commented out as shown.
-
-```
-Reboot the Rpi, freeboard should be running at http://[IP_ADDRESS]:8080/freeboard, where [IP_ADDRESS] is the Rpis ip address or hostname.
+see [README_install_Pi](README_install_Pi.md)
 
 See http://www.42.co.nz/freeboard for more.
+
 
 Updating
 --------
