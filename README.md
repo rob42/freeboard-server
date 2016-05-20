@@ -25,6 +25,8 @@ This is the main server for the Freeboard server project.
 Install
 -------
 
+For latest Rasbian Jessie see README_install_Pi.txt. - Thanks to Phil, who is much better at scripts then me!!
+
 For a PC:
 
 Select a suitable root directory, with no spaces in the path! eg /home/robert or C:\boat
@@ -79,29 +81,29 @@ Updating
 --------
 
 Login as you did before, (the pi or pc needs to be connected to the internet)
-
+```
 cd freeboard-server
-
+```
 make a note of your current version in case you want to revert
-
+```
 git reflog
-
+```
 You will see something like :
-
+```
 pi@mot:~/freeboard-server$ git reflog
 6a096cd HEAD@{0}: commit: Fix merge, disable defunct autoincrement plugin
 9b2f926 HEAD@{1}: 9b2f9267ad6f827c268e17ecc156b987fec96fab: updating HEAD
 etc
-
+```
 Write down the first ref key (6a096cd).
-
+```
 git pull
-
+```
 This should bring in any updates, but not affect your settings. Dont worry if bad stuff happens, git can roll back and forwards!
 To revert use :
-
+```
 git reset --hard 6a096cd
-
+```
 You did write down the ref key didnt you :-)
 
 
