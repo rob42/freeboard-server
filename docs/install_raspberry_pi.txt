@@ -1,43 +1,4 @@
-There may be problems with the install process, if so take a copy (not a screenshot) of the text on the ssh or putty screen and email me at robert@42.co.nz
+This process is now documented here:
 
-Follow the instructions and install Raspbian Debian Wheezy from http://www.raspberrypi.org/downloads/
-
-Put sdcard into rpi and connect to usb to power up. 
-
-You need to connect to your pi using ssh, or in windows use putty. See raspberrypi.org for details. Google will help too.
-
-The rest of this assumes your rpi is on your network at IP address 10.1.1.11. Your network may be different, so substitute your RPis ip address..
-
-Login to the rpi
-robert@rth:$ ssh pi@10.1.1.11 
-
-Change the pi users passwd now, for security:
-  
-  pi@rpi:$ passwd
-
-Set a password to suit
-
-
-From my laptop, I copied the latest freeboard*.zip to the RPi (in windows use winscp):
-robert@rth:$ scp freeboard-server-5.5.5-SNAPSHOT-all.zip pi@10.1.1.11:/home/pi
-
-Also, I copied the latest install_rpi.sh to the RPi (in windows use winscp):
-robert@rth:$ scp install_rpi.sh pi@10.1.1.11:/home/pi
-
-Login to your RPi as user pi again:
-  robert@rth:$ ssh pi@10.1.1.11
-
-At pi login prompt:
-
-  pi@rpi:~$ ./install_rpi.sh
-
-Follow the script, answering the questions, usually take the default answer.
-
-Log out and reboot. Use a web browser to go to http://10.1.1.11:8080/freeboard
-
-There may be problems with the install process, if so take a copy (not a screenshot) of the text on the ssh or putty screen and email me at robert@42.co.nz
-
-
-
-
+  - https://github.com/rob42/freeboard-server/blob/master/README_install_Pi.md
 
