@@ -1,0 +1,13 @@
+[Unit]
+Description=Freeboard Server
+
+[Service]
+Type=simple
+EnvironmentFile=/etc/default/freeboard
+User=pi
+Group=pi
+WorkingDirectory=/home/pi/freeboard-server
+ExecStart=/usr/bin/java $JAVA_OPTS -jar $JAR
+
+[Install]
+WantedBy=multi-user.target
