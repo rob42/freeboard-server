@@ -37,7 +37,7 @@
 
 <?script src="./js/leaflet-src.js" ?>
 <?script src="./js/leaflet.draw-src.js" ?>
-<?script src="./js/leaflet.measure.js" ?>s
+<?script src="./js/leaflet.measure.js" ?>
 <?script src="./js/Marker.Rotate.js" ?>
 <?script src="./js/GPX.js" ?>
 <?script src="./js/L.Control.MousePosition.js" ?>
