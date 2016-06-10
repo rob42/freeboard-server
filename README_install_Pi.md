@@ -66,7 +66,23 @@ If not, you'll have to go find the IP address in the console (See the
 
 * prepare some charts per [freeboard-installer documentation](https://github.com/rob42/freeboard-installer/blob/master/README.md)
 * copy prepared zip files to `/home/pi/maps/` on the server
-* rerun `./setup_raspbian.sh` as the user pi.
+
+  from the directory where your charts are on your laptop (or workstation):
+
+        user@x61s:~/charts$ ls -l
+        -rw------- 1 user user 20804162 May 14 04:27 50_1.zip
+        -rw------- 1 user user     3229 May 14 04:26 50_2.zip
+        user@x61s:~/charts$ scp 50_1.zip 50_2.zip pi@freeboard:/home/pi/maps/
+        pi@freeboard's password:
+        50_1.zip                                      100%   20MB   9.9MB/s   00:02
+        50_2.zip                                      100% 3229     3.2KB/s   00:00
+        user@x61s:~/charts$
+
+* rerun `./setup_raspbian.sh` as the user pi on the freeboard server.
+
+        user@x61s:~$ ssh pi@freeboard
+        pi@freeboard's password:
+        pi@freeboard:~ $ ./setup_raspbian.sh
 
 ### Networking
 
