@@ -207,6 +207,12 @@ public class Constants {
 	public static final String LOGG_H = "freeboard.logg.h";
 	public static final String LOGG_SCALE = "freeboard.logg.scale";
 
+	public static final String DOUBLE_LOG_X = "freeboard.doubleLog.x";
+	public static final String DOUBLE_LOG_Y = "freeboard.doubleLog.y";
+	public static final String DOUBLE_LOG_W = "freeboard.doubleLog.w";
+	public static final String DOUBLE_LOG_H = "freeboard.doubleLog.h";
+	public static final String DOUBLE_LOG_SCALE = "freeboard.doubleLog.scale";
+
 	public static final String DEPTH_X = "freeboard.depth.x";
 	public static final String DEPTH_Y = "freeboard.depth.y";
 	public static final String DEPTH_W = "freeboard.depth.w";

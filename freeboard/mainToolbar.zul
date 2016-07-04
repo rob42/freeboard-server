@@ -13,8 +13,8 @@
 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 	GNU General Public License for more details.
 
-	You should have received a copy of the GNU General Public License
-	along with FreeBoard.  If not, see <http://www.gnu.org/licenses/>.
+        You should have received a copy of the GNU General Public License
+        along with FreeBoard.  If not, see <http://www.gnu.org/licenses/>.
 -->
 <?page viewport="width=device-width, initial-scale=1.0, user-scalable=yes"?>
 <?page title="autopilot" contentType="text/html;charset=UTF-8"?>
@@ -23,56 +23,57 @@
 <?script src="./js/steelseries.js"?>
 <?script src="./js/websocket.js"?>
 <zk xmlns:w="http://www.zkoss.org/2005/zk/client">
-	<style>
-		.z-panel-body { overflow: visible; } .z-menu-body
-		.z-menu-inner-m div {
-		background-image:url('js/img/btn-arrow.gif')}
+    <style>
+        .z-panel-body { overflow: visible; } .z-menu-body
+        .z-menu-inner-m div {
+        background-image:url('js/img/btn-arrow.gif')}
 
-	</style>
-	<div id="mainToolBar">
-		<!-- main menubar, left side -->
-		<toolbar id="menubar" orient="vertical" width="50px"
-			style="float:left; background:none;border:0 none;">
-			<toolbarbutton id="help" image="img/help.png"
-				tooltiptext="Help" popup="helpPopup" />
-			<toolbarbutton image="img/back43x38.png" tooltiptext="Home"
-				href='./index.zul' />
-			<toolbarbutton image="img/chart43x38.png"
-				tooltiptext="Chartplotter" href='./floating.zul' />
-			<toolbarbutton mold="toggle" image="img/engine48x36.png"
-				tooltiptext="Engine" href='./engine.zul' />
-			<toolbarbutton mold="toggle" image="img/anemometer46x38.png"
-				tooltiptext="Wind"
-				onClick='mainToolBar.query("include #wind").setVisible(!mainToolBar.query("include #wind").isVisible());' />
-
-         <toolbarbutton mold="toggle" image="img/Sonar44x38.png"
-            tooltiptext = "Depth"
-            onClick='mainToolBar.query("include #depth").setVisible(!mainToolBar.query("include #depth").isVisible());' />
-
-         <toolbarbutton image="img/log43x38.png" tooltiptext="Log"
-				onClick='mainToolBar.query("include #logg").setVisible(!mainToolBar.query("include #logg").isVisible());' />
-
-			<toolbarbutton image="img/anchor44x38.png"
-				tooltiptext="Anchor"
-				onClick='mainToolBar.query("include #anchorWindow").setVisible(!mainToolBar.query("include #anchorWindow").isVisible());' />
-			<toolbarbutton image="img/android43x38.png"
-				tooltiptext="Autopilot"
-				onClick='mainToolBar.query("include #autopilotWindow").setVisible(!mainToolBar.query("include #autopilotWindow").isVisible());' />
-			<toolbarbutton tooltiptext="Config"
-				image="img/config43x38.png"
-				onClick='mainToolBar.query("include #configWindow").setVisible(!mainToolBar.query("include #configWindow").isVisible());' />
-		</toolbar>
-		<!-- wind -->
-		<include src="./wind2.zul" />
-		<!-- logg -->
-		<include src="./logg.zul" />
-		<!-- depth -->
-		<include src="./depth.zul" />
-		<!-- autopilot -->
-		<include src="./autopilotWindow.zul" />
-		<!-- anchor -->
-		<include src="./anchorWindow.zul" />
-		<!-- anchor -->
-		<include src="./configWindow.zul" />
-	</div>
+    </style>
+    <div id="mainToolBar">
+        <!-- main menubar, left side -->
+        <toolbar id="menubar" orient="vertical" width="50px"
+                 style="float:left; background:none;border:0 none;">
+            <toolbarbutton id="help" image="img/help.png"
+                           tooltiptext="Help" popup="helpPopup" />
+            <toolbarbutton image="img/back43x38.png" tooltiptext="Home"
+                           href='./index.zul' />
+            <toolbarbutton image="img/chart43x38.png"
+                           tooltiptext="Chartplotter" href='./floating.zul' />
+            <toolbarbutton mold="toggle" image="img/engine48x36.png"
+                           tooltiptext="Engine" href='./engine.zul' />
+            <toolbarbutton image="img/log43x38.png" tooltiptext="Log"
+                           onClick='mainToolBar.query("include #logg").setVisible(!mainToolBar.query("include #logg").isVisible());' />
+            <toolbarbutton mold="toggle" image="img/anemometer46x38.png"
+                           tooltiptext="Wind"
+                           onClick='mainToolBar.query("include #wind").setVisible(!mainToolBar.query("include #wind").isVisible());' />
+            <toolbarbutton mold="toggle" image="img/Sonar44x38.png"
+                           tooltiptext = "Depth"
+                           onClick='mainToolBar.query("include #depth").setVisible(!mainToolBar.query("include #depth").isVisible());' />
+            <toolbarbutton image="img/doubleLog43x40.png" tooltiptext="DoubleLog"
+                           onClick='mainToolBar.query("include #doubleLog").setVisible(!mainToolBar.query("include #doubleLog").isVisible());' />
+            <toolbarbutton image="img/anchor44x38.png"
+                           tooltiptext="Anchor"
+                           onClick='mainToolBar.query("include #anchorWindow").setVisible(!mainToolBar.query("include #anchorWindow").isVisible());' />
+            <toolbarbutton image="img/android43x38.png"
+                           tooltiptext="Autopilot"
+                           onClick='mainToolBar.query("include #autopilotWindow").setVisible(!mainToolBar.query("include #autopilotWindow").isVisible());' />
+            <toolbarbutton tooltiptext="Config"
+                           image="img/config43x38.png"
+                           onClick='mainToolBar.query("include #configWindow").setVisible(!mainToolBar.query("include #configWindow").isVisible());' />
+        </toolbar>
+        <!-- wind -->
+        <include src="./wind2.zul" />
+        <!-- logg -->
+        <include src="./logg.zul" />
+		  <!-- doubleLog -->
+        <include src="./doubleLog.zul" />
+        <!-- depth -->
+        <include src="./depth.zul" />
+        <!-- autopilot -->
+        <include src="./autopilotWindow.zul" />
+        <!-- anchor -->
+        <include src="./anchorWindow.zul" />
+        <!-- anchor -->
+        <include src="./configWindow.zul" />
+    </div>
 </zk>
