@@ -28,9 +28,14 @@
     <window id="doubleLog"
             apply="nz.co.fortytwo.freeboard.zk.DoubleLogModel"
             height="30px" width="100px" title="DoubleLog"
-            mode="overlapped" visible="false" minimizable="true" >
+            mode="overlapped" visible="false" minimizable="true" w:onMove="dlOnMove(event)" >
         <!-- 		 <style>.z-panel-body { overflow: visible; }"</style> -->
-        <style>
+        <attribute name="onAfterSize"><![CDATA[
+            double sc = Double.parseDouble(doubleLogScale.getValue())-1.;
+            String js = "resizeDoubleLog("+sc+");";
+            Clients.evalJavaScript(js);
+    ]]></attribute>
+    <style>
             .z-window-content, .z-panel-body, .z-window-modal-cnt-noborder, .z-window-highlighted-cnt-noborder,
             .z-window-embedded-cnt-noborder, .z-window-overlapped-cnt-noborder, .z-window-popup-cnt-noborder
             .z-window-embedded, .z-window-modal, .z-window-overlapped, .z-window-popup, .z-window-highlighted {
@@ -42,6 +47,13 @@
                 <hlayout>
                     <vlayout
                         style="margin-left:auto; margin-right:auto; text-align:center;">
+                        <!-- <html style="overflow: visible"> -->
+			<html>
+                            <canvas id="canvasDLogSOW" width= "375px"
+                                                        height="250px" >
+                                No canvas in your browser...sorry...
+                            </canvas>
+                        </html>
                         <hlayout valign="middle">
                             <label id="doubleLogScale" value="0.0" visible="false"/>
                             <button id="doubleLogShrink" tooltiptext="Shrink the panel"
@@ -49,10 +61,11 @@
                             <button id="doubleLogGrow" tooltiptext="Grow the panel"
                                     image="./js/img/zoom-plus-mini.png" w:onClick="resizeDoubleLog(0.2)" />
                         </hlayout>
+                        <html>
+                            <canvas id="canvasDLogSOG" width="375px"
+                                                        height="250px" />
+                        </html>
                     </vlayout>
-                    <html>
-                        <canvas id="canvasDoubleLog" width="350px" height="240px" />
-                    </html>
                 </hlayout>
             </vlayout>
         </hlayout>

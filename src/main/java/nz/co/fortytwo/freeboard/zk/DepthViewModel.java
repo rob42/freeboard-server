@@ -77,7 +77,7 @@ public class DepthViewModel extends SelectorComposer<Window>{
 	private double scale=0.7;
 
 	private ProducerTemplate producer;
-   
+
 	public DepthViewModel() {
 		super();
 		logger.debug("Constructing..");
@@ -106,7 +106,6 @@ public class DepthViewModel extends SelectorComposer<Window>{
                         alarmDepth.setValue(Util.getConfig(null).getProperty(Constants.ALARM_DEPTH));
                         sparkPts.setValue(Util.getConfig(null).getProperty(Constants.SPARKLINE_PTS));
                         sparkMin.setValue(Util.getConfig(null).getProperty(Constants.SPARKLINE_MIN));
-			//adjust wind zero point here
 			producer.sendBody(Constants.UID+":"+Constants.MEGA+","+Constants.DEPTH_ZERO_ADJUST_CMD+":"+Util.getConfig(null).getProperty(Constants.DEPTH_ZERO_OFFSET)+",");
 
 	}

@@ -1,18 +1,18 @@
 <!--
 	Copyright 2012,2013 Robert Huitema robert@42.co.nz
-	
+
 	This file is part of FreeBoard. (http://www.42.co.nz/freeboard)
-	
+
 	FreeBoard is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
 	the Free Software Foundation, either version 3 of the License, or
 	(at your option) any later version.
-	
+
 	FreeBoard is distributed in the hope that it will be useful,
 	but WITHOUT ANY WARRANTY; without even the implied warranty of
 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 	GNU General Public License for more details.
-	
+
 	You should have received a copy of the GNU General Public License
 	along with FreeBoard.  If not, see <http://www.gnu.org/licenses/>.
 -->
@@ -49,12 +49,16 @@
 					<canvas id="canvasDepth" width="375px"
 						height="240px" />
 				</html>
+                            <html >
+                                <div id="spring" class="dynamicsparkline"></div>
+<!--                                <div id="spring" style="border:1px solid #000000;" class="dynamicsparkline"></div> -->
+                            </html>
 				<hlayout valign="middle" style="overflow: visible">
-					<label id="depthScale" value="0.0" visible="false" />
+                                    <label id="depthScale" value="0.0" visible="false" />
 					<label id="depthUnit" value="M" visible="false" />
-                            <label id="alarmDepth" value="6" visible="false"/>
-                            <label id="sparkPts" value="100" visible="false"/>
-                            <label id="sparkMin" value="0" visible="false"/>
+                                        <label id="alarmDepth" value="6" visible="false"/>
+                                        <label id="sparkPts" value="100" visible="false"/>
+                                        <label id="sparkMin" value="0" visible="false"/>
 					<button id="depthShrink"
 						tooltiptext="Shrink the panel"
 						image="./js/img/zoom-minus-mini.png"
