@@ -7,21 +7,24 @@
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
-
+ 
  *  FreeBoard is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
-
+ 
  *  You should have received a copy of the GNU General Public License
  *  along with FreeBoard.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-var depthArraySize;
-var depthArray = [];
 var anAlarm;
+var options;
+var width;
+var height;
 
 function resizeDepth(amount) {
+    var wsize = $("#canvasDepth").width();
+    var hsize = $("#canvasDepth").height();
     if (amount == null) {
         amount = zk.Widget.$('$depthScale').getValue();
     } else {
@@ -30,62 +33,45 @@ function resizeDepth(amount) {
     if (amount == 0.0)
         return;
 
-    var wsize = $("#canvasDepth").width();
-    var hsize = $("#canvasDepth").height();
 
     $("#canvasDepth").width(wsize * amount);
     $("#canvasDepth").height(hsize * amount);
-    /*
-     var wsmallSize =  $("#canvasWaypoint").width();
-     var hsmallSize =  $("#canvasWaypoint").height();
-     */
-    /*	$("#canvasHeading").width(wsmallSize*amount);
-     $("#canvasHeading").height(hsmallSize*amount);
-
-     $("#canvasWaypoint").width(wsmallSize*amount);
-     $("#canvasWaypoint").height(hsmallSize*amount);
-
-     var wLat =  $("#canvasLat").width();
-     var hLat =  $("#canvasLat").height();
-     $("#canvasLat").width(wLat*amount);
-     $("#canvasLat").height(hLat*amount);
-     $("#canvasLon").width(wLat*amount);
-     $("#canvasLon").height(hLat*amount);
-     */
-    this.initDepth();
-
+    initDepth();
 }
 function Depth() {
 
-	this.onmessage = function (navObj) {
-
+    this.onmessage = function (navObj) {
 
         //avoid commands
         if (!navObj)
             return true;
         //depth
         if (navObj.DBT) {
-            depthArray.shift();
-            //            console.log(depthArray);
-            anAlarm = zk.Widget.$('$alarmDepth').getValue();
-            sPoints = zk.Widget.$('$sparkPts').getValue();
-            sparkMin = zk.Widget.$('$sparkMin').getValue();
-
-            // clip the sparkline values so that the scaling does not get screwed up by values < sparkMin
-            if (navObj.DBT < sparkMin) {
-                depthArray.push(sparkMin);
-            } else {
-                depthArray.push(navObj.DBT);
+            unitTemp = zk.Widget.$('$cfgDepthUnit').getValue();
+            if (unitTemp !== depthUnit) {
+                headerString = "Depth " + unitTemp;
+                depthUnit = unitTemp;
+                console.log("DBT DisplaySingle");
+                lcdDepth = new steelseries.DisplaySingle('canvasDepth', {
+//                    height: 200,
+//                    width: 200,
+                    lcdDecimals: 1,
+                    lcdColor: steelseries.LcdColor.BEIGE,
+                    headerString: headerString,
+                    headerStringVisible: true,
+                    unitString: depthUnit,
+                    unitStringVisible: false
+                });
             }
-            if (navObj.DBT < anAlarm) {
-                lcdSailDepth.setLcdColor(steelseries.LcdColor.RED);
-            } else {
-                lcdSailDepth.setLcdColor(steelseries.LcdColor.BEIGE);
-            }
-            $('.dynamicsparkline').sparkline(depthArray, options);
             lcdDepth.setValue(navObj.DBT);
-        }
 
+            anAlarm = zk.Widget.$('$alarmDepth').getValue();
+            if (navObj.DBT < anAlarm) {
+                lcdDepth.setLcdColor(steelseries.LcdColor.RED);
+            } else {
+                lcdDepth.setLcdColor(steelseries.LcdColor.BEIGE);
+            }
+        }
     };
 
 }
@@ -99,48 +85,24 @@ function initDepth() {
     // Initialzing lcds
     // depth
 
-    depthArraySize = zk.Widget.$('$sparkPts').getValue();
-    while (depthArraySize--)
-    depthArray.push(6);
-
+    amount = zk.Widget.$('$depthScale').getValue();
     depthUnit = zk.Widget.$('$depthUnit').getValue();
-
+    width = zk.Widget.$('$depthWidth').getValue()*amount;
+    height = zk.Widget.$('$depthHeight').getValue()*amount;
+    headerString = "Depth " + depthUnit;
     lcdDepth = new steelseries.DisplaySingle('canvasDepth', {
-        // gaugeType : steelseries.GaugeType.TYPE4,
-        //width : document.getElementById('canvasLog').width,
-        //height : document.getElementById('canvasLog').height,
+        height: height,
+        width: width,
         lcdDecimals: 1,
         lcdColor: steelseries.LcdColor.BEIGE,
-        headerString: "Depth",
+        headerString: headerString,
         headerStringVisible: true,
-//		detailString : "Avg: ",
-//		detailStringVisible : true,
         unitString: depthUnit,
-        unitStringVisible: true
-
+        unitStringVisible: false
     });
 
-    // Set width of spring div
-    $("#spring").width(vpWidth * 0.3);
-    $("#spring").height(vpHeight * .20);
-    wid = Math.round(vpWidth * 0.3) + "px";
-    ht = Math.round(vpHeight * .30) + "px";
 
     anAlarm = zk.Widget.$('$alarmDepth').getValue();
-    options = {
-        width: wid,
-        height: ht,
-        maxSpotColor: '',
-        minSpotColor: '',
-        fillColor: '#cdf',
-//        fillColor: '',
-        chartRangeMin: zk.Widget.$('$sparkMin').getValue(),
-        normalRangeMin: zk.Widget.$('$sparkMin').getValue(),
-        normalRangeMax: anAlarm,
-        drawNormalOnTop: 'true',
-        normalRangeColor: 'rgba(255, 0, 0, .20)'
-    };
-
     addSocketListener(new Depth());
 }
 

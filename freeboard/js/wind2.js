@@ -1,6 +1,6 @@
 /*
  * Copyright 2012,2013 Robert Huitema robert@42.co.nz
- * 
+ *
  * This file is part of FreeBoard. (http://www.42.co.nz/freeboard)
  *
  *  FreeBoard is free software: you can redistribute it and/or modify
@@ -129,12 +129,16 @@ function initWind() {
 			steelseries.Section(0, tackAngle, 'rgba(0, 0, 220, 0.3)') ];
 
 	// Initialzing gauges
+    amount = zk.Widget.$('$windScale').getValue();
+    size = zk.Widget.$('$windSize').getValue()*amount;
+		smallWidth = size*0.9;
+		smallHeight = size/3.5;
 
 	// wind app
 	// wind
 	lcdWindApp = new steelseries.DisplayMulti('canvasWindApp', {
-		// width : document.getElementById('canvasWindApp').width,
-		// : document.getElementById('canvasWindApp').height,
+		width : smallWidth,
+		height : smallHeight,
 		lcdDecimals : 1,
 		lcdColor : steelseries.LcdColor.BEIGE,
 		unitString : "Knots(A)",
@@ -145,7 +149,7 @@ function initWind() {
 
 	// wind dir
 	radialWindDirApp = new steelseries.WindDirection('canvasWindDirApp', {
-		// size : document.getElementById('canvasWindDirApp').width,
+		size : size,
 		titleString : "WIND          APP",
 		lcdVisible : true,
 		lcdColor : steelseries.LcdColor.BEIGE,
@@ -160,8 +164,8 @@ function initWind() {
 
 	// wind true
 	lcdWindTrue = new steelseries.DisplayMulti('canvasWindTrue', {
-		// width : document.getElementById('canvasWindTrue').width,
-		// height : document.getElementById('canvasWindTrue').height,
+		width : smallWidth,
+		height : smallHeight,
 		lcdDecimals : 1,
 		lcdColor : steelseries.LcdColor.BEIGE,
 		unitString : "Knots(T)",
@@ -173,7 +177,7 @@ function initWind() {
 	// wind dir
 
 	radialWindDirTrue = new steelseries.WindDirection('canvasWindDirTrue', {
-		// size : document.getElementById('canvasWindDirTrue').width,
+		size : size,
 		titleString : "WIND           TRUE",
 		roseVisible : false,
 		lcdVisible : true,

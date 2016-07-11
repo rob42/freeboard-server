@@ -54,6 +54,15 @@ public class LoggViewModel extends SelectorComposer<Window>{
 	@Wire ("#logScale")
 	Label logScale;
 
+	@Wire ("#headWptSiz")
+	Label headWptSiz;
+
+	@Wire ("#logSiz")
+	Label logSiz;
+
+	@Wire ("#latLonSiz")
+	Label latLonSiz;
+
 	@Wire ("button#logShrink")
 	Button logShrink;
 
@@ -82,6 +91,8 @@ public class LoggViewModel extends SelectorComposer<Window>{
 			}
 			if(Util.getConfig(null).containsKey(Constants.LOGG_SCALE)){
 				scale = Double.valueOf(Util.getConfig(null).getProperty(Constants.LOGG_SCALE));
+			} else {
+				scale = 1.0;
 			}
 			logScale.setValue(String.valueOf(scale));
 			//resize
@@ -124,9 +135,4 @@ public class LoggViewModel extends SelectorComposer<Window>{
 		}
 		logScale.setValue(String.valueOf(scale));
 	}
-
-
-
-
-
 }

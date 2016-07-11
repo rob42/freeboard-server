@@ -30,11 +30,7 @@
             height="30px" width="100px" title="DoubleLog"
             mode="overlapped" visible="false" minimizable="true" w:onMove="dlOnMove(event)" >
         <!-- 		 <style>.z-panel-body { overflow: visible; }"</style> -->
-        <attribute name="onAfterSize"><![CDATA[
-            double sc = Double.parseDouble(doubleLogScale.getValue())-1.;
-            String js = "resizeDoubleLog("+sc+");";
-            Clients.evalJavaScript(js);
-    ]]></attribute>
+
     <style>
             .z-window-content, .z-panel-body, .z-window-modal-cnt-noborder, .z-window-highlighted-cnt-noborder,
             .z-window-embedded-cnt-noborder, .z-window-overlapped-cnt-noborder, .z-window-popup-cnt-noborder
@@ -56,6 +52,8 @@
                         </html>
                         <hlayout valign="middle">
                             <label id="doubleLogScale" value="0.0" visible="false"/>
+                            <label id="doubleLogWidth" value="375" visible="false"/>
+                            <label id="doubleLogHeight" value="250" visible="false"/>
                             <button id="doubleLogShrink" tooltiptext="Shrink the panel"
                                     image="./js/img/zoom-minus-mini.png" w:onClick="resizeDoubleLog(-0.2)" />
                             <button id="doubleLogGrow" tooltiptext="Grow the panel"

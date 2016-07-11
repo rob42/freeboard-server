@@ -1,6 +1,6 @@
 /*
  * Copyright 2012,2013 Robert Huitema robert@42.co.nz
- * 
+ *
  * This file is part of FreeBoard. (http://www.42.co.nz/freeboard)
  *
  *  FreeBoard is free software: you can redistribute it and/or modify
@@ -41,42 +41,41 @@ import org.zkoss.zul.Window;
 public class WindViewModel extends SelectorComposer<Window>{
 
 	private static Logger logger = Logger.getLogger(WindViewModel.class);
-    
+
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 1L;
 	/**
 	 * Dial master size
 	 */
 	private double size = 400;
-	
+
 	@WireVariable
     private Session sess;
-	
+
 	@Wire ("#wind")
 	Window wind;
-	
-	
+
 	@Wire ("#windScale")
 	Label windScale;
 
 	@Wire ("button#windShrink")
 	Button windShrink;
-	
+
 	@Wire ("button#windGrow")
 	Button windGrow;
 
-	private double scale=0.5;
+	private double scale=1.0;
 
 	private ProducerTemplate producer;
-	
+
 	public WindViewModel() {
 		super();
 		if(logger.isDebugEnabled())logger.debug("Constructing..");
 		producer = CamelContextFactory.getInstance().createProducerTemplate();
 		producer.setDefaultEndpointUri("seda:input");
-		
+
 	}
 
 	@Override
@@ -95,12 +94,14 @@ public class WindViewModel extends SelectorComposer<Window>{
 			}
 			if(Util.getConfig(null).containsKey(Constants.WIND_SCALE)){
 				scale = Double.valueOf(Util.getConfig(null).getProperty(Constants.WIND_SCALE));
+			} else {
+				scale = 1.;
 			}
 			windScale.setValue(String.valueOf(scale));
 			//adjust wind zero point here
 			producer.sendBody(Constants.UID+":"+Constants.MEGA+","+Constants.WIND_ZERO_ADJUST_CMD+":"+Util.getConfig(null).getProperty(Constants.WIND_ZERO_OFFSET)+",");
 	}
-	
+
 	@Listen("onMove = #wind")
 	public void onMoveWindow(Event event) {
 		if(logger.isDebugEnabled())logger.debug(" move event = "+((Window)event.getTarget()).getLeft()+", "+((Window)event.getTarget()).getTop());
@@ -113,7 +114,7 @@ public class WindViewModel extends SelectorComposer<Window>{
 			} catch (IOException e) {
 				logger.error(e);
 			}
-	    
+
 	}
 
 	@Listen("onClick = button#windShrink")
@@ -123,7 +124,7 @@ public class WindViewModel extends SelectorComposer<Window>{
 			scale = Util.updateScale(Constants.WIND_SCALE, 0.8, scale);
 		} catch (Exception e) {
 			logger.error(e);
-		} 
+		}
 		windScale.setValue(String.valueOf(scale));
 	}
 
@@ -134,7 +135,7 @@ public class WindViewModel extends SelectorComposer<Window>{
 			scale = Util.updateScale(Constants.WIND_SCALE, 1.2, scale);
 		} catch (Exception e) {
 			logger.error(e);
-		} 
+		}
 		windScale.setValue(String.valueOf(scale));
 	}
 
@@ -145,9 +146,4 @@ public class WindViewModel extends SelectorComposer<Window>{
 	public void setSize(double size) {
 		this.size = size;
 	}
-
-	
-
-	
-
 }

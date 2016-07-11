@@ -17,6 +17,12 @@
  *  along with FreeBoard.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+var headWayPtWidth;
+var headWayPtHeight;
+var logWidth;
+var logHeight;
+var latLonWidth;
+var latLonHeight;
 
 function resizeLog(amount){
 	if(amount==null){
@@ -41,6 +47,7 @@ function resizeLog(amount){
 	$("#canvasLat").height(hLat*amount);
 	$("#canvasLon").width(wLat*amount);
 	$("#canvasLon").height(hLat*amount);
+
 	this.initLogg();
 }
 function Logg () {
@@ -113,12 +120,22 @@ function initLogg() {
 	
         // Setting declination to 0 to avoid  "Uncaught reference" or "undefined" for declination
         declination = 0.;
+    amount = zk.Widget.$('$logScale').getValue();
+	temp = zk.Widget.$('$headWptSiz').getValue().split('x');
+	headWayPtWidth = temp[0]*amount;
+	headWayPtHeight = temp[1]*amount;
+	temp = zk.Widget.$('$logSiz').getValue().split('x');
+	logWidth = temp[0]*amount;
+	logHeight = temp[1]*amount;
+	temp = zk.Widget.$('$latLonSiz').getValue().split('x');
+	latLonWidth = temp[0]*amount;
+	latLonHeight = temp[1]*amount;
         //// Initialzing lcds
 	// log
 	lcdLat = new steelseries.DisplaySingle('canvasLat', {
 		// gaugeType : steelseries.GaugeType.TYPE4,
-		//width : document.getElementById('canvasLat').width,
-		//height : document.getElementById('canvasLat').height,
+		width : latLonWidth,
+		height : latLonHeight,
 		lcdDecimals : 5,
 		lcdColor: steelseries.LcdColor.BEIGE,
 		//unitString:"",
@@ -128,8 +145,8 @@ function initLogg() {
 	});
 	lcdLon = new steelseries.DisplaySingle('canvasLon', {
 		// gaugeType : steelseries.GaugeType.TYPE4,
-		//width : document.getElementById('canvasLon').width,
-		//height : document.getElementById('canvasLon').height,
+		width : latLonWidth,
+		height : latLonHeight,
 		lcdDecimals : 5,
 		lcdColor: steelseries.LcdColor.BEIGE,
 		//unitString:"",
@@ -141,8 +158,8 @@ function initLogg() {
 	// log
 	lcdLog = new steelseries.DisplayMulti('canvasLog', {
 		// gaugeType : steelseries.GaugeType.TYPE4,
-		//width : document.getElementById('canvasLog').width,
-		//height : document.getElementById('canvasLog').height,
+		width : logWidth,
+		height : logHeight,
 		lcdDecimals : 1,
 		lcdColor: steelseries.LcdColor.BEIGE,
 		headerString : "Knots",
@@ -156,8 +173,8 @@ function initLogg() {
 
 	// heading
 	lcdHeading = new steelseries.DisplayMulti('canvasHeading', {
-		//width : document.getElementById('canvasHeading').width,
-		//height : document.getElementById('canvasHeading').height,
+		width : headWayPtWidth,
+		height : headWayPtHeight,
 		lcdDecimals : 0,
 		lcdColor: steelseries.LcdColor.BEIGE,
 		headerString : "Heading(M)",
@@ -168,8 +185,8 @@ function initLogg() {
 
 	// waypoint
 	lcdWaypoint = new steelseries.DisplayMulti('canvasWaypoint', {
-		//width : document.getElementById('canvasWaypoint').width,
-		//height : document.getElementById('canvasWaypoint').height,
+		width : headWayPtWidth,
+		height : headWayPtHeight,
 		lcdDecimals : 0,
 		lcdColor: steelseries.LcdColor.BEIGE,
 		headerString : "To Waypoint",
@@ -178,7 +195,6 @@ function initLogg() {
 		detailStringVisible : true,
 	});
 	lcdWaypoint.setValue(0);
-
 
 	addSocketListener(new Logg());
 }

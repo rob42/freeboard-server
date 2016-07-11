@@ -1,18 +1,18 @@
 /*
  * Copyright 2012,2013 Robert Huitema robert@42.co.nz
- * 
+ *
  * This file is part of FreeBoard. (http://www.42.co.nz/freeboard)
- * 
+ *
  * FreeBoard is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * FreeBoard is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with FreeBoard. If not, see <http://www.gnu.org/licenses/>.
  */
@@ -47,9 +47,9 @@ import purejavacomm.SerialPortEventListener;
 /**
  * Wrapper to read serial port via rxtx, then fire messages into the camel route
  * via the seda queue.
- * 
+ *
  * @author robert
- * 
+ *
  */
 public class SerialPortReader implements Processor {
 
@@ -65,7 +65,7 @@ public class SerialPortReader implements Processor {
 
 	private LinkedBlockingQueue<String> queue;
 	private SerialReader serialReader;
-	
+
 
 	public SerialPortReader() {
 		super();
@@ -75,8 +75,8 @@ public class SerialPortReader implements Processor {
 	/**
 	 * Opens a connection to the serial port, and starts two threads, one to read, one to write.
 	 * A background thread looks for new/lost USB devices and (re)attaches them
-	 * 
-	 * 
+	 *
+	 *
 	 * @param portName
 	 * @throws Exception
 	 */
@@ -133,18 +133,18 @@ public class SerialPortReader implements Processor {
 	public class SerialReader implements SerialPortEventListener {
 
 		//BufferedReader in;
-		
+
 		private Pattern uid;
 		List<String> lines = new ArrayList<String>();
 		StringBuffer line = new StringBuffer(60);
 		private boolean sendMessage=true;
 		private boolean complete;
 		private InputStream in;
-		byte[] buff = new byte[256]; 
+		byte[] buff = new byte[256];
 		int x=0;
-		
+
 		public SerialReader() throws Exception {
-			
+
 			//this.in = new BufferedReader(new InputStreamReader(serialPort.getInputStream()));
 			this.in = new BufferedInputStream(serialPort.getInputStream());
 			uid = Pattern.compile(Constants.UID + ":");
@@ -152,21 +152,21 @@ public class SerialPortReader implements Processor {
 			sendMessage = new Boolean(Util.getConfig(null).getProperty(Constants.SEND_MESSAGE, "true"));
 		}
 
-		
+
 		//@Override
 		public void serialEvent(SerialPortEvent event) {
 			if(logger.isTraceEnabled())logger.trace("SerialEvent:"+event.getEventType());
 			try{
 				if (event.getEventType() == SerialPortEvent.DATA_AVAILABLE) {
-					
+
 						int r=0;
-						
+
 						while((r>-1)&& in.available()>0 ){
 							try {
 								r = in.read();
 								buff[x]=(byte) r;
 								x++;
-								
+
 								//10=LF, 13=CR, lines should end in CR/LF
 								if(r==10  ||x==256){
 									if(r==10)complete=true;
@@ -174,7 +174,7 @@ public class SerialPortReader implements Processor {
 									buff=new byte[256];
 									x=0;
 								}
-								
+
 							} catch (IOException e) {
 								logger.error(portName + ":"+e.getMessage());
 								if(logger.isDebugEnabled())logger.debug(e.getMessage(),e);
@@ -184,6 +184,12 @@ public class SerialPortReader implements Processor {
 							if (complete) {
 								String lineStr = line.toString().trim();
 								if(logger.isDebugEnabled())logger.debug(portName + ":Serial Received:" + lineStr);
+
+								// enable the lines below to substitute SDDBT sentence for GGA sentence for testing Depth ionstrument
+//								if (lineStr.contains("GGA")){
+//									lineStr = "$SDDBT,8.1,f,2.4,M,1.3,F*0B";
+//								}
+
 								//its not empty!
 								if(lineStr.length()>0){
 									//map it if we havent already
@@ -212,7 +218,7 @@ public class SerialPortReader implements Processor {
 				running=false;
 				logger.error(portName, e);
 			}
-		
+
 		}
 
 	}
@@ -221,7 +227,7 @@ public class SerialPortReader implements Processor {
 
 	/**
 	 * Set the camel producer, which fire the messages into camel
-	 * 
+	 *
 	 * @param producer
 	 */
 	public void setProducer(ProducerTemplate producer) {
@@ -231,7 +237,7 @@ public class SerialPortReader implements Processor {
 
 	/**
 	 * True if the serial port read/write threads are running
-	 * 
+	 *
 	 * @return
 	 */
 	public boolean isRunning() {
@@ -253,7 +259,7 @@ public class SerialPortReader implements Processor {
 	/**
 	 * Set to false to stop the serial port read/write threads.
 	 * You must connect() to restart.
-	 * 
+	 *
 	 * @param running
 	 */
 	public void setRunning(boolean running) {
@@ -270,7 +276,7 @@ public class SerialPortReader implements Processor {
 
 	/*
 	 * Handles the messages to be delivered to the device attached to this port.
-	 * 
+	 *
 	 * @see org.apache.camel.Processor#process(org.apache.camel.Exchange)
 	 */
 	public void process(Exchange exchange) throws Exception {

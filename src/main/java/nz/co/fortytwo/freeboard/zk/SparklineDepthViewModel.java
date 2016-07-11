@@ -38,7 +38,7 @@ import org.zkoss.zul.Button;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Window;
 
-public class DepthViewModel extends SelectorComposer<Window>{
+public class SparklineDepthViewModel extends SelectorComposer<Window>{
 
 	private static Logger logger = Logger.getLogger(DepthViewModel.class);
 
@@ -62,6 +62,12 @@ public class DepthViewModel extends SelectorComposer<Window>{
 	@Wire ("#alarmDepth")
 	Label alarmDepth;
 
+	@Wire ("#sparkPts")
+	Label sparkPts;
+
+	@Wire ("#sparkMin")
+	Label sparkMin;
+
 	@Wire ("button#depthShrink")
 	Button depthShrink;
 
@@ -72,7 +78,7 @@ public class DepthViewModel extends SelectorComposer<Window>{
 
 	private ProducerTemplate producer;
 
-	public DepthViewModel() {
+	public SparklineDepthViewModel() {
 		super();
 		logger.debug("Constructing..");
 		producer = CamelContextFactory.getInstance().createProducerTemplate();
@@ -99,6 +105,8 @@ public class DepthViewModel extends SelectorComposer<Window>{
 			depthScale.setValue(String.valueOf(scale));
 			depthUnit.setValue(Util.getConfig(null).getProperty(Constants.DEPTH_UNIT));
                         alarmDepth.setValue(Util.getConfig(null).getProperty(Constants.ALARM_DEPTH));
+                        sparkPts.setValue(Util.getConfig(null).getProperty(Constants.SPARKLINE_PTS));
+                        sparkMin.setValue(Util.getConfig(null).getProperty(Constants.SPARKLINE_MIN));
 			producer.sendBody(Constants.UID+":"+Constants.MEGA+","+Constants.DEPTH_ZERO_ADJUST_CMD+":"+Util.getConfig(null).getProperty(Constants.DEPTH_ZERO_OFFSET)+",");
 	}
 

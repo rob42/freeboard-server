@@ -22,10 +22,12 @@ var vpHeight;
 var vpWidth;
 var sogUnit;
 var sowUnit;
+var width;
+var height;
 
 function resizeDoubleLog(amount) {
     var wsize = $("#canvasDLogSOW").width();
-    var hsize = $("#canvasDLogSOG").height();
+    var hsize = $("#canvasDLogSOW").height();
     console.log("resize entry: amount, wsize, hzixe = "+amount+" "+wsize+" "+hsize);
     if (amount == null) {
         amount = zk.Widget.$('$doubleLogScale').getValue();
@@ -34,15 +36,12 @@ function resizeDoubleLog(amount) {
     }
     if (amount == 0.0)
         return;
-//    var wsize = $("#canvasDLogSOW").width();
-//    var hsize = $("#canvasDLogSOG").height();
+
     $("#canvasDLogSOW").width(wsize * amount);
     $("#canvasDLogSOW").height(hsize * amount);
     $("#canvasDLogSOG").width(wsize * amount);
     $("#canvasDLogSOG").height(hsize * amount);
-    console.log("resize before init: amount, wsize, hzixe = "+amount+" "+wsize+" "+hsize);
     this.initDoubleLog();
-    console.log("resize after init: amount, wsize, hzixe = "+amount+" "+wsize+" "+hsize);
 }
 
 // see http://stackoverflow.com/questions/21731152/resize-zk-modal-programmatically
@@ -117,22 +116,17 @@ function initDoubleLog() {
     if (!window.CanvasRenderingContext2D)
         return;
     // Initialzing lcds
-    vpSize = Math.min(window.innerHeight - 50, window.innerWidth);
-    vpHeight = window.innerHeight - 50;
-    vpWidth = window.innerWidth;
-    console.log("vpHeight = "+ vpHeight + " vpWidth = "+vpWidth);
-
-    wsize = $("#canvasDLogSOW").width();
-    hsize = $("#canvasDLogSOG").height();
     amount = zk.Widget.$('$doubleLogScale').getValue();
-    console.log("init before: amount, wsize, hsixe = "+amount+" "+wsize+" "+hsize);
+    width = zk.Widget.$('$doubleLogWidth').getValue()*amount;
+    height = zk.Widget.$('$doubleLogHeight').getValue()*amount;
+//    console.log("init before: amount, wsize, hsixe = "+amount+" "+wsize+" "+hsize);
 
     // logs
     sogUnit = zk.Widget.$('$cfgSOGUnit').getValue();
     headerString = "SOG " + sogUnit;
     lcdSOG = new steelseries.DisplaySingle('canvasDLogSOG', {
-//        height: vpHeight * .25,
-//        width: vpWidth * .30,
+        height: height,
+        width: width,
         lcdDecimals: 1,
         lcdColor: steelseries.LcdColor.BEIGE,
         headerString: headerString,
@@ -142,13 +136,38 @@ function initDoubleLog() {
     sowUnit = zk.Widget.$('$cfgSOWUnit').getValue();
     headerString = "SOW " + sowUnit;
     lcdSOW = new steelseries.DisplaySingle('canvasDLogSOW', {
-//        height: vpHeight * .25,
-//        width: vpWidth * .30,
+        height: height,
+        width: width,
         lcdDecimals: 1,
         lcdColor: steelseries.LcdColor.BEIGE,
         headerString: headerString,
         headerStringVisible: true,
     });
-    
+
 	 addSocketListener(new DoubleLog());
+}
+
+function distanceUnit(unit) {
+    var convert;
+    switch (unit) {
+    case "Kt":
+        {
+            distUnit = "n.m.";
+            convert = 1.0;
+            break;
+        }
+    case "km/hr":
+        {
+            distUnit = "km";
+            convert = 1.852;
+            break;
+        }
+    case "mi/hr":
+        {
+            distUnit = "mi";
+            convert = 1.1450779448;
+            break;
+        }
+    }
+    return convert;
 }

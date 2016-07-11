@@ -51,6 +51,9 @@
 					</html>
 					<hlayout valign="middle">
 						<label id="logScale" value="0.0" visible="false"/>
+						<label id="headWptSiz" value="150x100" visible="false"/>
+						<label id="logSiz" value="350x240" visible="false"/>
+						<label id="latLonSiz" value="245x55" visible="false"/>
 						<button id="logShrink" tooltiptext="Shrink the panel"
 							image="./js/img/zoom-minus-mini.png" w:onClick="resizeLog(-0.2)" />
 						<button id="logGrow" tooltiptext="Grow the panel"

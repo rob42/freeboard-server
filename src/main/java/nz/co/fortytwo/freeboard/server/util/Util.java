@@ -153,7 +153,6 @@ public class Util {
 		props.setProperty(Constants.WAYPOINTS_RESOURCE,"./tracks");
 		props.setProperty(Constants.WAYPOINT_CURRENT,"waypoints.gpx");
 		props.setProperty(Constants.SERIAL_PORTS,"/dev/ttyUSB0,/dev/ttyUSB1,/dev/ttyUSB2,/dev/ttyACM0,/dev/ttyACM1,/dev/ttyACM2");
-		props.setProperty(Constants.DEPTH_SCALE, "0.15");
                 props.setProperty(Constants.DEPTH_UNIT, "f");
                 props.setProperty(Constants.DEPTH_ZERO_OFFSET, "1.5");
                 props.setProperty(Constants.SOG_UNIT, "mi/hr");

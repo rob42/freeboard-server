@@ -43,21 +43,14 @@
 <?script src="./js/tween-min.js"?>
 <?script src="./js/steelseries.js"?>
 
-<!--
-<?script src="./js/sparkline.js"?>
--->
-
-<?script type="text/javascript" src="./js/jquery-1.8.3.js"?>
-<?script type="text/javascript" src="./js/jquery.sparkline.js"?>
-
 <zk>
-    <script type="text/javascript" src="./js/depth.js" />
+    <script type="text/javascript" src="./js/sparklineDepth.js" />
     <style>.sysWin .z-window-overlapped-cnt</style>
     <!--	<div height="380px"> -->
 
     <window id="depth"
                         xmlns:w="http://www.zkoss.org/2005/zk/client"
-                        apply="nz.co.fortytwo.freeboard.zk.DepthViewModel"
+                        apply="nz.co.fortytwo.freeboard.zk.SparklineDepthViewModel"
                         height="30px" width="100px" title="Depth" mode="overlapped"
                         visible="false" minimizable="true" >
 
@@ -77,14 +70,14 @@
                     <canvas id="canvasDepth" width="375px"
                                                 height="240px" />
                 </html>
+                <html >
+                    <div id="depthSpring" class="dynamicsparkline"></div>
+                    <!--          <div id="spring" style="border:1px solid #000000;" class="dynamicsparkline"></div> -->
+                </html>
                 <hlayout valign="middle" style="overflow: visible">
                     <label id="depthScale" value="0.0" visible="false" />
-                    <label id="depthWidth" value="375" visible="false" />
-                    <label id="depthHeight" value="250" visible="false" />
                     <label id="depthUnit" value="M" visible="false" />
                     <label id="alarmDepth" value="6" visible="false"/>
-                    <label id="sparkPts" value="100" visible="false"/>
-                    <label id="sparkMin" value="0" visible="false"/>
                     <button id="depthShrink"
                                                 tooltiptext="Shrink the panel"
                                                 image="./js/img/zoom-minus-mini.png"
@@ -95,6 +88,7 @@
             </vlayout>
         </div>
     </window>
+    <!--	</div> -->
 
     <script type="text/javascript" defer="true">
         initSocket(); initDepth();
