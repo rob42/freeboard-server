@@ -111,12 +111,14 @@
 								<textbox id="cfgAlarmDepth"
 									tooltip="Shows alarm if depth less than this value." />
 							</row>
-							<row hflex="min">
+<!--
+                                                        <row hflex="min">
 								<label value="Sparkline Points" />
 								<textbox id="cfgSparklinePts"
 									tooltip="Number of depth values in the Sparkline plot." />
 							</row>
-							<row hflex="min">
+-->
+                                                        <row hflex="min">
 								<label value="Sparkline Minimum" />
 								<textbox id="cfgSparklineMin"
 									tooltip="Minimum depth for the Sparkline plot." />

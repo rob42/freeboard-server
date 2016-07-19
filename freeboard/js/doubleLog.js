@@ -22,21 +22,24 @@ var vpHeight;
 var vpWidth;
 var sogUnit;
 var sowUnit;
-var width;
-var height;
+var width = 375;
+var height = 250;
+var initDone = false;
 
 function resizeDoubleLog(amount) {
-    var wsize = $("#canvasDLogSOW").width();
-    var hsize = $("#canvasDLogSOW").height();
+//    var wsize = $("#canvasDLogSOW").width();
+//    var hsize = $("#canvasDLogSOW").height();
+    var wsize = localStorage.getItem("doubleLog.width");
+    var hsize = localStorage.getItem("doubleLog.height");
     console.log("resize entry: amount, wsize, hzixe = "+amount+" "+wsize+" "+hsize);
     if (amount == null) {
-        amount = zk.Widget.$('$doubleLogScale').getValue();
+        amount = localStorage.getItem("doubleLog.scale");
     } else {
-        amount = 1 + (1 * amount);
+        amount = 1*localStorage.getItem("doubleLog.scale") + (1 * amount);
     }
     if (amount == 0.0)
         return;
-
+    localStorage.setItem("doubleLog.scale", amount);
     $("#canvasDLogSOW").width(wsize * amount);
     $("#canvasDLogSOW").height(hsize * amount);
     $("#canvasDLogSOG").width(wsize * amount);
@@ -50,10 +53,11 @@ function resizeDoubleLog(amount) {
 
 this.dlOnMove = function (event) {
 	var e = event;
-//	var test = zk.Widget.$(jq('$doubleLog'));
-//	var l = zk.Widget.$(jq('$doubleLog')[0])._left;
-//	var t = zk.Widget.$(jq('$doubleLog')[0])._top;
 	console.log("doubleLog moved (left, top) = "+event.left+ " "+event.top);
+   if (initDone){
+       localStorage.setItem("doubleLog.top",  event.top+"");
+       localStorage.setItem("doubleLog.left", event.left+"");
+   }
 	return;
 }
 
@@ -109,17 +113,41 @@ function DoubleLog() {
 
 }
 
-
+function onLoad(){
+    zk.Widget.$(jq('$doubleLog')[0])._left = localStorage.getItem("doubleLog.left");
+    zk.Widget.$(jq('$doubleLog')[0]).setTop(localStorage.getItem("doubleLog.top"));
+	 varL = zk.Widget.$(jq('$doubleLog')[0])._left;
+	 varT = zk.Widget.$(jq('$doubleLog')[0])._top;
+	 initDoubleLog();
+}
 
 function initDoubleLog() {
     //if we cant do canvas, skip out here!
     if (!window.CanvasRenderingContext2D)
         return;
     // Initialzing lcds
-    amount = zk.Widget.$('$doubleLogScale').getValue();
-    width = zk.Widget.$('$doubleLogWidth').getValue()*amount;
-    height = zk.Widget.$('$doubleLogHeight').getValue()*amount;
-//    console.log("init before: amount, wsize, hsixe = "+amount+" "+wsize+" "+hsize);
+    if (typeof(Storage) == "undefined") {
+    // Sorry! No Web Storage support..
+    alert("Sorry! No Web Storage support. Please use a different browser.");
+    return;
+    }
+    if (localStorage.getItem("doubleLog.scale") == null){
+        localStorage.setItem("doubleLog.scale", "1.0");
+        localStorage.setItem("doubleLog.width", width);
+        localStorage.setItem("doubleLog.height", height);
+        localStorage.setItem("doubleLog.top",  zk.Widget.$(jq('$doubleLog')[0])._top);
+        localStorage.setItem("doubleLog.left", zk.Widget.$(jq('$doubleLog')[0])._left);
+    }
+    zk.Widget.$(jq('$doubleLog')[0]).setLeft(localStorage.getItem("doubleLog.left"));
+    zk.Widget.$(jq('$doubleLog')[0]).setTop(localStorage.getItem("doubleLog.top"));
+	 varL = zk.Widget.$(jq('$doubleLog')[0])._left;
+	 varT = zk.Widget.$(jq('$doubleLog')[0])._top;
+
+	 var test = zk.Widget.$(jq('$doubleLog')[0]).id;
+	 amount = localStorage.getItem("doubleLog.scale");
+    width = localStorage.getItem("doubleLog.width")*amount;
+    height = localStorage.getItem("doubleLog.height")*amount;
+//    console.log("init: amount, width, height , left, top= "+amount+" "+width+" "+height+ " "+ zk.Widget.$(jq('$doubleLog')[0])._left + " "+zk.Widget.$(jq('$doubleLog')[0])._top);
 
     // logs
     sogUnit = zk.Widget.$('$cfgSOGUnit').getValue();
@@ -145,6 +173,7 @@ function initDoubleLog() {
     });
 
 	 addSocketListener(new DoubleLog());
+         initDone = true;
 }
 
 function distanceUnit(unit) {

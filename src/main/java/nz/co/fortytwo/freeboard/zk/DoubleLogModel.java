@@ -74,73 +74,75 @@ public class DoubleLogModel extends SelectorComposer<Window> {
     @Override
     public void doAfterCompose(Window comp) throws Exception {
         super.doAfterCompose(comp);
-        if (logger.isDebugEnabled()) {
-            logger.debug("Init..");
-        }
-        if (Util.getConfig(null).containsKey(Constants.DOUBLE_LOG_X)) {
-            doubleLog.setLeft(Util.getConfig(null).getProperty(Constants.DOUBLE_LOG_X));
-            doubleLog.setTop(Util.getConfig(null).getProperty(Constants.DOUBLE_LOG_Y));
-            if (logger.isDebugEnabled()) {
-                logger.debug("  doubleLog location set to " + doubleLog.getLeft() + ", " + doubleLog.getTop());
-            }
-        } else {
-            doubleLog.setPosition("left,center");
-            if (logger.isDebugEnabled()) {
-                logger.debug("  doubleLog location set to " + doubleLog.getPosition());
-            }
-        }
-        if (Util.getConfig(null).containsKey(Constants.DOUBLE_LOG_SCALE)) {
-            scale = Double.valueOf(Util.getConfig(null).getProperty(Constants.DOUBLE_LOG_SCALE));
-        } else {
-            scale = 1.;
-        }
-        doubleLogScale.setValue(String.valueOf(scale));
-        //resize
-//        String js = "resizeDoubleLog("+scale+");";
-//        Clients.evalJavaScript("initDoubleLog()");
+		  Clients.evalJavaScript("onLoad();");
+
+//        if (logger.isDebugEnabled()) {
+//            logger.debug("Init..");
+//        }
+//        if (Util.getConfig(null).containsKey(Constants.DOUBLE_LOG_X)) {
+//            doubleLog.setLeft(Util.getConfig(null).getProperty(Constants.DOUBLE_LOG_X));
+//            doubleLog.setTop(Util.getConfig(null).getProperty(Constants.DOUBLE_LOG_Y));
+//            if (logger.isDebugEnabled()) {
+//                logger.debug("  doubleLog location set to " + doubleLog.getLeft() + ", " + doubleLog.getTop());
+//            }
+//        } else {
+//            doubleLog.setPosition("left,center");
+//            if (logger.isDebugEnabled()) {
+//                logger.debug("  doubleLog location set to " + doubleLog.getPosition());
+//            }
+//        }
+//        if (Util.getConfig(null).containsKey(Constants.DOUBLE_LOG_SCALE)) {
+//            scale = Double.valueOf(Util.getConfig(null).getProperty(Constants.DOUBLE_LOG_SCALE));
+//        } else {
+//            scale = 1.;
+//        }
+//        doubleLogScale.setValue(String.valueOf(scale));
+//        //resize
+////        String js = "resizeDoubleLog("+scale+");";
+////        Clients.evalJavaScript("initDoubleLog()");
     }
 
     @Listen("onMove =  #doubleLog")
     public void onMoveWindow(Event event) {
-        if (logger.isDebugEnabled()) {
-            logger.debug(" move event = " + ((Window) event.getTarget()).getLeft() + ", " + ((Window) event.getTarget()).getTop());
-        }
-        System.out.println(" move event = " + ((Window) event.getTarget()).getLeft() + ", " + ((Window) event.getTarget()).getTop());
-        try {
-            Util.getConfig(null).setProperty(Constants.DOUBLE_LOG_X, ((Window) event.getTarget()).getLeft());
-            Util.getConfig(null).setProperty(Constants.DOUBLE_LOG_Y, ((Window) event.getTarget()).getTop());
-            Util.saveConfig();
-        } catch (FileNotFoundException e) {
-            logger.error(e);
-        } catch (IOException e) {
-            logger.error(e);
-        }
+//        if (logger.isDebugEnabled()) {
+//            logger.debug(" move event = " + ((Window) event.getTarget()).getLeft() + ", " + ((Window) event.getTarget()).getTop());
+//        }
+//        System.out.println(" move event = " + ((Window) event.getTarget()).getLeft() + ", " + ((Window) event.getTarget()).getTop());
+//        try {
+//            Util.getConfig(null).setProperty(Constants.DOUBLE_LOG_X, ((Window) event.getTarget()).getLeft());
+//            Util.getConfig(null).setProperty(Constants.DOUBLE_LOG_Y, ((Window) event.getTarget()).getTop());
+//            Util.saveConfig();
+//        } catch (FileNotFoundException e) {
+//            logger.error(e);
+//        } catch (IOException e) {
+//            logger.error(e);
+//        }
     }
 
     @Listen("onClick =  button#doubleLogShrink")
     public void logShrinkClick(MouseEvent event) {
-        if (logger.isDebugEnabled()) {
-            logger.debug(" shrink event = " + event);
-        }
-        try {
-            scale = Util.updateScale(Constants.DOUBLE_LOG_SCALE, 0.8, scale);
-        } catch (Exception e) {
-            logger.error(e);
-        }
-        doubleLogScale.setValue(String.valueOf(scale));
+//        if (logger.isDebugEnabled()) {
+//            logger.debug(" shrink event = " + event);
+//        }
+//        try {
+//            scale = Util.updateScale(Constants.DOUBLE_LOG_SCALE, 0.8, scale);
+//        } catch (Exception e) {
+//            logger.error(e);
+//        }
+//        doubleLogScale.setValue(String.valueOf(scale));
     }
 
     @Listen("onClick =   button#doubleLogGrow")
     public void logGrowClick(MouseEvent event) {
-        if (logger.isDebugEnabled()) {
-            logger.debug(" grow event = " + event);
-        }
-        try {
-            scale = Util.updateScale(Constants.DOUBLE_LOG_SCALE, 1.2, scale);
-        } catch (Exception e) {
-            logger.error(e);
-        }
-        doubleLogScale.setValue(String.valueOf(scale));
+//        if (logger.isDebugEnabled()) {
+//            logger.debug(" grow event = " + event);
+//        }
+//        try {
+//            scale = Util.updateScale(Constants.DOUBLE_LOG_SCALE, 1.2, scale);
+//        } catch (Exception e) {
+//            logger.error(e);
+//        }
+//        doubleLogScale.setValue(String.valueOf(scale));
     }
 
 }
