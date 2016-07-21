@@ -32,6 +32,7 @@ import org.zkoss.zk.ui.select.SelectorComposer;
 import org.zkoss.zk.ui.select.annotation.Listen;
 import org.zkoss.zk.ui.select.annotation.Wire;
 import org.zkoss.zk.ui.select.annotation.WireVariable;
+import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Window;
@@ -54,15 +55,6 @@ public class LoggViewModel extends SelectorComposer<Window>{
 	@Wire ("#logScale")
 	Label logScale;
 
-	@Wire ("#headWptSiz")
-	Label headWptSiz;
-
-	@Wire ("#logSiz")
-	Label logSiz;
-
-	@Wire ("#latLonSiz")
-	Label latLonSiz;
-
 	@Wire ("button#logShrink")
 	Button logShrink;
 
@@ -80,59 +72,18 @@ public class LoggViewModel extends SelectorComposer<Window>{
 	@Override
 	public void doAfterCompose(Window comp) throws Exception {
 		super.doAfterCompose(comp);
-		if(logger.isDebugEnabled())logger.debug("Init..");
-			if(Util.getConfig(null).containsKey(Constants.LOGG_X)){
-				logg.setLeft(Util.getConfig(null).getProperty(Constants.LOGG_X));
-				logg.setTop(Util.getConfig(null).getProperty(Constants.LOGG_Y));
-				if(logger.isDebugEnabled())logger.debug("  logg location set to "+logg.getLeft()+", "+logg.getTop());
-			}else{
-				logg.setPosition("left,center");
-				if(logger.isDebugEnabled())logger.debug("  logg location set to "+logg.getPosition());
-			}
-			if(Util.getConfig(null).containsKey(Constants.LOGG_SCALE)){
-				scale = Double.valueOf(Util.getConfig(null).getProperty(Constants.LOGG_SCALE));
-			} else {
-				scale = 1.0;
-			}
-			logScale.setValue(String.valueOf(scale));
-			//resize
-
+                Clients.evalJavaScript("loggOnLoad();");
 	}
 
 	@Listen("onMove =  #logg")
 	public void onMoveWindow(Event event) {
-		if(logger.isDebugEnabled())logger.debug(" move event = "+((Window)event.getTarget()).getLeft()+", "+((Window)event.getTarget()).getTop());
-		    try {
-		    	Util.getConfig(null).setProperty(Constants.LOGG_X, ((Window)event.getTarget()).getLeft());
-		    	Util.getConfig(null).setProperty(Constants.LOGG_Y, ((Window)event.getTarget()).getTop());
-				Util.saveConfig();
-			} catch (FileNotFoundException e) {
-				logger.error(e);
-			} catch (IOException e) {
-				logger.error(e);
-			}
-
 	}
 
 	@Listen("onClick =  button#logShrink")
 	public void logShrinkClick(MouseEvent event) {
-		if(logger.isDebugEnabled())logger.debug(" shrink event = "+event);
-		try {
-			scale = Util.updateScale(Constants.LOGG_SCALE, 0.8, scale);
-		} catch (Exception e) {
-			logger.error(e);
-		}
-		logScale.setValue(String.valueOf(scale));
 	}
 
 	@Listen("onClick =   button#logGrow")
 	public void logGrowClick(MouseEvent event) {
-		if(logger.isDebugEnabled())logger.debug(" grow event = "+event);
-		try{
-			scale = Util.updateScale(Constants.LOGG_SCALE, 1.2, scale);
-		} catch (Exception e) {
-			logger.error(e);
-		}
-		logScale.setValue(String.valueOf(scale));
 	}
 }

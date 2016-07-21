@@ -1,6 +1,6 @@
 /*
  * Copyright 2012,2013 Robert Huitema robert@42.co.nz
- * 
+ *
  * This file is part of FreeBoard. (http://www.42.co.nz/freeboard)
  *
  *  FreeBoard is free software: you can redistribute it and/or modify
@@ -32,6 +32,7 @@ import org.zkoss.zk.ui.select.SelectorComposer;
 import org.zkoss.zk.ui.select.annotation.Listen;
 import org.zkoss.zk.ui.select.annotation.Wire;
 import org.zkoss.zk.ui.select.annotation.WireVariable;
+import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Toolbarbutton;
 import org.zkoss.zul.Window;
@@ -39,95 +40,96 @@ import org.zkoss.zul.Window;
 public class AutopilotViewModel extends SelectorComposer<Window>{
 
 	private static Logger logger = Logger.getLogger(AutopilotViewModel.class);
-    
+
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 1L;
-	
+
 	@WireVariable
     private Session sess;
-	
+
 	@Wire ("#autopilotWindow")
 	Window autopilotWindow;
-	
+
 	@Wire("button#apPort1")
-	private Button apPort1; 
-	
+	private Button apPort1;
+
 	@Wire("button#apStbd1")
-	private Button apStbd1; 
-	
+	private Button apStbd1;
+
 	@Wire("button#apPort10")
-	private Button apPort10; 
-	
+	private Button apPort10;
+
 	@Wire("button#apStbd10")
-	private Button apStbd10; 
-	
+	private Button apStbd10;
+
 	@Wire("toolbarbutton#apCompassOnOff")
-	private Toolbarbutton apCompassOnOff; 
-	
+	private Toolbarbutton apCompassOnOff;
+
 	@Wire("toolbarbutton#apWindOnOff")
-	private Toolbarbutton apWindOnOff; 
-	
+	private Toolbarbutton apWindOnOff;
+
 	@Wire("toolbarbutton#apOnOff")
-	private Toolbarbutton apOnOff; 
-	
+	private Toolbarbutton apOnOff;
+
 	private ProducerTemplate producer;
 	//private ConsumerTemplate consumer;
-	
+
 	private boolean autopilotOn=false;
 	private String APS = "C"; //C = compass, W = wind, compass by default
-	
+
 	public AutopilotViewModel() {
 		super();
 		if(logger.isDebugEnabled())logger.debug("Constructing..");
 
 		producer = CamelContextFactory.getInstance().createProducerTemplate();
 		producer.setDefaultEndpointUri("seda:input");
-		
+
 	}
 
 	@Override
 	public void doAfterCompose(Window comp) throws Exception {
 		super.doAfterCompose(comp);
-		if(logger.isDebugEnabled())logger.debug("Init..");
-			if(Util.getConfig(null).containsKey(Constants.AUTOPILOT_X)){
-				autopilotWindow.setLeft(Util.getConfig(null).getProperty(Constants.AUTOPILOT_X));
-				autopilotWindow.setTop(Util.getConfig(null).getProperty(Constants.AUTOPILOT_Y));
-				if(logger.isDebugEnabled())logger.debug("  autopilot location set to "+autopilotWindow.getLeft()+", "+autopilotWindow.getTop());
-			}else{
-				autopilotWindow.setPosition("center,bottom");
-				if(logger.isDebugEnabled())logger.debug("  autopilot location set to default "+autopilotWindow.getPosition());
-			}
+      Clients.evalJavaScript("autopilotOnLoad();");
+//		if(logger.isDebugEnabled())logger.debug("Init..");
+//			if(Util.getConfig(null).containsKey(Constants.AUTOPILOT_X)){
+//				autopilotWindow.setLeft(Util.getConfig(null).getProperty(Constants.AUTOPILOT_X));
+//				autopilotWindow.setTop(Util.getConfig(null).getProperty(Constants.AUTOPILOT_Y));
+//				if(logger.isDebugEnabled())logger.debug("  autopilot location set to "+autopilotWindow.getLeft()+", "+autopilotWindow.getTop());
+//			}else{
+//				autopilotWindow.setPosition("center,bottom");
+//				if(logger.isDebugEnabled())logger.debug("  autopilot location set to default "+autopilotWindow.getPosition());
+//			}
 		apCompassOnOff.setChecked(APS.equals(Constants.AUTOPILOT_COMPASS)?true:false);
 		apWindOnOff.setChecked(APS.equals(Constants.AUTOPILOT_WIND)?true:false);
 		setAutopilotState();
 	}
-	
+
 	@Listen("onClick = button#apPort1")
 	public void apPort1Click(MouseEvent event) {
 		if(logger.isDebugEnabled())logger.debug(" apPort1 button event = "+event);
 	    producer.sendBody(Constants.UID+":"+Constants.MEGA+","+Constants.AUTOPILOT_ADJUST_CMD+":-1,");
 	}
-	
+
 	@Listen("onClick = button#apStbd1")
 	public void apStbd1Click(MouseEvent event) {
 		if(logger.isDebugEnabled())logger.debug(" apStbd1 button event = "+event);
 	    producer.sendBody(Constants.UID+":"+Constants.MEGA+","+Constants.AUTOPILOT_ADJUST_CMD+":1,");
 	}
-	
+
 	@Listen("onClick = button#apPort10")
 	public void apPort10Click(MouseEvent event) {
 		if(logger.isDebugEnabled())logger.debug(" apPort10 button event = "+event);
 	    producer.sendBody(Constants.UID+":"+Constants.MEGA+","+Constants.AUTOPILOT_ADJUST_CMD+":-10,");
 	}
-	
+
 	@Listen("onClick = button#apStbd10")
 	public void apStbd10Click(MouseEvent event) {
 		if(logger.isDebugEnabled())logger.debug(" apStbd10 button event = "+event);
 	    producer.sendBody(Constants.UID+":"+Constants.MEGA+","+Constants.AUTOPILOT_ADJUST_CMD+":10,");
 	}
-	
+
 	@Listen("onCheck = toolbarbutton#apOnOff")
 	public void apOnOffCheck(CheckEvent event) {
 		if(logger.isDebugEnabled())logger.debug(" apOnOff button event = "+event);
@@ -138,15 +140,15 @@ public class AutopilotViewModel extends SelectorComposer<Window>{
 	    }
 	   setAutopilotState();
 	}
-	
+
 	private void setAutopilotState() {
 		 if(autopilotOn){
 		    	apOnOff.setImage("img/stop43x38.png");
-		    	
+
 		    	producer.sendBody(Constants.UID+":"+Constants.MEGA+","+Constants.AUTOPILOT_STATE_CMD+":1,");
 		    }else{
 		    	apOnOff.setImage("img/tick43x38.png");
-		    	
+
 		    	producer.sendBody(Constants.UID+":"+Constants.MEGA+","+Constants.AUTOPILOT_STATE_CMD+":0,");
 		    }
 	}
@@ -156,13 +158,13 @@ public class AutopilotViewModel extends SelectorComposer<Window>{
 		if(logger.isDebugEnabled())logger.debug(" apCompassOnOff button event = "+event);
 	    toggleSource(event, true);
 	}
-	
+
 	@Listen("onCheck = toolbarbutton#apWindOnOff")
 	public void apWindOnOffCheck(CheckEvent event) {
 		if(logger.isDebugEnabled())logger.debug(" apWindOnOff button event = "+event);
 	    toggleSource(event, false);
 	}
-	
+
 	private void toggleSource(CheckEvent event, boolean compass) {
 		//four possible states
 		 if(compass && event.isChecked()){
@@ -187,20 +189,20 @@ public class AutopilotViewModel extends SelectorComposer<Window>{
 		 }
 		 //now propagate command
 		 producer.sendBody(Constants.UID+":"+Constants.MEGA+","+Constants.AUTOPILOT_SOURCE_CMD+":"+APS+",");
-		 
+
 	}
 
 	@Listen("onMove = #autopilotWindow")
 	public void onMoveWindow(Event event) {
-		if(logger.isDebugEnabled())logger.debug(" move event = "+((Window)event.getTarget()).getLeft()+", "+((Window)event.getTarget()).getTop());
-		    try {
-		    	Util.getConfig(null).setProperty(Constants.AUTOPILOT_X, ((Window)event.getTarget()).getLeft());
-		    	Util.getConfig(null).setProperty(Constants.AUTOPILOT_Y, ((Window)event.getTarget()).getTop());
-				Util.saveConfig();
-			} catch (Exception e) {
-				logger.error(e);
-			} 
-	    
+//		if(logger.isDebugEnabled())logger.debug(" move event = "+((Window)event.getTarget()).getLeft()+", "+((Window)event.getTarget()).getTop());
+//		    try {
+//		    	Util.getConfig(null).setProperty(Constants.AUTOPILOT_X, ((Window)event.getTarget()).getLeft());
+//		    	Util.getConfig(null).setProperty(Constants.AUTOPILOT_Y, ((Window)event.getTarget()).getTop());
+//				Util.saveConfig();
+//			} catch (Exception e) {
+//				logger.error(e);
+//			}
+//
 	}
 
 }

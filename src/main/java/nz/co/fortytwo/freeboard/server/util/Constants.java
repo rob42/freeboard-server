@@ -23,7 +23,7 @@ public class Constants {
 	public static final String VER = "VER";
 	/** millis per hr */
         public static final double MS_PER_HR = 3600000.;
-        
+
         /** Roll degrees */
 	public static final String ROLL = "RLL";
 	/** Pitch degrees */
@@ -53,19 +53,19 @@ public class Constants {
 
 	/** Speed over ground */
 	public static final String SPEED_OVER_GND = "SOG";
-   
+
         /** Speed over water **/
 	public static final String SPEED_OVER_WATER = "SOW";
-        
+
         /** Distance between GPS readings **/
         public static final String DISTANCE_TRAVELED = "DST";
-        
+
         /** Trip average speed **/
         public static final String TRIP_AVERAGE_SPEED = "TAS";
-        
+
         /** Trip Elapsed Time **/
         public static final String TRIP_TIME = "TET";
-   
+
 	/** GPS fix true/false */
 	public static final String GPS_FIX = "FIX";
 	/** satellites */
@@ -201,35 +201,35 @@ public class Constants {
 	public static final String SPARKLINE_MIN = "freeboard.sparkline.minimum";
 
 	// gui constants
-	public static final String LOGG_X = "freeboard.logg.x";
-	public static final String LOGG_Y = "freeboard.logg.y";
-	public static final String LOGG_W = "freeboard.logg.w";
-	public static final String LOGG_H = "freeboard.logg.h";
-	public static final String LOGG_SCALE = "freeboard.logg.scale";
-
-	public static final String DOUBLE_LOG_X = "freeboard.doubleLog.x";
-	public static final String DOUBLE_LOG_Y = "freeboard.doubleLog.y";
-	public static final String DOUBLE_LOG_W = "freeboard.doubleLog.w";
-	public static final String DOUBLE_LOG_H = "freeboard.doubleLog.h";
-	public static final String DOUBLE_LOG_SCALE = "freeboard.doubleLog.scale";
-
-	public static final String DEPTH_X = "freeboard.depth.x";
-	public static final String DEPTH_Y = "freeboard.depth.y";
-	public static final String DEPTH_W = "freeboard.depth.w";
-	public static final String DEPTH_H = "freeboard.depth.h";
-	public static final String DEPTH_SCALE = "freeboard.depth.scale";
-
-	public static final String AUTOPILOT_X = "freeboard.autopilot.x";
-	public static final String AUTOPILOT_Y = "freeboard.autopilot.y";
-
-	public static final String ANCHOR_X = "freeboard.anchor.x";
-	public static final String ANCHOR_Y = "freeboard.anchor.y";
-
-	public static final String WIND_SCALE = "freeboard.wind.scale";
-	public static final String WIND_X = "freeboard.wind.x";
-	public static final String WIND_Y = "freeboard.wind.y";
-	public static final String WIND_W = "freeboard.wind.w";
-	public static final String WIND_H = "freeboard.wind.h";
+//	public static final String LOGG_X = "freeboard.logg.x";
+//	public static final String LOGG_Y = "freeboard.logg.y";
+//	public static final String LOGG_W = "freeboard.logg.w";
+//	public static final String LOGG_H = "freeboard.logg.h";
+//	public static final String LOGG_SCALE = "freeboard.logg.scale";
+//
+//	public static final String DOUBLE_LOG_X = "freeboard.doubleLog.x";
+//	public static final String DOUBLE_LOG_Y = "freeboard.doubleLog.y";
+//	public static final String DOUBLE_LOG_W = "freeboard.doubleLog.w";
+//	public static final String DOUBLE_LOG_H = "freeboard.doubleLog.h";
+//	public static final String DOUBLE_LOG_SCALE = "freeboard.doubleLog.scale";
+//
+//	public static final String DEPTH_X = "freeboard.depth.x";
+//	public static final String DEPTH_Y = "freeboard.depth.y";
+//	public static final String DEPTH_W = "freeboard.depth.w";
+//	public static final String DEPTH_H = "freeboard.depth.h";
+//	public static final String DEPTH_SCALE = "freeboard.depth.scale";
+//
+//	public static final String AUTOPILOT_X = "freeboard.autopilot.x";
+//	public static final String AUTOPILOT_Y = "freeboard.autopilot.y";
+//
+//	public static final String ANCHOR_X = "freeboard.anchor.x";
+//	public static final String ANCHOR_Y = "freeboard.anchor.y";
+//
+//	public static final String WIND_SCALE = "freeboard.wind.scale";
+//	public static final String WIND_X = "freeboard.wind.x";
+//	public static final String WIND_Y = "freeboard.wind.y";
+//	public static final String WIND_W = "freeboard.wind.w";
+//	public static final String WIND_H = "freeboard.wind.h";
 
 	public static final String USBDRIVE = "freeboard.usb.usbdrive";
 	public static final String CHART_LAT = "freeboard.chart.lat";

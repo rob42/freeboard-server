@@ -27,8 +27,8 @@
    <window id="wind"
         apply="nz.co.fortytwo.freeboard.zk.WindViewModel"
         height="30px" width="100px" title="Wind"
-        top="10px" left="50px"  mode="overlapped" visible="false" minimizable="true" >
-
+        top="10px" left="50px"  mode="overlapped" visible="false" minimizable="true"
+        w:onMove="windOnMove(event)" >
 
 		<style>
 			.z-window-content, .z-panel-body, .z-window-modal-cnt-noborder, .z-window-highlighted-cnt-noborder,
@@ -67,7 +67,6 @@
 
 			<vlayout style="overflow: visible" >
 				<label id="windScale" value="0.0" visible="false"/>
-				<label id="windSize" value="${wind$composer.size}" visible="false"/>
 				<button id="windShrink"
 					image="./js/img/zoom-minus-mini.png" w:onClick="resizeWind(-0.2)" />
 				<button id="windGrow"

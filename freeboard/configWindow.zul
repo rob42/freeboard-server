@@ -1,18 +1,18 @@
-<!-- 
+<!--
 	Copyright 2012,2013 Robert Huitema robert@42.co.nz
-	
+
 	This file is part of FreeBoard. (http://www.42.co.nz/freeboard)
-	
+
 	FreeBoard is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
 	the Free Software Foundation, either version 3 of the License, or
 	(at your option) any later version.
-	
+
 	FreeBoard is distributed in the hope that it will be useful,
 	but WITHOUT ANY WARRANTY; without even the implied warranty of
 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 	GNU General Public License for more details.
-	
+
 	You should have received a copy of the GNU General Public License
 	along with FreeBoard.  If not, see <http://www.gnu.org/licenses/>.
 -->
@@ -111,14 +111,7 @@
 								<textbox id="cfgAlarmDepth"
 									tooltip="Shows alarm if depth less than this value." />
 							</row>
-<!--
-                                                        <row hflex="min">
-								<label value="Sparkline Points" />
-								<textbox id="cfgSparklinePts"
-									tooltip="Number of depth values in the Sparkline plot." />
-							</row>
--->
-                                                        <row hflex="min">
+                     <row hflex="min">
 								<label value="Sparkline Minimum" />
 								<textbox id="cfgSparklineMin"
 									tooltip="Minimum depth for the Sparkline plot." />
@@ -126,7 +119,7 @@
 							<row>
 								<hbox>
 									<button id="cfgSave" label="Save" height="38px" />
-									<button id="cfgCancel" height="38px" 
+									<button id="cfgCancel" height="38px"
 										label="Cancel" />
 								</hbox>
 
@@ -147,7 +140,7 @@
 							</listitem>
 						</template>
 					</listbox>
-					
+
 					<vbox  spacing="10px" width="24px">
 						<image style="cursor:pointer" id="chooseAllBtn"
 							src="./js/img/control_stbd10_blue.png" />
@@ -183,7 +176,7 @@
 					</vbox>
 					</hbox>
 					<hbox>
-					<radiogroup id="useHomeGroup" tooltiptext="Select Boat if the Pi is your DNS server, eg your standalone boat network. 
+					<radiogroup id="useHomeGroup" tooltiptext="Select Boat if the Pi is your DNS server, eg your standalone boat network.
 						Select Home if you are putting the Pi onto an existing network like your home network.
 						The boat option is much faster, but to use it on an existing network requires DNS configuration, or you get errors - see install notes">
 						<radio id="useBoatRadio" label="Boat" value="false" />
@@ -195,7 +188,7 @@
 					</hbox>
 				</tabpanel>
 			</tabpanels>
-			
+
 		</tabbox>
 
 	</window>

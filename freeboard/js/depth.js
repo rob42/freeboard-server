@@ -19,25 +19,25 @@
 
 var anAlarm;
 var options;
-var width;
-var height;
+var width = 375;
+var height = 240;
 
 function resizeDepth(amount) {
-    var wsize = $("#canvasDepth").width();
-    var hsize = $("#canvasDepth").height();
     if (amount == null) {
-        amount = zk.Widget.$('$depthScale').getValue();
+        amount = localStorage.getItem("depth.scale");
     } else {
-        amount = 1 + (1 * amount);
+        amount = 1*localStorage.getItem("depth.scale") + (1 * amount);
     }
     if (amount == 0.0)
         return;
+    console.log("resize entry: amount, wsize, hzixe = "+amount+" "+width*amount+" "+height*amount);
+    localStorage.setItem("depth.scale", amount);
 
-
-    $("#canvasDepth").width(wsize * amount);
-    $("#canvasDepth").height(hsize * amount);
+    $("#canvasDepth").width(width * amount);
+    $("#canvasDepth").height(height * amount);
     initDepth();
 }
+
 function Depth() {
 
     this.onmessage = function (navObj) {
@@ -53,8 +53,6 @@ function Depth() {
                 depthUnit = unitTemp;
                 console.log("DBT DisplaySingle");
                 lcdDepth = new steelseries.DisplaySingle('canvasDepth', {
-//                    height: 200,
-//                    width: 200,
                     lcdDecimals: 1,
                     lcdColor: steelseries.LcdColor.BEIGE,
                     headerString: headerString,
@@ -76,7 +74,19 @@ function Depth() {
 
 }
 
+this.depthOnMove = function (event) {
+	var e = event;
+       localStorage.setItem("depth.top",  event.top+"");
+       localStorage.setItem("depth.left", event.left+"");
+	return;
+}
 
+
+
+function depthOnLoad(){
+    zk.Widget.$(jq('$depth')[0])._left = localStorage.getItem("depth.left");
+    zk.Widget.$(jq('$depth')[0]).setTop(localStorage.getItem("depth.top"));
+}
 
 function initDepth() {
     //if we cant do canvas, skip out here!
@@ -84,15 +94,29 @@ function initDepth() {
         return;
     // Initialzing lcds
     // depth
+    vpHeight = window.innerHeight - 50;
+    vpWidth = window.innerWidth;
 
-    amount = zk.Widget.$('$depthScale').getValue();
+    if (typeof(Storage) == "undefined") {
+    // Sorry! No Web Storage support..
+    alert("Sorry! No Web Storage support. Please use a different browser.");
+    return;
+    }
+    if (localStorage.getItem("depth.scale") == null){
+        localStorage.setItem("depth.scale", "1.0");
+        localStorage.setItem("depth.top",  "0px");
+        localStorage.setItem("depth.left", Math.floor(vpWidth/2)+"px");
+    }
+    zk.Widget.$(jq('$depth')[0]).setLeft(localStorage.getItem("depth.left"));
+    zk.Widget.$(jq('$depth')[0]).setTop(localStorage.getItem("depth.top"));
+
+    amount = localStorage.getItem("depth.scale");
     depthUnit = zk.Widget.$('$depthUnit').getValue();
-    width = zk.Widget.$('$depthWidth').getValue()*amount;
-    height = zk.Widget.$('$depthHeight').getValue()*amount;
+    
     headerString = "Depth " + depthUnit;
     lcdDepth = new steelseries.DisplaySingle('canvasDepth', {
-        height: height,
-        width: width,
+        height: height*amount,
+        width: width*amount,
         lcdDecimals: 1,
         lcdColor: steelseries.LcdColor.BEIGE,
         headerString: headerString,
@@ -100,7 +124,6 @@ function initDepth() {
         unitString: depthUnit,
         unitStringVisible: false
     });
-
 
     anAlarm = zk.Widget.$('$alarmDepth').getValue();
     addSocketListener(new Depth());

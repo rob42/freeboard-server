@@ -59,7 +59,7 @@
                         xmlns:w="http://www.zkoss.org/2005/zk/client"
                         apply="nz.co.fortytwo.freeboard.zk.DepthViewModel"
                         height="30px" width="100px" title="Depth" mode="overlapped"
-                        visible="false" minimizable="true" >
+                        visible="false" minimizable="true" w:onMove="depthOnMove(event)" >
 
         <style>
             .z-window-content,.z-panel-body,
@@ -79,8 +79,6 @@
                 </html>
                 <hlayout valign="middle" style="overflow: visible">
                     <label id="depthScale" value="0.0" visible="false" />
-                    <label id="depthWidth" value="375" visible="false" />
-                    <label id="depthHeight" value="250" visible="false" />
                     <label id="depthUnit" value="M" visible="false" />
                     <label id="alarmDepth" value="6" visible="false"/>
                     <label id="sparkPts" value="100" visible="false"/>

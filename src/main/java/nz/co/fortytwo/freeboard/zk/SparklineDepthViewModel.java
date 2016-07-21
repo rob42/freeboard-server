@@ -53,9 +53,6 @@ public class SparklineDepthViewModel extends SelectorComposer<Window>{
 	@Wire ("#depth")
 	Window depth;
 
-	@Wire ("#depthScale")
-	Label depthScale;
-
 	@Wire ("#depthUnit")
 	Label depthUnit;
 
@@ -88,21 +85,21 @@ public class SparklineDepthViewModel extends SelectorComposer<Window>{
 	@Override
 	public void doAfterCompose(Window comp) throws Exception {
 		super.doAfterCompose(comp);
-		logger.debug("Init..");
-			if(Util.getConfig(null).containsKey(Constants.DEPTH_X)){
-				depth.setLeft(Util.getConfig(null).getProperty(Constants.DEPTH_X));
-				depth.setTop(Util.getConfig(null).getProperty(Constants.DEPTH_Y));
-				logger.debug("  depth location set to "+depth.getLeft()+", "+depth.getTop());
-			}else{
-				depth.setPosition("left,center");
-				logger.debug("  depth location set to "+depth.getPosition());
-			}
-			if(Util.getConfig(null).containsKey(Constants.DEPTH_SCALE)){
-				scale = Double.valueOf(Util.getConfig(null).getProperty(Constants.DEPTH_SCALE));
-                        } else {
-                            scale = 1.;
-                        }
-			depthScale.setValue(String.valueOf(scale));
+//		logger.debug("Init..");
+//			if(Util.getConfig(null).containsKey(Constants.DEPTH_X)){
+//				depth.setLeft(Util.getConfig(null).getProperty(Constants.DEPTH_X));
+//				depth.setTop(Util.getConfig(null).getProperty(Constants.DEPTH_Y));
+//				logger.debug("  depth location set to "+depth.getLeft()+", "+depth.getTop());
+//			}else{
+//				depth.setPosition("left,center");
+//				logger.debug("  depth location set to "+depth.getPosition());
+//			}
+//			if(Util.getConfig(null).containsKey(Constants.DEPTH_SCALE)){
+//				scale = Double.valueOf(Util.getConfig(null).getProperty(Constants.DEPTH_SCALE));
+//                        } else {
+//                            scale = 1.;
+//                        }
+//			depthScale.setValue(String.valueOf(scale));
 			depthUnit.setValue(Util.getConfig(null).getProperty(Constants.DEPTH_UNIT));
                         alarmDepth.setValue(Util.getConfig(null).getProperty(Constants.ALARM_DEPTH));
                         sparkPts.setValue(Util.getConfig(null).getProperty(Constants.SPARKLINE_PTS));
@@ -112,38 +109,38 @@ public class SparklineDepthViewModel extends SelectorComposer<Window>{
 
 	@Listen("onMove =  #depth")
 	public void onMoveWindow(Event event) {
-		    logger.debug(" move event = "+((Window)event.getTarget()).getLeft()+", "+((Window)event.getTarget()).getTop());
-		    try {
-		    	Util.getConfig(null).setProperty(Constants.DEPTH_X, ((Window)event.getTarget()).getLeft());
-		    	Util.getConfig(null).setProperty(Constants.DEPTH_Y, ((Window)event.getTarget()).getTop());
-				Util.saveConfig();
-			} catch (FileNotFoundException e) {
-				logger.error(e);
-			} catch (IOException e) {
-				logger.error(e);
-			}
-
+//		    logger.debug(" move event = "+((Window)event.getTarget()).getLeft()+", "+((Window)event.getTarget()).getTop());
+//		    try {
+//		    	Util.getConfig(null).setProperty(Constants.DEPTH_X, ((Window)event.getTarget()).getLeft());
+//		    	Util.getConfig(null).setProperty(Constants.DEPTH_Y, ((Window)event.getTarget()).getTop());
+//				Util.saveConfig();
+//			} catch (FileNotFoundException e) {
+//				logger.error(e);
+//			} catch (IOException e) {
+//				logger.error(e);
+//			}
+//
 	}
 
 	@Listen("onClick =  button#depthShrink")
 	public void logShrinkClick(MouseEvent event) {
-		logger.debug(" shrink event = "+event);
-		try {
-			scale = Util.updateScale(Constants.DEPTH_SCALE, 0.8, scale);
-		} catch (Exception e) {
-			logger.error(e);
-		}
-		depthScale.setValue(String.valueOf(scale));
+//		logger.debug(" shrink event = "+event);
+//		try {
+//			scale = Util.updateScale(Constants.DEPTH_SCALE, 0.8, scale);
+//		} catch (Exception e) {
+//			logger.error(e);
+//		}
+//		depthScale.setValue(String.valueOf(scale));
 	}
 
 	@Listen("onClick =   button#depthGrow")
 	public void logGrowClick(MouseEvent event) {
-		logger.debug(" grow event = "+event);
-		try{
-			scale = Util.updateScale(Constants.DEPTH_SCALE, 1.2, scale);
-		} catch (Exception e) {
-			logger.error(e);
-		}
-		depthScale.setValue(String.valueOf(scale));
+//		logger.debug(" grow event = "+event);
+//		try{
+//			scale = Util.updateScale(Constants.DEPTH_SCALE, 1.2, scale);
+//		} catch (Exception e) {
+//			logger.error(e);
+//		}
+//		depthScale.setValue(String.valueOf(scale));
 	}
 }

@@ -27,7 +27,8 @@
 <script type="text/javascript" src="./js/anchor.js" />
 <window id="anchorWindow" 
 		apply="nz.co.fortytwo.freeboard.zk.AnchorViewModel"
-		title="Anchor Alarm"   mode="overlapped" visible="false" minimizable="true" >
+		title="Anchor Alarm"   mode="overlapped" visible="false" minimizable="true"
+                w:onMove="anchorOnMove(event)" >
 		<style>
 			.z-panel-body { overflow: visible; }
 			.z-window-modal-cnt-noborder, .z-window-highlighted-cnt-noborder, .z-window-embedded-cnt-noborder, .z-window-overlapped-cnt-noborder, .z-window-popup-cnt-noborder

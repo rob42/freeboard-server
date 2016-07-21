@@ -34,116 +34,78 @@ import org.zkoss.zk.ui.select.SelectorComposer;
 import org.zkoss.zk.ui.select.annotation.Listen;
 import org.zkoss.zk.ui.select.annotation.Wire;
 import org.zkoss.zk.ui.select.annotation.WireVariable;
+import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Window;
 
-public class WindViewModel extends SelectorComposer<Window>{
+public class WindViewModel extends SelectorComposer<Window> {
 
-	private static Logger logger = Logger.getLogger(WindViewModel.class);
+    private static Logger logger = Logger.getLogger(WindViewModel.class);
 
-	/**
-	 *
-	 */
-	private static final long serialVersionUID = 1L;
-	/**
-	 * Dial master size
-	 */
-	private double size = 400;
+    /**
+     *
+     */
+    private static final long serialVersionUID = 1L;
+    /**
+     * Dial master size
+     */
+    private double size = 400;
 
-	@WireVariable
+    @WireVariable
     private Session sess;
 
-	@Wire ("#wind")
-	Window wind;
+    @Wire("#wind")
+    Window wind;
 
-	@Wire ("#windScale")
-	Label windScale;
+    @Wire("#windScale")
+    Label windScale;
 
-	@Wire ("button#windShrink")
-	Button windShrink;
+    @Wire("button#windShrink")
+    Button windShrink;
 
-	@Wire ("button#windGrow")
-	Button windGrow;
+    @Wire("button#windGrow")
+    Button windGrow;
 
-	private double scale=1.0;
+    private double scale = 1.0;
 
-	private ProducerTemplate producer;
+    private ProducerTemplate producer;
 
-	public WindViewModel() {
-		super();
-		if(logger.isDebugEnabled())logger.debug("Constructing..");
-		producer = CamelContextFactory.getInstance().createProducerTemplate();
-		producer.setDefaultEndpointUri("seda:input");
+    public WindViewModel() {
+        super();
+        if (logger.isDebugEnabled()) {
+            logger.debug("Constructing..");
+        }
+        producer = CamelContextFactory.getInstance().createProducerTemplate();
+        producer.setDefaultEndpointUri("seda:input");
 
-	}
+    }
 
-	@Override
-	public void doAfterCompose(Window comp) throws Exception {
-		super.doAfterCompose(comp);
-		if(logger.isDebugEnabled())logger.debug("Init..");
-			if(Util.getConfig(null).containsKey(Constants.WIND_X)){
-				wind.setLeft(Util.getConfig(null).getProperty(Constants.WIND_X));
-				wind.setTop(Util.getConfig(null).getProperty(Constants.WIND_Y));
-				if(logger.isDebugEnabled())logger.debug("  wind location set to "+wind.getLeft()+", "+wind.getTop());
-			}else{
-				//top="10px" left="50px"
-				wind.setTop("10px");
-				wind.setLeft("50px");
-				if(logger.isDebugEnabled())logger.debug("  wind location set to "+wind.getPosition());
-			}
-			if(Util.getConfig(null).containsKey(Constants.WIND_SCALE)){
-				scale = Double.valueOf(Util.getConfig(null).getProperty(Constants.WIND_SCALE));
-			} else {
-				scale = 1.;
-			}
-			windScale.setValue(String.valueOf(scale));
-			//adjust wind zero point here
-			producer.sendBody(Constants.UID+":"+Constants.MEGA+","+Constants.WIND_ZERO_ADJUST_CMD+":"+Util.getConfig(null).getProperty(Constants.WIND_ZERO_OFFSET)+",");
-	}
+    @Override
+    public void doAfterCompose(Window comp) throws Exception {
+        super.doAfterCompose(comp);
+        Clients.evalJavaScript("windOnLoad();");
+        //adjust wind zero point here
+        producer.sendBody(Constants.UID + ":" + Constants.MEGA + "," + Constants.WIND_ZERO_ADJUST_CMD + ":" + Util.getConfig(null).getProperty(Constants.WIND_ZERO_OFFSET) + ",");
+    }
 
-	@Listen("onMove = #wind")
-	public void onMoveWindow(Event event) {
-		if(logger.isDebugEnabled())logger.debug(" move event = "+((Window)event.getTarget()).getLeft()+", "+((Window)event.getTarget()).getTop());
-		    try {
-		    	Util.getConfig(null).setProperty(Constants.WIND_X, ((Window)event.getTarget()).getLeft());
-		    	Util.getConfig(null).setProperty(Constants.WIND_Y, ((Window)event.getTarget()).getTop());
-				Util.saveConfig();
-			} catch (FileNotFoundException e) {
-				logger.error(e);
-			} catch (IOException e) {
-				logger.error(e);
-			}
+    @Listen("onMove = #wind")
+    public void onMoveWindow(Event event) {
+    }
 
-	}
+    @Listen("onClick = button#windShrink")
+    public void windShrinkClick(MouseEvent event) {
+    }
 
-	@Listen("onClick = button#windShrink")
-	public void windShrinkClick(MouseEvent event) {
-		if(logger.isDebugEnabled())logger.debug(" shrink event = "+event);
-		try {
-			scale = Util.updateScale(Constants.WIND_SCALE, 0.8, scale);
-		} catch (Exception e) {
-			logger.error(e);
-		}
-		windScale.setValue(String.valueOf(scale));
-	}
+    @Listen("onClick = button#windGrow")
+    public void windGrowClick(MouseEvent event) {
+    }
 
-	@Listen("onClick = button#windGrow")
-	public void windGrowClick(MouseEvent event) {
-		if(logger.isDebugEnabled())logger.debug(" grow event = "+event);
-		try{
-			scale = Util.updateScale(Constants.WIND_SCALE, 1.2, scale);
-		} catch (Exception e) {
-			logger.error(e);
-		}
-		windScale.setValue(String.valueOf(scale));
-	}
+    public double getSize() {
+        return size;
+    }
 
-	public double getSize() {
-		return size;
-	}
-
-	public void setSize(double size) {
-		this.size = size;
-	}
+    public void setSize(double size) {
+        this.size = size;
+    }
 }

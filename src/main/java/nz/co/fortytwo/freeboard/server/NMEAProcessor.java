@@ -80,7 +80,7 @@ public class NMEAProcessor extends FreeboardProcessor implements Processor, Free
 
 // enable line below to get random depth values for testing.
 // See also line 83, 98 and 499
-    private RandomGaussian gaussian;
+//    private RandomGaussian gaussian;
     public NMEAProcessor() {
         try {
             preferRMC = new Boolean(Util.getConfig(null).getProperty(Constants.PREFER_RMC, "true"));
@@ -95,7 +95,7 @@ public class NMEAProcessor extends FreeboardProcessor implements Processor, Free
         setNmeaListeners();
 
         // Enable the code below to generate Gausian distributed random depths
-        gaussian = new RandomGaussian();
+//        gaussian = new RandomGaussian();
     }
 
     public void process(Exchange exchange) throws Exception {
@@ -496,7 +496,7 @@ public class NMEAProcessor extends FreeboardProcessor implements Processor, Free
                     DepthSentence sen = (DepthSentence) evt.getSentence();
 
                     //Remove comment below to get randomly distributed depts for tessting
-                    sen.setDepth(gaussian.getGaussian(2.5, 1.0));
+//                    sen.setDepth(gaussian.getGaussian(2.5, 1.0));
                     //in meters
                     double unit;
                     if (config.getProperty(Constants.DEPTH_UNIT).equals("f")) {
