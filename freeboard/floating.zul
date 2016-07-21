@@ -23,6 +23,7 @@
 <?link rel="stylesheet" type="text/css" href="./js/leaflet.measure.css" ?>
 <?link rel="stylesheet" type="text/css" href="./js/leaflet.draw.css" ?>
 <?link rel="stylesheet" type="text/css" href="./js/L.Control.MousePosition.css" ?>
+
 <?script src="./js/jquery-1.8.2.min.js"?>
 <?script src="./js/org/cometd.js"?>
 <?script src="./js/org/cometd/ReloadExtension.js"?>
