@@ -34,6 +34,7 @@ import org.zkoss.zk.ui.select.SelectorComposer;
 import org.zkoss.zk.ui.select.annotation.Listen;
 import org.zkoss.zk.ui.select.annotation.Wire;
 import org.zkoss.zk.ui.select.annotation.WireVariable;
+import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Window;
@@ -48,7 +49,7 @@ public class DepthViewModel extends SelectorComposer<Window>{
 	private static final long serialVersionUID = 1L;
 
 	@WireVariable
-    private Session sess;
+        private Session sess;
 
 	@Wire ("#depth")
 	Window depth;
@@ -62,12 +63,6 @@ public class DepthViewModel extends SelectorComposer<Window>{
 	@Wire ("#alarmDepth")
 	Label alarmDepth;
 
-	@Wire ("#sparkPts")
-	Label sparkPts;
-
-	@Wire ("#sparkMin")
-	Label sparkMin;
-
 	@Wire ("button#depthShrink")
 	Button depthShrink;
 
@@ -77,79 +72,33 @@ public class DepthViewModel extends SelectorComposer<Window>{
 	private double scale=0.7;
 
 	private ProducerTemplate producer;
-   
+
 	public DepthViewModel() {
 		super();
 		logger.debug("Constructing..");
 		producer = CamelContextFactory.getInstance().createProducerTemplate();
 		producer.setDefaultEndpointUri("seda:input");
-
 	}
 
 	@Override
 	public void doAfterCompose(Window comp) throws Exception {
 		super.doAfterCompose(comp);
-		logger.debug("Init..");
-			if(Util.getConfig(null).containsKey(Constants.DEPTH_X)){
-				depth.setLeft(Util.getConfig(null).getProperty(Constants.DEPTH_X));
-				depth.setTop(Util.getConfig(null).getProperty(Constants.DEPTH_Y));
-				logger.debug("  depth location set to "+depth.getLeft()+", "+depth.getTop());
-			}else{
-				depth.setPosition("left,center");
-				logger.debug("  depth location set to "+depth.getPosition());
-			}
-			if(Util.getConfig(null).containsKey(Constants.DEPTH_SCALE)){
-				scale = Double.valueOf(Util.getConfig(null).getProperty(Constants.DEPTH_SCALE));
-			}
-			depthScale.setValue(String.valueOf(scale));
+                Clients.evalJavaScript("depthOnLoad();");
+
 			depthUnit.setValue(Util.getConfig(null).getProperty(Constants.DEPTH_UNIT));
                         alarmDepth.setValue(Util.getConfig(null).getProperty(Constants.ALARM_DEPTH));
-                        sparkPts.setValue(Util.getConfig(null).getProperty(Constants.SPARKLINE_PTS));
-                        sparkMin.setValue(Util.getConfig(null).getProperty(Constants.SPARKLINE_MIN));
-			//adjust wind zero point here
 			producer.sendBody(Constants.UID+":"+Constants.MEGA+","+Constants.DEPTH_ZERO_ADJUST_CMD+":"+Util.getConfig(null).getProperty(Constants.DEPTH_ZERO_OFFSET)+",");
-
 	}
 
 	@Listen("onMove =  #depth")
 	public void onMoveWindow(Event event) {
-		    logger.debug(" move event = "+((Window)event.getTarget()).getLeft()+", "+((Window)event.getTarget()).getTop());
-		    try {
-		    	Util.getConfig(null).setProperty(Constants.DEPTH_X, ((Window)event.getTarget()).getLeft());
-		    	Util.getConfig(null).setProperty(Constants.DEPTH_Y, ((Window)event.getTarget()).getTop());
-				Util.saveConfig();
-			} catch (FileNotFoundException e) {
-				logger.error(e);
-			} catch (IOException e) {
-				logger.error(e);
-			}
-
 	}
 
 	@Listen("onClick =  button#depthShrink")
 	public void logShrinkClick(MouseEvent event) {
-		logger.debug(" shrink event = "+event);
-		try {
-			scale = Util.updateScale(Constants.DEPTH_SCALE, 0.8, scale);
-		} catch (Exception e) {
-			logger.error(e);
-		}
-		depthScale.setValue(String.valueOf(scale));
 	}
 
 	@Listen("onClick =   button#depthGrow")
 	public void logGrowClick(MouseEvent event) {
-		logger.debug(" grow event = "+event);
-		try{
-			scale = Util.updateScale(Constants.DEPTH_SCALE, 1.2, scale);
-		} catch (Exception e) {
-			logger.error(e);
-		}
-		depthScale.setValue(String.valueOf(scale));
 	}
-
-
-
-
-
 }

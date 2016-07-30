@@ -1,9 +1,9 @@
 
-<!-- 
+<!--
   Copyright 2012,2013 Robert Huitema robert@42.co.nz
- 
+
   This file is part of FreeBoard. (http://www.42.co.nz/freeboard)
- 
+
   FreeBoard is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
   the Free Software Foundation, either version 3 of the License, or
@@ -25,13 +25,14 @@
 <?script src="./js/websocket.js"?>
 <zk xmlns:w="http://www.zkoss.org/2005/zk/client">
 <script type="text/javascript" src="./js/logg.js" />
-<window id="logg" 
+<window id="logg"
 		apply="nz.co.fortytwo.freeboard.zk.LoggViewModel"
-		height="30px" width="100px" title="Log" 
-		 mode="overlapped" visible="false" minimizable="true" >
+		height="30px" width="100px" title="Log"
+		 mode="overlapped" visible="false" minimizable="true"
+                 w:onMove="loggOnMove(event)" >
 <!-- 		 <style>.z-panel-body { overflow: visible; }"</style> -->
 		<style>
-			.z-window-content, .z-panel-body, .z-window-modal-cnt-noborder, .z-window-highlighted-cnt-noborder, 
+			.z-window-content, .z-panel-body, .z-window-modal-cnt-noborder, .z-window-highlighted-cnt-noborder,
 			.z-window-embedded-cnt-noborder, .z-window-overlapped-cnt-noborder, .z-window-popup-cnt-noborder
 			.z-window-embedded, .z-window-modal, .z-window-overlapped, .z-window-popup, .z-window-highlighted {
 				    overflow: visible;
@@ -73,12 +74,12 @@
 					<canvas id="canvasLat" width="245px" height="55px" />
 				</html>
 			</hlayout>
-			
+
 		</vlayout>
 	</hlayout>
 </window>
 
 	<script type="text/javascript" defer="true">initSocket(); initLogg();</script>
-	
+
 
 </zk>

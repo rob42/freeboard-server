@@ -33,6 +33,7 @@ import org.zkoss.zk.ui.select.SelectorComposer;
 import org.zkoss.zk.ui.select.annotation.Listen;
 import org.zkoss.zk.ui.select.annotation.Wire;
 import org.zkoss.zk.ui.select.annotation.WireVariable;
+import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Toolbarbutton;
 import org.zkoss.zul.Window;
@@ -80,15 +81,16 @@ public class AnchorViewModel extends SelectorComposer<Window>{
 	@Override
 	public void doAfterCompose(Window comp) throws Exception {
 		super.doAfterCompose(comp);
-		if(logger.isDebugEnabled())logger.debug("Init..");
-			if(Util.getConfig(null).containsKey(Constants.ANCHOR_X)){
-				anchorWindow.setLeft(Util.getConfig(null).getProperty(Constants.ANCHOR_X));
-				anchorWindow.setTop(Util.getConfig(null).getProperty(Constants.ANCHOR_Y));
-				if(logger.isDebugEnabled())logger.debug("  anchor location set to "+anchorWindow.getLeft()+", "+anchorWindow.getTop());
-			}else{
-				anchorWindow.setPosition("right,bottom");
-				if(logger.isDebugEnabled())logger.debug("  anchor location set to default "+anchorWindow.getPosition());
-			}
+                Clients.evalJavaScript("anchorOnLoad();");
+//		if(logger.isDebugEnabled())logger.debug("Init..");
+//			if(Util.getConfig(null).containsKey(Constants.ANCHOR_X)){
+//				anchorWindow.setLeft(Util.getConfig(null).getProperty(Constants.ANCHOR_X));
+//				anchorWindow.setTop(Util.getConfig(null).getProperty(Constants.ANCHOR_Y));
+//				if(logger.isDebugEnabled())logger.debug("  anchor location set to "+anchorWindow.getLeft()+", "+anchorWindow.getTop());
+//			}else{
+//				anchorWindow.setPosition("right,bottom");
+//				if(logger.isDebugEnabled())logger.debug("  anchor location set to default "+anchorWindow.getPosition());
+//			}
 		
 		setAnchorAlarmState();
 	}
@@ -139,15 +141,14 @@ public class AnchorViewModel extends SelectorComposer<Window>{
 
 	@Listen("onMove = #anchorWindow")
 	public void onMoveWindow(Event event) {
-		if(logger.isDebugEnabled())logger.debug(" move event = "+((Window)event.getTarget()).getLeft()+", "+((Window)event.getTarget()).getTop());
-		    try {
-		    	Util.getConfig(null).setProperty(Constants.ANCHOR_X, ((Window)event.getTarget()).getLeft());
-		    	Util.getConfig(null).setProperty(Constants.ANCHOR_Y, ((Window)event.getTarget()).getTop());
-				Util.saveConfig();
-			} catch (Exception e) {
-				logger.error(e);
-			} 
-	    
+//		if(logger.isDebugEnabled())logger.debug(" move event = "+((Window)event.getTarget()).getLeft()+", "+((Window)event.getTarget()).getTop());
+//		    try {
+//		    	Util.getConfig(null).setProperty(Constants.ANCHOR_X, ((Window)event.getTarget()).getLeft());
+//		    	Util.getConfig(null).setProperty(Constants.ANCHOR_Y, ((Window)event.getTarget()).getTop());
+//				Util.saveConfig();
+//			} catch (Exception e) {
+//				logger.error(e);
+//			} 	    
 	}
 
 	

@@ -1,18 +1,18 @@
 /*
  * Copyright 2012,2013 Robert Huitema robert@42.co.nz
- * 
+ *
  * This file is part of FreeBoard. (http://www.42.co.nz/freeboard)
- * 
+ *
  * FreeBoard is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * FreeBoard is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with FreeBoard. If not, see <http://www.gnu.org/licenses/>.
  */
@@ -80,9 +80,6 @@ public class ConfigViewModel extends SelectorComposer<Window> {
 
     @Wire("textbox#cfgAlarmDepth")
     private Textbox cfgAlarmDepth;
-
-    @Wire("textbox#cfgSparklinePts")
-    private Textbox cfgSparklinePts;
 
     @Wire("textbox#cfgSparklineMin")
     private Textbox cfgSparklineMin;
@@ -345,8 +342,7 @@ public class ConfigViewModel extends SelectorComposer<Window> {
                 Messagebox.show("Depth offset must be numeric");
             }
             config.setProperty(Constants.PREFER_RMC, (String) useRmcGroup.getSelectedItem().getValue());
-//            config.setProperty(Constants.DNS_USE_CHOICE, (String) useHomeGroup.getSelectedItem().getValue());
-                config.setProperty(Constants.SOG_UNIT, (String) (cfgSOGUnit.getSelectedItem().getValue()));
+            config.setProperty(Constants.SOG_UNIT, (String) (cfgSOGUnit.getSelectedItem().getValue()));
             config.setProperty(Constants.SOW_UNIT, (String) (cfgSOWUnit.getSelectedItem().getValue()));
             config.setProperty(Constants.DEPTH_UNIT, (String) (cfgDepthUnit.getSelectedItem().getValue()));
             Util.saveConfig();
@@ -360,12 +356,12 @@ public class ConfigViewModel extends SelectorComposer<Window> {
                 Messagebox.show("Alarm depth must be numeric");
             }
 
-            if (NumberUtils.isNumber(cfgSparklinePts.getValue())) {
-                config.setProperty(Constants.SPARKLINE_PTS, cfgSparklinePts.getValue());
-                Util.saveConfig();
-            } else {
-                Messagebox.show("Sparkline points must be numeric");
-            }
+//            if (NumberUtils.isNumber(cfgSparklinePts.getValue())) {
+//                config.setProperty(Constants.SPARKLINE_PTS, cfgSparklinePts.getValue());
+//                Util.saveConfig();
+//            } else {
+//                Messagebox.show("Sparkline points must be numeric");
+//            }
             if (NumberUtils.isNumber(cfgSparklineMin.getValue())) {
                 config.setProperty(Constants.SPARKLINE_MIN, cfgSparklineMin.getValue());
                 Util.saveConfig();
@@ -621,7 +617,7 @@ public class ConfigViewModel extends SelectorComposer<Window> {
 
             cfgAlarmDepth.setValue(config.getProperty(Constants.ALARM_DEPTH));
             cfgDepthOffset.setValue(config.getProperty(Constants.DEPTH_ZERO_OFFSET));
-            cfgSparklinePts.setValue(config.getProperty(Constants.SPARKLINE_PTS));
+//            cfgSparklinePts.setValue(config.getProperty(Constants.SPARKLINE_PTS));
             cfgSparklineMin.setValue(config.getProperty(Constants.SPARKLINE_MIN));
             portsToScan.setValue(config.getProperty(Constants.SERIAL_PORTS));
             cfgWindOffset.setValue(config.getProperty(Constants.WIND_ZERO_OFFSET));

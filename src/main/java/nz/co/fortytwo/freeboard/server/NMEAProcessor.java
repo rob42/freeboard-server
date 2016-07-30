@@ -1,19 +1,19 @@
 
 /*
  * Copyright 2012,2013 Robert Huitema robert@42.co.nz
- * 
+ *
  * This file is part of FreeBoard. (http://www.42.co.nz/freeboard)
- * 
+ *
  * FreeBoard is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * FreeBoard is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with FreeBoard. If not, see <http://www.gnu.org/licenses/>.
  */
@@ -79,7 +79,7 @@ public class NMEAProcessor extends FreeboardProcessor implements Processor, Free
     private ConcurrentMap<String, List<SentenceListener>> listeners = new ConcurrentHashMap<String, List<SentenceListener>>();
 
 // enable line below to get random depth values for testing.
-// See also line 83 and 333
+// See also line 83, 98 and 499
 //    private RandomGaussian gaussian;
     public NMEAProcessor() {
         try {
@@ -95,7 +95,7 @@ public class NMEAProcessor extends FreeboardProcessor implements Processor, Free
         setNmeaListeners();
 
         // Enable the code below to generate Gausian distributed random depths
-        //gaussian = new RandomGaussian();
+//        gaussian = new RandomGaussian();
     }
 
     public void process(Exchange exchange) throws Exception {
@@ -328,7 +328,7 @@ public class NMEAProcessor extends FreeboardProcessor implements Processor, Free
                         }
 
                         String tempString;
-                        // if elapsedTime == 0, we have just started and need to get elapsedTime from freeboard.cfg 
+                        // if elapsedTime == 0, we have just started and need to get elapsedTime from freeboard.cfg
                         if (startTrip) {
                             // if the property does not exist in freeboard.cfg, we need to initialize
                             startTrip = false;

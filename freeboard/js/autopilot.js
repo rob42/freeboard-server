@@ -1,6 +1,6 @@
 /*
  * Copyright 2012,2013 Robert Huitema robert@42.co.nz
- * 
+ *
  * This file is part of FreeBoard. (http://www.42.co.nz/freeboard)
  *
  *  FreeBoard is free software: you can redistribute it and/or modify
@@ -20,7 +20,7 @@ var autopilotOn=false;
 var followCompass=true;
 function Autopilot() {
 	this.onmessage = function(navObj) {
-				
+
 				//get autopilot state, avoid commands
 				if (!navObj)
 					return true;
@@ -55,17 +55,38 @@ function Autopilot() {
 				if (autopilotOn && navObj.APT) {
 						autopilotTarget.setValue(navObj.APT);
 				}
-			
 	};
-
 }
 
+function autopilotOnMove(event) {
+    var e = event;
+    localStorage.setItem("autopilot.top", event.top + "");
+    localStorage.setItem("autopilot.left", event.left + "");
+    return;
+}
+
+function autopilotOnLoad(){
+    zk.Widget.$(jq('$autopilotWindow')[0]).setLeft(localStorage.getItem("autopilot.left"));
+    zk.Widget.$(jq('$autopilotWindow')[0]).setTop(localStorage.getItem("autopilot.top"));
+}
 
 
 function initAutopilot() {
 	//if we cant do canvas, skip out here!
 	if(!window.CanvasRenderingContext2D)return;
 	// heading
+    vpHeight = window.innerHeight - 50;
+    vpWidth = window.innerWidth;
+
+    if (typeof (Storage) == "undefined") {
+        // Sorry! No Web Storage support..
+        alert("Sorry! No Web Storage support. Please use a different browser.");
+        return;
+    }
+    if (localStorage.getItem("autopilot.top") == null) {
+        localStorage.setItem("autopilot.top",  "0px");
+        localStorage.setItem("autopilot.left", Math.floor(vpWidth/2)+"px");
+    }
 	autopilotTarget = new steelseries.DisplaySingle('canvasTarget', {
 		//width : document.getElementById('canvasTarget').width,
 		//height : document.getElementById('canvasTarget').height,
