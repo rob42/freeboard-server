@@ -29,6 +29,7 @@ import org.zkoss.zk.ui.select.annotation.Listen;
 import org.zkoss.zk.ui.select.annotation.Wire;
 import org.zkoss.zk.ui.select.annotation.WireVariable;
 import org.zkoss.zul.Label;
+import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 public class ChartplotterViewModel extends SelectorComposer<Window>{
@@ -41,7 +42,7 @@ public class ChartplotterViewModel extends SelectorComposer<Window>{
 	private static final long serialVersionUID = 1L;
 	
 	@WireVariable
-    private Session sess;
+        private Session sess;
 	
 	@Wire( "#mainWindow")
 	private Window mainWindow;
@@ -53,11 +54,18 @@ public class ChartplotterViewModel extends SelectorComposer<Window>{
 	private Label firstZoom;
 	@Wire( "#layerVisibility")
 	private Label layerVisibility;
-	
+
+        @Wire("#numCircles")
+        private Label numCircles;
+        @Wire("#radiiCircles")
+        private Label radiiCircles;
+        
 	private String lat ="0.0";
 	private String lon ="0.0";
 	private String zoom ="1";
 	private String visibility="";
+        private String num = "0";
+        private String radii = "100";
 	
 	public ChartplotterViewModel() {
 		super();
@@ -77,6 +85,12 @@ public class ChartplotterViewModel extends SelectorComposer<Window>{
 		if(Util.getConfig(null).containsKey(Constants.CHART_ZOOM)){
 			zoom=Util.getConfig(null).getProperty(Constants.CHART_ZOOM);
 		}
+		if(Util.getConfig(null).containsKey(Constants.NUM_BOAT_CIRCLES)){
+			num=Util.getConfig(null).getProperty(Constants.NUM_BOAT_CIRCLES);
+		}
+		if(Util.getConfig(null).containsKey(Constants.RADII_BOAT_CIRCLES)){
+			radii=Util.getConfig(null).getProperty(Constants.RADII_BOAT_CIRCLES);
+		}
 		for(Object key:Util.getConfig(null).keySet()){
 			if(((String)key).startsWith(Constants.CHART_LAYER)){
 				String name = (String)key;
@@ -90,6 +104,8 @@ public class ChartplotterViewModel extends SelectorComposer<Window>{
 		firstLat.setValue(lat);
 		firstLon.setValue(lon);
 		firstZoom.setValue(zoom);
+                numCircles.setValue(num);
+                radiiCircles.setValue(radii);
 				
 	}
 	

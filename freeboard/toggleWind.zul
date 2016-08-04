@@ -27,7 +27,7 @@
 <script type="text/javascript" src="./js/toggleWind.js" />
 <window id="toggleWind"
 		apply="nz.co.fortytwo.freeboard.zk.ToggleWindModel"
-		height="30px" width="100px" title="Log"
+		height="30px" width="100px" title="Wind T/A"
 		 mode="overlapped" visible="false" minimizable="true"
                  w:onMove="toggleWindOnMove(event)" >
 <!-- 		 <style>.z-panel-body { overflow: visible; }"</style> -->

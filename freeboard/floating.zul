@@ -76,8 +76,9 @@
 					<label id="firstLat" value="0.0" visible="false" />
 					<label id="firstLon" value="0.0" visible="false" />
 					<label id="firstZoom" value="0.0" visible="false" />
-					<label id="layerVisibility" value=""
-						visible="false" />
+					<label id="layerVisibility" value="" visible="false" />
+					<label id="numCircles" value="0" visible="false" />
+					<label id="radiiCircles" value="0" visible="false" />
 
 					<div vflex="1" hflex="1">
 						<html>

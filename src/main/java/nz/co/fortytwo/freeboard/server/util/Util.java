@@ -153,13 +153,15 @@ public class Util {
 		props.setProperty(Constants.WAYPOINTS_RESOURCE,"./tracks");
 		props.setProperty(Constants.WAYPOINT_CURRENT,"waypoints.gpx");
 		props.setProperty(Constants.SERIAL_PORTS,"/dev/ttyUSB0,/dev/ttyUSB1,/dev/ttyUSB2,/dev/ttyACM0,/dev/ttyACM1,/dev/ttyACM2");
-                props.setProperty(Constants.DEPTH_UNIT, "f");
-                props.setProperty(Constants.DEPTH_ZERO_OFFSET, "1.5");
-                props.setProperty(Constants.SOG_UNIT, "mi/hr");
-                props.setProperty(Constants.SOW_UNIT, "Kt");
-                props.setProperty(Constants.ALARM_DEPTH, "6");
-                props.setProperty(Constants.SPARKLINE_PTS, "200");
-                props.setProperty(Constants.SPARKLINE_MIN, "3");
+		props.setProperty(Constants.DEPTH_UNIT, "f");
+		props.setProperty(Constants.DEPTH_ZERO_OFFSET, "1.5");
+		props.setProperty(Constants.SOG_UNIT, "mi/hr");
+		props.setProperty(Constants.SOW_UNIT, "Kt");
+		props.setProperty(Constants.ALARM_DEPTH, "6");
+		props.setProperty(Constants.SPARKLINE_PTS, "200");
+		props.setProperty(Constants.SPARKLINE_MIN, "3");
+		props.setProperty(Constants.RADII_BOAT_CIRCLES, "100");
+		props.setProperty(Constants.NUM_BOAT_CIRCLES, "3");
 		if(SystemUtils.IS_OS_WINDOWS){
 			props.setProperty(Constants.SERIAL_PORTS,"COM1,COM2,COM3,COM4");
 		}
@@ -236,12 +238,19 @@ public class Util {
 				net.sf.marineapi.nmea.util.Date dayNow = sen.getDate();
 				//if we need to set the time, we will be WAAYYY out
 				//we only try once, so we dont get lots of native processes spawning if we fail
-				timeSet=true;
-				Date date = new Date();
-				if((date.getYear()+1900)==dayNow.getYear()){
-					if(logger.isDebugEnabled())logger.debug("Current date is " + date);
+				if (System.getProperty("os.name").startsWith("Windows")) {
+					// includes: Windows 2000,  Windows 95, Windows 98, Windows NT, Windows Vista, Windows XP
+					// a Win system will already have the time set.
 					return;
 				}
+				timeSet = true;
+				Date date = new Date();
+//				if(((date.getYear()+1900)==dayNow.getYear()) &&
+//						((date.getYear()+1900)==dayNow.getYear())
+//						  ){
+//					if(logger.isDebugEnabled())logger.debug("Current date is " + date);
+//					return;
+//				}
 				//so we need to set the date and time
 				net.sf.marineapi.nmea.util.Time timeNow = sen.getTime();
 				String yy = String.valueOf(dayNow.getYear());

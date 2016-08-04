@@ -26,7 +26,7 @@
    <script type="text/javascript" src="./js/wind2.js"/>
    <window id="wind"
         apply="nz.co.fortytwo.freeboard.zk.WindViewModel"
-        height="30px" width="100px" title="Wind"
+        height="30px" width="100px" title="Wind T+A"
         top="10px" left="50px"  mode="overlapped" visible="false" minimizable="true"
         w:onMove="windOnMove(event)" >
 
