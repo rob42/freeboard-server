@@ -31,6 +31,7 @@ import java.util.Enumeration;
 import java.util.Properties;
 import java.util.Set;
 import java.util.TreeSet;
+import net.sf.marineapi.nmea.parser.DataNotAvailableException;
 
 import net.sf.marineapi.nmea.sentence.RMCSentence;
 
@@ -235,6 +236,11 @@ public class Util {
 	public static void checkTime(RMCSentence sen) {
 			if(timeSet)return;
 			try {
+                            sen.getPosition();
+                        } catch (DataNotAvailableException e){
+                            return;
+                        }
+                        try {
 				net.sf.marineapi.nmea.util.Date dayNow = sen.getDate();
 				//if we need to set the time, we will be WAAYYY out
 				//we only try once, so we dont get lots of native processes spawning if we fail
@@ -261,6 +267,7 @@ public class Util {
 				String ss = pad(2,String.valueOf(timeNow.getSeconds()));
 				if(logger.isDebugEnabled())logger.debug("Setting current date to " + dayNow + " "+timeNow);
 				String cmd = "sudo date --utc " + MM+dd+hh+mm+yy+"."+ss;
+                                System.out.println("Setting date "+cmd);
 				Runtime.getRuntime().exec(cmd.split(" "));// MMddhhmm[[yy]yy]
 				if(logger.isDebugEnabled())logger.debug("Executed date setting command:"+cmd);
 			} catch (Exception e) {
