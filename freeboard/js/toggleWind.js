@@ -86,12 +86,13 @@ function ToggleWind() {
             }
             localStorage.setItem("toggleWind.avgVelPosA", avgVelPosA);
             localStorage.setItem("toggleWind.avgVelA", JSON.stringify(avgVelA));
+            windSparkApp.shift();
+            windSparkApp.push(navObj.WST);
             if (!displayTrue) {
                 lcdToggleWind.setValue(navObj.WSA);
                 lcdToggleWind.setAltValue(arrayAvg(avgVelA));
+                $('.windSparkline').sparkline(windSparkApp, windOptions);
             }
-            windSparkApp.shift();
-            windSparkApp.push(navObj.WST);
         }
         if (navObj.WST) {
             avgVelT = JSON.parse(localStorage.getItem("toggleWind.avgVelT"));
@@ -103,12 +104,13 @@ function ToggleWind() {
             }
             localStorage.setItem("toggleWind.avgVelPosT", avgVelPosT);
             localStorage.setItem("toggleWind.avgVelT", JSON.stringify(avgVelT));
+            windSparkTrue.shift();
+            windSparkTrue.push(navObj.WST);
             if (displayTrue) {
                 lcdToggleWind.setValue(navObj.WST);
                 lcdToggleWind.setAltValue(arrayAvg(avgVelT));
             }
-            windSparkApp.shift();
-            windSparkApp.push(navObj.WST);
+            $('.windSparkline').sparkline(windSparkTrue, windOptions);
         }
         if (navObj.WDA) {
             var c = navObj.WDA;
@@ -221,7 +223,7 @@ function toggle() {
             pointerTypeAverage: steelseries.PointerType.TYPE1,
             backgroundColor: steelseries.BackgroundColor.BROWN,
         });
-        $('.dynamicsparkline').sparkline(windSparkTrue, options);
+        $('.windSparkline').sparkline(windSparkTrue, windOptions);
         
     } else {
         s.setImage("./js/img/ToggleApp.png");
@@ -265,7 +267,7 @@ function toggle() {
             pointerTypeAverage: steelseries.PointerType.TYPE1,
             backgroundColor: steelseries.BackgroundColor.BROWN,
         });
-        $('.dynamicsparkline').sparkline(windSparkApp, options);
+        $('.windSparkline').sparkline(windSparkApp, windOptions);
     }
 //    initToggleWind();
 }

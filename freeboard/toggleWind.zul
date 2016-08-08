@@ -51,7 +51,7 @@
 						</canvas>
 					</html>
                                         <html >
-                                        <div id="wSpring" class="dynamicsparkline"></div>
+                                        <div id="wSpring" class="windSparkline"></div>
 <!--                                        <div id="wSpring" style="border:1px solid #000000;" class="dynamicsparkline"></div> -->
                                         </html>
 

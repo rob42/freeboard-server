@@ -113,7 +113,7 @@ function Depth() {
             } else {
                 lcdDepth.setLcdColor(steelseries.LcdColor.BEIGE);
             }
-            $('.dynamicsparkline').sparkline(depthArray, options);
+            $('.depthSparkline').sparkline(depthArray, options);
 
         }
     }

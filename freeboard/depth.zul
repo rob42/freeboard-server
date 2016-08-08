@@ -79,7 +79,7 @@
                                                 height="240px" />
                 </html>
                 <html >
-                    <div id="dSpring" class="dynamicsparkline"></div>
+                    <div id="dSpring" class="depthSparkline"></div>
 <!--                <div id="dSpring" style="border:1px solid #000000;" class="dynamicsparkline"></div> -->
                 </html>
                 <hlayout valign="middle" style="overflow: visible">
