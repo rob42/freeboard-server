@@ -411,7 +411,7 @@ public class ConfigViewModel extends SelectorComposer<Window> {
                     ok = true;
                 } else {
                     // doesnt match, its bad so outa here.
-                    return true;
+                    return false;
                 }
 
             }

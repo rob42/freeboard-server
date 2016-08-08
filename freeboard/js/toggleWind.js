@@ -35,6 +35,7 @@ var avgVelPosT = 0;
 
 var width = 400;
 var displayTrue = 0;
+var smallHeightFract = 0.3;
 
 
 function resizeToggleWind(amount) {
@@ -46,6 +47,7 @@ function resizeToggleWind(amount) {
     if (amount == 0.0)
         return;
     localStorage.setItem("toggleWind.scale", amount);
+    
     $("#canvasToggleWindDir").width(width * amount);
     $("#canvasToggleWindDir").height(width * amount);
 
@@ -53,9 +55,19 @@ function resizeToggleWind(amount) {
     var hsmallSize = width / 3.5;
     $("#canvasToggleWind").width(wsmallSize * amount);
     $("#canvasToggleWind").height(hsmallSize * amount);
-//    $("#canvasWindApp").width(wsmallSize * amount);
-//    $("#canvasWindApp").height(hsmallSize * amount);
-    this.initWind();
+    $("wSpring").width(wsmallSize*amount);
+    $("wSpring").height(wsmallSize*amount * smallHeightFract);
+    wid = Math.round(wsmallSize*amount) + "px";
+    ht = Math.round(wsmallSize*amount * smallHeightFract) + "px";
+    windOptions = {
+        width: wid,
+        height: ht,
+        maxSpotColor: '',
+        minSpotColor: '',
+        fillColor: '#cdf',
+//        fillColor: '',
+        chartRangeMin: 0
+    };
 }
 
 function toggleWindOnMove(event) {
@@ -88,6 +100,7 @@ function ToggleWind() {
             localStorage.setItem("toggleWind.avgVelA", JSON.stringify(avgVelA));
             windSparkApp.shift();
             windSparkApp.push(navObj.WST);
+            localStorage.setItem("toggleWind.windSparkApp", JSON.stringify(windSparkApp));            
             if (!displayTrue) {
                 lcdToggleWind.setValue(navObj.WSA);
                 lcdToggleWind.setAltValue(arrayAvg(avgVelA));
@@ -106,6 +119,7 @@ function ToggleWind() {
             localStorage.setItem("toggleWind.avgVelT", JSON.stringify(avgVelT));
             windSparkTrue.shift();
             windSparkTrue.push(navObj.WST);
+            localStorage.setItem("toggleWind.windSparkTrue", JSON.stringify(windSparkTrue));            
             if (displayTrue) {
                 lcdToggleWind.setValue(navObj.WST);
                 lcdToggleWind.setAltValue(arrayAvg(avgVelT));
@@ -294,6 +308,11 @@ function initToggleWind() {
         alert("Sorry! No Web Storage support. Please use a different browser.");
         return;
     }
+    windSparkArraySize = zk.Widget.$('$sparkPts').getValue();
+    while (windSparkArraySize--){
+        windSparkTrue.push(0);
+        windSparkApp.push(0);
+    }
     if (localStorage.getItem("toggleWind.scale") == null) {
         localStorage.setItem("toggleWind.scale", "1.0");
         localStorage.setItem("toggleWind.size", width);
@@ -316,6 +335,8 @@ function initToggleWind() {
         localStorage.setItem("toggleWind.avgVelT", JSON.stringify(avgVelT));
         localStorage.setItem("toggleWind.avgVelPosA", "0");
         localStorage.setItem("toggleWind.avgVelPosT", "0");
+        localStorage.setItem("toggleWind.windSparkTrue", JSON.stringify(windSparkTrue));
+        localStorage.setItem("toggleWind.windSparkApp", JSON.stringify(windSparkApp));        
     }
 
     avgArrayA = JSON.parse(localStorage.getItem("toggleWind.avgArrayA"));
@@ -327,6 +348,9 @@ function initToggleWind() {
     avgVelPosA = localStorage.getItem("toggleWind.avgVelPosA");
     avgVelT = JSON.parse(localStorage.getItem("toggleWind.avgVelT"));
     avgVelPosT = localStorage.getItem("toggleWind.avgVelPosT");
+    
+    windSparkApp = JSON.parse(localStorage.getItem("toggleWind.windSparkApp"))
+    windSparkTrue = JSON.parse(localStorage.getItem("toggleWind.windSparkTrue"))
 
     zk.Widget.$(jq('$toggleWind')[0]).setLeft(localStorage.getItem("toggleWind.left"));
     zk.Widget.$(jq('$toggleWind')[0]).setTop(localStorage.getItem("toggleWind.top"));
@@ -334,11 +358,6 @@ function initToggleWind() {
     amount = localStorage.getItem("toggleWind.scale");
     size = width * amount;
     
-    windSparkArraySize = zk.Widget.$('$sparkPts').getValue();
-    while (windSparkArraySize--){
-        windSparkTrue.push(0);
-        windSparkApp.push(0);
-    }
 
     // Initialzing gauges
     smallWidth = size;
@@ -434,10 +453,10 @@ function initToggleWind() {
     }
     $("#twButtons").width(smallWidth);
     $("#twBbuttons").height(smallHeight);
-    $("wSpring").width(width * amount);
-    $("wSpring").height(width * amount * 0.4);
-    wid = Math.round(width * amount) + "px";
-    ht = Math.round(height * .4 * amount) + "px";
+    $("wSpring").width(smallWidth);
+    $("wSpring").height(smallWidth * smallHeightFract);
+    wid = Math.round(smallWidth) + "px";
+    ht = Math.round(smallHeight) + "px";
 
     windOptions = {
         width: wid,
