@@ -186,9 +186,9 @@ public class SerialPortReader implements Processor {
 								if(logger.isDebugEnabled())logger.debug(portName + ":Serial Received:" + lineStr);
 
 								// enable the lines below to substitute SDDBT sentence for GGA sentence for testing Depth ionstrument
-//								if (lineStr.contains("GGA")){
-//									lineStr = "$SDDBT,8.1,f,2.4,M,1.3,F*0B";
-//								}
+								if (lineStr.contains("GGA")){
+									lineStr = "$SDDBT,8.1,f,2.4,M,1.3,F*0B";
+								}
 
 								//its not empty!
 								if(lineStr.length()>0){

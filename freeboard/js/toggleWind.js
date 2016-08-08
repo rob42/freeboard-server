@@ -16,7 +16,12 @@
  *  You should have received a copy of the GNU General Public License
  *  along with FreeBoard.  If not, see <http://www.gnu.org/licenses/>.
  */
-// Arrays and pointers for wind direction
+// Arrays and pointers for sparkline
+var windSparkArraySize;
+var windSparkTrue = [];
+var windSparkApp = [];
+var windOptions;
+// // Arrays and pointers for wind direction
 var avgArrayA;
 var avgPosA = 0;
 var avgArrayT;
@@ -43,8 +48,7 @@ function resizeToggleWind(amount) {
     localStorage.setItem("toggleWind.scale", amount);
     $("#canvasToggleWindDir").width(width * amount);
     $("#canvasToggleWindDir").height(width * amount);
-//    $("#canvasWindDirApp").width(width * amount);
-//    $("#canvasWindDirApp").height(width * amount);
+
     var wsmallSize = width;
     var hsmallSize = width / 3.5;
     $("#canvasToggleWind").width(wsmallSize * amount);
@@ -86,6 +90,8 @@ function ToggleWind() {
                 lcdToggleWind.setValue(navObj.WSA);
                 lcdToggleWind.setAltValue(arrayAvg(avgVelA));
             }
+            windSparkApp.shift();
+            windSparkApp.push(navObj.WST);
         }
         if (navObj.WST) {
             avgVelT = JSON.parse(localStorage.getItem("toggleWind.avgVelT"));
@@ -101,6 +107,8 @@ function ToggleWind() {
                 lcdToggleWind.setValue(navObj.WST);
                 lcdToggleWind.setAltValue(arrayAvg(avgVelT));
             }
+            windSparkApp.shift();
+            windSparkApp.push(navObj.WST);
         }
         if (navObj.WDA) {
             var c = navObj.WDA;
@@ -175,11 +183,91 @@ function toggle() {
     if (s._image.includes("./js/img/ToggleApp.png")) {
         s.setImage("./js/img/ToggleTrue.png");
         displayTrue = 1;
+        if (avgVelPosT == 0){
+            vel = avgVelT[avgVelT.length - 1];
+        } else {
+            vel = avgVelT[avgVelPosT - 1];
+        }
+        avgVel = arrayAvg(avgVelT);
+        lcdToggleWind = new steelseries.DisplayMulti('canvasToggleWind', {
+            width: smallWidth,
+            height: smallHeight,
+            lcdDecimals: 1,
+            lcdColor: steelseries.LcdColor.BEIGE,
+            unitString: "Knots(T)",
+            value: vel,
+            altValue: avgVel,
+            linkAltValue: false,
+            unitStringVisible: true,
+            detailString: "Avg: ",
+            detailStringVisible: true,
+        });
+
+
+        // wind dir
+
+        radialToggleWindDir = new steelseries.WindDirection('canvasToggleWindDir', {
+            size: size,
+            titleString: "WIND           TRUE",
+            roseVisible: false,
+            lcdVisible: true,
+            lcdColor: steelseries.LcdColor.BEIGE,
+            section: areasCloseHaul,
+            area: areasCloseHaul,
+            pointSymbolsVisible: false,
+            // pointSymbols: ["N", "", "", "", "", "", "", ""]
+            lcdTitleStrings: ["Latest", "Average"],
+            pointerTypeLatest: steelseries.PointerType.TYPE2,
+            pointerTypeAverage: steelseries.PointerType.TYPE1,
+            backgroundColor: steelseries.BackgroundColor.BROWN,
+        });
+        $('.dynamicsparkline').sparkline(windSparkTrue, options);
+        
     } else {
         s.setImage("./js/img/ToggleApp.png");
         displayTrue = 0;
+        if (avgVelPosA == 0){
+            vel = avgVelA[avgVelA.length - 1];
+        } else {
+            vel = avgVelA[avgVelPosA - 1];
+        }
+        avgVel = arrayAvg(avgVelA);
+        lcdToggleWind = new steelseries.DisplayMulti('canvasToggleWind', {
+            width: smallWidth,
+            height: smallHeight,
+            lcdDecimals: 1,
+            lcdColor: steelseries.LcdColor.BEIGE,
+            linkAltValue: false,
+            value: vel,
+            altValue: avgVel,
+            unitString: "Knots(A)",
+            unitStringVisible: true,
+            detailString: "Avg: ",
+            detailStringVisible: true,
+        });
+
+        // wind dir
+        if (avgPosA == 0){
+            pos = avgArrayA[avgPosA.length - 1];
+        } else {
+            pos = avgArrayA[avgPosA - 1];
+        }
+        radialToggleWindDir = new steelseries.WindDirection('canvasToggleWindDir', {
+            size: size,
+            titleString: "WIND          APP",
+            lcdVisible: true,
+            lcdColor: steelseries.LcdColor.BEIGE,
+            pointSymbolsVisible: false,
+            degreeScaleHalf: true,
+            section: areasCloseHaul,
+            area: areasCloseHaul,
+            pointerTypeLatest: steelseries.PointerType.TYPE2,
+            pointerTypeAverage: steelseries.PointerType.TYPE1,
+            backgroundColor: steelseries.BackgroundColor.BROWN,
+        });
+        $('.dynamicsparkline').sparkline(windSparkApp, options);
     }
-    initToggleWind();
+//    initToggleWind();
 }
 
 
@@ -243,6 +331,12 @@ function initToggleWind() {
 
     amount = localStorage.getItem("toggleWind.scale");
     size = width * amount;
+    
+    windSparkArraySize = zk.Widget.$('$sparkPts').getValue();
+    while (windSparkArraySize--){
+        windSparkTrue.push(0);
+        windSparkApp.push(0);
+    }
 
     // Initialzing gauges
     smallWidth = size;
@@ -291,8 +385,6 @@ function initToggleWind() {
             pointerTypeAverage: steelseries.PointerType.TYPE1,
             backgroundColor: steelseries.BackgroundColor.BROWN,
         });
-//        radialToggleWindDir.setValueAnimatedLatest(arrayAvg(pos));
-//        radialToggleWindDir.setValueAnimatedAverage(arrayAvg(avgArrayA))
     }
 
     // wind true
@@ -340,6 +432,20 @@ function initToggleWind() {
     }
     $("#twButtons").width(smallWidth);
     $("#twBbuttons").height(smallHeight);
+    $("wSpring").width(width * amount);
+    $("wSpring").height(width * amount * 0.4);
+    wid = Math.round(width * amount) + "px";
+    ht = Math.round(height * .4 * amount) + "px";
+
+    windOptions = {
+        width: wid,
+        height: ht,
+        maxSpotColor: '',
+        minSpotColor: '',
+        fillColor: '#cdf',
+//        fillColor: '',
+        chartRangeMin: 0
+    };
 
     addSocketListener(new ToggleWind());
 

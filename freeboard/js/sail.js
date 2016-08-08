@@ -47,6 +47,9 @@ function Sail() {
 
     this.onmessage = function(navObj) {
 
+        var unitDepth;
+        var headerString;
+        
         //avoid commands
         if (!navObj) return true;
 

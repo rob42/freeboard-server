@@ -50,6 +50,11 @@
 							No canvas in your browser...sorry...
 						</canvas>
 					</html>
+                                        <html >
+                                        <div id="wSpring" class="dynamicsparkline"></div>
+<!--                                        <div id="wSpring" style="border:1px solid #000000;" class="dynamicsparkline"></div> -->
+                                        </html>
+
 					<hlayout id="twButtons" valign="middle">
 						<label id="logScale" value="0.0" visible="false"/>
 						<button id="toggleWindShrink" tooltiptext="Shrink the panel"
