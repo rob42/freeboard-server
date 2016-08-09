@@ -180,7 +180,7 @@ function ToggleWind() {
             localStorage.setItem("toggleWind.avgPosT", avgPosT);
             localStorage.setItem("toggleWind.avgArrayT", JSON.stringify(avgArrayT));
             if (displayTrue) {
-                if (v > 0.0)
+                if (aveVelT > 0.0)
                     radialToggleWindDir.setValueAnimatedAverage(arrayAvg(avgArrayT));
                 else
                     radialToggleWindDir.setValueAnimatedAverage(0.0);

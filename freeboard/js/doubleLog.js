@@ -76,10 +76,10 @@ function DoubleLog() {
                     headerStringVisible: true,
                 });
             }
-            console.log("SOG= " + navObj.SOG);
+//            console.log("SOG= " + navObj.SOG);
             temp = distanceUnit(sogUnit)*navObj.SOG;
             lcdSOG.setValue(temp);
-            console.log("AdjSOG= " + temp);
+//            console.log("AdjSOG= " + temp);
         }
 
         //SOW
