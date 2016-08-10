@@ -61,7 +61,7 @@ public class ConfigViewModel extends SelectorComposer<Window> {
      */
     private static final long serialVersionUID = 1L;
     private Pattern portNamesRegexLinux = Pattern
-            .compile("(/dev/ttyUSB|/dev/ttyACM|/dev/pts|/dev/ttyAMA|/dev/cu)[0-9]{1,3}");
+            .compile("(/dev/ttyUSB|/dev/ttyACM|/dev/pts/|/dev/ttyAMA|/dev/cu)[0-9]{1,3}");
     private Pattern portNamesRegexWindows = Pattern.compile("COM[0-9]{1,2}");
 
     @WireVariable
