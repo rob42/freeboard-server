@@ -371,9 +371,9 @@ function distanceUnit(unit) {
             convert = 1.852;
             break;
         }
-    case "mi/hr":
+    case "Mi/hr":
         {
-            distUnit = "mi";
+            distUnit = "Mi";
             convert = 1.1450779448;
             break;
         }

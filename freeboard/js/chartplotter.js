@@ -67,7 +67,8 @@ function initCharts() {
 	console.log(firstLat+","+firstLon+","+firstZoom);
 */
 	map = L.map('map', {
-		//attributionControl: false,
+		attributionControl: false,
+                maxZoom: 20     
 	}).setView(new L.LatLng(firstLat,firstLon),firstZoom,true);
 
 	addLayers(map);
@@ -127,7 +128,7 @@ function initCharts() {
 	var myIcon = L.icon({
 		iconUrl : './js/img/ship_red.png',
 		iconSize : [ 10, 24 ],
-		iconAnchor : [ 5, 10 ],
+		iconAnchor : [ 5, 10 ]
 	});
 	shipMarker = L.marker([ 0.0, 0.0 ], {
 		icon : myIcon
@@ -135,7 +136,7 @@ function initCharts() {
 //	layers.addOverlay(shipMarker, "BoatIcon");
 
         boatLayerGroup = L.layerGroup([shipMarker]);
-
+       
         numCircles = zk.Widget.$('$numCircles').getValue();
         radiiCircles = zk.Widget.$('$radiiCircles').getValue();
         radius = 0;
@@ -162,13 +163,13 @@ function initCharts() {
 
 	windAppLayer = L.polyline([ new L.LatLng(0.0, 0.0), new L.LatLng(0.0, 0.0) ], {
 		color : 'blue',
-		weight : 1,
+		weight : 2,
 		dashArray : '5,5',
 	}).addTo(map);
 	layers.addOverlay(windAppLayer, "Wind Apparent");
 	windTrueLayer = L.polyline([ new L.LatLng(0.0, 0.0), new L.LatLng(0.0, 0.0) ], {
 		color : 'red',
-		weight : 1,
+		weight : 2,
 		dashArray : '5,5',
 	}).addTo(map);
 	layers.addOverlay(windTrueLayer, "Wind True");
@@ -291,10 +292,11 @@ function setPosition(llat, llon, brng, spd) {
 	}
 	if(map.hasLayer(shipMarker)){
         //console.log("Chartplotter:moveBoat to "+llat+","+llon);
-        shipMarker.setLatLng(new L.LatLng(llat, llon));
+        var posit = new L.LatLng(llat, llon);
+        shipMarker.setLatLng(posit);
         numCircles = zk.Widget.$('$numCircles').getValue();
-        for (i = 0; i < 3; i++) {
-            circles[i].setLatLng(new L.LatLng(llat, llon));
+        for (i = 0; i < numCircles; i++) {
+            circles[i].setLatLng(posit);
         }
 
 //		circle.setLatLng(new L.LatLng(llat, llon));
@@ -304,8 +306,8 @@ function setPosition(llat, llon, brng, spd) {
 	var start_point = new L.LatLng(llat, llon);
 	// //1852 meters in nautical mile
 	//
-	var end_point = destVincenty(llat, llon, brng, spd * 1852);
-	var end_point2 = destVincenty(llat, llon, brng, 185200);
+	var end_point = destVincenty(llat, llon, brng, spd * 1852/6); // distance traveled in 10 minutes
+	var end_point2 = destVincenty(llat, llon, brng, spd * 185200/100); // distance traveled in 1 hour
 	if(map.hasLayer(hdgLayer)){
 		hdgLayer.setLatLngs([ start_point, end_point2 ]);
 	}
@@ -438,6 +440,7 @@ function refreshTrack() {
 	}).addTo(map);
 
 	layers.addOverlay(trackLayer, "Track");
+        setLayerVisibility();
 }
 //
 /*
@@ -610,8 +613,12 @@ function ChartPlotter() {
 				return;
 
 			setPosition(lat, lon, heading, speed);
-			setWind(lat, lon, windDirApparent, windSpdApparent, windDirTrue, windSpdTrue);
-			// setTrack(lat,lon);
+			if (windDirApparent < 0.0) {
+                            windDirApparent = 360.0 + windDirApparent;
+                        }
+                        setWind(lat, lon, heading + windDirApparent, windSpdApparent, heading + windDirTrue, windSpdTrue);
+	//		console.log("heading = "+heading+" windTrue = "+windDirTrue + " windApparent = "+windDirApparent);
+                        // setTrack(lat,lon);
 			moveToBoatPosition(lat, lon);
 		}
 	};

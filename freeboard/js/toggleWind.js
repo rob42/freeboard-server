@@ -36,6 +36,13 @@ var avgVelPosT = 0;
 var width = 400;
 var displayTrue = 0;
 var smallHeightFract = 0.3;
+// Define some sections for wind
+var areasCloseHaul = [
+    steelseries.Section((0 - tackAngle), 0, 'rgba(0, 0, 220, 0.3)'),
+    steelseries.Section(0, tackAngle, 'rgba(0, 0, 220, 0.3)')];
+var areasCloseHaulTrue = [
+    steelseries.Section((360 - tackAngle), 0, 'rgba(0, 0, 220, 0.3)'),
+    steelseries.Section(0, tackAngle, 'rgba(0, 0, 220, 0.3)')];
 
 
 function resizeToggleWind(amount) {
@@ -47,7 +54,7 @@ function resizeToggleWind(amount) {
     if (amount == 0.0)
         return;
     localStorage.setItem("toggleWind.scale", amount);
-    
+
     $("#canvasToggleWindDir").width(width * amount);
     $("#canvasToggleWindDir").height(width * amount);
 
@@ -55,19 +62,11 @@ function resizeToggleWind(amount) {
     var hsmallSize = width / 3.5;
     $("#canvasToggleWind").width(wsmallSize * amount);
     $("#canvasToggleWind").height(hsmallSize * amount);
-    $("wSpring").width(wsmallSize*amount);
-    $("wSpring").height(wsmallSize*amount * smallHeightFract);
-    wid = Math.round(wsmallSize*amount) + "px";
-    ht = Math.round(wsmallSize*amount * smallHeightFract) + "px";
-    windOptions = {
-        width: wid,
-        height: ht,
-        maxSpotColor: '',
-        minSpotColor: '',
-        fillColor: '#cdf',
-//        fillColor: '',
-        chartRangeMin: 0
-    };
+    $("wSpring").width(wsmallSize * amount);
+    $("wSpring").height(wsmallSize * amount * smallHeightFract);
+    wid = Math.round(wsmallSize * amount) + "px";
+    ht = Math.round(wsmallSize * amount * smallHeightFract) + "px";
+
 }
 
 function toggleWindOnMove(event) {
@@ -100,7 +99,7 @@ function ToggleWind() {
             localStorage.setItem("toggleWind.avgVelA", JSON.stringify(avgVelA));
             windSparkApp.shift();
             windSparkApp.push(navObj.WST);
-            localStorage.setItem("toggleWind.windSparkApp", JSON.stringify(windSparkApp));            
+            localStorage.setItem("toggleWind.windSparkApp", JSON.stringify(windSparkApp));
             if (!displayTrue) {
                 lcdToggleWind.setValue(navObj.WSA);
                 lcdToggleWind.setAltValue(arrayAvg(avgVelA));
@@ -112,19 +111,19 @@ function ToggleWind() {
             avgVelPosT = localStorage.getItem("toggleWind.avgVelPosT");
             avgVelT[avgVelPosT] = navObj.WST;
             avgVelPosT = parseInt(avgVelPosT) + 1;
-            if (avgVelPosT >= avgVelT.length){
+            if (avgVelPosT >= avgVelT.length) {
                 avgVelPosT = 0;
             }
             localStorage.setItem("toggleWind.avgVelPosT", avgVelPosT);
             localStorage.setItem("toggleWind.avgVelT", JSON.stringify(avgVelT));
             windSparkTrue.shift();
             windSparkTrue.push(navObj.WST);
-            localStorage.setItem("toggleWind.windSparkTrue", JSON.stringify(windSparkTrue));            
+            localStorage.setItem("toggleWind.windSparkTrue", JSON.stringify(windSparkTrue));
             if (displayTrue) {
                 lcdToggleWind.setValue(navObj.WST);
                 lcdToggleWind.setAltValue(arrayAvg(avgVelT));
+                $('.windSparkline').sparkline(windSparkTrue, windOptions);
             }
-            $('.windSparkline').sparkline(windSparkTrue, windOptions);
         }
         if (navObj.WDA) {
             var c = navObj.WDA;
@@ -145,7 +144,7 @@ function ToggleWind() {
             localStorage.setItem("toggleWind.avgArrayA", JSON.stringify(avgArrayA));
 
 
-            if (avgPosA >= avgArrayA.length){
+            if (avgPosA >= avgArrayA.length) {
                 avgPosA = 0;
             }
             localStorage.setItem("toggleWind.avgPosA", avgPosA);
@@ -174,14 +173,15 @@ function ToggleWind() {
             avgPosT = localStorage.getItem("toggleWind.avgPosT");
             avgArrayT[avgPosT] = c;
             avgPosT = parseInt(avgPosT) + 1;
-            if (avgPosT >= avgArrayT.length){
+            if (avgPosT >= avgArrayT.length) {
                 avgPosT = 0;
             }
             localStorage.setItem("toggleWind.avgPosT", avgPosT);
             localStorage.setItem("toggleWind.avgArrayT", JSON.stringify(avgArrayT));
             if (displayTrue) {
-                if (aveVelT > 0.0)
-                    radialToggleWindDir.setValueAnimatedAverage(arrayAvg(avgArrayT));
+                var tempAvgVel = arrayAvg(avgArrayT);
+                if (tempAvgVel > 0.0)
+                    radialToggleWindDir.setValueAnimatedAverage(tempAvgVel);
                 else
                     radialToggleWindDir.setValueAnimatedAverage(0.0);
             }
@@ -199,7 +199,7 @@ function toggle() {
     if (s._image.includes("./js/img/ToggleApp.png")) {
         s.setImage("./js/img/ToggleTrue.png");
         displayTrue = 1;
-        if (avgVelPosT == 0){
+        if (avgVelPosT == 0) {
             vel = avgVelT[avgVelT.length - 1];
         } else {
             vel = avgVelT[avgVelPosT - 1];
@@ -237,12 +237,21 @@ function toggle() {
             pointerTypeAverage: steelseries.PointerType.TYPE1,
             backgroundColor: steelseries.BackgroundColor.BROWN,
         });
+        windOptions = {
+            width: wid,
+            height: ht,
+            maxSpotColor: '',
+            minSpotColor: '',
+            fillColor: 'red',
+//        fillColor: '',
+            chartRangeMin: 0
+        };
         $('.windSparkline').sparkline(windSparkTrue, windOptions);
-        
+
     } else {
         s.setImage("./js/img/ToggleApp.png");
         displayTrue = 0;
-        if (avgVelPosA == 0){
+        if (avgVelPosA == 0) {
             vel = avgVelA[avgVelA.length - 1];
         } else {
             vel = avgVelA[avgVelPosA - 1];
@@ -263,7 +272,7 @@ function toggle() {
         });
 
         // wind dir
-        if (avgPosA == 0){
+        if (avgPosA == 0) {
             pos = avgArrayA[avgPosA.length - 1];
         } else {
             pos = avgArrayA[avgPosA - 1];
@@ -281,6 +290,14 @@ function toggle() {
             pointerTypeAverage: steelseries.PointerType.TYPE1,
             backgroundColor: steelseries.BackgroundColor.BROWN,
         });
+        windOptions = {
+            width: wid,
+            height: ht,
+            maxSpotColor: '',
+            minSpotColor: '',
+            fillColor: blue,
+            chartRangeMin: 0
+        };
         $('.windSparkline').sparkline(windSparkApp, windOptions);
     }
 //    initToggleWind();
@@ -294,11 +311,6 @@ function initToggleWind() {
     if (!window.CanvasRenderingContext2D)
         return;
 
-    // Define some sections for wind
-    var areasCloseHaul = [
-        steelseries.Section((0 - tackAngle), 0, 'rgba(0, 0, 220, 0.3)'),
-        steelseries.Section(0, tackAngle, 'rgba(0, 0, 220, 0.3)')];
-
     // Initialzing lcds
     vpHeight = window.innerHeight - 50;
     vpWidth = window.innerWidth;
@@ -309,7 +321,7 @@ function initToggleWind() {
         return;
     }
     windSparkArraySize = zk.Widget.$('$sparkPts').getValue();
-    while (windSparkArraySize--){
+    while (windSparkArraySize--) {
         windSparkTrue.push(0);
         windSparkApp.push(0);
     }
@@ -336,7 +348,7 @@ function initToggleWind() {
         localStorage.setItem("toggleWind.avgVelPosA", "0");
         localStorage.setItem("toggleWind.avgVelPosT", "0");
         localStorage.setItem("toggleWind.windSparkTrue", JSON.stringify(windSparkTrue));
-        localStorage.setItem("toggleWind.windSparkApp", JSON.stringify(windSparkApp));        
+        localStorage.setItem("toggleWind.windSparkApp", JSON.stringify(windSparkApp));
     }
 
     avgArrayA = JSON.parse(localStorage.getItem("toggleWind.avgArrayA"));
@@ -348,7 +360,7 @@ function initToggleWind() {
     avgVelPosA = localStorage.getItem("toggleWind.avgVelPosA");
     avgVelT = JSON.parse(localStorage.getItem("toggleWind.avgVelT"));
     avgVelPosT = localStorage.getItem("toggleWind.avgVelPosT");
-    
+
     windSparkApp = JSON.parse(localStorage.getItem("toggleWind.windSparkApp"))
     windSparkTrue = JSON.parse(localStorage.getItem("toggleWind.windSparkTrue"))
 
@@ -357,17 +369,23 @@ function initToggleWind() {
 
     amount = localStorage.getItem("toggleWind.scale");
     size = width * amount;
-    
+
 
     // Initialzing gauges
     smallWidth = size;
     smallHeight = size / 3.5;
+    $("#twButtons").width(smallWidth);
+    $("#twBbuttons").height(smallHeight);
+    $("wSpring").width(smallWidth);
+    $("wSpring").height(smallWidth * smallHeightFract);
+    wid = Math.round(smallWidth) + "px";
+    ht = Math.round(smallHeight) + "px";
 
     // wind app
     // wind
 //    radialToggleWindDir = null;
     if (!displayTrue) {
-        if (avgVelPosA == 0){
+        if (avgVelPosA == 0) {
             vel = avgVelA[avgVelA.length - 1];
         } else {
             vel = avgVelA[avgVelPosA - 1];
@@ -388,7 +406,7 @@ function initToggleWind() {
         });
 
         // wind dir
-        if (avgPosA == 0){
+        if (avgPosA == 0) {
             pos = avgArrayA[avgPosA.length - 1];
         } else {
             pos = avgArrayA[avgPosA - 1];
@@ -406,11 +424,20 @@ function initToggleWind() {
             pointerTypeAverage: steelseries.PointerType.TYPE1,
             backgroundColor: steelseries.BackgroundColor.BROWN,
         });
+        windOptions = {
+            width: wid,
+            height: ht,
+            maxSpotColor: '',
+            minSpotColor: '',
+            fillColor: 'blue',
+//        fillColor: '',
+            chartRangeMin: 0
+        };
     }
 
     // wind true
     if (displayTrue) {
-        if (avgVelPosT == 0){
+        if (avgVelPosT == 0) {
             vel = avgVelT[avgVelT.length - 1];
         } else {
             vel = avgVelT[avgVelPosT - 1];
@@ -450,23 +477,17 @@ function initToggleWind() {
         });
 //        radialToggleWindDir.setValueAnimatedLatest(avgArrayT(pos));
 //        radialToggleWindDir.setValueAnimatedAverage(arrayAvg(avgArrayT))
-    }
-    $("#twButtons").width(smallWidth);
-    $("#twBbuttons").height(smallHeight);
-    $("wSpring").width(smallWidth);
-    $("wSpring").height(smallWidth * smallHeightFract);
-    wid = Math.round(smallWidth) + "px";
-    ht = Math.round(smallHeight) + "px";
-
-    windOptions = {
-        width: wid,
-        height: ht,
-        maxSpotColor: '',
-        minSpotColor: '',
-        fillColor: '#cdf',
+        windOptions = {
+            width: wid,
+            height: ht,
+            maxSpotColor: '',
+            minSpotColor: '',
+            fillColor: 'red',
 //        fillColor: '',
-        chartRangeMin: 0
-    };
+            chartRangeMin: 0
+        };
+    }
+
 
     addSocketListener(new ToggleWind());
 
@@ -474,9 +495,10 @@ function initToggleWind() {
 
 function arrayAvg(array) {
     var avg = 0.;
-        if (array == undefined) return 0;
-        for (i = 0; i < array.length; i++){
-            avg += array[i];
-        }
-        return avg / array.length;
+    if (array == undefined)
+        return 0;
+    for (i = 0; i < array.length; i++) {
+        avg += array[i];
+    }
+    return avg / array.length;
 }

@@ -88,7 +88,7 @@
 								<combobox id="cfgSOGUnit"
 									tooltiptext= "km/hr, Mi/hr, Kt">
 									<comboitem label="km/hr" value="km/hr"/>
-									<comboitem label="mi/hr" value="mi/hr"/>
+									<comboitem label="Mi/hr" value="Mi/hr"/>
 									<comboitem label="Kt" value="Kt"/>
 									</combobox>
 							</row>

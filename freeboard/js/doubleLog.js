@@ -18,12 +18,15 @@
  */
 
 var vpSize;
-var vpHeight;
-var vpWidth;
-var sogUnit;
-var sowUnit;
+var dlVPHeight;
+var dlVPWidth;
+var dlSOGUnit;
+var dlSOWUnit;
 var width = 375;
 var height = 250;
+var dlLCDSOG;
+var dlLCDSOW
+
 
 function resizeDoubleLog(amount) {
     if (amount == null) {
@@ -64,12 +67,12 @@ function DoubleLog() {
         //SOG
         if (navObj.SOG) {
             //            console.log("navObj.SOG = " + navObj.SOG.toString());
-            unitTemp = zk.Widget.$('$cfgSOGUnit').getValue();
-            if (unitTemp !== sogUnit) {
-                headerString = "SOG " + unitTemp;
-                sogUnit = unitTemp;
+            var unitTemp = zk.Widget.$('$cfgSOGUnit').getValue();
+            if (unitTemp !== dlSOGUnit) {
+                var headerString = "SOG " + unitTemp;
+                dlSOGUnit = unitTemp;
                 console.log("SOG DisplaySingle");
-                lcdSOG = new steelseries.DisplaySingle('sailSOG', {
+                dlLCDSOG = new steelseries.DisplaySingle('canvasDLogSOG', {
                     lcdDecimals: 1,
                     lcdColor: steelseries.LcdColor.BEIGE,
                     headerString: headerString,
@@ -77,26 +80,26 @@ function DoubleLog() {
                 });
             }
 //            console.log("SOG= " + navObj.SOG);
-            temp = distanceUnit(sogUnit)*navObj.SOG;
-            lcdSOG.setValue(temp);
+            var temp = distanceUnit(dlSOGUnit)*navObj.SOG;
+            dlLCDSOG.setValue(temp);
 //            console.log("AdjSOG= " + temp);
         }
 
         //SOW
         if (navObj.SOW) {
             unitTemp = zk.Widget.$('$cfgSOWUnit').getValue();
-            if (unitTemp !== sowUnit) {
+            if (unitTemp !== dlSOWUnit) {
                 headerString = "SOW " + unitTemp;
-                sowUnit = unitTemp;
+                dlSOWUnit = unitTemp;
                 console.log("SOW DisplaySingle");
-                lcdSOW = new steelseries.DisplaySingle('sailLog', {
+                dlLCDSOW = new steelseries.DisplaySingle('canvasDLogSOW', {
                     lcdDecimals: 1,
                     lcdColor: steelseries.LcdColor.BEIGE,
                     headerString: headerString,
                     headerStringVisible: true,
                 });
             }
-            lcdSOW.setValue(distanceUnit(sowUnit)*navObj.SOW);
+            dlLCDSOW.setValue(distanceUnit(dlSOWUnit)*navObj.SOW);
         }
     };
 
@@ -105,8 +108,8 @@ function DoubleLog() {
 function dlOnLoad(){
     zk.Widget.$(jq('$doubleLog')[0])._left = localStorage.getItem("doubleLog.left");
     zk.Widget.$(jq('$doubleLog')[0]).setTop(localStorage.getItem("doubleLog.top"));
-	 varL = zk.Widget.$(jq('$doubleLog')[0])._left;
-	 varT = zk.Widget.$(jq('$doubleLog')[0])._top;
+//	 varL = zk.Widget.$(jq('$doubleLog')[0])._left;
+//	 varT = zk.Widget.$(jq('$doubleLog')[0])._top;
 }
 
 function initDoubleLog() {
@@ -114,8 +117,8 @@ function initDoubleLog() {
     if (!window.CanvasRenderingContext2D)
         return;
     // Initialzing lcds
-    vpHeight = window.innerHeight - 50;
-    vpWidth = window.innerWidth;
+    dlVPHeight = window.innerHeight - 50;
+    dlVPWidth = window.innerWidth;
 
     if (typeof(Storage) == "undefined") {
     // Sorry! No Web Storage support..
@@ -125,16 +128,16 @@ function initDoubleLog() {
     if (localStorage.getItem("doubleLog.scale") == null){
         localStorage.setItem("doubleLog.scale", "1.0");
         localStorage.setItem("doubleLog.top",  "0px");
-        localStorage.setItem("doubleLog.left", Math.floor(vpWidth/2)+"px");
+        localStorage.setItem("doubleLog.left", Math.floor(dlVPWidth/2)+"px");
     }
     zk.Widget.$(jq('$doubleLog')[0]).setLeft(localStorage.getItem("doubleLog.left"));
     zk.Widget.$(jq('$doubleLog')[0]).setTop(localStorage.getItem("doubleLog.top"));
     amount = localStorage.getItem("doubleLog.scale");
 
     // logs
-    sogUnit = zk.Widget.$('$cfgSOGUnit').getValue();
-    headerString = "SOG " + sogUnit;
-    lcdSOG = new steelseries.DisplaySingle('canvasDLogSOG', {
+    dlSOGUnit = zk.Widget.$('$cfgSOGUnit').getValue();
+    headerString = "SOG " + dlSOGUnit;
+    dlLCDSOG = new steelseries.DisplaySingle('canvasDLogSOG', {
         height: height*amount,
         width: width*amount,
         lcdDecimals: 1,
@@ -143,9 +146,9 @@ function initDoubleLog() {
         headerStringVisible: true,
     });
 
-    sowUnit = zk.Widget.$('$cfgSOWUnit').getValue();
-    headerString = "SOW " + sowUnit;
-    lcdSOW = new steelseries.DisplaySingle('canvasDLogSOW', {
+    dlSOWUnit = zk.Widget.$('$cfgSOWUnit').getValue();
+    headerString = "SOW " + dlSOWUnit;
+    dlLCDSOW = new steelseries.DisplaySingle('canvasDLogSOW', {
         height: height*amount,
         width: width*amount,
         lcdDecimals: 1,
@@ -172,7 +175,7 @@ function distanceUnit(unit) {
             convert = 1.852;
             break;
         }
-    case "mi/hr":
+    case "Mi/hr":
         {
             distUnit = "mi";
             convert = 1.1450779448;
