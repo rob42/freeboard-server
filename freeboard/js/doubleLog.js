@@ -59,7 +59,8 @@ this.dlOnMove = function (event) {
 
 function DoubleLog() {
 
-	this.onmessage = function (navObj) {
+	var unitTemp;
+        this.onmessage = function (navObj) {
         //avoid commands
         if (!navObj)
             return true;
@@ -67,7 +68,7 @@ function DoubleLog() {
         //SOG
         if (navObj.SOG) {
             //            console.log("navObj.SOG = " + navObj.SOG.toString());
-            var unitTemp = zk.Widget.$('$cfgSOGUnit').getValue();
+            unitTemp = zk.Widget.$('$cfgSOGUnit').getValue();
             if (unitTemp !== dlSOGUnit) {
                 var headerString = "SOG " + unitTemp;
                 dlSOGUnit = unitTemp;
