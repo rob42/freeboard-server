@@ -7,12 +7,12 @@
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
- 
+
  *  FreeBoard is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
- 
+
  *  You should have received a copy of the GNU General Public License
  *  along with FreeBoard.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -81,10 +81,10 @@ function Depth() {
             return true;
         //depth
         if (navObj.DBT) {
-            unitTemp = zk.Widget.$('$cfgDepthUnit').getValue();
+            var unitTemp = zk.Widget.$('$cfgDepthUnit').getValue();
             if (unitTemp !== depthUnit) {
-                headerString = "Depth " + unitTemp;
-                depthUnit = unitTemp;
+                var headerString = "Depth " + unitTemp;
+                var depthUnit = unitTemp;
                 console.log("DBT DisplaySingle");
                 lcdDepth = new steelseries.DisplaySingle('canvasDepth', {
                     lcdDecimals: 1,

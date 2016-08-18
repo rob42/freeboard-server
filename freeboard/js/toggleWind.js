@@ -7,12 +7,12 @@
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
- 
+
  *  FreeBoard is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
- 
+
  *  You should have received a copy of the GNU General Public License
  *  along with FreeBoard.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -66,6 +66,25 @@ function resizeToggleWind(amount) {
     $("wSpring").height(wsmallSize * amount * smallHeightFract);
     wid = Math.round(wsmallSize * amount) + "px";
     ht = Math.round(wsmallSize * amount * smallHeightFract) + "px";
+    if (displayTrue){
+        windOptions = {
+            width: wid,
+            height: ht,
+            maxSpotColor: '',
+            minSpotColor: '',
+            fillColor: 'red',
+            chartRangeMin: 0
+        };
+    } else {
+        windOptions = {
+            width: wid,
+            height: ht,
+            maxSpotColor: '',
+            minSpotColor: '',
+            fillColor: 'blue',
+            chartRangeMin: 0
+        };
+    }
 
 }
 
@@ -247,6 +266,12 @@ function toggle() {
             chartRangeMin: 0
         };
         $('.windSparkline').sparkline(windSparkTrue, windOptions);
+		  var temp = JSON.parse(localStorage.getItem("toggleWind.avgArrayT"));
+		  var ndx = localStorage.getItem("toggleWind.avgPosT");
+		  var tempDir = temp[ndx];
+		  radialToggleWindDir.setValueLatest(tempDir);
+		  radialToggleWindDir.segtValueAverage(arrayAve(temp));
+
 
     } else {
         s.setImage("./js/img/ToggleApp.png");
@@ -295,10 +320,15 @@ function toggle() {
             height: ht,
             maxSpotColor: '',
             minSpotColor: '',
-            fillColor: blue,
+            fillColor: "blue",
             chartRangeMin: 0
         };
         $('.windSparkline').sparkline(windSparkApp, windOptions);
+		   temp = JSON.parse(localStorage.getItem("toggleWind.avgArrayA"));
+		   ndx = localStorage.getItem("toggleWind.avgPosA");
+		   tempDir = temp[ndx];
+		   radialToggleWindDir.setValueLatest(tempDir);
+		  radialToggleWindDir.segtValueAverage(arrayAve(temp));
     }
 //    initToggleWind();
 }
