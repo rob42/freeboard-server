@@ -389,24 +389,7 @@ public class NMEAProcessor extends FreeboardProcessor implements Processor, Free
 	
 	                    // handle soeed and distance in GPS units (knots)
 	                    gpsPreviousSpeed = Util.movingAverage(ALPHA, gpsPreviousSpeed, sen.getSpeed());
-	//                    String unit = config.getProperty(Constants.SOG_UNIT);
-	//                    switch (unit) {
-	//                        case "km/hr": {
-	//                            convert = 1.852;
-	//                            break;
-	//                        }
-	//                        case "mi/hr": {
-	//                            convert = 1.1450779448;
-	//                            break;
-	//                        }
-	//                        case "Kt": {
-	//                            convert = 1.;
-	//                            break;
-	//                        }
-	//                    }
-	                    //gpsPreviousSpeed = 1.0;
 	                    map.put(Constants.SPEED_OVER_GND, gpsPreviousSpeed);
-	//                    double deltaDist = sen.getSpeed()*timeDiff/Constants.MS_PER_HR;
 	                    double deltaDist = gpsPreviousSpeed * timeDiff / Constants.MS_PER_HR;
 	                    tripDistance += deltaDist;
 	                    map.put(Constants.DISTANCE_TRAVELED, tripDistance);

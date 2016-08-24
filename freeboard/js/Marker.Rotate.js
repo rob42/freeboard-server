@@ -11,14 +11,17 @@ L.Marker.include({
 		this._icon.style[L.DomUtil.TRANSFORM] = "";
 		_old_update.apply(this, []);
 
-		if (this.options.iconAngle) {
+		// Code modified by R. Berliner.
+                // Apparently leaflet 0.7.7 rotates icons around the icon anchor - as it should.
+               if (this.options.iconAngle) {
 			var a = this.options.icon.options.iconAnchor;
 			var s = this.options.icon.options.iconSize;
-			a = L.point(s).divideBy(2)._subtract(L.point(a));
-			var transform = '';
-			transform += ' translate(' + -a.x + 'px, ' + -a.y + 'px)';
+//			a = L.point(s).divideBy(2)._subtract(L.point(a));
+			a = L.point(a);
+                        var transform = '';
+			//transform += ' translate(' + -a.x + 'px, ' + -a.y + 'px)';
 			transform += ' rotate(' + this.options.iconAngle + 'deg)';
-			transform += ' translate(' + a.x + 'px, ' + a.y + 'px)';
+			//transform += ' translate(' + a.x + 'px, ' + a.y + 'px)';
 			this._icon.style[L.DomUtil.TRANSFORM] += transform;
 		}
 	},

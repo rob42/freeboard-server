@@ -141,6 +141,13 @@ public class ConfigViewModel extends SelectorComposer<Window> {
     @Wire("radio#useHomeRadio")
     Radio useHomeRadio;
 
+    @Wire("textbox#numBoatCircles")
+    private Textbox numBoatCircles;
+
+    @Wire("textbox#radiiBoatCircles")
+    private Textbox radiiBoatCircles;
+
+
     private ProducerTemplate producer;
 
     private TreeMap<String, String> allListMap;
@@ -368,6 +375,18 @@ public class ConfigViewModel extends SelectorComposer<Window> {
             } else {
                 Messagebox.show("Sparkline minimum must be numeric");
             }
+            if (NumberUtils.isNumber(radiiBoatCircles.getValue())) {
+                config.setProperty(Constants.RADII_BOAT_CIRCLES, radiiBoatCircles.getValue());
+                Util.saveConfig();
+            } else {
+                Messagebox.show("Boat circle radii minimum must be numeric (m)");
+            }
+            if (NumberUtils.isNumber(numBoatCircles.getValue())) {
+                config.setProperty(Constants.NUM_BOAT_CIRCLES, numBoatCircles.getValue());
+                Util.saveConfig();
+            } else {
+                Messagebox.show("Number of Boat Circles must be numeric");
+            }
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
         }
@@ -383,7 +402,7 @@ public class ConfigViewModel extends SelectorComposer<Window> {
         // linux (and OSX?)
         if (SystemUtils.IS_OS_LINUX || SystemUtils.IS_OS_MAC_OSX) {
             // each will be /dev/tty* or /dev/cu*
-            for (String port : ports) {
+		for (String port : ports) {
                 if (StringUtils.isBlank(port)) {
                     continue;
                 }
@@ -621,7 +640,9 @@ public class ConfigViewModel extends SelectorComposer<Window> {
             cfgSparklineMin.setValue(config.getProperty(Constants.SPARKLINE_MIN));
             portsToScan.setValue(config.getProperty(Constants.SERIAL_PORTS));
             cfgWindOffset.setValue(config.getProperty(Constants.WIND_ZERO_OFFSET));
-            String useChoice = config.getProperty(Constants.DNS_USE_CHOICE);
+            radiiBoatCircles.setValue(config.getProperty(Constants.RADII_BOAT_CIRCLES));
+				numBoatCircles.setValue(config.getProperty(Constants.NUM_BOAT_CIRCLES));
+				String useChoice = config.getProperty(Constants.DNS_USE_CHOICE);
             if (Constants.DNS_USE_BOAT.equals(useChoice)) {
                 useHomeGroup.setSelectedItem(useBoatRadio);
             } else {

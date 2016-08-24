@@ -60,12 +60,12 @@
 							<row hflex="min">
 								<label value="Wind Correction" />
 								<textbox id="cfgWindOffset"
-									tooltip="+/- degrees offset" />
+									tooltiptext="+/- degrees offset" />
 							</row>
 							<row hflex="min">
 								<label value="Compass Correction" />
 								<textbox id="cfgCompassOffset"
-									tooltip="+/- degrees offset" />
+									tooltiptext="+/- degrees offset" />
 							</row>
 							<row hflex="min">
 								<label value="Heading source" />
@@ -88,7 +88,7 @@
 								<combobox id="cfgSOGUnit"
 									tooltiptext= "km/hr, Mi/hr, Kt">
 									<comboitem label="km/hr" value="km/hr"/>
-									<comboitem label="mi/hr" value="mi/hr"/>
+									<comboitem label="Mi/hr" value="Mi/hr"/>
 									<comboitem label="Kt" value="Kt"/>
 									</combobox>
 							</row>
@@ -104,17 +104,27 @@
 							<row hflex="min">
 								<label value="Depth Offset" />
 								<textbox id="cfgDepthOffset"
-									tooltip="Transducer depth below water" />
+									tooltiptext="Transducer depth below water" />
 							</row>
 							<row hflex="min">
 								<label value="Alarm Depth" />
 								<textbox id="cfgAlarmDepth"
-									tooltip="Shows alarm if depth less than this value." />
+									tooltiptext="Shows alarm if depth less than this value." />
 							</row>
                      <row hflex="min">
 								<label value="Sparkline Minimum" />
 								<textbox id="cfgSparklineMin"
-									tooltip="Minimum depth for the Sparkline plot." />
+									tooltiptext="Minimum depth for the Sparkline plot." />
+							</row>
+							<row hflex="min">
+								<label value="Number of Boat Circles" />
+								<textbox id="numBoatCircles"
+									tooltiptext="The number of circles to be drawn around the boat" />
+							</row>
+							<row hflex="min">
+								<label value="Boat Circle Radii" />
+								<textbox id="radiiBoatCircles"
+									tooltiptext="The radial difference between the boat circles" />
 							</row>
 							<row>
 								<hbox>
@@ -122,7 +132,6 @@
 									<button id="cfgCancel" height="38px"
 										label="Cancel" />
 								</hbox>
-
 							</row>
 						</rows>
 					</grid>

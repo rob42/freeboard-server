@@ -1,0 +1,80 @@
+
+<!--
+  Copyright 2012,2013 Robert Huitema robert@42.co.nz
+
+  This file is part of FreeBoard. (http://www.42.co.nz/freeboard)
+
+  FreeBoard is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+
+  FreeBoard is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with FreeBoard.  If not, see <http://www.gnu.org/licenses/>.
+ -->
+<?page viewport="width=device-width, initial-scale=1.0, user-scalable=yes"?>
+<?page title="new page title" contentType="text/html;charset=UTF-8"?>
+<?script src="./js/jquery-1.8.2.min.js"?>
+<?script src="./js/tween-min.js"?>
+<?script src="./js/steelseries.js"?>
+<?script src="./js/websocket.js"?>
+<zk xmlns:w="http://www.zkoss.org/2005/zk/client">
+<script type="text/javascript" src="./js/toggleWind.js" />
+<window id="toggleWind"
+		apply="nz.co.fortytwo.freeboard.zk.ToggleWindModel"
+		height="30px" width="100px" title="Wind T/A"
+		 mode="overlapped" visible="false" minimizable="true"
+                 w:onMove="toggleWindOnMove(event)" >
+<!-- 		 <style>.z-panel-body { overflow: visible; }"</style> -->
+		<style>
+			.z-window-content, .z-panel-body, .z-window-modal-cnt-noborder, .z-window-highlighted-cnt-noborder,
+			.z-window-embedded-cnt-noborder, .z-window-overlapped-cnt-noborder, .z-window-popup-cnt-noborder
+			.z-window-embedded, .z-window-modal, .z-window-overlapped, .z-window-popup, .z-window-highlighted {
+				    overflow: visible;
+				}
+		</style>
+	<hlayout style="overflow: visible">
+		<vlayout>
+			<hlayout>
+				<vlayout
+					style="margin-left:auto; margin-right:auto; text-align:center;">
+
+					<html style="overflow: visible">
+						<canvas id="canvasToggleWindDir" width="150px"
+							height="100px">
+							No canvas in your browser...sorry...
+						</canvas>
+					</html>
+                                        <html >
+                                        <div id="wSpring" class="windSparkline"></div>
+<!--                                        <div id="wSpring" style="border:1px solid #000000;" class="dynamicsparkline"></div> -->
+                                        </html>
+
+					<hlayout id="twButtons" valign="middle">
+						<label id="logScale" value="0.0" visible="false"/>
+						<button id="toggleWindShrink" tooltiptext="Shrink the panel"
+							image="./js/img/zoom-minus-mini.png" w:onClick="resizeToggleWind(-0.2)" />
+                                                <button id="twImageToggle"
+                                                        image="./js/img/ToggleApp.png" w:onClick="toggle()" />
+						<button id="toggleWindGrow" tooltiptext="Grow the panel"
+							image="./js/img/zoom-plus-mini.png" w:onClick="resizeToggleWind(0.2)" />
+					</hlayout>
+					<html>
+						<canvas id="canvasToggleWind" width="150px"
+							height="100px" />
+					</html>
+				</vlayout>
+			</hlayout>
+		</vlayout>
+	</hlayout>
+</window>
+
+	<script type="text/javascript" defer="true">initSocket(); initToggleWind();</script>
+
+
+</zk>

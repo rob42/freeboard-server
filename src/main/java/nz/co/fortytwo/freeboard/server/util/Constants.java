@@ -200,6 +200,10 @@ public class Constants {
 	public static final String SPARKLINE_PTS = "freeboard.sparkline.points";
 	public static final String SPARKLINE_MIN = "freeboard.sparkline.minimum";
 
+	public static final String NUM_BOAT_CIRCLES = "freeboard.numBoatCircles";
+	public static final String RADII_BOAT_CIRCLES = "freeboard.radiiBoatCircles";
+
+
 	// gui constants
 //	public static final String LOGG_X = "freeboard.logg.x";
 //	public static final String LOGG_Y = "freeboard.logg.y";
