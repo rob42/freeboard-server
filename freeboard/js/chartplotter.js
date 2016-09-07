@@ -52,6 +52,7 @@ var windSpdTrue=0;
 var windDirApparent=0;
 var windDirTrue=0;
 var ONE_KNOT_LAT=(1000 / 40075017) * 360;
+var allCharts = {};
 
 function initCharts() {
 	//
@@ -71,7 +72,40 @@ function initCharts() {
                 maxZoom: 20
 	}).setView(new L.LatLng(firstLat,firstLon),firstZoom,true);
 
-	addLayers(map);
+        allCharts = JSON.parse(zk.Widget.$('$allChartIndex').getValue());
+		  console.log(allCharts);
+		  console.log(allCharts[0]);
+        var screenBounds = map.getBounds();
+        var scrnBoundsArray = [];
+        scrnBoundsArray[0] = {x: screenBounds.getNorthEast().lng, y: screenBounds.getNorthEast().lat};
+        scrnBoundsArray[1] = {x: screenBounds.getSouthWest().lng, y: screenBounds.getNorthEast().lat};
+        scrnBoundsArray[2] = {x: screenBounds.getSouthWest().lng, y: screenBounds.getSouthWest().lat};
+        scrnBoundsArray[3] = {x: screenBounds.getNorthEast().lng, y: screenBounds.getSouthWest().lat};
+//			console.log("ScrnBoundsArray");
+//        for (i = 0; i < 4; i++){
+//            console.log(scrnBoundsArray[i]);
+//        }
+        for (var i = 0; i < allCharts.length; i++){
+            var included = false;
+            var chartBoundsArray = [];
+				console.log(allCharts[i]["Title"]);
+				if ((firstZoom > allCharts[i].maxZoom)||(firstZoom < allCharts.minZoom)){
+                included =false;
+                console.log("\t+not included - zoom out of range");
+					 continue;
+            }
+				chartBoundsArray[0] = {x:allCharts[i].minx, y:allCharts[i].maxy};
+				chartBoundsArray[1] = {x:allCharts[i].maxx, y:allCharts[i].maxy};
+				chartBoundsArray[2] = {x:allCharts[i].maxx, y:allCharts[i].miny};
+				chartBoundsArray[3] = {x:allCharts[i].minx, y:allCharts[i].miny};
+//				console.log("ChartBoundsArray");
+//				for (var ii = 0; ii < 4; ii++){
+//					console.log(chartBoundsArray[ii]);
+//				}
+				included = doPolygonsIntersect(scrnBoundsArray, chartBoundsArray)
+				console.log("\t chart overlaps screen bounds = "+included);
+        }
+        addLayers(map);
 
 
 	var zoomControl = new L.Control.Zoom({
@@ -246,11 +280,25 @@ function initCharts() {
 }
 
 
+/** Autoselect chart layers
+ *
+ * Charts are selected if they partially or wholly contain the screen bounds
+ *
+ */
 
+//function autoSelectCharts(){
+//    var zoom = map.getZoom();
+//    for (i = 0; i < allCharts.length; i++){
+//        if ()
+//
+//    }
+//}
 
 // set layer visibility
 function setLayerVisibility(){
-	var vis = zk.Widget.$("$layerVisibility").getValue().split(';');
+    var vis = zk.Widget.$("$layerVisibility").getValue().split(';');
+    var allCharts = zk.Widget.$("$allChartIndex").getValue();
+    var array_from_json = JSON.parse(allCharts);
 	jQuery.each(vis, function(i, data) {
 		var lyr = data.split("=");
 		//console.log(lyr);
@@ -269,6 +317,38 @@ function setLayerVisibility(){
 	});
 }
 
+
+function getTileUrls(bounds, tileLayer, zoom) {
+    var urlTemp;
+    var min = map.project(bounds.getNorthWest(), zoom).divideBy(256).floor(),
+        max = map.project(bounds.getSouthEast(), zoom).divideBy(256).floor(),
+        urls = [];
+
+    if (zoom > tileLayer.options.maxNativeZoom){
+        return;
+    }
+    if (zoom< tileLayer.options.minZoom){
+        return;
+    }
+    for (var i = min.x; i <= max.x; i++) {
+        for (var j = min.y; j <= max.y; j++) {
+            var coords = new L.Point(i, j);
+            coords.z = zoom;
+            urlTemp = tileLayer.getTileUrl(coords);
+            var test = UrlExists(urlTemp);
+            urls.push(tileLayer.getTileUrl(coords));
+            }
+        }
+    return urls;
+}
+
+function UrlExists(url)
+{
+    var http = new XMLHttpRequest();
+    http.open('HEAD', url, false);
+    http.send();
+    return http.status!=404;
+}
 
 /**
  * Set the current position, moving vessel, bearing and track, and associated stuff
@@ -290,7 +370,21 @@ function setPosition(llat, llon, brng, spd) {
 	} else {
 		eLon.setValue(llon.toFixed(5) + ' W');
 	}
-	if(map.hasLayer(shipMarker)){
+//        var zm = map.getZoom();
+//        var url;
+//        map.eachLayer(function (layer) {
+//            if (layer instanceof L.TileLayer){
+//                url = getTileUrls(map.getBounds(), layer, zm);
+//                console.log(layer.options.attribution);
+//                if (url == undefined){
+//                } else {
+//                    console.log(url.join(separator = '\n'));
+//                }
+//            }
+//        });
+
+
+    if(map.hasLayer(shipMarker)){
         //console.log("Chartplotter:moveBoat to "+llat+","+llon);
         var posit = new L.LatLng(llat, llon);
         shipMarker.setLatLng(posit);
@@ -698,3 +792,85 @@ function destVincenty(lat1, lon1, brng, dist) {
 	var llon = lon1 + toDeg(La);
 	return new L.LatLng(llat, llon);
 };
+
+function rotate(cx, cy, x, y, angle) {
+    var radians = (Math.PI / 180) * angle,
+        cos = Math.cos(radians),
+        sin = Math.sin(radians),
+        nx = (cos * (x - cx)) + (sin * (y - cy)) + cx,
+        ny = (cos * (y - cy)) - (sin * (x - cx)) + cy;
+    return [nx, ny];
+}
+
+/**
+ *
+ * The code for isUndefined and doPolygonsIntersect from:
+ * http://stackoverflow.com/questions/10962379/how-to-check-intersection-between-2-rotated-rectangles
+ */
+function isUndefined(a) {
+    return a === undefined;
+}
+
+/**
+ * Helper function to determine whether there is an intersection between the two polygons described
+ * by the lists of vertices. Uses the Separating Axis Theorem
+ *
+ * @param a an array of connected points [{x:, y:}, {x:, y:},...] that form a closed polygon
+ * @param b an array of connected points [{x:, y:}, {x:, y:},...] that form a closed polygon
+ * @return true if there is any intersection between the 2 polygons, false otherwise
+ */
+function doPolygonsIntersect (a, b) {
+    var polygons = [a, b];
+    var minA, maxA, projected, i, i1, j, minB, maxB;
+
+    for (i = 0; i < polygons.length; i++) {
+
+        // for each polygon, look at each edge of the polygon, and determine if it separates
+        // the two shapes
+        var polygon = polygons[i];
+        for (i1 = 0; i1 < polygon.length; i1++) {
+
+            // grab 2 vertices to create an edge
+            var i2 = (i1 + 1) % polygon.length;
+            var p1 = polygon[i1];
+            var p2 = polygon[i2];
+
+            // find the line perpendicular to this edge
+            var normal = { x: p2.y - p1.y, y: p1.x - p2.x };
+
+            minA = maxA = undefined;
+            // for each vertex in the first shape, project it onto the line perpendicular to the edge
+            // and keep track of the min and max of these values
+            for (j = 0; j < a.length; j++) {
+                projected = normal.x * a[j].x + normal.y * a[j].y;
+                if (isUndefined(minA) || projected < minA) {
+                    minA = projected;
+                }
+                if (isUndefined(maxA) || projected > maxA) {
+                    maxA = projected;
+                }
+            }
+
+            // for each vertex in the second shape, project it onto the line perpendicular to the edge
+            // and keep track of the min and max of these values
+            minB = maxB = undefined;
+            for (j = 0; j < b.length; j++) {
+                projected = normal.x * b[j].x + normal.y * b[j].y;
+                if (isUndefined(minB) || projected < minB) {
+                    minB = projected;
+                }
+                if (isUndefined(maxB) || projected > maxB) {
+                    maxB = projected;
+                }
+            }
+            // if there is no overlap between the projects, the edge we are looking at separates the two
+            // polygons, and we know there is no overlap
+            if (maxA < minB || maxB < minA) {
+                //console.log("polygons don't intersect!");
+                return false;
+            }
+        }
+    }
+    return true;
+};
+

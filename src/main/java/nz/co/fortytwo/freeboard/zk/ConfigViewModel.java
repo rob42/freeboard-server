@@ -18,9 +18,12 @@
  */
 package nz.co.fortytwo.freeboard.zk;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
+import java.util.StringTokenizer;
 import java.util.TreeMap;
 import java.util.regex.Pattern;
 
@@ -51,6 +54,7 @@ import org.zkoss.zul.Radio;
 import org.zkoss.zul.Radiogroup;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
+import org.zkoss.zul.Label;
 
 public class ConfigViewModel extends SelectorComposer<Window> {
 
@@ -147,10 +151,15 @@ public class ConfigViewModel extends SelectorComposer<Window> {
     @Wire("textbox#radiiBoatCircles")
     private Textbox radiiBoatCircles;
 
+    @Wire("#allChartIndex")
+    private Label allChartIndex;
+
 
     private ProducerTemplate producer;
 
-    private TreeMap<String, String> allListMap;
+    private TreeMap<String, String>  allListMap;
+    private TreeMap<String, String> chartIndex;
+    List<TreeMap<String, String>> chartIndexList = new ArrayList<TreeMap<String, String>>();
     private ArrayList<String> selectedListArray;
 
     public ConfigViewModel() {
@@ -176,6 +185,9 @@ public class ConfigViewModel extends SelectorComposer<Window> {
         selectedCharts.setModel(selectedChartsModel);
     }
 
+    /** Fill the selectedListArray with the selected chart layers from freeboard.cfg
+     *
+     */
     private void setSelectedChartLayers() throws Exception {
         File layersFile = new File(Util.getConfig(null).getProperty(
                 Constants.FREEBOARD_RESOURCE)
@@ -191,7 +203,7 @@ public class ConfigViewModel extends SelectorComposer<Window> {
             String name = layer.substring(pos, pos1);
             selectedListArray.add(name);
             if (logger.isDebugEnabled()) {
-                logger.debug("Found:" + name);
+                logger.debug("Found Selected:" + name);
             }
             pos = layer.indexOf("L.tileLayer(", pos1 + 1);
         }
@@ -265,6 +277,14 @@ public class ConfigViewModel extends SelectorComposer<Window> {
         return snippet;
     }
 
+    /**
+     * Read the MapCache tilemapresource fies to get boundig box for each chart
+     * Read the MapCache freeboard.txt to get the minZoom, maxZoom and maxNAtiveZoom
+     * Construct the allChartsModel ListModelList
+     * Construct the chartIndex TreeMap and add it to the chartIndexList.
+     * Use the chartIndexList to generate the JSON string
+     * that is used as the value for the allChartIndex label in configWindow.zul
+    */
     private void setAllChartLayers() throws Exception {
         File layersDir = new File(Util.getConfig(null).getProperty(
                 Constants.MAPCACHE_RESOURCE));
@@ -276,6 +296,30 @@ public class ConfigViewModel extends SelectorComposer<Window> {
             if (layerDir.isFile()) {
                 continue;
             }
+            StringTokenizer st;
+            try {
+                File resourceFile = new File(layerDir, "tilemapresource.xml");
+                if (resourceFile.exists()) {
+                    chartIndex = new TreeMap<String, String>();
+                    String resource = FileUtils.readFileToString(resourceFile);
+                    int ptr = resource.indexOf("<Title>") + 7;
+                    int ptr2 = resource.indexOf("/", ptr) - 1;
+                    chartIndex.put("Title", resource.substring(ptr, ptr2));
+                    ptr = resource.indexOf("BoundingBox") + 11;
+                    int ptr1 = resource.indexOf("\n", ptr);
+                    st = new StringTokenizer(resource.substring(ptr, ptr1).replaceAll("\"", ""), " <>=/");
+                    while (st.hasMoreTokens()){
+                        chartIndex.put((String)st.nextElement(), (String)st.nextElement());
+                    }
+                    if (logger.isDebugEnabled()) {
+                        logger.debug("Found tilemapresource:" + chartIndex.toString());
+                    }
+                } else {
+                    logger.warn(resourceFile.getAbsolutePath() + " does not exist");
+                }
+            } catch (Exception e) {
+                logger.error(e.getMessage(), e);
+            }
             try {
                 File layerFile = new File(layerDir, "freeboard.txt");
                 if (layerFile.exists()) {
@@ -283,9 +327,29 @@ public class ConfigViewModel extends SelectorComposer<Window> {
                     String chart = layerFile.getName();
                     chart = chart.substring(0, chart.indexOf("."));
                     String name = getChartName(layer, chart);
+                    int ptr = layer.indexOf("minZoom");
+                    int ptr2;
+                    if (ptr != -1){
+                    ptr += 7;
+                    ptr2 = layer.indexOf(",", ptr);
+                        chartIndex.put("minZoom", layer.substring(ptr, ptr2).replace(":", "").trim());
+                    }
+                    ptr = layer.indexOf("maxZoom");
+                    if (ptr != -1){
+                        ptr += 7;
+                        ptr2 = layer.indexOf(",", ptr);
+                        chartIndex.put("maxZoom", layer.substring(ptr, ptr2).replace(":", "").trim());
+                    }
+                    ptr = layer.indexOf("maxNativeZoom");
+                    if (ptr != -1){
+                        ptr += 13;
+                        ptr2 = layer.indexOf(",", ptr);
+                        chartIndex.put("maxNativeZoom", layer.substring(ptr, ptr2).replace(":", "").trim());
+                    }
+                    chartIndexList.add(chartIndex);
                     allListMap.put(name, layer);
                     if (logger.isDebugEnabled()) {
-                        logger.debug("Found:" + name);
+                        logger.debug("Found All:" + name);
                     }
                 } else {
                     logger.warn(layerFile.getAbsolutePath() + " does not exist");
@@ -296,6 +360,8 @@ public class ConfigViewModel extends SelectorComposer<Window> {
 
         }
 
+        String jysonList = (new ObjectMapper()).writeValueAsString(chartIndexList);
+		  allChartIndex.setValue(jysonList);
         allChartsModel = new ListModelList<String>(allListMap.keySet());
 
     }
@@ -362,13 +428,6 @@ public class ConfigViewModel extends SelectorComposer<Window> {
             } else {
                 Messagebox.show("Alarm depth must be numeric");
             }
-
-//            if (NumberUtils.isNumber(cfgSparklinePts.getValue())) {
-//                config.setProperty(Constants.SPARKLINE_PTS, cfgSparklinePts.getValue());
-//                Util.saveConfig();
-//            } else {
-//                Messagebox.show("Sparkline points must be numeric");
-//            }
             if (NumberUtils.isNumber(cfgSparklineMin.getValue())) {
                 config.setProperty(Constants.SPARKLINE_MIN, cfgSparklineMin.getValue());
                 Util.saveConfig();

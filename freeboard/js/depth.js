@@ -32,7 +32,7 @@ function resizeDepth(amount) {
     }
     if (amount == 0.0)
         return;
-    console.log("resize entry: amount, wsize, hzixe = " + amount + " " + width * amount + " " + height * amount);
+//    console.log("resize entry: amount, wsize, hzixe = " + amount + " " + width * amount + " " + height * amount);
     localStorage.setItem("depth.scale", amount);
 
     $("#canvasDepth").width(width * amount);
@@ -85,7 +85,7 @@ function Depth() {
             if (unitTemp !== depthUnit) {
                 var headerString = "Depth " + unitTemp;
                 var depthUnit = unitTemp;
-                console.log("DBT DisplaySingle");
+//                console.log("DBT DisplaySingle");
                 lcdDepth = new steelseries.DisplaySingle('canvasDepth', {
                     lcdDecimals: 1,
                     lcdColor: steelseries.LcdColor.BEIGE,

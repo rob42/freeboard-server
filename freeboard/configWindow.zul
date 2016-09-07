@@ -28,6 +28,7 @@
 		minimizable="true">
 
 
+		<label id="allChartIndex" value="" visible="false" />
 		<tabbox>
 			<tabs >
 				<tab label="Config" />
