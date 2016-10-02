@@ -263,19 +263,19 @@ public class Util {
             }
             timeSet = true;
             Date date = new Date();
+            net.sf.marineapi.nmea.util.Date gpsDate;
 				
             //so we need to set the date and time
-            net.sf.marineapi.nmea.util.Time timeNow = sen.getTime();
-            String yy = String.valueOf(dayNow.getYear());
-            String MM = pad(2, String.valueOf(dayNow.getMonth()));
-            String dd = pad(2, String.valueOf(dayNow.getDay()));
-            String hh = pad(2, String.valueOf(timeNow.getHour()));
-            String mm = pad(2, String.valueOf(timeNow.getMinutes()));
-            String ss = pad(2, String.valueOf(timeNow.getSeconds()));
+            net.sf.marineapi.nmea.util.Time gpsTime = sen.getTime();
+            gpsDate = sen.getDate();
+            String hh = pad(2, String.valueOf(gpsTime.getHour()));
+            String mm = pad(2, String.valueOf(gpsTime.getMinutes()));
+            String ss = pad(2, String.valueOf((int)gpsTime.getSeconds()));
             if (logger.isDebugEnabled()) {
-                logger.debug("Setting current date to " + dayNow + " " + timeNow);
+                logger.debug("Setting current date to " + dayNow + " " + gpsTime);
             }
-            String cmd = "sudo date --utc " + MM + dd + hh + mm + yy + "." + ss;
+            String cmd = "sudo date --utc " + pad(2, String.valueOf(gpsDate.getMonth())) + 
+                    pad(2, String.valueOf(gpsDate.getDay())) + hh + mm + gpsDate.getYear() + "." + ss;
             System.out.println("Setting date " + cmd);
             // only set the system time if we are not running demo
             if (props.getProperty(Constants.DEMO).equals("false")) {

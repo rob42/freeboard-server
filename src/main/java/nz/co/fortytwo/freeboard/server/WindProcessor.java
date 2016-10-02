@@ -152,6 +152,10 @@ public class WindProcessor extends FreeboardProcessor implements Processor, Free
 		if (Double.valueOf(tspeed).isNaN() || Double.isInfinite(tspeed))
 			return;
 		trueWindSpeed = tspeed * vesselSpd;
+                if (trueWindSpeed < 0.0d) {
+                    trueDirection = trueDirection + 180.0;
+                    trueWindSpeed = -trueWindSpeed;
+                }
 	}
 
 	public double getTrueDirection() {
