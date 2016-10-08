@@ -46,6 +46,7 @@
 <?script src="./js/chartplotter.js" ?>
 <?script src="./js/tween-min.js"?>
 <?script src="./js/steelseries.js"?>
+<?script src="./js/vectorArray.js"?>
 
 
 <zk>

@@ -16,13 +16,8 @@
  *  You should have received a copy of the GNU General Public License
  *  along with FreeBoard.  If not, see <http://www.gnu.org/licenses/>.
  */
-//var  lcdWindTrue, radialWindDirTrue
-var avgArrayA = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
-    0.0, 0.0, 0.0];
-var avgPosA = 0;
-var avgArrayT = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
-    0.0, 0.0, 0.0];
-var avgPosT = 0;
+var wind2VectorArrayApparent = new vectorArray();
+var wind2VectorArrayTrue = new vectorArray();
 
 var width = 400;
 
@@ -82,19 +77,20 @@ function Wind2() {
             }
 
             // make average
-            avgArrayA[avgPosA] = c;
-            avgPosA = avgPosA + 1;
-            if (avgPosA >= avgArrayA.length)
-                avgPosA = 0;
-            var v = 0;
-            for (var i = 0; i < avgArrayA.length; i++) {
-                v = v + avgArrayA[i];
-            }
-            if (c > 180) {
-                radialWindDirApp
-                        .setValueAnimatedAverage(-(360 - (v / avgArrayA.length)));
+            if (navObj.WSA) {
+                if (c < 0) {
+                    c += 360;
+                }
+                wind2VectorArrayApparent.addVector([navObj.WSA, c]);
             } else {
-                radialWindDirApp.setValueAnimatedAverage(v / avgArrayA.length);
+                wind2VectorArrayApparent.addVector(null);
+            }
+            avgVector = wind2VectorArrayApparent.getVectorAverage();
+            if (avgVector[1] > 180) {
+                radialWindDirApp
+                        .setValueAnimatedAverage(-(360 - avgVector[1]));
+            } else {
+                radialWindDirApp.setValueAnimatedAverage(avgVector[1]);
             }
 
             c = null;
@@ -107,22 +103,21 @@ function Wind2() {
                 radialWindDirTrue.setValueAnimatedLatest(0.0);
 
             // make average
-            avgArrayT[avgPosT] = c;
-            avgPosT = avgPosT + 1;
-            if (avgPosT >= avgArrayT.length)
-                avgPosT = 0;
-            var v = 0.0;
-            for (var i = 0; i < avgArrayT.length; i++) {
-                v = v + avgArrayT[i];
+            if (navObj.WST) {
+                if (c < 0) {
+                    c += 360;
+                }
+                wind2VectorArrayTrue.addVector([navObj.WST, c]);
+            } else {
+                wind2VectorArrayTrue.addVector(null);
             }
-            if (v > 0.0)
-                radialWindDirTrue.setValueAnimatedAverage(v / avgArrayT.length);
+            avgVector = wind2VectorArrayTrue.getVectorAverage();
+            if (avgVector[1]  > 0.0)
+                radialWindDirTrue.setValueAnimatedAverage(avgVector[1]);
             else
                 radialWindDirTrue.setValueAnimatedAverage(0.0);
         }
         c = null;
-
-        data = null;
     };
 }
 
