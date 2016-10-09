@@ -21,17 +21,9 @@ var windSparkArraySize;
 var windSparkTrue = [];
 var windSparkApp = [];
 var windOptions;
-// // Arrays and pointers for wind direction
-var avgArrayA;
-var avgPosA = 0;
-var avgArrayT;
-var avgPosT = 0;
-
-//Arrays and pointers for wind magnitude
-var avgVelA;
-var avgVelT;
-var avgVelPosA = 0;
-var avgVelPosT = 0;
+// wind vector averaging objects
+var toggleWindVectorArrayApparent = new vectorArray();
+var toggleWindVectorArrayTrue = new vectorArray();
 
 var width = 400;
 var displayTrue = 0;
@@ -106,108 +98,49 @@ function ToggleWind() {
         if (!navObj)
             return true;
 
-        if (navObj.WSA) {
-            avgVelA = JSON.parse(localStorage.getItem("toggleWind.avgVelA"));
-            avgVelPosA = localStorage.getItem("toggleWind.avgVelPosA");
-            avgVelA[avgVelPosA] = navObj.WSA;
-            avgVelPosA = parseInt(avgVelPosA) + 1;
-            if (avgVelPosA >= avgVelA.length) {
-                avgVelPosA = 0;
-            }
-            localStorage.setItem("toggleWind.avgVelPosA", avgVelPosA);
-            localStorage.setItem("toggleWind.avgVelA", JSON.stringify(avgVelA));
+        if (navObj.WSA && navObj.WDA) {
+	    toggleWindVectorArrayApparent.addVector([navObj.WSA, navObj.WDA]);
+	    avgVector = toggleWindVectorArrayApparent.getVectorAverage();
+
             windSparkApp.shift();
-            windSparkApp.push(navObj.WST);
-            localStorage.setItem("toggleWind.windSparkApp", JSON.stringify(windSparkApp));
+            windSparkApp.push(navObj.WSA);
             if (!displayTrue) {
                 lcdToggleWind.setValue(navObj.WSA);
-                lcdToggleWind.setAltValue(arrayAvg(avgVelA));
+                lcdToggleWind.setAltValue(avgVector[0]);
                 $('.windSparkline').sparkline(windSparkApp, windOptions);
+                if (navObj.WDA > 180) {
+                    radialToggleWindDir.setValueAnimatedLatest(-(360 - navObj.WDA));
+                } else {
+                    radialToggleWindDir.setValueAnimatedLatest(navObj.WDA);
+                }
+                if (avgVector[1] > 180) {
+                    radialToggleWindDir
+                            .setValueAnimatedAverage(-(360 - avgVector[1]));
+                } else {
+                    radialToggleWindDir.setValueAnimatedAverage(avgVector[1]);
+                }
             }
         }
-        if (navObj.WST) {
-            avgVelT = JSON.parse(localStorage.getItem("toggleWind.avgVelT"));
-            avgVelPosT = localStorage.getItem("toggleWind.avgVelPosT");
-            avgVelT[avgVelPosT] = navObj.WST;
-            avgVelPosT = parseInt(avgVelPosT) + 1;
-            if (avgVelPosT >= avgVelT.length) {
-                avgVelPosT = 0;
-            }
-            localStorage.setItem("toggleWind.avgVelPosT", avgVelPosT);
-            localStorage.setItem("toggleWind.avgVelT", JSON.stringify(avgVelT));
+        if (navObj.WST && navObj.WDT) {
+	    toggleWindVectorArrayTrue.addVector([navObj.WST, navObj.WDT]);
+	    avgVector = toggleWindVectorArrayTrue.getVectorAverage();
+
             windSparkTrue.shift();
             windSparkTrue.push(navObj.WST);
-            localStorage.setItem("toggleWind.windSparkTrue", JSON.stringify(windSparkTrue));
             if (displayTrue) {
                 lcdToggleWind.setValue(navObj.WST);
-                lcdToggleWind.setAltValue(arrayAvg(avgVelT));
+                lcdToggleWind.setAltValue(avgVector[0]);
                 $('.windSparkline').sparkline(windSparkTrue, windOptions);
-            }
-        }
-        if (navObj.WDA) {
-            var c = navObj.WDA;
-            // -180 <> 180
-            if (!displayTrue) {
-                if (c > 180) {
-                    radialToggleWindDir.setValueAnimatedLatest(-(360 - c));
-                } else {
-                    radialToggleWindDir.setValueAnimatedLatest(c);
-                }
-            }
-
-            // make average
-            avgArrayA = JSON.parse(localStorage.getItem("toggleWind.avgArrayA"));
-            avgPosA = localStorage.getItem("toggleWind.avgPosA");
-            avgArrayA[avgPosA] = c;
-            avgPosA = parseInt(avgPosA) + 1;
-            localStorage.setItem("toggleWind.avgArrayA", JSON.stringify(avgArrayA));
-
-
-            if (avgPosA >= avgArrayA.length) {
-                avgPosA = 0;
-            }
-            localStorage.setItem("toggleWind.avgPosA", avgPosA);
-            if (!displayTrue) {
-                if (c > 180) {
-                    radialToggleWindDir
-                            .setValueAnimatedAverage(-(360 - arrayAvg(avgArrayA)));
-                } else {
-                    radialToggleWindDir.setValueAnimatedAverage(arrayAvg(avgArrayA));
-                }
-            }
-
-            c = null;
-        }
-        if (navObj.WDT) {
-            var c = navObj.WDT;
-            if (displayTrue) {
-                if (c > 0.0 || c < 360.0)
-                    radialToggleWindDir.setValueAnimatedLatest(c);
-                else
-                    radialToggleWindDir.setValueAnimatedLatest(0.0);
-            }
-
-            // make average
-            avgArrayT = JSON.parse(localStorage.getItem("toggleWind.avgArrayT"));
-            avgPosT = localStorage.getItem("toggleWind.avgPosT");
-            avgArrayT[avgPosT] = c;
-            avgPosT = parseInt(avgPosT) + 1;
-            if (avgPosT >= avgArrayT.length) {
-                avgPosT = 0;
-            }
-            localStorage.setItem("toggleWind.avgPosT", avgPosT);
-            localStorage.setItem("toggleWind.avgArrayT", JSON.stringify(avgArrayT));
-            if (displayTrue) {
-                var tempAvgVel = arrayAvg(avgArrayT);
-                if (tempAvgVel > 0.0)
-                    radialToggleWindDir.setValueAnimatedAverage(tempAvgVel);
+		if (navObj.WDT > 0.0 && navObj.WDT < 360.0)
+		    radialToggleWindDir.setValueAnimatedLatest(navObj.WDT)
+		else
+		    radialToggleWindDir.setValueAnimatedLatest(0.0);
+                if (avgVector[1] > 0.0)
+                    radialToggleWindDir.setValueAnimatedAverage(avgVector[1]);
                 else
                     radialToggleWindDir.setValueAnimatedAverage(0.0);
             }
         }
-        c = null;
-
-        data = null;
     };
 }
 
@@ -218,20 +151,16 @@ function toggle() {
     if (s._image.includes("./js/img/ToggleApp.png")) {
         s.setImage("./js/img/ToggleTrue.png");
         displayTrue = 1;
-        if (avgVelPosT == 0) {
-            vel = avgVelT[avgVelT.length - 1];
-        } else {
-            vel = avgVelT[avgVelPosT - 1];
-        }
-        avgVel = arrayAvg(avgVelT);
+	var lastVector = toggleWindVectorArrayTrue.getVectorLast();
+	var avgVector = toggleWindVectorArrayTrue.getVectorAverage();
         lcdToggleWind = new steelseries.DisplayMulti('canvasToggleWind', {
             width: smallWidth,
             height: smallHeight,
             lcdDecimals: 1,
             lcdColor: steelseries.LcdColor.BEIGE,
             unitString: "Knots(T)",
-            value: vel,
-            altValue: avgVel,
+            value: lastVector[0],
+            altValue: avgVector[0],
             linkAltValue: false,
             unitStringVisible: true,
             detailString: "Avg: ",
@@ -262,34 +191,26 @@ function toggle() {
             maxSpotColor: '',
             minSpotColor: '',
             fillColor: 'red',
-//        fillColor: '',
             chartRangeMin: 0
         };
         $('.windSparkline').sparkline(windSparkTrue, windOptions);
-		  var temp = JSON.parse(localStorage.getItem("toggleWind.avgArrayT"));
-		  var ndx = localStorage.getItem("toggleWind.avgPosT");
-		  var tempDir = temp[ndx];
-		  radialToggleWindDir.setValueLatest(tempDir);
-		  radialToggleWindDir.segtValueAverage(arrayAve(temp));
+	radialToggleWindDir.setValueLatest(lastVector[1]);
+	radialToggleWindDir.setValueAverage(avgVector[1]);
 
 
     } else {
         s.setImage("./js/img/ToggleApp.png");
         displayTrue = 0;
-        if (avgVelPosA == 0) {
-            vel = avgVelA[avgVelA.length - 1];
-        } else {
-            vel = avgVelA[avgVelPosA - 1];
-        }
-        avgVel = arrayAvg(avgVelA);
+	var lastVector = toggleWindVectorArrayApparent.getVectorLast();
+	var avgVector = toggleWindVectorArrayApparent.getVectorAverage();
         lcdToggleWind = new steelseries.DisplayMulti('canvasToggleWind', {
             width: smallWidth,
             height: smallHeight,
             lcdDecimals: 1,
             lcdColor: steelseries.LcdColor.BEIGE,
             linkAltValue: false,
-            value: vel,
-            altValue: avgVel,
+            value: lastVector[0],
+            altValue: avgVector[0],
             unitString: "Knots(A)",
             unitStringVisible: true,
             detailString: "Avg: ",
@@ -297,11 +218,6 @@ function toggle() {
         });
 
         // wind dir
-        if (avgPosA == 0) {
-            pos = avgArrayA[avgPosA.length - 1];
-        } else {
-            pos = avgArrayA[avgPosA - 1];
-        }
         radialToggleWindDir = new steelseries.WindDirection('canvasToggleWindDir', {
             size: size,
             titleString: "WIND          APP",
@@ -324,11 +240,8 @@ function toggle() {
             chartRangeMin: 0
         };
         $('.windSparkline').sparkline(windSparkApp, windOptions);
-		   temp = JSON.parse(localStorage.getItem("toggleWind.avgArrayA"));
-		   ndx = localStorage.getItem("toggleWind.avgPosA");
-		   tempDir = temp[ndx];
-		   radialToggleWindDir.setValueLatest(tempDir);
-		  radialToggleWindDir.segtValueAverage(arrayAve(temp));
+	radialToggleWindDir.setValueLatest(lastVector[1]);
+	radialToggleWindDir.setValueAverage(avgVector[1]);
     }
 //    initToggleWind();
 }
@@ -360,36 +273,9 @@ function initToggleWind() {
         localStorage.setItem("toggleWind.size", width);
         localStorage.setItem("toggleWind.top", "0px");
         localStorage.setItem("toggleWind.left", Math.floor(vpWidth / 2) + "px");
-        avgArrayA = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
-            0.0, 0.0, 0.0];
-        localStorage.setItem("toggleWind.avgArrayA", JSON.stringify(avgArrayA));
-        localStorage.setItem("toggleWind.avgPosA", "0");
-        var avgArrayT = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
-            0.0, 0.0, 0.0];
-        localStorage.setItem("toggleWind.avgPosT", "0");
-        localStorage.setItem("toggleWind.avgArrayT", JSON.stringify(avgArrayT));
-
-        avgVelA = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
-            0.0, 0.0, 0.0];
-        avgVelT = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
-            0.0, 0.0, 0.0];
-        localStorage.setItem("toggleWind.avgVelA", JSON.stringify(avgVelA));
-        localStorage.setItem("toggleWind.avgVelT", JSON.stringify(avgVelT));
-        localStorage.setItem("toggleWind.avgVelPosA", "0");
-        localStorage.setItem("toggleWind.avgVelPosT", "0");
         localStorage.setItem("toggleWind.windSparkTrue", JSON.stringify(windSparkTrue));
         localStorage.setItem("toggleWind.windSparkApp", JSON.stringify(windSparkApp));
     }
-
-    avgArrayA = JSON.parse(localStorage.getItem("toggleWind.avgArrayA"));
-    avgPosA = localStorage.getItem("toggleWind.avgPosA");
-    avgArrayT = JSON.parse(localStorage.getItem("toggleWind.avgArrayT"));
-    avgPosT = localStorage.getItem("toggleWind.avgPosT");
-
-    avgVelA = JSON.parse(localStorage.getItem("toggleWind.avgVelA"));
-    avgVelPosA = localStorage.getItem("toggleWind.avgVelPosA");
-    avgVelT = JSON.parse(localStorage.getItem("toggleWind.avgVelT"));
-    avgVelPosT = localStorage.getItem("toggleWind.avgVelPosT");
 
     windSparkApp = JSON.parse(localStorage.getItem("toggleWind.windSparkApp"))
     windSparkTrue = JSON.parse(localStorage.getItem("toggleWind.windSparkTrue"))
@@ -415,20 +301,14 @@ function initToggleWind() {
     // wind
 //    radialToggleWindDir = null;
     if (!displayTrue) {
-        if (avgVelPosA == 0) {
-            vel = avgVelA[avgVelA.length - 1];
-        } else {
-            vel = avgVelA[avgVelPosA - 1];
-        }
-        avgVel = arrayAvg(avgVelA);
         lcdToggleWind = new steelseries.DisplayMulti('canvasToggleWind', {
             width: smallWidth,
             height: smallHeight,
             lcdDecimals: 1,
             lcdColor: steelseries.LcdColor.BEIGE,
             linkAltValue: false,
-            value: vel,
-            altValue: avgVel,
+            value: 0,
+            altValue: 0,
             unitString: "Knots(A)",
             unitStringVisible: true,
             detailString: "Avg: ",
@@ -436,11 +316,6 @@ function initToggleWind() {
         });
 
         // wind dir
-        if (avgPosA == 0) {
-            pos = avgArrayA[avgPosA.length - 1];
-        } else {
-            pos = avgArrayA[avgPosA - 1];
-        }
         radialToggleWindDir = new steelseries.WindDirection('canvasToggleWindDir', {
             size: size,
             titleString: "WIND          APP",
@@ -467,20 +342,14 @@ function initToggleWind() {
 
     // wind true
     if (displayTrue) {
-        if (avgVelPosT == 0) {
-            vel = avgVelT[avgVelT.length - 1];
-        } else {
-            vel = avgVelT[avgVelPosT - 1];
-        }
-        avgVel = arrayAvg(avgVelT);
         lcdToggleWind = new steelseries.DisplayMulti('canvasToggleWind', {
             width: smallWidth,
             height: smallHeight,
             lcdDecimals: 1,
             lcdColor: steelseries.LcdColor.BEIGE,
             unitString: "Knots(T)",
-            value: vel,
-            altValue: avgVel,
+            value: 0,
+            altValue: 0,
             linkAltValue: false,
             unitStringVisible: true,
             detailString: "Avg: ",
@@ -505,8 +374,6 @@ function initToggleWind() {
             pointerTypeAverage: steelseries.PointerType.TYPE1,
             backgroundColor: steelseries.BackgroundColor.BROWN,
         });
-//        radialToggleWindDir.setValueAnimatedLatest(avgArrayT(pos));
-//        radialToggleWindDir.setValueAnimatedAverage(arrayAvg(avgArrayT))
         windOptions = {
             width: wid,
             height: ht,
@@ -521,14 +388,4 @@ function initToggleWind() {
 
     addSocketListener(new ToggleWind());
 
-}
-
-function arrayAvg(array) {
-    var avg = 0.;
-    if (array == undefined)
-        return 0;
-    for (i = 0; i < array.length; i++) {
-        avg += array[i];
-    }
-    return avg / array.length;
 }
