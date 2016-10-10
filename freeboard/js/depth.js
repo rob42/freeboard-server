@@ -61,13 +61,12 @@ function resizeDepth(amount) {
         height: ht,
         maxSpotColor: '',
         minSpotColor: '',
-        fillColor: '#cdf',
-//        fillColor: '',
+        fillColor: 'rgba(0, 255, 0, 1.0)',
         chartRangeMin: zk.Widget.$('$sparkMin').getValue(),
         normalRangeMin: zk.Widget.$('$sparkMin').getValue(),
         normalRangeMax: anAlarm,
         drawNormalOnTop: 'true',
-        normalRangeColor: 'rgba(255, 0, 0, .20)'
+        normalRangeColor: 'rgba(255, 0, 0, 1.0)'
     }
 //    initDepth();
 }
@@ -186,13 +185,12 @@ function initDepth() {
         height: ht,
         maxSpotColor: '',
         minSpotColor: '',
-        fillColor: '#cdf',
-//        fillColor: '',
+        fillColor: 'rgba(0, 255, 0, 1.0)',
         chartRangeMin: zk.Widget.$('$sparkMin').getValue(),
         normalRangeMin: zk.Widget.$('$sparkMin').getValue(),
         normalRangeMax: anAlarm,
         drawNormalOnTop: 'true',
-        normalRangeColor: 'rgba(255, 0, 0, .20)'
+        normalRangeColor: 'rgba(255, 0, 0, 1.0)'
     };
 
     anAlarm = zk.Widget.$('$alarmDepth').getValue();

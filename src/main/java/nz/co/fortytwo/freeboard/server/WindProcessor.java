@@ -101,69 +101,63 @@ public class WindProcessor extends FreeboardProcessor implements Processor, Free
 	 * Result is relative to bow
 	 * 
 	 * @param apparentWnd
-	 * @param apparentDir
-	 *            0 to 360 deg to the bow
+	 * @param apparentDir CCW = + (0 --> 180) CW = - (0 --> -180)
 	 * @param vesselSpd
-	 * @return trueDirection 0 to 360 deg to the bow
+	 * @return trueDirection 0 to 360 deg to the bow CW = + (0 --> 360)
 	 */
 	void calcTrueWindDirection(double apparentWnd, double apparentDir, double vesselSpd) {
-		/*
-		 * Y = 90 - D
-		 * a = AW * ( cos Y )
-		 * bb = AW * ( sin Y )
-		 * b = bb - BS
-		 * True-Wind Speed = (( a * a ) + ( b * b )) 1/2
-		 * True-Wind Angle = 90-arctangent ( b / a )
-		 */
-		apparentDir = apparentDir % 360;
-		boolean port = apparentDir > 180;
-		if (port) {
-			apparentDir = 360 - apparentDir;
-		}
-
-		/*
-		 * // Calculate true heading diff and true wind speed - JAVASCRIPT
-		 * tan_alpha = (Math.sin(angle) / (aspeed - Math.cos(angle)));
-		 * alpha = Math.atan(tan_alpha);
-		 * 
-		 * tdiff = rad2deg(angle + alpha);
-		 * tspeed = Math.sin(angle)/Math.sin(alpha);
-		 */
-		double aspeed = Math.max(apparentDir, vesselSpd);
-		if (apparentWnd > 0 && vesselSpd > 0.0) {
-			aspeed = apparentWnd / vesselSpd;
-		}
-		double angle = Math.toRadians(apparentDir);
-		double tan_alpha = (Math.sin(angle) / (aspeed - Math.cos(angle)));
-		double alpha = Math.atan(tan_alpha);
-		double tAngle = Math.toDegrees(alpha + angle);
-		if (Double.valueOf(tAngle).isNaN() || Double.isInfinite(tAngle))
-			return;
-		if (port) {
-			trueDirection = (360 - tAngle);
-		} else {
-			trueDirection = tAngle;
-		}
-		if (apparentWnd < 0.1 || vesselSpd < 0.1) {
-			trueWindSpeed = Math.max(apparentWnd, vesselSpd);
-			return;
-		}
-		double tspeed = Math.sin(angle) / Math.sin(alpha);
-		if (Double.valueOf(tspeed).isNaN() || Double.isInfinite(tspeed))
-			return;
-		trueWindSpeed = tspeed * vesselSpd;
-                if (trueWindSpeed < 0.0d) {
-                    trueDirection = trueDirection + 180.0;
-                    trueWindSpeed = -trueWindSpeed;
+		
+                // Switch to standard mathematical sign onvention CCW = +
+                double theta = -apparentDir;
+                if (theta < 0.0d){
+                    theta = theta+360.;
                 }
-	}
+                theta = theta % 360.;
+		double appX = apparentWnd*Math.cos(Math.toRadians(theta));
+                double appY = apparentWnd*Math.sin(Math.toRadians(theta));
+                double trueX = appX - vesselSpd;
+                if (trueX == 0.0){
+                    trueDirection = 0;
+                } else {
+                    trueDirection = Math.toDegrees(Math.atan(appY/trueX));
+                }
+                
+                // atan gives result between -Pi/2 and Pi/2
+                // we need to assign the proper quadrant.
+                
+                if (appY >= 0.0d){
+                    if (trueX >= 0.0d){
+                        // 1st Quad 
+                    } else {
+                        // 2nd Quad
+                        trueDirection = trueDirection + 180.;
+                    }
+                } else {
+                    if (trueX >= 0.0d){
+                        // 4th Quad;
+                        trueDirection = trueDirection + 360.;
+                    } else {
+                        // 3rd Quad
+                        trueDirection = trueDirection + 180.;
+                    }
+                }
+                
+                // convert back to boat convention
+                trueDirection = -trueDirection;
+                if (trueDirection < 0.0d){
+                    trueDirection = trueDirection + 360.d;
+                }
+                
+                trueWindSpeed = Math.sqrt(trueX*trueX + appY*appY);
+                              
+        }
 
 	public double getTrueDirection() {
 		return trueDirection;
 	}
 
 	public double getTrueWindSpeed() {
-		return trueWindSpeed;
+                return trueWindSpeed;
 	}
 
 }

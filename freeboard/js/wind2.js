@@ -61,13 +61,13 @@ function Wind2() {
         if (!navObj)
             return true;
 
-        if (navObj.WSA) {
+        if (!(navObj.WSA == null)) {
             lcdWindApp.setValue(navObj.WSA);
         }
-        if (navObj.WST) {
+        if (!(navObj.WST == null)) {
             lcdWindTrue.setValue(navObj.WST);
         }
-        if (navObj.WDA) {
+        if (!(navObj.WDA == null)) {
             var c = navObj.WDA;
             // -180 <> 180
             if (c > 180) {
@@ -77,7 +77,7 @@ function Wind2() {
             }
 
             // make average
-            if (navObj.WSA) {
+            if (!(navObj.WSA == null)) {
                 if (c < 0) {
                     c += 360;
                 }
@@ -92,10 +92,11 @@ function Wind2() {
             } else {
                 radialWindDirApp.setValueAnimatedAverage(avgVector[1]);
             }
+            lcdWindApp.setAltValue(avgVector[0]);
 
             c = null;
         }
-        if (navObj.WDT) {
+        if (!(navObj.WDT == null)) {
             var c = navObj.WDT;
             if (c > 0.0 || c < 360.0)
                 radialWindDirTrue.setValueAnimatedLatest(c);
@@ -103,7 +104,7 @@ function Wind2() {
                 radialWindDirTrue.setValueAnimatedLatest(0.0);
 
             // make average
-            if (navObj.WST) {
+            if (!(navObj.WST == null)) {
                 if (c < 0) {
                     c += 360;
                 }
@@ -112,12 +113,15 @@ function Wind2() {
                 wind2VectorArrayTrue.addVector(null);
             }
             avgVector = wind2VectorArrayTrue.getVectorAverage();
-            if (avgVector[1]  > 0.0)
+            if (avgVector[1]  > 0.0){
                 radialWindDirTrue.setValueAnimatedAverage(avgVector[1]);
-            else
+            } else {
                 radialWindDirTrue.setValueAnimatedAverage(0.0);
-        }
+            }
+        
+            lcdWindTrue.setAltValue(avgVector[0]);
         c = null;
+    }
     };
 }
 
@@ -170,6 +174,7 @@ function initWind() {
         lcdDecimals: 1,
         lcdColor: steelseries.LcdColor.BEIGE,
         unitString: "Knots(A)",
+            linkAltValue: false,
         unitStringVisible: true,
         detailString: "Avg: ",
         detailStringVisible: true,
@@ -198,6 +203,7 @@ function initWind() {
         lcdColor: steelseries.LcdColor.BEIGE,
         unitString: "Knots(T)",
         unitStringVisible: true,
+            linkAltValue: false,
         detailString: "Avg: ",
         detailStringVisible: true,
     });
