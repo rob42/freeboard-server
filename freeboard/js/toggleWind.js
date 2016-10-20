@@ -98,7 +98,7 @@ function ToggleWind() {
         if (!navObj)
             return true;
 
-        if (navObj.WSA && navObj.WDA) {
+        if (!(navObj.WSA == null) && !(navObj.WDA==null)) {
 	    toggleWindVectorArrayApparent.addVector([navObj.WSA, navObj.WDA]);
 	    avgVector = toggleWindVectorArrayApparent.getVectorAverage();
 
@@ -121,7 +121,7 @@ function ToggleWind() {
                 }
             }
         }
-        if (navObj.WST && navObj.WDT) {
+        if (!(navObj.WST==null) && !(navObj.WDT==null)) {
 	    toggleWindVectorArrayTrue.addVector([navObj.WST, navObj.WDT]);
 	    avgVector = toggleWindVectorArrayTrue.getVectorAverage();
 

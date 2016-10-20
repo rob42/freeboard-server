@@ -32,7 +32,7 @@ function resizeDepth(amount) {
     }
     if (amount == 0.0)
         return;
-    console.log("resize entry: amount, wsize, hzixe = " + amount + " " + width * amount + " " + height * amount);
+//    console.log("resize entry: amount, wsize, hzixe = " + amount + " " + width * amount + " " + height * amount);
     localStorage.setItem("depth.scale", amount);
 
     $("#canvasDepth").width(width * amount);
@@ -61,13 +61,12 @@ function resizeDepth(amount) {
         height: ht,
         maxSpotColor: '',
         minSpotColor: '',
-        fillColor: '#cdf',
-//        fillColor: '',
+        fillColor: 'rgba(0, 255, 0, 1.0)',
         chartRangeMin: zk.Widget.$('$sparkMin').getValue(),
         normalRangeMin: zk.Widget.$('$sparkMin').getValue(),
         normalRangeMax: anAlarm,
         drawNormalOnTop: 'true',
-        normalRangeColor: 'rgba(255, 0, 0, .20)'
+        normalRangeColor: 'rgba(255, 0, 0, 1.0)'
     }
 //    initDepth();
 }
@@ -85,7 +84,7 @@ function Depth() {
             if (unitTemp !== depthUnit) {
                 var headerString = "Depth " + unitTemp;
                 var depthUnit = unitTemp;
-                console.log("DBT DisplaySingle");
+//                console.log("DBT DisplaySingle");
                 lcdDepth = new steelseries.DisplaySingle('canvasDepth', {
                     lcdDecimals: 1,
                     lcdColor: steelseries.LcdColor.BEIGE,
@@ -186,13 +185,12 @@ function initDepth() {
         height: ht,
         maxSpotColor: '',
         minSpotColor: '',
-        fillColor: '#cdf',
-//        fillColor: '',
+        fillColor: 'rgba(0, 255, 0, 1.0)',
         chartRangeMin: zk.Widget.$('$sparkMin').getValue(),
         normalRangeMin: zk.Widget.$('$sparkMin').getValue(),
         normalRangeMax: anAlarm,
         drawNormalOnTop: 'true',
-        normalRangeColor: 'rgba(255, 0, 0, .20)'
+        normalRangeColor: 'rgba(255, 0, 0, 1.0)'
     };
 
     anAlarm = zk.Widget.$('$alarmDepth').getValue();

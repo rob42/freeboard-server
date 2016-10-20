@@ -16,7 +16,6 @@
  *  You should have received a copy of the GNU General Public License
  *  along with FreeBoard.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package nz.co.fortytwo.freeboard.server.util;
 
 import java.io.File;
@@ -41,255 +40,268 @@ import org.apache.log4j.Logger;
 
 /**
  * Place for all the left over bits that are used across freeboard
+ *
  * @author robert
  *
  */
 public class Util {
 
-	private static Logger logger = Logger.getLogger(Util.class);
-	private static Properties props;
-	public static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd_hh:mm:ss");
-	public static File cfg = null;
-	private static boolean timeSet=false;
-	/**
-	 * Smooth the data a bit
-	 * @param prev
-	 * @param current
-	 * @return
-	 */
-	public static  double movingAverage(double ALPHA, double prev, double current) {
-	    prev = ALPHA * prev + (1-ALPHA) * current;
-	    return prev;
-	}
+    private static Logger logger = Logger.getLogger(Util.class);
+    private static Properties props;
+    public static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd_hh:mm:ss");
+    public static File cfg = null;
+    private static boolean timeSet = false;
 
-	/**
-	 * Load the config from the named dir, or if the named dir is null, from the default location
-	 * The config is cached, subsequent calls get the same object
-	 * @param dir
-	 * @return
-	 * @throws FileNotFoundException
-	 * @throws IOException
-	 */
-	public static Properties getConfig(String dir) throws FileNotFoundException, IOException{
-		if(props==null){
-			//we do a quick override so we get nice sorted output :-)
-			System.out.println("Creating config...");
-			props = new Properties() {
-			    /**
-				 *
-				 */
-				private static final long serialVersionUID = 1L;
+    /**
+     * Smooth the data a bit
+     *
+     * @param prev
+     * @param current
+     * @return
+     */
+    public static double movingAverage(double ALPHA, double prev, double current) {
+        prev = ALPHA * prev + (1 - ALPHA) * current;
+        return prev;
+    }
 
-				@Override
-			    public Set<Object> keySet(){
-			        return Collections.unmodifiableSet(new TreeSet<Object>(super.keySet()));
-			    }
+    /**
+     * Load the config from the named dir, or if the named dir is null, from the
+     * default location The config is cached, subsequent calls get the same
+     * object
+     *
+     * @param dir
+     * @return
+     * @throws FileNotFoundException
+     * @throws IOException
+     */
+    public static Properties getConfig(String dir) throws FileNotFoundException, IOException {
+        if (props == null) {
+            //we do a quick override so we get nice sorted output :-)
+            System.out.println("Creating config...");
+            props = new Properties() {
+                /**
+                 *
+                 */
+                private static final long serialVersionUID = 1L;
 
-			    @Override
-			    public synchronized Enumeration<Object> keys() {
-			        return Collections.enumeration(new TreeSet<Object>(super.keySet()));
-			    }
-			};
-			Util.setDefaults(props);
-			if(StringUtils.isNotBlank(dir)){
-				//we provided a config dir, so we use it
-				props.setProperty(Constants.CFG_DIR, dir);
-				cfg = new File(props.getProperty(Constants.CFG_DIR)+props.getProperty(Constants.CFG_FILE));
-			}else if(Util.getUSBFile()!=null){
-				//nothing provided, but we have a usb config dir, so use it
-				cfg = new File(Util.getUSBFile(),props.getProperty(Constants.CFG_DIR)+props.getProperty(Constants.CFG_FILE));
-			}else{
-				//use the default config
-				cfg = new File(props.getProperty(Constants.CFG_DIR)+props.getProperty(Constants.CFG_FILE));
-			}
+                @Override
+                public Set<Object> keySet() {
+                    return Collections.unmodifiableSet(new TreeSet<Object>(super.keySet()));
+                }
 
-			if(cfg.exists()){
-				System.out.println("Loading config from "+cfg.getAbsolutePath());
-				props.load(new FileReader(cfg));
-			}else{
-				saveConfig();
-			}
-		}
-		return props;
-	}
+                @Override
+                public synchronized Enumeration<Object> keys() {
+                    return Collections.enumeration(new TreeSet<Object>(super.keySet()));
+                }
+            };
+            Util.setDefaults(props);
+            if (StringUtils.isNotBlank(dir)) {
+                //we provided a config dir, so we use it
+                props.setProperty(Constants.CFG_DIR, dir);
+                cfg = new File(props.getProperty(Constants.CFG_DIR) + props.getProperty(Constants.CFG_FILE));
+            } else if (Util.getUSBFile() != null) {
+                //nothing provided, but we have a usb config dir, so use it
+                cfg = new File(Util.getUSBFile(), props.getProperty(Constants.CFG_DIR) + props.getProperty(Constants.CFG_FILE));
+            } else {
+                //use the default config
+                cfg = new File(props.getProperty(Constants.CFG_DIR) + props.getProperty(Constants.CFG_FILE));
+            }
 
-	/**
-	 * Save the current config to disk.
-	 * @throws IOException
-	 */
-	public static void saveConfig() throws IOException{
-		if(props==null){
-			System.out.println("Saving config but its null!");
-			return;
-		}
-		System.out.println("Saving config to "+cfg.getAbsolutePath());
-		props.store(new FileWriter(cfg), null);
+            if (cfg.exists()) {
+                System.out.println("Loading config from " + cfg.getAbsolutePath());
+                props.load(new FileReader(cfg));
+            } else {
+                saveConfig();
+            }
+        }
+        return props;
+    }
 
-	}
+    /**
+     * Save the current config to disk.
+     *
+     * @throws IOException
+     */
+    public static void saveConfig() throws IOException {
+        if (props == null) {
+            System.out.println("Saving config but its null!");
+            return;
+        }
+        System.out.println("Saving config to " + cfg.getAbsolutePath());
+        props.store(new FileWriter(cfg), null);
 
-	/**
-	 * Config defaults
-	 *
-	 * @param props
-	 */
-	public static void setDefaults(Properties props) {
-		System.out.println("Setting config defaults...");
-		//populate sensible defaults here
-		props.setProperty(Constants.FREEBOARD_URL,"/freeboard");
-		props.setProperty(Constants.FREEBOARD_RESOURCE,"freeboard/");
-		props.setProperty(Constants.MAPCACHE_RESOURCE,"./mapcache");
-		props.setProperty(Constants.MAPCACHE,"/mapcache");
-		props.setProperty(Constants.HTTP_PORT,"8080");
-		props.setProperty(Constants.WEBSOCKET_PORT,"9090");
-		props.setProperty(Constants.CFG_DIR,"./conf/");
-		props.setProperty(Constants.CFG_FILE,"freeboard.cfg");
-		props.setProperty(Constants.DEMO,"false");
-		props.setProperty(Constants.SERIAL_URL,"./src/test/resources/motu.log&scanStream=true&scanStreamDelay=500");
-		props.setProperty(Constants.VIRTUAL_URL,"");
-		props.setProperty(Constants.USBDRIVE,"/media/usb0");
-		props.setProperty(Constants.TRACKS,"/tracks");
-		props.setProperty(Constants.TRACKS_RESOURCE,"./tracks");
-		props.setProperty(Constants.TRACK_CURRENT,"current.gpx");
-		props.setProperty(Constants.WAYPOINTS,"/tracks");
-		props.setProperty(Constants.WAYPOINTS_RESOURCE,"./tracks");
-		props.setProperty(Constants.WAYPOINT_CURRENT,"waypoints.gpx");
-		props.setProperty(Constants.SERIAL_PORTS,"/dev/ttyUSB0,/dev/ttyUSB1,/dev/ttyUSB2,/dev/ttyACM0,/dev/ttyACM1,/dev/ttyACM2");
-		props.setProperty(Constants.DEPTH_UNIT, "f");
-		props.setProperty(Constants.DEPTH_ZERO_OFFSET, "1.5");
-		props.setProperty(Constants.SOG_UNIT, "Mi/hr");
-		props.setProperty(Constants.SOW_UNIT, "Kt");
-		props.setProperty(Constants.ALARM_DEPTH, "6");
-		props.setProperty(Constants.SPARKLINE_PTS, "200");
-		props.setProperty(Constants.SPARKLINE_MIN, "3");
-		props.setProperty(Constants.RADII_BOAT_CIRCLES, "100");
-		props.setProperty(Constants.NUM_BOAT_CIRCLES, "3");
-                props.setProperty(Constants.WIND_ZERO_OFFSET, "170");
-		if(SystemUtils.IS_OS_WINDOWS){
-			props.setProperty(Constants.SERIAL_PORTS,"COM1,COM2,COM3,COM4");
-		}
-		props.setProperty(Constants.SERIAL_PORT_BAUD,"38400");
-		props.setProperty(Constants.DNS_USE_CHOICE,Constants.DNS_USE_BOAT);
-		props.setProperty(Constants.ENABLE_COMET,"false");
+    }
 
-		props.setProperty(Constants.PREFER_RMC,"true");
-		//add default charts
+    /**
+     * Config defaults
+     *
+     * @param props
+     */
+    public static void setDefaults(Properties props) {
+        System.out.println("Setting config defaults...");
+        //populate sensible defaults here
+        props.setProperty(Constants.FREEBOARD_URL, "/freeboard");
+        props.setProperty(Constants.FREEBOARD_RESOURCE, "freeboard/");
+        props.setProperty(Constants.MAPCACHE_RESOURCE, "./mapcache");
+        props.setProperty(Constants.MAPCACHE, "/mapcache");
+        props.setProperty(Constants.HTTP_PORT, "8080");
+        props.setProperty(Constants.WEBSOCKET_PORT, "9090");
+        props.setProperty(Constants.CFG_DIR, "./conf/");
+        props.setProperty(Constants.CFG_FILE, "freeboard.cfg");
+        props.setProperty(Constants.DEMO, "false");
+        props.setProperty(Constants.SERIAL_URL, "./src/test/resources/motu.log&scanStream=true&scanStreamDelay=500");
+        props.setProperty(Constants.VIRTUAL_URL, "");
+        props.setProperty(Constants.USBDRIVE, "/media/usb0");
+        props.setProperty(Constants.TRACKS, "/tracks");
+        props.setProperty(Constants.TRACKS_RESOURCE, "./tracks");
+        props.setProperty(Constants.TRACK_CURRENT, "current.gpx");
+        props.setProperty(Constants.WAYPOINTS, "/tracks");
+        props.setProperty(Constants.WAYPOINTS_RESOURCE, "./tracks");
+        props.setProperty(Constants.WAYPOINT_CURRENT, "waypoints.gpx");
+        props.setProperty(Constants.SERIAL_PORTS, "/dev/ttyUSB0,/dev/ttyUSB1,/dev/ttyUSB2,/dev/ttyACM0,/dev/ttyACM1,/dev/ttyACM2");
+        props.setProperty(Constants.DEPTH_UNIT, "f");
+        props.setProperty(Constants.DEPTH_ZERO_OFFSET, "1.5");
+        props.setProperty(Constants.SOG_UNIT, "Mi/hr");
+        props.setProperty(Constants.SOW_UNIT, "Kt");
+        props.setProperty(Constants.ALARM_DEPTH, "6");
+        props.setProperty(Constants.SPARKLINE_PTS, "200");
+        props.setProperty(Constants.SPARKLINE_MIN, "3");
+        props.setProperty(Constants.RADII_BOAT_CIRCLES, "100");
+        props.setProperty(Constants.NUM_BOAT_CIRCLES, "3");
+        props.setProperty(Constants.WIND_ZERO_OFFSET, "170");
+        if (SystemUtils.IS_OS_WINDOWS) {
+            props.setProperty(Constants.SERIAL_PORTS, "COM1,COM2,COM3,COM4");
+        }
+        props.setProperty(Constants.SERIAL_PORT_BAUD, "38400");
+        props.setProperty(Constants.DNS_USE_CHOICE, Constants.DNS_USE_BOAT);
+        props.setProperty(Constants.ENABLE_COMET, "false");
 
+        props.setProperty(Constants.PREFER_RMC, "true");
+        //add default charts
 
-	}
+    }
 
+    /**
+     * Round to specified decimals
+     *
+     * @param val
+     * @param places
+     * @return
+     */
+    public static double round(double val, int places) {
+        double scale = Math.pow(10, places);
+        long iVal = Math.round(val * scale);
+        return iVal / scale;
+    }
 
-	/**
-	 * Round to specified decimals
-	 * @param val
-	 * @param places
-	 * @return
-	 */
-	public static double round(double val, int places){
-		double scale = Math.pow(10, places);
-		long iVal = Math.round (val*scale);
-		return iVal/scale;
-	}
+    /**
+     * Updates and saves the scaling values for instruments
+     *
+     * @param scaleKey
+     * @param amount
+     * @param scaleValue
+     * @return
+     * @throws IOException
+     * @throws FileNotFoundException
+     */
+    public static double updateScale(String scaleKey, double amount, double scaleValue) throws FileNotFoundException, IOException {
+        scaleValue = scaleValue * amount;
+        scaleValue = Util.round(scaleValue, 2);
+        //logger.debug(" scale now = "+scale);
 
-	/**
-	 * Updates and saves the scaling values for instruments
-	 * @param scaleKey
-	 * @param amount
-	 * @param scaleValue
-	 * @return
-	 * @throws IOException
-	 * @throws FileNotFoundException
-	 */
-	public static double updateScale(String scaleKey, double amount, double scaleValue) throws FileNotFoundException, IOException {
-			scaleValue = scaleValue*amount;
-			scaleValue= Util.round(scaleValue, 2);
-			//logger.debug(" scale now = "+scale);
+        //write out to config
+        Util.getConfig(null).setProperty(scaleKey, String.valueOf(scaleValue));
+        Util.saveConfig();
 
-			//write out to config
-			Util.getConfig(null).setProperty(scaleKey, String.valueOf(scaleValue));
-			Util.saveConfig();
+        return scaleValue;
+    }
 
-		return scaleValue;
-	}
+    /**
+     * Checks if a usb drive is inserted, and returns the root dir. Returns null
+     * if its not there
+     *
+     * @param file
+     * @return
+     * @throws IOException
+     * @throws FileNotFoundException
+     */
+    public static File getUSBFile() throws FileNotFoundException, IOException {
+        File usbDrive = new File(Util.getConfig(null).getProperty(Constants.USBDRIVE));
+        if (usbDrive.exists() && usbDrive.list().length > 0) {
+            //we return it
+            return usbDrive;
+        }
+        return null;
+    }
 
-	/**
-	 * Checks if a usb drive is inserted, and returns the root dir.
-	 * Returns null if its not there
-	 *
-	 * @param file
-	 * @return
-	 * @throws IOException
-	 * @throws FileNotFoundException
-	 */
-	public static File getUSBFile() throws FileNotFoundException, IOException {
-		File usbDrive = new File(Util.getConfig(null).getProperty(Constants.USBDRIVE));
-		if(usbDrive.exists() && usbDrive.list().length>0){
-			//we return it
-			return usbDrive;
-		}
-		return null;
-	}
+    /**
+     * Attempt to set the system time using the GPS time
+     *
+     * @param sen
+     */
+    @SuppressWarnings("deprecation")
+    public static void checkTime(RMCSentence sen) {
+        if (timeSet) {
+            return;
+        }
+        try {
+            sen.getPosition();
+        } catch (DataNotAvailableException e) {
+            return;
+        }
+        try {
+            net.sf.marineapi.nmea.util.Date dayNow = sen.getDate();
+            //if we need to set the time, we will be WAAYYY out
+            //we only try once, so we dont get lots of native processes spawning if we fail
+            props = getConfig(null);
+            if (props.getProperty(Constants.DEMO).equals("false")) {
+                if (System.getProperty("os.name").startsWith("Windows")) {
+                    // includes: Windows 2000,  Windows 95, Windows 98, Windows NT, Windows Vista, Windows XP
+                    // a Win system will already have the time set.
+                    return;
+                }
+            }
+            timeSet = true;
+            Date date = new Date();
+            net.sf.marineapi.nmea.util.Date gpsDate;
+				
+            //so we need to set the date and time
+            net.sf.marineapi.nmea.util.Time gpsTime = sen.getTime();
+            gpsDate = sen.getDate();
+            String hh = pad(2, String.valueOf(gpsTime.getHour()));
+            String mm = pad(2, String.valueOf(gpsTime.getMinutes()));
+            String ss = pad(2, String.valueOf((int)gpsTime.getSeconds()));
+            if (logger.isDebugEnabled()) {
+                logger.debug("Setting current date to " + dayNow + " " + gpsTime);
+            }
+            String cmd = "sudo date --utc " + pad(2, String.valueOf(gpsDate.getMonth())) + 
+                    pad(2, String.valueOf(gpsDate.getDay())) + hh + mm + gpsDate.getYear() + "." + ss;
+            System.out.println("Setting date " + cmd);
+            // only set the system time if we are not running demo
+            if (props.getProperty(Constants.DEMO).equals("false")) {
+                Runtime.getRuntime().exec(cmd.split(" "));// MMddhhmm[[yy]yy]
+            }
+            if (logger.isDebugEnabled()) {
+                logger.debug("Executed date setting command:" + cmd);
+            }
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+        }
 
-	/**
-	 * Attempt to set the system time using the GPS time
-	 * @param sen
-	 */
-	@SuppressWarnings("deprecation")
-	public static void checkTime(RMCSentence sen) {
-			if(timeSet)return;
-			try {
-                            sen.getPosition();
-                        } catch (DataNotAvailableException e){
-                            return;
-                        }
-                        try {
-				net.sf.marineapi.nmea.util.Date dayNow = sen.getDate();
-				//if we need to set the time, we will be WAAYYY out
-				//we only try once, so we dont get lots of native processes spawning if we fail
-				if (System.getProperty("os.name").startsWith("Windows")) {
-					// includes: Windows 2000,  Windows 95, Windows 98, Windows NT, Windows Vista, Windows XP
-					// a Win system will already have the time set.
-					return;
-				}
-				timeSet = true;
-				Date date = new Date();
-//				if(((date.getYear()+1900)==dayNow.getYear()) &&
-//						((date.getYear()+1900)==dayNow.getYear())
-//						  ){
-//					if(logger.isDebugEnabled())logger.debug("Current date is " + date);
-//					return;
-//				}
-				//so we need to set the date and time
-				net.sf.marineapi.nmea.util.Time timeNow = sen.getTime();
-				String yy = String.valueOf(dayNow.getYear());
-				String MM = pad(2,String.valueOf(dayNow.getMonth()));
-				String dd = pad(2,String.valueOf(dayNow.getDay()));
-				String hh = pad(2,String.valueOf(timeNow.getHour()));
-				String mm = pad(2,String.valueOf(timeNow.getMinutes()));
-				String ss = pad(2,String.valueOf(timeNow.getSeconds()));
-				if(logger.isDebugEnabled())logger.debug("Setting current date to " + dayNow + " "+timeNow);
-				String cmd = "sudo date --utc " + MM+dd+hh+mm+yy+"."+ss;
-                                System.out.println("Setting date "+cmd);
-				Runtime.getRuntime().exec(cmd.split(" "));// MMddhhmm[[yy]yy]
-				if(logger.isDebugEnabled())logger.debug("Executed date setting command:"+cmd);
-			} catch (Exception e) {
-				logger.error(e.getMessage(),e);
-			}
+    }
 
-		}
-
-	/**
-	 * pad the value to i places, eg 2 >> 02
-	 * @param i
-	 * @param valueOf
-	 * @return
-	 */
-	private static String pad(int i, String value) {
-		while(value.length()<i){
-			value="0"+value;
-		}
-		return value;
-	}
-
-
+    /**
+     * pad the value to i places, eg 2 >> 02
+     *
+     * @param i
+     * @param valueOf
+     * @return
+     */
+    private static String pad(int i, String value) {
+        while (value.length() < i) {
+            value = "0" + value;
+        }
+        return value;
+    }
 
 }

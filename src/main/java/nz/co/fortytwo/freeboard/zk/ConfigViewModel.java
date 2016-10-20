@@ -176,6 +176,9 @@ public class ConfigViewModel extends SelectorComposer<Window> {
         selectedCharts.setModel(selectedChartsModel);
     }
 
+    /** Fill the selectedListArray with the selected chart layers from freeboard.cfg
+     *
+     */
     private void setSelectedChartLayers() throws Exception {
         File layersFile = new File(Util.getConfig(null).getProperty(
                 Constants.FREEBOARD_RESOURCE)
@@ -191,7 +194,7 @@ public class ConfigViewModel extends SelectorComposer<Window> {
             String name = layer.substring(pos, pos1);
             selectedListArray.add(name);
             if (logger.isDebugEnabled()) {
-                logger.debug("Found:" + name);
+                logger.debug("Found Selected:" + name);
             }
             pos = layer.indexOf("L.tileLayer(", pos1 + 1);
         }
@@ -237,7 +240,7 @@ public class ConfigViewModel extends SelectorComposer<Window> {
         layers.append("\tlayers = L.control.layers(baseLayers, overlays).addTo(map);\n");
         layers.append("\t};\n");
         String layersStr = layers.toString();
-        if (useHomeChoice) {
+        if (!useHomeChoice) {
             // we parse out all refs to the subdomains
             // remove {s}.
             layersStr = StringUtils.remove(layersStr, "{s}.");

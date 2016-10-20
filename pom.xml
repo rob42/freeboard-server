@@ -168,7 +168,7 @@
 			<artifactId>jsp-2.1-glassfish</artifactId>
 			<version>2.1.v20100127</version>
 		</dependency>
-		<!-- ZK 
+		<!-- ZK
 		<dependency>
             <groupId>org.zkoss.zk</groupId>
             <artifactId>zk</artifactId>
@@ -288,7 +288,7 @@
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>exec-maven-plugin</artifactId>
-                                <version>2.2</version>
+                                <version>1.5.0</version>
                                     <configuration>
 					<mainClass>nz.co.fortytwo.freeboard.server.ServerMain</mainClass>
 					<includePluginDependencies>false</includePluginDependencies>
@@ -303,8 +303,8 @@
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>3.0</version>
 				<configuration>
-					<source>1.7</source>
-					<target>1.7</target>
+					<source>1.8</source>
+					<target>1.8</target>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -331,7 +331,7 @@
 							<goal>single</goal>
 						</goals>
 					</execution>
-					
+
 				</executions>
 			</plugin>
 			<plugin>
