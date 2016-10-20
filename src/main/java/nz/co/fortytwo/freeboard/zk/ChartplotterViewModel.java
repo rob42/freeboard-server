@@ -18,13 +18,6 @@
  */
 package nz.co.fortytwo.freeboard.zk;
 
-import java.awt.geom.Point2D;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.util.StringTokenizer;
-import javafx.geometry.BoundingBox;
-import net.sf.marineapi.nmea.util.Position;
 import nz.co.fortytwo.freeboard.server.util.Constants;
 import nz.co.fortytwo.freeboard.server.util.Util;
 
@@ -36,6 +29,7 @@ import org.zkoss.zk.ui.select.annotation.Listen;
 import org.zkoss.zk.ui.select.annotation.Wire;
 import org.zkoss.zk.ui.select.annotation.WireVariable;
 import org.zkoss.zul.Label;
+import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 public class ChartplotterViewModel extends SelectorComposer<Window>{
@@ -60,10 +54,6 @@ public class ChartplotterViewModel extends SelectorComposer<Window>{
 	private Label firstZoom;
 	@Wire( "#layerVisibility")
 	private Label layerVisibility;
-        
-        @Wire( "#chartIndex")
-        public Label chartIndex;
-        
 
         @Wire("#numCircles")
         private Label numCircles;
@@ -116,67 +106,10 @@ public class ChartplotterViewModel extends SelectorComposer<Window>{
 		firstZoom.setValue(zoom);
                 numCircles.setValue(num);
                 radiiCircles.setValue(radii);
-                
-                
-		File mapDir = new File(Util.cfg.getParentFile().getParentFile(),Util.getConfig(null).getProperty(Constants.MAPCACHE));
-                File[] dirList = mapDir.listFiles(File::isDirectory);
-                BoundingBox[] bbList = new BoundingBox[dirList.length];
-                for (int i = 0; i < dirList.length;i++){
-                    bbList[i] = getChartBounds(((File)dirList[i]).getAbsolutePath()+File.separator+"tilemapresource.xml");
-                    System.out.println(((File)dirList[i]).getName()+" "+bbList[i].toString());
-                }				
+				
 	}
 	
-    public BoundingBox getChartBounds(String filnam) {
-
-//        File tileMapResource = new File(Util.getConfig(null).getProperty(Constants.MAPCACHE_RESOURCE));
-        BufferedReader reader = null;
-        double minx = 0;
-        double miny = 0;
-        double maxx = 0;
-        double maxy = 0;
-        Point2D.Double upLeft;
-        Point2D.Double lowRight;
-        try{
-        reader = new BufferedReader(new FileReader(filnam));
-        String text = null;
-
-            while ((text = reader.readLine()) != null) {
-            if (text.contains("BoundingBox")) {
-                String values = text.replace("<", "").replace("BoundingBox", "").replace("\"", "").trim();
-                StringTokenizer st = new StringTokenizer(values, " =/>");
-                while (st.hasMoreElements()) {
-                    String id = (String) st.nextElement();
-                    String val = (String) st.nextElement();
-                    if (id.equals("minx")) {
-                        minx = Double.parseDouble(val);
-                        continue;
-                    }
-                    if (id.equals("maxx")) {
-                        maxx = Double.parseDouble(val);
-                        continue;
-                    }
-                    if (id.equals("miny")) {
-                        miny = Double.parseDouble(val);
-                        continue;
-                    }
-                    if (id.equals("maxy")) {
-                        maxy = Double.parseDouble(val);
-                        continue;
-                    }
-                }
-            }
-        }
-        upLeft = new Point2D.Double(minx, maxy);
-        lowRight = new Point2D.Double(maxx, miny);
-        } catch (Exception e){
-                System.out.println(e);
-                }
-        return new BoundingBox(minx, miny, (maxx-minx), (maxy-miny));
-    }
-
-
-//	[12:19:06.939] NZ6142_1 Nelson Harbour layer visibility changed to true
+	//	[12:19:06.939] NZ6142_1 Nelson Harbour layer visibility changed to true
 	@Listen("onLayerChange = #mainWindow")
 	public void onLayerChange(Event event) {
 		try{
