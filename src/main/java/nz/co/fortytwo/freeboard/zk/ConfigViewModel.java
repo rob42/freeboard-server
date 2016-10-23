@@ -240,7 +240,7 @@ public class ConfigViewModel extends SelectorComposer<Window> {
         layers.append("\tlayers = L.control.layers(baseLayers, overlays).addTo(map);\n");
         layers.append("\t};\n");
         String layersStr = layers.toString();
-        if (!useHomeChoice) {
+        if (useHomeChoice) {
             // we parse out all refs to the subdomains
             // remove {s}.
             layersStr = StringUtils.remove(layersStr, "{s}.");
