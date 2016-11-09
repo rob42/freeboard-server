@@ -23,10 +23,10 @@ var depthArray = [];
 var anAlarm;
 var selectorNdx = 0;
 var tripElapsedTime;
+var timeDiff;
 var tripDistance;
 var tripAverageSpeed;
 var conv;
-
 //colours
 var gaugeLcdColor = steelseries.LcdColor.BEIGE;
 //TILTED_BLACK
@@ -41,15 +41,13 @@ var sowUnit;
 var distUnit;
 var depthUnit;
 var MILLISPERHR;
-
-
 function Sail() {
 
-    this.onmessage = function(navObj) {
+    this.onmessage = function (navObj) {
 
         //avoid commands
-        if (!navObj) return true;
-
+        if (!navObj)
+            return true;
         //depth
         if (navObj.DBT) {
             unitTemp = zk.Widget.$('$cfgDepthUnit').getValue();
@@ -75,7 +73,6 @@ function Sail() {
             anAlarm = zk.Widget.$('$alarmDepth').getValue();
             sPoints = zk.Widget.$('$sparkPts').getValue();
             sparkMin = zk.Widget.$('$sparkMin').getValue();
-            
             // clip the sparkline values so that the scaling does not get screwed up by values < sparkMin
             if (navObj.DBT < sparkMin) {
                 depthArray.push(sparkMin);
@@ -108,9 +105,44 @@ function Sail() {
                 });
             }
             console.log("SOG= " + navObj.SOG);
-            temp = distanceUnit(sogUnit)*navObj.SOG;
+            temp = distanceUnit(sogUnit) * navObj.SOG;
             lcdSOG.setValue(temp);
-//            console.log("AdjSOG= " + temp);
+            if (typeof (Storage) == "undefined") {
+                // Sorry! No Web Storage support..
+                alert("Sorry! No Web Storage support. Please use a different browser.");
+                return;
+            } else {
+                localStorage.setItem("sail.sog", navObj.SOG);
+            }
+        }
+
+        // GPS Date
+        if (navObj.DTE) {
+            
+            // This case occurs if the time has been improperly set or if we are testing or if it is the first time
+            if ((localStorage.getItem("sail.date") == null) || ((new Date(navObj.DTE)) - (new Date(localStorage.getItem("sail.date")))) < 0) { 
+                timeDiff = 0;
+                localStorage.setItem("sail.date", navObj.DTE);
+                localStorage.setItem("sail.trip_elapsed_time", "0");
+                localStorage.setItem("sail.trip_distance", "0");
+            }
+            timeDiff = (new Date(navObj.DTE)) - (new Date(localStorage.getItem("sail.date")));
+            tripElapsedTime = parseInt(localStorage.getItem("sail.trip_elapsed_time")) + timeDiff;
+            tripDistance = parseFloat(localStorage.getItem("sail.trip_distance")) + (timeDiff * parseFloat(localStorage.getItem("sail.sog")))/ MILLISPERHR;
+            localStorage.setItem("sail.date", navObj.DTE);
+            localStorage.setItem("sail.trip_elapsed_time", String(tripElapsedTime));
+            localStorage.setItem("sail.trip_distance", String(tripDistance));
+            
+            if (selectorNdx == 0) {
+                lcdSummary.setValue(tripDistance * distanceUnit(sogUnit));
+            }
+            if (selectorNdx == 1) {
+                lcdSummary.setValue(tripElapsedTime / MILLISPERHR);
+            }
+            if (selectorNdx == 2) {
+                tripAverageSpeed = tripDistance * MILLISPERHR / tripElapsedTime;
+                lcdSummary.setValue(tripAverageSpeed * distanceUnit(sogUnit));
+            }
         }
 
         //SOW
@@ -129,34 +161,17 @@ function Sail() {
                     headerStringVisible: true,
                 });
             }
-            lcdSOW.setValue(distanceUnit(sowUnit)*navObj.SOW);
+            lcdSOW.setValue(distanceUnit(sowUnit) * navObj.SOW);
         }
-        
-        if (navObj.TET){
-            tripElapsedTime = navObj.TET;
-            if (selectorNdx == 1){
-                lcdSummary.setValue(tripElapsedTime/MILLISPERHR);
-            }
-        }
-        
-        if (navObj.DST){
-            tripDistance = navObj.DST;
-            if (selectorNdx == 0){
-                lcdSummary.setValue(tripDistance*distanceUnit(sogUnit));
-            }
-            console.log("Disy= " + navObj.DST);
-            console.log("AdjDST= " + distanceUnit(sogUnit)*navObj.DST);
-        }
-        if (navObj.TAS){
-            tripAverageSpeed = navObj.TAS;
-            if (selectorNdx == 2){
-                lcdSummary.setValue(tripAverageSpeed*distanceUnit(sogUnit));
-            }tripAverageSpeed
-        }
-    };
+    }
 }
 
-
+function resetLog() {
+    console.log("Got reset log");
+    localStorage.setItem("sail.trip_elapsed_time", 0);
+    localStorage.setItem("sail.trip_distance", 0);
+    localStorge.setitem("sail.sog", 0);
+}
 
 //setup gauge scales here
 
@@ -167,6 +182,31 @@ var gaugePointerType = steelseries.PointerType.TYPE4;
 var gaugeBackgroundColor = steelseries.BackgroundColor.CARBON;
 var gaugeFrameDesign = steelseries.FrameDesign.BLACK_METAL;
 
+function distanceUnit(unit) {
+    var convert;
+    switch (unit) {
+        case "Kt":
+        {
+            distUnit = "n.m.";
+            convert = 1.0;
+            break;
+        }
+        case "km/hr":
+        {
+            distUnit = "km";
+            convert = 1.852;
+            break;
+        }
+        case "Mi/hr":
+        {
+            distUnit = "Mi";
+            convert = 1.1450779448;
+            break;
+        }
+    }
+    return convert;
+}
+
 function initSail() {
     // Define some sections for gauges
     // Initialzing gauges
@@ -175,20 +215,24 @@ function initSail() {
     vpSize = Math.min(window.innerHeight - 50, window.innerWidth);
     vpHeight = window.innerHeight - 50;
     vpWidth = window.innerWidth;
-    MILLISPERHR=3600000.;
-
+    MILLISPERHR = 3600000.;
     // Depth 
     //if we cant do canvas, skip out here!
-    if (!window.CanvasRenderingContext2D) return;
+    if (!window.CanvasRenderingContext2D)
+        return;
     // 
-    // Initialzing displays
-    var tackAngle = 45;
-    var areasCloseHaul = [
-    steelseries.Section((0 - tackAngle), 0, 'rgba(0, 0, 220, 0.3)'), steelseries.Section(0, tackAngle, 'rgba(0, 0, 220, 0.3)')];
-    var areasCloseHaulTrue = [
-    steelseries.Section((360 - tackAngle), 0, 'rgba(0, 0, 220, 0.3)'), steelseries.Section(0, tackAngle, 'rgba(0, 0, 220, 0.3)')];
+    if (typeof (Storage) == "undefined") {
+        // Sorry! No Web Storage support..
+        alert("Sorry! No Web Storage support. Please use a different browser.");
+        return;
+    }
 
     // Initialzing gauges
+    // Initialzing displays
+    var tackAngle = 45;
+    var areasCloseHaul = [steelseries.Section((0 - tackAngle), 0, 'rgba(0, 0, 220, 0.3)'), steelseries.Section(0, tackAngle, 'rgba(0, 0, 220, 0.3)')];
+    var areasCloseHaulTrue = [steelseries.Section((360 - tackAngle), 0, 'rgba(0, 0, 220, 0.3)'), steelseries.Section(0, tackAngle, 'rgba(0, 0, 220, 0.3)')];
+
     // wind dir apparent
     vpSize = Math.min(window.innerWidth * .30, (window.innerHeight - 50) * .75);
     radialWindDirApp = new steelseries.WindDirection('sailWindDir', {
@@ -205,14 +249,11 @@ function initSail() {
         pointerTypeAverage: steelseries.PointerType.TYPE1,
         backgroundColor: steelseries.BackgroundColor.BROWN,
     });
-
-
     // depth
     // init Sparkline array
     depthArraySize = zk.Widget.$('$sparkPts').getValue();
     while (depthArraySize--)
-    depthArray.push(6);
-
+        depthArray.push(6);
     depthUnit = zk.Widget.$('$depthUnit').getValue();
     headerString = "Depth " + depthUnit;
     lcdSailDepth = new steelseries.DisplaySingle('sailDepth', {
@@ -225,13 +266,11 @@ function initSail() {
         unitString: depthUnit,
         unitStringVisible: false
     });
-
     // Set width of spring div
     $("#spring").width(vpWidth * 0.3);
     $("#spring").height(vpHeight * .20);
     wid = Math.round(vpWidth * 0.3) + "px";
     ht = Math.round(vpHeight * .30) + "px";
-
     anAlarm = zk.Widget.$('$alarmDepth').getValue();
     options = {
         width: wid,
@@ -246,7 +285,6 @@ function initSail() {
         drawNormalOnTop: 'true',
         normalRangeColor: 'rgba(255, 0, 0, .20)'
     };
-
     //   $("#selector").height(vpHeight*.10);
 
     // log
@@ -260,7 +298,6 @@ function initSail() {
         headerString: headerString,
         headerStringVisible: true,
     });
-
     // wind app
     lcdWindApp = new steelseries.DisplayMulti('sailWind', {
         // width : document.getElementById('canvasWindApp').width,
@@ -268,13 +305,15 @@ function initSail() {
         height: vpHeight * .25,
         width: vpWidth * .30,
         lcdDecimals: 1,
+        linkAltValue: false,
+        value: 0,
+        altValue: 0,
         lcdColor: steelseries.LcdColor.BEIGE,
         headerString: "Knots(A)",
         headerStringVisible: true,
         detailString: "Avg: ",
         detailStringVisible: true,
     });
-
     // GPS SOG
     sogUnit = zk.Widget.$('$cfgSOGUnit').getValue();
     headerString = "SOG " + sogUnit;
@@ -286,11 +325,9 @@ function initSail() {
         headerString: headerString,
         headerStringVisible: true,
     });
-
     distanceUnit(sogUnit);
     console.log("init sogUnit = " + sogUnit);
     console.log("init distUnit = " + distUnit);
-
     lcdSummary = new steelseries.DisplaySingle('tripSummary', {
         height: vpHeight * .25 / 2,
         width: vpWidth * .30 / 2,
@@ -299,10 +336,8 @@ function initSail() {
         headerString: "Distance " + distUnit,
         headerStringVisible: true,
     });
-
     jq('$Selector').height(vpHeight * .25 / 2);
     jq('$Selector').width(vpWidth * .30 / 2);
-
     // make a web socket
     addSocketListener(new Sail());
 }
@@ -317,89 +352,41 @@ function selectorButton() {
     }
     distanceUnit(sogUnit);
     switch (selectorNdx) {
-    case 0:
-        lcdSummary = new steelseries.DisplaySingle('tripSummary', {
-            height: vpHeight * .25 / 2,
-            width: vpWidth * .30 / 2,
-            lcdDecimals: 1,
-            lcdColor: steelseries.LcdColor.BEIGE,
-            headerString: "Distance "+distUnit,
-            headerStringVisible: true,
-        });
-        lcdSummary.setValue(tripDistance);
-        break;
-    case 1:
-        headerString = "Elapsed Time hr";
-        lcdSummary = new steelseries.DisplaySingle('tripSummary', {
-            height: vpHeight * .25 / 2,
-            width: vpWidth * .30 / 2,
-            lcdDecimals: 1,
+        case 0:
+            lcdSummary = new steelseries.DisplaySingle('tripSummary', {
+                height: vpHeight * .25 / 2,
+                width: vpWidth * .30 / 2,
+                lcdDecimals: 1,
+                lcdColor: steelseries.LcdColor.BEIGE,
+                headerString: "Distance " + distUnit,
+                headerStringVisible: true,
+            });
+            lcdSummary.setValue(tripDistance);
+            break;
+        case 1:
+            headerString = "Elapsed Time hr";
+            lcdSummary = new steelseries.DisplaySingle('tripSummary', {
+                height: vpHeight * .25 / 2,
+                width: vpWidth * .30 / 2,
+                lcdDecimals: 1,
 //            valuesNumeric: false,
-            lcdColor: steelseries.LcdColor.BEIGE,
-            headerString: headerString,
-            headerStringVisible: true,
-        });
-        lcdSummary.setValue(tripElapsedTime/MILLISPERHR);
-        break;
-    case 2:
-        headerString = "Ave. Spd. " + sogUnit;
-        lcdSummary = new steelseries.DisplaySingle('tripSummary', {
-            height: vpHeight * .25 / 2,
-            width: vpWidth * .30 / 2,
-            lcdDecimals: 1,
-            lcdColor: steelseries.LcdColor.BEIGE,
-            headerString: headerString,
-            headerStringVisible: true,
-        });
-        lcdSummary.setValue(tripAverageSpeed*distanceUnit(sogUnit));
-        break;
+                lcdColor: steelseries.LcdColor.BEIGE,
+                headerString: headerString,
+                headerStringVisible: true,
+            });
+            lcdSummary.setValue(tripElapsedTime / MILLISPERHR);
+            break;
+        case 2:
+            headerString = "Ave. Spd. " + sogUnit;
+            lcdSummary = new steelseries.DisplaySingle('tripSummary', {
+                height: vpHeight * .25 / 2,
+                width: vpWidth * .30 / 2,
+                lcdDecimals: 1,
+                lcdColor: steelseries.LcdColor.BEIGE,
+                headerString: headerString,
+                headerStringVisible: true,
+            });
+            lcdSummary.setValue(tripAverageSpeed * distanceUnit(sogUnit));
+            break;
     }
 }
-
-function distanceUnit(unit) {
-    var convert;
-    switch (unit) {
-    case "Kt":
-        {
-            distUnit = "n.m.";
-            convert = 1.0;
-            break;
-        }
-    case "km/hr":
-        {
-            distUnit = "km";
-            convert = 1.852;
-            break;
-        }
-    case "Mi/hr":
-        {
-            distUnit = "Mi";
-            convert = 1.1450779448;
-            break;
-        }
-    }
-    return convert;
-}
-
-// This doesn't work - why???
-//function distanceUnit(spdOvrGnd) {
-//    var du;
-//    switch (spdOvrGnd) {
-//    case "kt":
-//        {
-//            du = "n.m.";
-//            break;
-//        }
-//    case "km/hr":
-//        {
-//            du = "km";
-//            break;
-//        }
-//    case "mi/hr":
-//        {
-//            du = "mi";
-//            break;
-//        }
-//    }
-//    return du;
-//}

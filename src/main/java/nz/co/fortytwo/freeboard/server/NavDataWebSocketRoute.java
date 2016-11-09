@@ -21,8 +21,10 @@ package nz.co.fortytwo.freeboard.server;
 import java.util.Properties;
 
 import nz.co.fortytwo.freeboard.server.util.Constants;
+import org.apache.camel.CamelContext;
 
 import org.apache.camel.Predicate;
+import org.apache.camel.ShutdownRunningTask;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.websocket.WebsocketComponent;
 import org.apache.camel.model.dataformat.JsonLibrary;
@@ -154,7 +156,7 @@ public class NavDataWebSocketRoute extends RouteBuilder {
 				
 		
 		// push NMEA out via TCPServer.
-		from("seda:nmeaOutput")
+		from("seda:nmeaOutput").shutdownRunningTask(ShutdownRunningTask.CompleteCurrentTaskOnly)
 			.process(nmeaTcpServer)
 			.end();
 		
@@ -169,7 +171,7 @@ public class NavDataWebSocketRoute extends RouteBuilder {
 		
 		//main input to destination route
 		// send input to listeners
-		from("seda:input")
+		from("seda:input").shutdownRunningTask(ShutdownRunningTask.CompleteCurrentTaskOnly)
 				.onException(Exception.class)
 					.handled(true)
 					.maximumRedeliveries(0)
@@ -191,7 +193,9 @@ public class NavDataWebSocketRoute extends RouteBuilder {
 				 	.to("direct:command")
 				.end();
 
-	}
+	CamelContext cxt = this.getContext();
+        System.out.println("Shutting down "+cxt.toString());
+        }
 
 	private void initProcessors() {
 		commandProcessor.init();

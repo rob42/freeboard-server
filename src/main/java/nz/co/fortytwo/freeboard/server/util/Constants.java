@@ -59,12 +59,15 @@ public class Constants {
 
         /** Distance between GPS readings **/
         public static final String DISTANCE_TRAVELED = "DST";
-
-        /** Trip average speed **/
-        public static final String TRIP_AVERAGE_SPEED = "TAS";
-
-        /** Trip Elapsed Time **/
-        public static final String TRIP_TIME = "TET";
+        
+        /** GPS Date **/
+        public static final String GPS_DATE = "DTE";
+        
+//        /** Trip average speed **/
+//        public static final String TRIP_AVERAGE_SPEED = "TAS";
+//
+//        /** Trip Elapsed Time **/
+//        public static final String TRIP_TIME = "TET";
 
 	/** GPS fix true/false */
 	public static final String GPS_FIX = "FIX";
