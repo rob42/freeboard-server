@@ -19,10 +19,10 @@
  */
 package nz.co.fortytwo.freeboard.server;
 
-import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -250,6 +250,7 @@ public class NMEAProcessor extends FreeboardProcessor implements Processor, Free
             private long nowMillis;
             private long previousMillis;
             private Date utcNowDate;
+            private Calendar cal = Calendar.getInstance();
             private long tripElapsedTime;
             private long timeDiff; // time between successive GPS readings
 
@@ -259,11 +260,10 @@ public class NMEAProcessor extends FreeboardProcessor implements Processor, Free
             double paddlePreviousSpeed = 0;
             double tripDistance;
             static final double ALPHA = 1 - 1.0 / 6;
-            DateFormat rmcFormat = new SimpleDateFormat("ddMMyy");
+            DateFormat rmcDateFormat = new SimpleDateFormat("ddMMyy");
+            DateFormat printFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 
             public void sentenceRead(SentenceEvent evt) {
-                // Exchange exchange = (Exchange) evt.getSource();
-                // StringBuilder body = new StringBuilder();
                 @SuppressWarnings("unchecked")
 
                 Properties config = null;
@@ -305,58 +305,10 @@ public class NMEAProcessor extends FreeboardProcessor implements Processor, Free
                         double lon1 = previousLon;
                         previousLon = Util.movingAverage(ALPHA, previousLon, sen.getPosition().getLongitude());
                         map.put(Constants.LON, previousLon);
-//                        double deltaDist = distance(previousLat, lat1, previousLon, lon1);
-//                        dist+=deltaDist;
-//                        System.out.println("deltaDist, speed = " + deltaDist+" "+ "," + ((RMCSentence)sen).getSpeed());
-//                        map.put(Constants.DISTANCE_TRAVELED, dist);
-//                        config.setProperty(Constants.TRIP_DISTANCE, String.format("%4.2f", dist));
                     } catch (DataNotAvailableException p) {
                         if (logger.isDebugEnabled()) {
                             logger.debug(p);
                         }
-                    }
-                    if ((evt.getSentence() instanceof DateSentence) && (evt.getSentence() instanceof TimeSentence)) {
-                        DateSentence dSen = (DateSentence) evt.getSentence();
-                        TimeSentence tSen = (TimeSentence) evt.getSentence();
-
-                        // Get ELAP_TIME from config or assign it from Date/Time sentences
-                        try {
-                            utcNowDate = rmcFormat.parse(dSen.getDate().toString());
-                            nowMillis = utcNowDate.getTime() + tSen.getTime().getMilliseconds();
-                        } catch (ParseException ex) {
-                            java.util.logging.Logger.getLogger(NMEAProcessor.class.getName()).log(Level.SEVERE, null, ex);
-                        }
-
-                        String tempString;
-                        // if elapsedTime == 0, we have just started and need to get elapsedTime from freeboard.cfg
-                        if (startTrip) {
-                            // if the property does not exist in freeboard.cfg, we need to initialize
-                            startTrip = false;
-                            tempString = (config.getProperty(Constants.TRIP_ELAPSED_TIME));
-                            if (tempString == null) {
-                                tempString = "0";
-                                previousMillis = nowMillis;
-                                tripElapsedTime = 0;
-                            } else {
-                                previousMillis = nowMillis;
-                                tripElapsedTime = Long.parseLong(tempString);
-                            }
-                        }
-                        timeDiff = nowMillis - previousMillis;
-                        tripElapsedTime += timeDiff;
-                        config.setProperty(Constants.TRIP_ELAPSED_TIME, tripElapsedTime + "");
-                        map.put(Constants.TRIP_TIME, tripElapsedTime);
-                        previousMillis = nowMillis;
-
-                        // handle all distances and speeds in GPS units (knots)
-                        map.put(Constants.TRIP_AVERAGE_SPEED, tripDistance * Constants.MS_PER_HR / tripElapsedTime);
-//                        System.out.println("tripDistance, tripElapsedTime = "+tripDistance + " "+ tripElapsedTime);
-                        String hhmmss = convertSecondsToHMmSs(timeDiff / 1000);
-                    }
-                    try {
-                        Util.saveConfig();
-                    } catch (IOException ex) {
-                        java.util.logging.Logger.getLogger(NMEAProcessor.class.getName()).log(Level.SEVERE, null, ex);
                     }
                 }
 
@@ -378,23 +330,26 @@ public class NMEAProcessor extends FreeboardProcessor implements Processor, Free
                 if (evt.getSentence() instanceof RMCSentence) {
                     RMCSentence sen = (RMCSentence) evt.getSentence();
                     Util.checkTime(sen);
-                    try{
-	                    //may conflict with the Heading sentences, producing COG 'wobble' if they dont agree.
-	                    if (preferRMC) {
-	                        if (sen.getSpeed() > 0.7d) {
-	                            map.put(Constants.COURSE_OVER_GND, sen.getCourse());
-	                        }
-	                    }
-	//                    System.out.println(String.format("Speed gpsPreviousSpeed, sen.getSpeed = %2.2f %2.2f", gpsPreviousSpeed, sen.getSpeed()));
-	
-	                    // handle soeed and distance in GPS units (knots)
-	                    gpsPreviousSpeed = Util.movingAverage(ALPHA, gpsPreviousSpeed, sen.getSpeed());
-	                    map.put(Constants.SPEED_OVER_GND, gpsPreviousSpeed);
-	                    double deltaDist = gpsPreviousSpeed * timeDiff / Constants.MS_PER_HR;
-	                    tripDistance += deltaDist;
-	                    map.put(Constants.DISTANCE_TRAVELED, tripDistance);
-	                    String mapString = String.format("%010.6f", tripDistance);
-	                    config.setProperty(Constants.TRIP_DISTANCE, mapString);
+                    try {
+                        //may conflict with the Heading sentences, producing COG 'wobble' if they dont agree.
+                        if (preferRMC) {
+                            if (sen.getSpeed() > 0.7d) {
+                                map.put(Constants.COURSE_OVER_GND, sen.getCourse());
+                            }
+                        }
+                        DateSentence dSen = (DateSentence) evt.getSentence();
+                        TimeSentence tSen = (TimeSentence) evt.getSentence();
+                        try {
+                            utcNowDate = rmcDateFormat.parse(dSen.getDate().toString());
+                            cal.setTime(utcNowDate);
+                            cal.set(Calendar.HOUR, tSen.getTime().getHour() );
+                            cal.set(Calendar.MINUTE, tSen.getTime().getMinutes());
+                            cal.set(Calendar.SECOND, (int)tSen.getTime().getSeconds() );
+                        } catch (ParseException ex) {
+                            java.util.logging.Logger.getLogger(NMEAProcessor.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                        map.put(Constants.GPS_DATE, printFormat.format(cal.getTime()));
+                        map.put(Constants.SPEED_OVER_GND, sen.getSpeed());
                     } catch (DataNotAvailableException p) {
                         if (logger.isDebugEnabled()) {
                             logger.debug(p);

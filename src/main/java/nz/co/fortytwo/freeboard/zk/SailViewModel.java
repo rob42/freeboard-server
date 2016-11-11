@@ -59,9 +59,6 @@ public class SailViewModel extends SelectorComposer<Window> {
     @Wire("#depth")
     private Panel depth;
     private double size = 400;
-
-    @Wire("toolbarbutton#resetLog")
-    private Toolbarbutton tbBtn;
 	
 
     public SailViewModel() {
@@ -85,12 +82,6 @@ public class SailViewModel extends SelectorComposer<Window> {
         //chartplotter.setFloatable(true);
     }
 
-
-    @Listen("onClick= #resetLog")
-    public void resetLog(MouseEvent event) {
-        System.out.println("Got resetLog click");
-        NMEAProcessor.resetTripLog = true;
-    }
 
     public double getSize() {
         if (sess.hasAttribute("size")) {
